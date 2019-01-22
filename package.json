@@ -1,0 +1,19 @@
+{
+  "name": "rpglang",
+  "version": "1.0.0",
+  "description": "antlr4 antlr4 -Dlanguage=JavaScript test.g4",
+  "main": "serve-static.js",
+  "dependencies": {
+    "antlr4": "^4.7.2",
+    "bluebird": "^3.5.3",
+    "commander": "^2.19.0",
+    "electron": "^4.0.1",
+    "esprima": "^4.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

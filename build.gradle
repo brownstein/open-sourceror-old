@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    runtime 'org.antlr:antlr4:4.7.2'
+}
+
+task generateTestParser(type:JavaExec) {
+   main = 'org.antlr.v4.Tool'
+   classpath = sourceSets.main.runtimeClasspath
+   args = ['-Dlanguage=JavaScript', 'test.g4', '-o', 'static/generated-parser']
+}
+
+task generateChatParser(type:JavaExec) {
+   main = 'org.antlr.v4.Tool'
+   classpath = sourceSets.main.runtimeClasspath
+   args = ['-Dlanguage=JavaScript', 'Chat.g4', '-o', 'static/chat-parser']
+}
