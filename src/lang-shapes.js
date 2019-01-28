@@ -6,7 +6,8 @@ const {
   Mesh,
   DoubleSide,
   ShaderMaterial,
-  Color
+  Color,
+  Object3D
 } = THREE;
 const Line2DGeometry = require("three-line-2d")(THREE);
 const Line2DShader = require('three-line-2d/shaders/basic')(THREE);
@@ -20,7 +21,7 @@ export class CircleSlice {
     radius = 10,
     thickness = 1,
     resolution = 32,
-    color = "#996600"
+    color = "#ffffff"
   } = {}) {
     this.startTheta = startTheta;
     this.endTheta = endTheta;
@@ -72,24 +73,41 @@ export class CircleSlice {
 export class SymbolText {
   constructor ({
     value = "[Symbol]",
-    runic = true
+    runic = true,
+    center = true,
+    color = "#ffffff"
   } = {}) {
     this.value = value;
     this.runic = runic;
+    this.center = center;
+    this.color = color;
   }
   createMesh () {
     const {
       value,
-      runic
+      runic,
+      center,
+      color
     } = this;
+    let textMesh;
     if (runic) {
       // hash into a single letter
       const hashValue = 65 + Math.abs((hash.value(value) % 57));
-      const runicMesh = createRunicText(String.fromCharCode(hashValue));
-      return runicMesh;
+      textMesh = createRunicText(String.fromCharCode(hashValue), color);
     }
-
-    const textMesh = createText(value);
+    else {
+      textMesh = createText(value, color);
+    }
+    if (center) {
+      textMesh.geometry.computeBoundingBox();
+      const textBbox = textMesh.geometry.boundingBox;
+      const textBboxSize = new Vector3();
+      textBbox.getSize(textBboxSize);
+      textBboxSize.multiplyScalar(0.5);
+      textMesh.position.x = -textBboxSize.x / 2;
+      textMesh.position.y = textBboxSize.y / 2;
+      textMesh.scale.multiplyScalar(0.5);
+    }
     return textMesh;
   }
 }

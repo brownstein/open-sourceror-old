@@ -63,7 +63,7 @@ export async function loadAllFonts () {
   await loadRunicFont();
 }
 
-export function createText (text) {
+export function createText (text, { color } = {}) {
   const geom = createTextGeometry({
     align: "left",
     font: _normalFont
@@ -72,13 +72,13 @@ export function createText (text) {
   const material = new RawShaderMaterial(SDFShader({
     map: _normalTexture,
     transparent: true,
-    color: 0xaa0000,
+    color: color || 0xffffff,
     side: DoubleSide
   }));
   return new Mesh(geom, material);
 }
 
-export function createRunicText (text) {
+export function createRunicText (text, { color } = {}) {
   const geom = createTextGeometry({
     align: "left",
     font: _runicFont
@@ -87,7 +87,7 @@ export function createRunicText (text) {
   const material = new RawShaderMaterial(SDFShader({
     map: _runicTexture,
     transparent: true,
-    color: 0xaa0000,
+    color: color || 0xffffff,
     side: DoubleSide
   }));
   return new Mesh(geom, material);
