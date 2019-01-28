@@ -63,7 +63,7 @@ export async function loadAllFonts () {
   await loadRunicFont();
 }
 
-export async function createText (text) {
+export function createText (text) {
   const geom = createTextGeometry({
     align: "left",
     font: _normalFont
@@ -75,11 +75,10 @@ export async function createText (text) {
     color: 0xaa0000,
     side: DoubleSide
   }));
-  console.log(material);
   return new Mesh(geom, material);
 }
 
-export async function createRunicText (text) {
+export function createRunicText (text) {
   const geom = createTextGeometry({
     align: "left",
     font: _runicFont
@@ -91,6 +90,5 @@ export async function createRunicText (text) {
     color: 0xaa0000,
     side: DoubleSide
   }));
-  console.log(material);
   return new Mesh(geom, material);
 }
