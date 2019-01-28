@@ -1,6 +1,6 @@
 "use strict";
 const { ipcRenderer } = require("electron");
-//const esprima = require("esprima");
+const esprima = require("esprima");
 
 var THREE = require("three");
 var {
@@ -21,27 +21,26 @@ var {
 } = THREE;
 
 const {
-  loadRunicFont,
+  loadAllFonts,
+  createText,
   createRunicText
 } = require("./dist");
 
-// parser test stuff
-// const scr = `
-//   "use strict";
-//   on(MOTION, ()=> {
-//     var a = 1;
-//     console.log(a);
-//   });
-// `;
-// const parsed = esprima.parseScript(scr, {
-//   range: true,
-//   loc: true
-// });
-// function visitor (node) {
-//   const stringified = JSON.stringify(node, 0, 2);
-//   fs.writeFileSync("temp1.json", stringified);
-// }
-// visitor(parsed);
+const scr = `
+  "use strict";
+  on(MOTION, ()=> {
+    var a = 1;
+    console.log(a);
+  });
+`;
+const parsed = esprima.parseScript(scr, {
+  range: true,
+  loc: true
+});
+function visitor (node) {
+  console.log(node);
+}
+visitor(parsed);
 
 
 let renderEl;
@@ -72,24 +71,32 @@ async function init () {
     preserveDrawingBuffer: true
   });
   renderer.setClearColor(new Color("#cccccc"));
-  renderer.setPixelRatio(1);
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(256, 256);
 
-  await loadRunicFont();
-  const mesh = await createRunicText("hello world");
-  mesh.geometry.computeBoundingBox();
+  await loadAllFonts();
 
-  const bbox = mesh.geometry.boundingBox;
+  const textMesh = await createText("abcdefghijlkmn\nopqrstubwxyz.");
+  textMesh.geometry.computeBoundingBox();
+  const bbox = textMesh.geometry.boundingBox;
   const bboxSize = new Vector3();
   bbox.getSize(bboxSize);
   bboxSize.multiplyScalar(0.5);
+  textMesh.position.x = -bboxSize.x / 2;
+  textMesh.position.y = bboxSize.y / 2 - 50;
+  textMesh.scale.multiplyScalar(0.5);
+  scene.add(textMesh);
 
-  mesh.position.x = -bboxSize.x / 2;
-  mesh.position.y = bboxSize.y / 2;
-
-  mesh.scale.multiplyScalar(0.5);
-
-  scene.add(mesh);
+  const runicMesh = await createRunicText("abcdefghijlkmn\nopqrstubwxyz.");
+  runicMesh.geometry.computeBoundingBox();
+  const runicBbox = runicMesh.geometry.boundingBox;
+  const runicBboxSize = new Vector3();
+  runicBbox.getSize(runicBboxSize);
+  runicBboxSize.multiplyScalar(0.5);
+  runicMesh.position.x = -runicBboxSize.x / 2;
+  runicMesh.position.y = runicBboxSize.y / 2;
+  runicMesh.scale.multiplyScalar(0.5);
+  scene.add(runicMesh);
 
   renderer.render(scene, camera);
   renderer.render(scene, camera);

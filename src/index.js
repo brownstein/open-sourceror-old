@@ -1,8 +1,9 @@
-import { createRunicText, loadRunicFont } from "./text";
+import { createText, createRunicText, loadAllFonts } from "./text";
 
 const RPGLangLib = {
+  createText,
   createRunicText,
-  loadRunicFont
+  loadAllFonts
 };
 
 export default RPGLangLib;

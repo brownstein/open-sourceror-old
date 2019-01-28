@@ -1,8 +1,10 @@
 import createTextGeometry from "three-bmfont-text";
 import loadBMFont from "load-bmfont/browser";
 import SDFShader from 'three-bmfont-text/shaders/sdf';
-import graceOfEtroFnt from "./fonts/bmf-grace-of-etro-sdf.fnt";
-import graceOfEtroPng from "./fonts/bmf-grace-of-etro-sdf.png";
+import menloFnt from "./fonts/menlo-sdf.fnt";
+import menloPng from "./fonts/menlo-sdf.png";
+import graceOfEtroFnt from "./fonts/grace-of-etro-sdf.fnt";
+import graceOfEtroPng from "./fonts/grace-of-etro-sdf.png";
 import {
   DoubleSide,
   TextureLoader,
@@ -11,8 +13,30 @@ import {
 } from "three";
 
 var texLoader = new TextureLoader();
+var _normalFont = null;
+var _normalTexture = null;
 var _runicFont = null;
 var _runicTexture = null;
+
+export async function loadNormalFont () {
+  if (!_normalFont) {
+    _normalFont = await new Promise ((resolve, reject) =>
+      loadBMFont(menloFnt, (err, fnt) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(fnt);
+      })
+    );
+  }
+  if (!_normalTexture) {
+    _normalTexture = await new Promise ((resolve, reject) =>
+      texLoader.load(menloPng, tex => {
+        resolve(tex);
+      })
+    );
+  }
+}
 
 export async function loadRunicFont () {
   if (!_runicFont) {
@@ -34,19 +58,33 @@ export async function loadRunicFont () {
   }
 }
 
+export async function loadAllFonts () {
+  await loadNormalFont();
+  await loadRunicFont();
+}
+
+export async function createText (text) {
+  const geom = createTextGeometry({
+    align: "left",
+    font: _normalFont
+  });
+  geom.update(text);
+  const material = new RawShaderMaterial(SDFShader({
+    map: _normalTexture,
+    transparent: true,
+    color: 0xaa0000,
+    side: DoubleSide
+  }));
+  console.log(material);
+  return new Mesh(geom, material);
+}
+
 export async function createRunicText (text) {
   const geom = createTextGeometry({
     align: "left",
     font: _runicFont
   });
   geom.update(text);
-  console.log({ _runicFont, geom });
-  // const mat = new RawShaderMaterial(SDFShader({
-  //   map: _runicTexture,
-  //   transparent: true,
-  //   side: DoubleSide,
-  //   color: 'rgb(230, 230, 230)'
-  // }));
   const material = new RawShaderMaterial(SDFShader({
     map: _runicTexture,
     transparent: true,
