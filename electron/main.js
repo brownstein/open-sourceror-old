@@ -59,9 +59,12 @@ function createWindow () {
 
     // init all the things
   mainWindow = new BrowserWindow({
-    width: cmdArgs.dev ? 400 : 100,
-    height: cmdArgs.dev ? 500 : 120,
-    title: cmdArgs.file ? `OpenFPC - ${cmdArgs.file}` : "OpenFPC"
+    width: cmdArgs.dev ? 800 : 300,
+    height: cmdArgs.dev ? 500 : 300,
+    title: cmdArgs.file ? `RPGLang - ${cmdArgs.file}` : "RPGLand",
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   mainWindow.loadURL(url.format({
@@ -113,7 +116,7 @@ app.on("window-all-closed", function () {
   app.quit();
 });
 
-app.on("activate", function () {
+app.on("activate", async function () {
   if (mainWindow === null) {
     createWindow();
   }
