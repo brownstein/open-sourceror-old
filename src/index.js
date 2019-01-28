@@ -1,5 +1,9 @@
 import { createText, createRunicText, loadAllFonts } from "./text";
-import { CircleSlice, SymbolText } from "./lang-shapes";
+import {
+  CircleSlice,
+  SymbolText,
+  SymbolTextCircleSlice
+} from "./lang-shapes";
 
 const RPGLangLib = {
   createText,
@@ -7,7 +11,8 @@ const RPGLangLib = {
   loadAllFonts,
 
   CircleSlice,
-  SymbolText
+  SymbolText,
+  SymbolCircleSlice
 };
 
 export default RPGLangLib;

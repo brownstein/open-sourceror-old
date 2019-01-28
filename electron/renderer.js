@@ -1,6 +1,7 @@
 "use strict";
 const { ipcRenderer } = require("electron");
 const esprima = require("esprima");
+const fs = require("fs");
 
 var THREE = require("three");
 var {
@@ -31,17 +32,19 @@ const {
 
 const scr = `
   "use strict";
-  on(MOTION, ()=> {
-    var a = 1;
+  on(MOTION, (move)=> {
+    var a = move;
+    PLAYER.position.add(a.direction);
     console.log(a);
   });
 `;
 const parsed = esprima.parseScript(scr, {
-  range: true,
-  loc: true
+  range: false,
+  loc: false
 });
 function visitor (node) {
   console.log(node);
+  fs.writeFileSync("temp1.json", JSON.stringify(node, 0, 2));
 }
 visitor(parsed);
 
@@ -81,7 +84,7 @@ async function init () {
 
   const cSlice1 = new CircleSlice({ radius: 40, startTheta: Math.PI / 2 + 0.1, endTheta: Math.PI * 2 - 0.05 });
   const cSlice2 = new CircleSlice({ radius: 40, startTheta: 0.05, endTheta: Math.PI / 2 });
-  const symbol = new SymbolText({ value: "!" });
+  const symbol = new SymbolText({ value: "test" });
   const sm = symbol.createMesh();
 
   scene.add(cSlice1.createMesh());

@@ -7,13 +7,16 @@ const {
   DoubleSide,
   ShaderMaterial,
   Color,
-  Object3D
+  Scene
 } = THREE;
 const Line2DGeometry = require("three-line-2d")(THREE);
 const Line2DShader = require('three-line-2d/shaders/basic')(THREE);
 const hash = require("hashcode").hashCode();
 import { createText, createRunicText } from "./text";
 
+/**
+ * Helper class to make dealing with slices of circles easier
+ */
 export class CircleSlice {
   constructor ({
     startTheta = 0,
@@ -21,7 +24,8 @@ export class CircleSlice {
     radius = 10,
     thickness = 1,
     resolution = 32,
-    color = "#ffffff"
+    color = "#ffffff",
+    layoutPriority = 1
   } = {}) {
     this.startTheta = startTheta;
     this.endTheta = endTheta;
@@ -30,6 +34,7 @@ export class CircleSlice {
     this.resolution = resolution;
     this.color = color;
     this.children = [];
+    this.layoutPriority = layoutPriority;
   }
   static fromCodeExpression () {
     return new CircleSlice();
@@ -70,6 +75,9 @@ export class CircleSlice {
   }
 }
 
+/**
+ * Helper class to make dealing with symbols and text easier
+ */
 export class SymbolText {
   constructor ({
     value = "[Symbol]",
@@ -98,16 +106,49 @@ export class SymbolText {
     else {
       textMesh = createText(value, color);
     }
+    const meshContainer = new Scene();
     if (center) {
       textMesh.geometry.computeBoundingBox();
       const textBbox = textMesh.geometry.boundingBox;
       const textBboxSize = new Vector3();
       textBbox.getSize(textBboxSize);
-      textBboxSize.multiplyScalar(0.5);
       textMesh.position.x = -textBboxSize.x / 2;
       textMesh.position.y = textBboxSize.y / 2;
-      textMesh.scale.multiplyScalar(0.5);
     }
-    return textMesh;
+    meshContainer.add(textMesh);
+    return meshContainer;
   }
+}
+
+/**
+ * Helper class to allow text to occupy circle slices
+ */
+export class SymbolTextCircleSlice {
+  constructor ({
+    text = "test",
+    startTheta = 0,
+    endTheta = Math.PI * 2,
+    radius = 10,
+    color = "0xffffff",
+    runic = true,
+    layoutPriority = 1
+  } = {}) {
+    this.text = text;
+    this.startTheta = startTheta;
+    this.endTheta = endTheta;
+    this.radius = radius;
+    this.color = color;
+    this.runic = runic;
+    this.layoutPriority = layoutPriority;
+  }
+  createMesh () {
+
+  }
+}
+
+/**
+ * Configures a given set of circle slices to fit into a given circle slice
+ */
+export function applyCircularLayout (slices, startTheta, endTheta) {
+  
 }
