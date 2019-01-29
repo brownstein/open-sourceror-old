@@ -64,7 +64,10 @@ export class CircleSlice extends BaseSlice {
     let closed = false;
     let numPoints = Math.ceil(resolution * (endTheta - startTheta) / Math.PI * 2);
     let pointAngle = (endTheta - startTheta) / numPoints;
-    if ((startTheta % (Math.PI * 2)) === (endTheta % (Math.PI * 2))) {
+    if (
+      ((startTheta + Math.PI * 2) % (Math.PI * 2)) ===
+      ((endTheta + Math.PI * 2) % (Math.PI * 2))
+    ) {
       closed = true;
       numPoints -= 1;
     }
@@ -154,6 +157,7 @@ export class SymbolTextCircleSlice extends BaseSlice {
     this.color = color;
     this.runic = runic;
     this.layoutPriority = layoutPriority;
+    this.children = [];
   }
   createMesh () {
     if (this.runic) {
@@ -163,7 +167,7 @@ export class SymbolTextCircleSlice extends BaseSlice {
       });
       const runicMesh = runicSymbol.createMesh();
       const midTheta = (this.startTheta + this.endTheta) / 2;
-      runicMesh.rotation.z = midTheta;
+      runicMesh.rotation.z = midTheta + Math.PI / 2;
       runicMesh.position.x = this.radius * Math.cos(midTheta);
       runicMesh.position.y = this.radius * Math.sin(midTheta);
       runicMesh.scale.multiplyScalar(0.5);
@@ -180,7 +184,7 @@ export function applyCircularLayout (slices, {
   startTheta = 0,
   endTheta = Math.PI * 2,
   margin = 0.1,
-  radius = 20,
+  radius = 10,
   radiusDelta = 10
 } = {}) {
   if (slices.length === 0) {
