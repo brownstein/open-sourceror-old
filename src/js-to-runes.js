@@ -1,33 +1,46 @@
 import esprima from "esprima";
 import {
   CircleSlice,
-  SymbolText
+  SymbolTextCircleSlice,
+  applyCircularLayout
 } from "./lang-shapes";
 
 function _expression (expression) {
 
 }
 
-function _function (funcExpression) {
-  const args = funcExpression.params;
-  const body = funcExpression.body;
+function _symbol (symbol) {
+  return new SymbolTextCircleSlice({
+    text: symbol.name
+  });
+}
 
+function _function (funcExpression) {
+  const params = funcExpression.params;
+  const body = funcExpression.body;
+  return new CircleSlice();
 }
 
 function _callExpression (callExpression) {
   let callee = callExpression.callee.name;
+  const slices = [];
   switch (callee) {
     case "on":
-      const symbol = callExpression.argumnets[0].name;
+      const symbol = callExpression.arguments[0].name;
+      slices.push(_symbol(symbol));
       const handler = callExpression.arguments[1];
-      return [symbol, _function(handler)];
+      slices.push(_function(handler));
+      break;
     default:
       return;
   }
+  const callCircle = new CircleSlice();
+  callCircle.children = slices;
+  return callCircle;
 }
 
 export function scriptToCircle (script) {
-  const statements = [];
+  const slices = [];
   script.body.forEach (part => {
     if (part.type !== "ExpressionStatement") {
       return;
@@ -37,8 +50,10 @@ export function scriptToCircle (script) {
     }
     switch (part.expression.type) {
       case "CallExpression":
-        statements.push(_callExpression(part.expression));
+        slices.push(_callExpression(part.expression));
         return;
     }
   });
+  applyCircularLayout(slices);
+  return slices;
 }

@@ -1,9 +1,18 @@
-import { createText, createRunicText, loadAllFonts } from "./text";
+import {
+  createText,
+  createRunicText,
+  loadAllFonts
+} from "./text";
 import {
   CircleSlice,
   SymbolText,
-  SymbolTextCircleSlice
+  SymbolTextCircleSlice,
+  applyCircularLayout
 } from "./lang-shapes";
+import {
+  scriptToCircle
+} from "./js-to-runes";
+
 
 const RPGLangLib = {
   createText,
@@ -12,7 +21,10 @@ const RPGLangLib = {
 
   CircleSlice,
   SymbolText,
-  SymbolCircleSlice
+  SymbolTextCircleSlice,
+  applyCircularLayout,
+
+  scriptToCircle
 };
 
 export default RPGLangLib;

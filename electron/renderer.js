@@ -27,7 +27,10 @@ const {
   createRunicText,
 
   CircleSlice,
-  SymbolText
+  SymbolText,
+  applyCircularLayout,
+
+  scriptToCircle
 } = require("./dist");
 
 const scr = `
@@ -82,14 +85,8 @@ async function init () {
 
   await loadAllFonts();
 
-  const cSlice1 = new CircleSlice({ radius: 40, startTheta: Math.PI / 2 + 0.1, endTheta: Math.PI * 2 - 0.05 });
-  const cSlice2 = new CircleSlice({ radius: 40, startTheta: 0.05, endTheta: Math.PI / 2 });
-  const symbol = new SymbolText({ value: "test" });
-  const sm = symbol.createMesh();
-
-  scene.add(cSlice1.createMesh());
-  scene.add(cSlice2.createMesh());
-  scene.add(sm);
+  const mainSlices = scriptToCircle(parsed);
+  mainSlices.forEach(s => scene.add(s.createAllMeshes()));
 
   renderer.render(scene, camera);
 }

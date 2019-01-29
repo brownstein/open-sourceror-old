@@ -14,10 +14,22 @@ const Line2DShader = require('three-line-2d/shaders/basic')(THREE);
 const hash = require("hashcode").hashCode();
 import { createText, createRunicText } from "./text";
 
+class BaseSlice {
+  createAllMeshes (...params) {
+    const parentMesh = this.createMesh(...params);
+    if (this.children) {
+      this.children.forEach(child => {
+        parentMesh.children.push(child.createAllMeshes());
+      });
+    }
+    return parentMesh;
+  }
+}
+
 /**
  * Helper class to make dealing with slices of circles easier
  */
-export class CircleSlice {
+export class CircleSlice extends BaseSlice {
   constructor ({
     startTheta = 0,
     endTheta = Math.PI * 2,
@@ -27,6 +39,7 @@ export class CircleSlice {
     color = "#ffffff",
     layoutPriority = 1
   } = {}) {
+    super();
     this.startTheta = startTheta;
     this.endTheta = endTheta;
     this.radius = radius;
@@ -123,7 +136,7 @@ export class SymbolText {
 /**
  * Helper class to allow text to occupy circle slices
  */
-export class SymbolTextCircleSlice {
+export class SymbolTextCircleSlice extends BaseSlice {
   constructor ({
     text = "test",
     startTheta = 0,
@@ -131,8 +144,9 @@ export class SymbolTextCircleSlice {
     radius = 10,
     color = "0xffffff",
     runic = true,
-    layoutPriority = 1
+    layoutPriority = 0.2
   } = {}) {
+    super();
     this.text = text;
     this.startTheta = startTheta;
     this.endTheta = endTheta;
@@ -142,13 +156,64 @@ export class SymbolTextCircleSlice {
     this.layoutPriority = layoutPriority;
   }
   createMesh () {
-
+    if (this.runic) {
+      const runicSymbol = new SymbolText({
+        value: this.text,
+        color: this.color
+      });
+      const runicMesh = runicSymbol.createMesh();
+      const midTheta = (this.startTheta + this.endTheta) / 2;
+      runicMesh.rotation.z = midTheta;
+      runicMesh.position.x = this.radius * Math.cos(midTheta);
+      runicMesh.position.y = this.radius * Math.sin(midTheta);
+      runicMesh.scale.multiplyScalar(0.5);
+      return runicMesh;
+    }
+    throw new Error("only runic is currently supported");
   }
 }
 
 /**
  * Configures a given set of circle slices to fit into a given circle slice
  */
-export function applyCircularLayout (slices, startTheta, endTheta) {
-  
+export function applyCircularLayout (slices, {
+  startTheta = 0,
+  endTheta = Math.PI * 2,
+  margin = 0.1,
+  radius = 20,
+  radiusDelta = 10
+} = {}) {
+  if (slices.length === 0) {
+    return;
+  }
+  if (slices.length === 1) {
+    const slice = slices[0];
+    slice.startTheta = startTheta;
+    slice.endTheta = endTheta;
+    slice.radius = radius;
+    applyCircularLayout(slice.children, {
+      startTheta: slice.startTheta,
+      endTheta: slice.endTheta,
+      radius: radius + radiusDelta,
+      radiusDelta: radiusDelta
+    });
+    return;
+  }
+  let totalPriority = slices.reduce((p, s) => p + s.layoutPriority, 0);
+  totalPriority += margin * slices.length;
+  const thetaPerPriority = (endTheta - startTheta) / totalPriority;
+  let theta = startTheta + margin * thetaPerPriority / 2;
+  slices.forEach(slice => {
+    slice.startTheta = theta;
+    theta += slice.layoutPriority * thetaPerPriority;
+    slice.endTheta = theta;
+    theta += margin * thetaPerPriority;
+    slice.radius = radius;
+    applyCircularLayout(slice.children || [], {
+      startTheta: slice.startTheta,
+      endTheta: slice.endTheta,
+      radius: radius + radiusDelta,
+      radiusDelta: radiusDelta
+    });
+  });
 }
