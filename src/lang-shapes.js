@@ -37,7 +37,8 @@ export class CircleSlice extends BaseSlice {
     thickness = 1,
     resolution = 32,
     color = "#ffffff",
-    layoutPriority = 1
+    layoutPriority = 1,
+    children = null
   } = {}) {
     super();
     this.startTheta = startTheta;
@@ -48,6 +49,9 @@ export class CircleSlice extends BaseSlice {
     this.color = color;
     this.children = [];
     this.layoutPriority = layoutPriority;
+    if (children) {
+      this.children.push(...children);
+    }
   }
   static fromCodeExpression () {
     return new CircleSlice();
@@ -116,7 +120,7 @@ export class SymbolText {
     let textMesh;
     if (runic) {
       // hash into a single letter
-      const hashValue = 65 + Math.abs((hash.value(value) % 57));
+      const hashValue = 65 + Math.abs(hash.value(value) % 26);
       textMesh = createRunicText(String.fromCharCode(hashValue), color);
     }
     else {
@@ -184,7 +188,7 @@ export function applyCircularLayout (slices, {
   startTheta = 0,
   endTheta = Math.PI * 2,
   margin = 0.1,
-  radius = 10,
+  radius = 20,
   radiusDelta = 10
 } = {}) {
   if (slices.length === 0) {

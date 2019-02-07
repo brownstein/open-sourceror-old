@@ -4,123 +4,151 @@
     {
       "type": "ExpressionStatement",
       "expression": {
-        "type": "Literal",
-        "value": "use strict",
-        "raw": "\"use strict\""
-      },
-      "directive": "use strict"
+        "type": "AssignmentExpression",
+        "operator": "=",
+        "left": {
+          "type": "Identifier",
+          "name": "renderer"
+        },
+        "right": {
+          "type": "NewExpression",
+          "callee": {
+            "type": "Identifier",
+            "name": "WebGLRenderer"
+          },
+          "arguments": [
+            {
+              "type": "ObjectExpression",
+              "properties": [
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "name": "canvas"
+                  },
+                  "computed": false,
+                  "value": {
+                    "type": "Identifier",
+                    "name": "renderEl"
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false
+                },
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "name": "preserveDrawingBuffer"
+                  },
+                  "computed": false,
+                  "value": {
+                    "type": "Literal",
+                    "value": true,
+                    "raw": "true"
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": false
+                }
+              ]
+            }
+          ]
+        }
+      }
     },
     {
       "type": "ExpressionStatement",
       "expression": {
         "type": "CallExpression",
         "callee": {
-          "type": "Identifier",
-          "name": "on"
+          "type": "MemberExpression",
+          "computed": false,
+          "object": {
+            "type": "Identifier",
+            "name": "renderer"
+          },
+          "property": {
+            "type": "Identifier",
+            "name": "setClearColor"
+          }
         },
         "arguments": [
           {
+            "type": "NewExpression",
+            "callee": {
+              "type": "Identifier",
+              "name": "Color"
+            },
+            "arguments": [
+              {
+                "type": "Literal",
+                "value": "#444444",
+                "raw": "\"#444444\""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "CallExpression",
+        "callee": {
+          "type": "MemberExpression",
+          "computed": false,
+          "object": {
             "type": "Identifier",
-            "name": "MOTION"
+            "name": "renderer"
+          },
+          "property": {
+            "type": "Identifier",
+            "name": "setPixelRatio"
+          }
+        },
+        "arguments": [
+          {
+            "type": "MemberExpression",
+            "computed": false,
+            "object": {
+              "type": "Identifier",
+              "name": "window"
+            },
+            "property": {
+              "type": "Identifier",
+              "name": "devicePixelRatio"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "CallExpression",
+        "callee": {
+          "type": "MemberExpression",
+          "computed": false,
+          "object": {
+            "type": "Identifier",
+            "name": "renderer"
+          },
+          "property": {
+            "type": "Identifier",
+            "name": "setSize"
+          }
+        },
+        "arguments": [
+          {
+            "type": "Literal",
+            "value": 256,
+            "raw": "256"
           },
           {
-            "type": "ArrowFunctionExpression",
-            "id": null,
-            "params": [
-              {
-                "type": "Identifier",
-                "name": "move"
-              }
-            ],
-            "body": {
-              "type": "BlockStatement",
-              "body": [
-                {
-                  "type": "VariableDeclaration",
-                  "declarations": [
-                    {
-                      "type": "VariableDeclarator",
-                      "id": {
-                        "type": "Identifier",
-                        "name": "a"
-                      },
-                      "init": {
-                        "type": "Identifier",
-                        "name": "move"
-                      }
-                    }
-                  ],
-                  "kind": "var"
-                },
-                {
-                  "type": "ExpressionStatement",
-                  "expression": {
-                    "type": "CallExpression",
-                    "callee": {
-                      "type": "MemberExpression",
-                      "computed": false,
-                      "object": {
-                        "type": "MemberExpression",
-                        "computed": false,
-                        "object": {
-                          "type": "Identifier",
-                          "name": "PLAYER"
-                        },
-                        "property": {
-                          "type": "Identifier",
-                          "name": "position"
-                        }
-                      },
-                      "property": {
-                        "type": "Identifier",
-                        "name": "add"
-                      }
-                    },
-                    "arguments": [
-                      {
-                        "type": "MemberExpression",
-                        "computed": false,
-                        "object": {
-                          "type": "Identifier",
-                          "name": "a"
-                        },
-                        "property": {
-                          "type": "Identifier",
-                          "name": "direction"
-                        }
-                      }
-                    ]
-                  }
-                },
-                {
-                  "type": "ExpressionStatement",
-                  "expression": {
-                    "type": "CallExpression",
-                    "callee": {
-                      "type": "MemberExpression",
-                      "computed": false,
-                      "object": {
-                        "type": "Identifier",
-                        "name": "console"
-                      },
-                      "property": {
-                        "type": "Identifier",
-                        "name": "log"
-                      }
-                    },
-                    "arguments": [
-                      {
-                        "type": "Identifier",
-                        "name": "a"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            "generator": false,
-            "expression": false,
-            "async": false
+            "type": "Literal",
+            "value": 256,
+            "raw": "256"
           }
         ]
       }

@@ -34,12 +34,14 @@ const {
 } = require("./dist");
 
 const scr = `
-  "use strict";
-  on(MOTION, (move)=> {
-    var a = move;
-    PLAYER.position.add(a.direction);
-    console.log(a);
-  });
+renderer = new WebGLRenderer({
+  // alpha: true,
+  canvas: renderEl,
+  preserveDrawingBuffer: true
+});
+renderer.setClearColor(new Color("#444444"));
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(256, 256);
 `;
 const parsed = esprima.parseScript(scr, {
   range: false,

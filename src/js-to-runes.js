@@ -5,94 +5,119 @@ import {
   applyCircularLayout
 } from "./lang-shapes";
 
+const typesOfThings = {
+  Program: script => ({
+      expand: script.body.filter(p => p.type === "ExpressionStatement"),
+      andThen: slices => {
+        applyCircularLayout(slices, {
+          startTheta: -Math.PI * 0.5,
+          endTheta: Math.PI * 1.5
+        });
+        return slices;
+      }
+  }),
+  ExpressionStatement: expStatement => ({
+    expand: expStatement.expression
+  }),
+  Literal: l => ({
+    value: new SymbolTextCircleSlice({ text: `${l.value}` })
+  }),
+  CallExpression: exp => ({
+    expand: [exp.callee, ...exp.arguments],
+    andThen: slices => [
+      slices[0],
+      new CircleSlice({ children: slices.slice(1, slices.length) })
+    ]
+  }),
+  Identifier: i => ({
+    value: new SymbolTextCircleSlice({ text: i.name })
+  }),
+  ArrowFunctionExpression: exp => ({
+    expand: [...exp.params, exp.body],
+    andThen: slices => new CircleSlice({ children: slices })
+  }),
+  FunctionDeclaration: f => ({
+    expand: [...exp.params, exp.body],
+    andThen: slices => new CircleSlice({ children: slices })
+  }),
+  BlockStatement: b => ({
+    expand: b.body
+  }),
+  VariableDeclaration: v => ({
+    expand: v.declarations
+  }),
+  VariableDeclarator: v => ({
+    expand: [
+      v.id,
+      v.init,
+    ]
+  }),
+  AssignmentExpression: a => ({
+    expand: [
+      a.left,
+      a.right
+    ]
+  }),
+  MemberExpression: m => ({
+    expand: [m.object, m.property]
+  }),
+  NewExpression: n => ({
+    expand: [n.callee, ...n.arguments],
+    andThen: slices => new CircleSlice({ children: slices })
+  }),
+  UnaryExpression: u => ({
+    value: new SymbolTextCircleSlice({ text: u.operator }),
+    expand: [u.argument]
+  }),
+  IfStatement: i => ({
+    expand: [i.test, i.consequent],
+    andThen: slices => new CircleSlice({ children: slices })
+  }),
+  ReturnStatement: r => ({
+    expand: [r.argument]
+  }),
+  ObjectExpression: r => ({
+    expand: r.properties,
+    andThen: slices => new CircleSlice({ children: slices })
+  }),
+  Property: p => ({
+    expand: [p.key, p.value]
+  })
+};
 
-// symbols are just symbols
-function _symbolToArc (symbol) {
-  return new SymbolTextCircleSlice({
-    text: symbol.name
-  });
-}
-
-function _functionToArc (funcExpression) {
-  const params = funcExpression.params;
-  const body = funcExpression.body;
-  // add container arc
-  const functionArc = new CircleSlice({ thickness: 3 });
-  // add variables
-  params.forEach(p => {
-    functionArc.children.push(_symbolToArc(p));
-  });
-  // add function body
-  functionArc.children.push(new SymbolTextCircleSlice({ text: "=>" }));
-  functionArc.children.push(..._blockStatementToArc(body));
-
-  console.log({ params, functionArc });
-
-  return functionArc;
-}
-
-function _callExpressionToArc (callExpression) {
-  const slices = [];
-  let callee = callExpression.callee.name;
-  if (!callee) {
-    console.log({ callExpression });
+function _ensureArray (v) {
+  if (Array.isArray(v)) {
+    return v;
   }
-  switch (callee) {
-    case "on":
-      const symbol = callExpression.arguments[0].name;
-      slices.push(_symbolToArc(symbol));
-      const handler = callExpression.arguments[1];
-      slices.push(_functionToArc(handler));
-      break;
-    default:
-      return;
-  }
-  const callCircle = new CircleSlice();
-  callCircle.children = slices;
-  return callCircle;
+  return [v];
 }
 
-function _blockStatementToArc (block) {
-  const slices = [];
-  block.body.forEach (part => {
-    switch (part.type) {
-      case "ExpressionStatement":
-        slices.push(_expressionStatementToArc(part.expression));
-        break;
-      default:
-        break;
+function _entityToSlices (node) {
+  if (Array.isArray(node)) {
+    return node.map(_entityToSlices).reduce((m, arr) => m.concat(arr), []);
+  }
+  if (typesOfThings[node.type]) {
+    const thingHandler = typesOfThings[node.type];
+    const thingHandlerResult = thingHandler(node);
+    if (thingHandlerResult) {
+      let ret = [];
+      if (thingHandlerResult.value || thingHandlerResult.values) {
+        ret.push(..._ensureArray(thingHandlerResult.value || thingHandlerResult.values));
+      }
+      if (thingHandlerResult.expand) {
+        _ensureArray(thingHandlerResult.expand).forEach(expandSlice => {
+          ret.push(..._entityToSlices(expandSlice));
+        });
+      }
+      if (thingHandlerResult.andThen) {
+        ret = _ensureArray(thingHandlerResult.andThen(ret));
+      }
+      return ret;
     }
-  });
-  return slices.filter(s => s);
-}
-
-function _expressionStatementToArc (expression) {
-  if (expression.value === "use strict") {
-    return;
   }
-  switch (expression.type) {
-    case "CallExpression":
-      return _callExpressionToArc(expression);
-    default:
-      return null;
-  }
+  return [];
 }
 
 export function scriptToCircle (script) {
-  // create arc slices
-  let slices = [];
-  script.body.forEach (part => {
-    if (part.type !== "ExpressionStatement") {
-      return;
-    }
-    slices.push(_expressionStatementToArc(part.expression));
-  });
-  // remove anything empty
-  slices = slices.filter(s => s);
-  // make arcs concentric and balance their sizes
-  applyCircularLayout(slices, {
-    startTheta: -Math.PI * 0.5,
-    endTheta: Math.PI * 1.5
-  });
-  return slices;
+  return _entityToSlices(script);
 }
