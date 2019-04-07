@@ -1,6 +1,6 @@
 "use strict";
 const { ipcRenderer } = require("electron");
-const esprima = require("esprima");
+const acorn = require("acorn");
 const fs = require("fs");
 
 var THREE = require("three");
@@ -34,18 +34,18 @@ const {
 } = require("./dist");
 
 const scr = `
-renderer = new WebGLRenderer({
-  // alpha: true,
-  canvas: renderEl,
-  preserveDrawingBuffer: true
-});
-renderer.setClearColor(new Color("#444444"));
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(256, 256);
+const containerEl = document.getElementById("container");
+containerEl.appendChild(document.createElement("canvas"));
+renderEl = document.querySelector("#container > canvas");
+renderEl.style = \`
+  background: #cccccc;
+  width: 256px;
+  height: 256px;
+  \`;
 `;
-const parsed = esprima.parseScript(scr, {
-  range: false,
-  loc: false
+
+const parsed = acorn.parse(scr, {
+  locations: true
 });
 function visitor (node) {
   console.log(node);

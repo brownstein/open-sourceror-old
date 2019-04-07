@@ -7,7 +7,7 @@ import {
 
 const typesOfThings = {
   Program: script => ({
-      expand: script.body.filter(p => p.type === "ExpressionStatement"),
+      expand: script.body,
       andThen: slices => {
         applyCircularLayout(slices, {
           startTheta: -Math.PI * 0.5,
@@ -20,7 +20,7 @@ const typesOfThings = {
     expand: expStatement.expression
   }),
   Literal: l => ({
-    value: new SymbolTextCircleSlice({ text: `${l.value}` })
+    value: new SymbolTextCircleSlice({ text: `${l.value}`, runic: false })
   }),
   CallExpression: exp => ({
     expand: [exp.callee, ...exp.arguments],
@@ -30,15 +30,20 @@ const typesOfThings = {
     ]
   }),
   Identifier: i => ({
-    value: new SymbolTextCircleSlice({ text: i.name })
+    value: new SymbolTextCircleSlice({ text: i.name, runic: false })
   }),
-  ArrowFunctionExpression: exp => ({
-    expand: [...exp.params, exp.body],
+  ArrowFunctionExpression: f => ({
+    expand: [...f.params, f.body],
     andThen: slices => new CircleSlice({ children: slices })
   }),
   FunctionDeclaration: f => ({
-    expand: [...exp.params, exp.body],
-    andThen: slices => new CircleSlice({ children: slices })
+    expand: [...f.params, f.body],
+    andThen: slices => [
+      new SymbolTextCircleSlice({ text: "F(" }),
+      new SymbolTextCircleSlice({ text: f.id.name, runic: false }),
+      new SymbolTextCircleSlice({ text: "):" }),
+      new CircleSlice({ children: slices })
+    ]
   }),
   BlockStatement: b => ({
     expand: b.body
@@ -82,6 +87,9 @@ const typesOfThings = {
   }),
   Property: p => ({
     expand: [p.key, p.value]
+  }),
+  ArrayExpression: a => ({
+    expand: a.elements
   })
 };
 

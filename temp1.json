@@ -1,90 +1,305 @@
 {
   "type": "Program",
+  "start": 0,
+  "end": 256,
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 10,
+      "column": 0
+    }
+  },
   "body": [
     {
-      "type": "ExpressionStatement",
-      "expression": {
-        "type": "AssignmentExpression",
-        "operator": "=",
-        "left": {
-          "type": "Identifier",
-          "name": "renderer"
+      "type": "VariableDeclaration",
+      "start": 1,
+      "end": 58,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 0
         },
-        "right": {
-          "type": "NewExpression",
-          "callee": {
-            "type": "Identifier",
-            "name": "WebGLRenderer"
-          },
-          "arguments": [
-            {
-              "type": "ObjectExpression",
-              "properties": [
-                {
-                  "type": "Property",
-                  "key": {
-                    "type": "Identifier",
-                    "name": "canvas"
-                  },
-                  "computed": false,
-                  "value": {
-                    "type": "Identifier",
-                    "name": "renderEl"
-                  },
-                  "kind": "init",
-                  "method": false,
-                  "shorthand": false
-                },
-                {
-                  "type": "Property",
-                  "key": {
-                    "type": "Identifier",
-                    "name": "preserveDrawingBuffer"
-                  },
-                  "computed": false,
-                  "value": {
-                    "type": "Literal",
-                    "value": true,
-                    "raw": "true"
-                  },
-                  "kind": "init",
-                  "method": false,
-                  "shorthand": false
-                }
-              ]
-            }
-          ]
+        "end": {
+          "line": 2,
+          "column": 57
         }
-      }
-    },
-    {
-      "type": "ExpressionStatement",
-      "expression": {
-        "type": "CallExpression",
-        "callee": {
-          "type": "MemberExpression",
-          "computed": false,
-          "object": {
-            "type": "Identifier",
-            "name": "renderer"
+      },
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "start": 7,
+          "end": 57,
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 6
+            },
+            "end": {
+              "line": 2,
+              "column": 56
+            }
           },
-          "property": {
+          "id": {
             "type": "Identifier",
-            "name": "setClearColor"
-          }
-        },
-        "arguments": [
-          {
-            "type": "NewExpression",
+            "start": 7,
+            "end": 18,
+            "loc": {
+              "start": {
+                "line": 2,
+                "column": 6
+              },
+              "end": {
+                "line": 2,
+                "column": 17
+              }
+            },
+            "name": "containerEl"
+          },
+          "init": {
+            "type": "CallExpression",
+            "start": 21,
+            "end": 57,
+            "loc": {
+              "start": {
+                "line": 2,
+                "column": 20
+              },
+              "end": {
+                "line": 2,
+                "column": 56
+              }
+            },
             "callee": {
-              "type": "Identifier",
-              "name": "Color"
+              "type": "MemberExpression",
+              "start": 21,
+              "end": 44,
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 20
+                },
+                "end": {
+                  "line": 2,
+                  "column": 43
+                }
+              },
+              "object": {
+                "type": "Identifier",
+                "start": 21,
+                "end": 29,
+                "loc": {
+                  "start": {
+                    "line": 2,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 28
+                  }
+                },
+                "name": "document"
+              },
+              "property": {
+                "type": "Identifier",
+                "start": 30,
+                "end": 44,
+                "loc": {
+                  "start": {
+                    "line": 2,
+                    "column": 29
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 43
+                  }
+                },
+                "name": "getElementById"
+              },
+              "computed": false
             },
             "arguments": [
               {
                 "type": "Literal",
-                "value": "#444444",
-                "raw": "\"#444444\""
+                "start": 45,
+                "end": 56,
+                "loc": {
+                  "start": {
+                    "line": 2,
+                    "column": 44
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 55
+                  }
+                },
+                "value": "container",
+                "raw": "\"container\""
+              }
+            ]
+          }
+        }
+      ],
+      "kind": "const"
+    },
+    {
+      "type": "ExpressionStatement",
+      "start": 59,
+      "end": 117,
+      "loc": {
+        "start": {
+          "line": 3,
+          "column": 0
+        },
+        "end": {
+          "line": 3,
+          "column": 58
+        }
+      },
+      "expression": {
+        "type": "CallExpression",
+        "start": 59,
+        "end": 116,
+        "loc": {
+          "start": {
+            "line": 3,
+            "column": 0
+          },
+          "end": {
+            "line": 3,
+            "column": 57
+          }
+        },
+        "callee": {
+          "type": "MemberExpression",
+          "start": 59,
+          "end": 82,
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 3,
+              "column": 23
+            }
+          },
+          "object": {
+            "type": "Identifier",
+            "start": 59,
+            "end": 70,
+            "loc": {
+              "start": {
+                "line": 3,
+                "column": 0
+              },
+              "end": {
+                "line": 3,
+                "column": 11
+              }
+            },
+            "name": "containerEl"
+          },
+          "property": {
+            "type": "Identifier",
+            "start": 71,
+            "end": 82,
+            "loc": {
+              "start": {
+                "line": 3,
+                "column": 12
+              },
+              "end": {
+                "line": 3,
+                "column": 23
+              }
+            },
+            "name": "appendChild"
+          },
+          "computed": false
+        },
+        "arguments": [
+          {
+            "type": "CallExpression",
+            "start": 83,
+            "end": 115,
+            "loc": {
+              "start": {
+                "line": 3,
+                "column": 24
+              },
+              "end": {
+                "line": 3,
+                "column": 56
+              }
+            },
+            "callee": {
+              "type": "MemberExpression",
+              "start": 83,
+              "end": 105,
+              "loc": {
+                "start": {
+                  "line": 3,
+                  "column": 24
+                },
+                "end": {
+                  "line": 3,
+                  "column": 46
+                }
+              },
+              "object": {
+                "type": "Identifier",
+                "start": 83,
+                "end": 91,
+                "loc": {
+                  "start": {
+                    "line": 3,
+                    "column": 24
+                  },
+                  "end": {
+                    "line": 3,
+                    "column": 32
+                  }
+                },
+                "name": "document"
+              },
+              "property": {
+                "type": "Identifier",
+                "start": 92,
+                "end": 105,
+                "loc": {
+                  "start": {
+                    "line": 3,
+                    "column": 33
+                  },
+                  "end": {
+                    "line": 3,
+                    "column": 46
+                  }
+                },
+                "name": "createElement"
+              },
+              "computed": false
+            },
+            "arguments": [
+              {
+                "type": "Literal",
+                "start": 106,
+                "end": 114,
+                "loc": {
+                  "start": {
+                    "line": 3,
+                    "column": 47
+                  },
+                  "end": {
+                    "line": 3,
+                    "column": 55
+                  }
+                },
+                "value": "canvas",
+                "raw": "\"canvas\""
               }
             ]
           }
@@ -93,64 +308,248 @@
     },
     {
       "type": "ExpressionStatement",
+      "start": 118,
+      "end": 175,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 4,
+          "column": 57
+        }
+      },
       "expression": {
-        "type": "CallExpression",
-        "callee": {
-          "type": "MemberExpression",
-          "computed": false,
-          "object": {
-            "type": "Identifier",
-            "name": "renderer"
+        "type": "AssignmentExpression",
+        "start": 118,
+        "end": 174,
+        "loc": {
+          "start": {
+            "line": 4,
+            "column": 0
           },
-          "property": {
-            "type": "Identifier",
-            "name": "setPixelRatio"
+          "end": {
+            "line": 4,
+            "column": 56
           }
         },
-        "arguments": [
-          {
+        "operator": "=",
+        "left": {
+          "type": "Identifier",
+          "start": 118,
+          "end": 126,
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 0
+            },
+            "end": {
+              "line": 4,
+              "column": 8
+            }
+          },
+          "name": "renderEl"
+        },
+        "right": {
+          "type": "CallExpression",
+          "start": 129,
+          "end": 174,
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 11
+            },
+            "end": {
+              "line": 4,
+              "column": 56
+            }
+          },
+          "callee": {
             "type": "MemberExpression",
-            "computed": false,
+            "start": 129,
+            "end": 151,
+            "loc": {
+              "start": {
+                "line": 4,
+                "column": 11
+              },
+              "end": {
+                "line": 4,
+                "column": 33
+              }
+            },
             "object": {
               "type": "Identifier",
-              "name": "window"
+              "start": 129,
+              "end": 137,
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 11
+                },
+                "end": {
+                  "line": 4,
+                  "column": 19
+                }
+              },
+              "name": "document"
             },
             "property": {
               "type": "Identifier",
-              "name": "devicePixelRatio"
+              "start": 138,
+              "end": 151,
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 20
+                },
+                "end": {
+                  "line": 4,
+                  "column": 33
+                }
+              },
+              "name": "querySelector"
+            },
+            "computed": false
+          },
+          "arguments": [
+            {
+              "type": "Literal",
+              "start": 152,
+              "end": 173,
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 34
+                },
+                "end": {
+                  "line": 4,
+                  "column": 55
+                }
+              },
+              "value": "#container > canvas",
+              "raw": "\"#container > canvas\""
             }
-          }
-        ]
+          ]
+        }
       }
     },
     {
       "type": "ExpressionStatement",
+      "start": 176,
+      "end": 255,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 0
+        },
+        "end": {
+          "line": 9,
+          "column": 4
+        }
+      },
       "expression": {
-        "type": "CallExpression",
-        "callee": {
+        "type": "AssignmentExpression",
+        "start": 176,
+        "end": 254,
+        "loc": {
+          "start": {
+            "line": 5,
+            "column": 0
+          },
+          "end": {
+            "line": 9,
+            "column": 3
+          }
+        },
+        "operator": "=",
+        "left": {
           "type": "MemberExpression",
-          "computed": false,
+          "start": 176,
+          "end": 190,
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 0
+            },
+            "end": {
+              "line": 5,
+              "column": 14
+            }
+          },
           "object": {
             "type": "Identifier",
-            "name": "renderer"
+            "start": 176,
+            "end": 184,
+            "loc": {
+              "start": {
+                "line": 5,
+                "column": 0
+              },
+              "end": {
+                "line": 5,
+                "column": 8
+              }
+            },
+            "name": "renderEl"
           },
           "property": {
             "type": "Identifier",
-            "name": "setSize"
-          }
-        },
-        "arguments": [
-          {
-            "type": "Literal",
-            "value": 256,
-            "raw": "256"
+            "start": 185,
+            "end": 190,
+            "loc": {
+              "start": {
+                "line": 5,
+                "column": 9
+              },
+              "end": {
+                "line": 5,
+                "column": 14
+              }
+            },
+            "name": "style"
           },
-          {
-            "type": "Literal",
-            "value": 256,
-            "raw": "256"
-          }
-        ]
+          "computed": false
+        },
+        "right": {
+          "type": "TemplateLiteral",
+          "start": 193,
+          "end": 254,
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 17
+            },
+            "end": {
+              "line": 9,
+              "column": 3
+            }
+          },
+          "expressions": [],
+          "quasis": [
+            {
+              "type": "TemplateElement",
+              "start": 194,
+              "end": 253,
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 18
+                },
+                "end": {
+                  "line": 9,
+                  "column": 2
+                }
+              },
+              "value": {
+                "raw": "\n  background: #cccccc;\n  width: 256px;\n  height: 256px;\n  ",
+                "cooked": "\n  background: #cccccc;\n  width: 256px;\n  height: 256px;\n  "
+              },
+              "tail": true
+            }
+          ]
+        }
       }
     }
   ],

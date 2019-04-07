@@ -1,0 +1,4 @@
+electron/dist
+.gradle
+node_modules
+static

@@ -1,0 +1,20 @@
+for basic functions, I need to:
+- calculate size (radians) of each segment at current radius
+- adjust radius to handle overages proportionally'
+- repeat a few times
+
+for functions with nested functions, I need to:
+- calculate sub-functions first
+-- should not need to re-calculate afterwards, as circles will be fully sized
+- run re-flow on parent circles and recurse up
+
+example:
+
+initial radian allocations of:
+[  4  ][ 2 ][    5    ] / 6.28 @ radius 15
+after radius increase becomes:
+[ 3 ][ 1.5 ][  4  ]... / 6.28 @ radius 20
+
+- need classes for:
+-- layout and meshing phase
+-- iteration phase

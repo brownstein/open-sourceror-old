@@ -18,6 +18,7 @@ var _normalTexture = null;
 var _runicFont = null;
 var _runicTexture = null;
 
+// lineHeight = 24
 export async function loadNormalFont () {
   if (!_normalFont) {
     _normalFont = await new Promise ((resolve, reject) =>
@@ -38,6 +39,7 @@ export async function loadNormalFont () {
   }
 }
 
+// lineHeight = 24
 export async function loadRunicFont () {
   if (!_runicFont) {
     _runicFont = await new Promise ((resolve, reject) =>
@@ -78,6 +80,7 @@ export function createText (text, { color } = {}) {
   return new Mesh(geom, material);
 }
 
+// pull size info from text using mesh.geom.layout.width
 export function createRunicText (text, { color } = {}) {
   const geom = createTextGeometry({
     align: "left",
@@ -91,4 +94,11 @@ export function createRunicText (text, { color } = {}) {
     side: DoubleSide
   }));
   return new Mesh(geom, material);
+}
+
+export function createTextWithFont (text, { color, font } = {}) {
+  if (font === "runic") {
+    return createRunicText(text, { color });
+  }
+  return createText(text, { color });
 }

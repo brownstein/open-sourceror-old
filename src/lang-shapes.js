@@ -99,43 +99,87 @@ export class CircleSlice extends BaseSlice {
  * Helper class to make dealing with symbols and text easier
  */
 export class SymbolText {
+  static extraCharSpace = 2;
   constructor ({
     value = "[Symbol]",
-    runic = true,
-    center = true,
-    color = "#ffffff"
+    runic = false,
+    center = false,
+    color = "#ffffff",
+    curveRadius = 0,
+    scale = 1
   } = {}) {
     this.value = value;
     this.runic = runic;
     this.center = center;
     this.color = color;
+    this.curveRadius = curveRadius;
+    this.scale = scale;
   }
   createMesh () {
     const {
       value,
       runic,
       center,
-      color
+      color,
+      curveRadius,
+      scale
     } = this;
-    let textMesh;
+    let textVal = `${value}`;
     if (runic) {
-      // hash into a single letter
-      const hashValue = 65 + Math.abs(hash.value(value) % 26);
-      textMesh = createRunicText(String.fromCharCode(hashValue), color);
+      textVal = String.fromCharCode(65 + Math.abs(hash.value(textVal)) % 26);
+    }
+    let textMeshes = [];
+    if (curveRadius) {
+      const cx = 0;
+      const cy = curveRadius;
+      let totalWidth = 0;
+      const textWidths = [];
+      for (let li = 0; li < textVal.length; li++) {
+        const mesh = runic ?
+          createRunicText(textVal[li], color) :
+          createText(textVal[li], color);
+        textMeshes.push(mesh);
+        mesh.scale.multiplyScalar(scale);
+        mesh.geometry.computeBoundingBox();
+        let width = mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x;
+        textWidths.push(width);
+        totalWidth += width;
+        if (li < textVal.length - 1) {
+          totalWidth += SymbolText.extraCharSpace;
+        }
+      }
+      let offset = -totalWidth / 2;
+      const thetaRatio = 1 / (curveRadius * Math.PI * 2);
+      for (let li = 0; li < textVal.length; li++) {
+        const mesh = textMeshes[li];
+        const width = textWidths[li];
+        const theta = -Math.PI / 2 + (offset + (width / 2)) * thetaRatio;
+        offset += width;
+        mesh.rotation.z = theta + Math.PI / 2;
+        mesh.position.x = cx + curveRadius * Math.cos(theta);
+        mesh.position.y = cy + curveRadius * Math.sin(theta);
+      }
     }
     else {
-      textMesh = createText(value, color);
+      textMeshes.push(runic ?
+        createRunicText(textVal, color) :
+        createText(textVal, color)
+      );
+      textMeshes[0].scale.multiplyScalar(scale);
     }
     const meshContainer = new Scene();
-    if (center) {
-      textMesh.geometry.computeBoundingBox();
-      const textBbox = textMesh.geometry.boundingBox;
-      const textBboxSize = new Vector3();
-      textBbox.getSize(textBboxSize);
-      textMesh.position.x = -textBboxSize.x / 2;
-      textMesh.position.y = textBboxSize.y / 2;
+    if (center && !curveRadius) {
+      textMeshes.forEach(textMesh => {
+        textMesh.geometry.computeBoundingBox();
+        const textBbox = textMesh.geometry.boundingBox;
+        const textBboxSize = new Vector3();
+        textBbox.getSize(textBboxSize);
+        textBboxSize.multiplyScalar(scale);
+        textMesh.position.x = -textBboxSize.x / 2;
+        textMesh.position.y = textBboxSize.y / 2;
+      });
     }
-    meshContainer.add(textMesh);
+    meshContainer.add(...textMeshes);
     return meshContainer;
   }
 }
@@ -150,7 +194,7 @@ export class SymbolTextCircleSlice extends BaseSlice {
     endTheta = Math.PI * 2,
     radius = 10,
     color = "0xffffff",
-    runic = true,
+    runic = false,
     layoutPriority = 0.2
   } = {}) {
     super();
@@ -164,18 +208,33 @@ export class SymbolTextCircleSlice extends BaseSlice {
     this.children = [];
   }
   createMesh () {
+    const midTheta = (this.startTheta + this.endTheta) / 2;
     if (this.runic) {
       const runicSymbol = new SymbolText({
         value: this.text,
-        color: this.color
+        color: this.color,
+        scale: 0.5,
+        runic: true,
+        center: true
       });
       const runicMesh = runicSymbol.createMesh();
-      const midTheta = (this.startTheta + this.endTheta) / 2;
       runicMesh.rotation.z = midTheta + Math.PI / 2;
       runicMesh.position.x = this.radius * Math.cos(midTheta);
       runicMesh.position.y = this.radius * Math.sin(midTheta);
-      runicMesh.scale.multiplyScalar(0.5);
       return runicMesh;
+    }
+    else {
+      const symbol = new SymbolText({
+        value: this.text,
+        color: this.color,
+        curveRadius: this.radius,
+        scale: 0.3
+      });
+      const mesh = symbol.createMesh();
+      mesh.rotation.z = midTheta + Math.PI / 2;
+      mesh.position.x = this.radius * Math.cos(midTheta);
+      mesh.position.y = this.radius * Math.sin(midTheta);
+      return mesh;
     }
     throw new Error("only runic is currently supported");
   }
@@ -188,7 +247,7 @@ export function applyCircularLayout (slices, {
   startTheta = 0,
   endTheta = Math.PI * 2,
   margin = 0.1,
-  radius = 20,
+  radius = 30,
   radiusDelta = 10
 } = {}) {
   if (slices.length === 0) {
