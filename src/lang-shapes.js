@@ -99,7 +99,6 @@ export class CircleSlice extends BaseSlice {
  * Helper class to make dealing with symbols and text easier
  */
 export class SymbolText {
-  static extraCharSpace = 2;
   constructor ({
     value = "[Symbol]",
     runic = false,
@@ -183,6 +182,7 @@ export class SymbolText {
     return meshContainer;
   }
 }
+SymbolText.extraCharSpace = 2;
 
 /**
  * Helper class to allow text to occupy circle slices

@@ -12,7 +12,14 @@ import {
 import {
   scriptToCircle
 } from "./js-to-runes";
+import {
+  CircleGroupSlice,
+  CircleStackSlice,
+  CircleTextSlice,
+  runLayout
+} from "./text-circles";
 
+console.log({ CircleGroupSlice });
 
 const RPGLangLib = {
   createText,
@@ -24,7 +31,13 @@ const RPGLangLib = {
   SymbolTextCircleSlice,
   applyCircularLayout,
 
-  scriptToCircle
+  scriptToCircle,
+
+  CircleGroupSlice,
+  CircleStackSlice,
+  CircleTextSlice,
+
+  runLayout
 };
 
 export default RPGLangLib;

@@ -30,7 +30,12 @@ const {
   SymbolText,
   applyCircularLayout,
 
-  scriptToCircle
+  scriptToCircle,
+
+  CircleGroupSlice,
+  CircleStackSlice,
+  CircleTextSlice,
+  runLayout
 } = require("./dist");
 
 const scr = `
@@ -87,8 +92,23 @@ async function init () {
 
   await loadAllFonts();
 
-  const mainSlices = scriptToCircle(parsed);
-  mainSlices.forEach(s => scene.add(s.createAllMeshes()));
+  // const mainSlices = scriptToCircle(parsed);
+  // mainSlices.forEach(s => scene.add(s.createAllMeshes()));
+
+  const csg = new CircleStackSlice();
+  const cst = new CircleTextSlice();
+  cst.setText("here's some text - and more text");
+  const cst2 = new CircleTextSlice("hello world");
+  csg.children.push(cst);
+  csg.children.push(new CircleTextSlice("V", { font: "runic" }));
+  csg.children.push(cst2);
+  runLayout(csg);
+
+  const container = new Object3D();
+
+  csg.addMeshesToContainer(container);
+  container.scale.multiplyScalar(50 / csg.radius);
+  scene.add(container);
 
   renderer.render(scene, camera);
 }
