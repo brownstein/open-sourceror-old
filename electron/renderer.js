@@ -39,14 +39,11 @@ const {
 } = require("./dist");
 
 const scr = `
-const containerEl = document.getElementById("container");
-containerEl.appendChild(document.createElement("canvas"));
-renderEl = document.querySelector("#container > canvas");
-renderEl.style = \`
-  background: #cccccc;
-  width: 256px;
-  height: 256px;
-  \`;
+const container = new Object3D();
+mainSlices.forEach(s => s.addMeshesToContainer(container));
+const maxRadius = mainSlices[0].getMaxRadius();
+container.scale.multiplyScalar(80 / maxRadius);
+scene.add(container);
 `;
 
 const parsed = acorn.parse(scr, {
@@ -92,22 +89,13 @@ async function init () {
 
   await loadAllFonts();
 
-  // const mainSlices = scriptToCircle(parsed);
-  // mainSlices.forEach(s => scene.add(s.createAllMeshes()));
-
-  const csg = new CircleStackSlice();
-  const cst = new CircleTextSlice();
-  cst.setText("here's some text - and more text");
-  const cst2 = new CircleTextSlice("hello world");
-  csg.children.push(cst);
-  csg.children.push(new CircleTextSlice("V", { font: "runic" }));
-  csg.children.push(cst2);
-  runLayout(csg);
+  const mainSlices = scriptToCircle(parsed);
+  runLayout(mainSlices[0]);
 
   const container = new Object3D();
-
-  csg.addMeshesToContainer(container);
-  container.scale.multiplyScalar(50 / csg.radius);
+  mainSlices.forEach(s => s.addMeshesToContainer(container));
+  const maxRadius = mainSlices[0].getMaxRadius();
+  container.scale.multiplyScalar(80 / maxRadius);
   scene.add(container);
 
   renderer.render(scene, camera);

@@ -1,48 +1,53 @@
 import esprima from "esprima";
 import {
-  CircleSlice,
-  SymbolTextCircleSlice,
-  applyCircularLayout
-} from "./lang-shapes";
+  runLayout,
+  CircleGroupSlice,
+  CircleStackSlice,
+  CircleTextSlice
+} from "./text-circles";
 
 const typesOfThings = {
   Program: script => ({
       expand: script.body,
       andThen: slices => {
-        applyCircularLayout(slices, {
-          startTheta: -Math.PI * 0.5,
-          endTheta: Math.PI * 1.5
-        });
-        return slices;
+        const csg = new CircleGroupSlice(slices);
+        csg.runLayout();
+        return csg;
       }
   }),
   ExpressionStatement: expStatement => ({
     expand: expStatement.expression
   }),
   Literal: l => ({
-    value: new SymbolTextCircleSlice({ text: `${l.value}`, runic: false })
+    value: new CircleTextSlice(`${l.value}`)
   }),
   CallExpression: exp => ({
     expand: [exp.callee, ...exp.arguments],
     andThen: slices => [
-      slices[0],
-      new CircleSlice({ children: slices.slice(1, slices.length) })
+      new CircleStackSlice([
+        new CircleGroupSlice([
+          slices[0]
+        ]),
+        new CircleGroupSlice(slices.slice(1, slices.length))
+      ])
     ]
   }),
   Identifier: i => ({
-    value: new SymbolTextCircleSlice({ text: i.name, runic: false })
+    value: new CircleTextSlice(i.name)
   }),
   ArrowFunctionExpression: f => ({
     expand: [...f.params, f.body],
-    andThen: slices => new CircleSlice({ children: slices })
+    andThen: slices => new CircleGroupSlice(slices)
   }),
   FunctionDeclaration: f => ({
     expand: [...f.params, f.body],
     andThen: slices => [
-      new SymbolTextCircleSlice({ text: "F(" }),
-      new SymbolTextCircleSlice({ text: f.id.name, runic: false }),
-      new SymbolTextCircleSlice({ text: "):" }),
-      new CircleSlice({ children: slices })
+      new CircleStackSlice([
+        new CircleGroupSlice([
+          new CircleTextSlice(`${f.id.name}()`)
+        ]),
+        new CircleGroupSlice(slices)
+      ])
     ]
   }),
   BlockStatement: b => ({
@@ -55,12 +60,22 @@ const typesOfThings = {
     expand: [
       v.id,
       v.init,
+    ],
+    andThen: dec => [
+      dec[0],
+      new CircleTextSlice("<-"),
+      ...dec.slice(1)
     ]
   }),
   AssignmentExpression: a => ({
     expand: [
       a.left,
       a.right
+    ],
+    andThen: dec => [
+      dec[0],
+      new CircleTextSlice("<-"),
+      ...dec.slice(1)
     ]
   }),
   MemberExpression: m => ({
@@ -68,22 +83,22 @@ const typesOfThings = {
   }),
   NewExpression: n => ({
     expand: [n.callee, ...n.arguments],
-    andThen: slices => new CircleSlice({ children: slices })
+    andThen: slices => new CircleGroupSlice(slices)
   }),
   UnaryExpression: u => ({
-    value: new SymbolTextCircleSlice({ text: u.operator }),
+    value: new CircleTextSlice(u.operator),
     expand: [u.argument]
   }),
   IfStatement: i => ({
     expand: [i.test, i.consequent],
-    andThen: slices => new CircleSlice({ children: slices })
+    andThen: slices => new CircleGroupSlice(slices)
   }),
   ReturnStatement: r => ({
     expand: [r.argument]
   }),
   ObjectExpression: r => ({
     expand: r.properties,
-    andThen: slices => new CircleSlice({ children: slices })
+    andThen: slices => new CircleGroupSlice(slices)
   }),
   Property: p => ({
     expand: [p.key, p.value]

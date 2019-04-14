@@ -1,6 +1,7 @@
+import { Vector3 } from "three";
 import { createTextWithFont } from "./text";
 
-const CIRCLE_ELEMENT_PADDING = 4;
+const CIRCLE_ELEMENT_PADDING = 15;
 const CIRCLE_CHARACTER_SPACING = 0.5;
 const CIRCLE_CHARACTER_SPACE_WIDTH = 15;
 const CIRCLE_ELEMENT_RADIAL_PADDING = 30;
@@ -23,7 +24,7 @@ export class CircleGroupSlice {
   runLayout (radius = 1, scale = 1) {
     this.radius = radius;
     this.scale = scale;
-    this.totalWidthInRadians = 0;
+    this.totalWidthInRadians = this.childSpacing * this.scale / this.radius;
     this.children.forEach((childElement) => {
       this.totalWidthInRadians += childElement.runLayout(radius, scale);
       this.totalWidthInRadians += this.childSpacing * this.scale / this.radius;
@@ -31,12 +32,18 @@ export class CircleGroupSlice {
     return this.totalWidthInRadians;
   }
   addMeshesToContainer (container, startTheta = 0) {
-    let theta = startTheta + this.childSpacing * this.scale / this.radius;
+    let theta = startTheta + this.childSpacing * this.scale * 0.5 / this.radius;
     this.children.forEach((childElement) => {
       childElement.addMeshesToContainer(container, theta);
       theta += childElement.totalWidthInRadians;
       theta += this.childSpacing * this.scale / this.radius;
     });
+  }
+  getMaxRadius () {
+    return this.children.reduce(
+      (r, c) => Math.max(r, c.getMaxRadius()),
+      this.radius
+    );
   }
 }
 
@@ -67,14 +74,17 @@ export class CircleStackSlice {
     return this.totalWidthInRadians;
   }
   addMeshesToContainer (container, startTheta = 0) {
-    if (!this.totalWidthInRadians) {
-      this.calculateWidthInRadians();
-    }
     const midpointTheta = startTheta + this.totalWidthInRadians / 2;
     this.children.forEach(childElement => {
       const childStartTheta = midpointTheta - childElement.totalWidthInRadians / 2;
       childElement.addMeshesToContainer(container, childStartTheta);
     });
+  }
+  getMaxRadius () {
+    return this.children.reduce(
+      (r, c) => Math.max(r, c.getMaxRadius()),
+      this.radius
+    );
   }
 }
 
@@ -102,6 +112,7 @@ export class CircleTextSlice {
     for (let i = 0; i < this.text.length; i++) {
       const char = this.text[i];
       const mesh = createTextWithFont(char, this.colorAndFont);
+      mesh.geometry.computeBoundingBox();
       mesh.scale.multiplyScalar(this.scale);
       this.textMeshes.push(mesh);
       let layoutWidth = mesh.geometry.layout.width;
@@ -141,6 +152,9 @@ export class CircleTextSlice {
       theta += layoutWidth * this.scale / this.radius;
       theta += this.characterSpacing * this.scale / this.radius;
     });
+  }
+  getMaxRadius () {
+    return this.radius;
   }
 }
 
