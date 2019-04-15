@@ -6,6 +6,7 @@
   "dependencies": {
     "bluebird": "^3.5.3",
     "commander": "^2.19.0",
+    "delay": "^4.2.0",
     "electron": "^4.0.1"
   },
   "devDependencies": {

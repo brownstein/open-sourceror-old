@@ -115,9 +115,10 @@ function _ensureArray (v) {
   return [v];
 }
 
-function _entityToSlices (node) {
+function _entityToSlices (ctx, node) {
   if (Array.isArray(node)) {
-    return node.map(_entityToSlices).reduce((m, arr) => m.concat(arr), []);
+    return node.map(_entityToSlices.bind(null, ctx))
+    .reduce((m, arr) => m.concat(arr), []);
   }
   if (typesOfThings[node.type]) {
     const thingHandler = typesOfThings[node.type];
@@ -129,12 +130,13 @@ function _entityToSlices (node) {
       }
       if (thingHandlerResult.expand) {
         _ensureArray(thingHandlerResult.expand).forEach(expandSlice => {
-          ret.push(..._entityToSlices(expandSlice));
+          ret.push(..._entityToSlices(ctx, expandSlice));
         });
       }
       if (thingHandlerResult.andThen) {
         ret = _ensureArray(thingHandlerResult.andThen(ret));
       }
+      ctx.slicesByPosition[`${node.start}:${node.end}`] = ret;
       return ret;
     }
   }
@@ -142,5 +144,8 @@ function _entityToSlices (node) {
 }
 
 export function scriptToCircle (script) {
-  return _entityToSlices(script);
+  const ctx = {
+    slicesByPosition: {}
+  };
+  return [ctx, _entityToSlices(ctx, script)];
 }

@@ -5,6 +5,7 @@ const CIRCLE_ELEMENT_PADDING = 15;
 const CIRCLE_CHARACTER_SPACING = 0.5;
 const CIRCLE_CHARACTER_SPACE_WIDTH = 15;
 const CIRCLE_ELEMENT_RADIAL_PADDING = 30;
+const CIRCLE_UNDERLINE_RESOLUTION = Math.PI / 32;
 
 /**
  * This represents a group of elements laid out next to one another along the
@@ -15,8 +16,10 @@ export class CircleGroupSlice {
     this.children = children;
     this.radius = 1;
     this.scale = 1;
+    this.underline = true;
     this.totalWidthInRadians = 0;
     this.childSpacing = CIRCLE_ELEMENT_PADDING;
+    this.underlineResolution = CIRCLE_UNDERLINE_RESOLUTION;
   }
   addChildSlice (slice) {
     this.children.push(slice);
@@ -38,6 +41,10 @@ export class CircleGroupSlice {
       theta += childElement.totalWidthInRadians;
       theta += this.childSpacing * this.scale / this.radius;
     });
+    if (this.underline) {
+       theta = startTheta + this.childSpacing * this.scale * 0.5 / this.radius;
+       // underline geometry code here
+    }
   }
   getMaxRadius () {
     return this.children.reduce(

@@ -1,0 +1,11 @@
+Setting: A post-peak civilization in which magical macros are used commonly and stunt technological necessity. This is a world full of ancient relics and defunct structures, where the population is considerably smaller than that of the historic past.
+
+The story begins when you, [name here], discover an ancient escape pod that crashes outside your village. Upon reaching the crash site and opening the thing, you meet a very confused researcher from the distant past who immediately starts asking why all of the networks are down. After a brief discussion, you offer to help her find answers and she teaches you about IF statements. This evolves into a quick tutorial for creating conditional macros to defend yourself.
+
+Upon reaching your home village, your new companion is noticed by a local representative of the empire (because of course), and is eventually coerced into going with them. Standard RPG chase/rescue hijinks ensue in which you travel over more of the land and learn more about programming. By the time you reach the imperial castle, you know if/then, throw/catch, function definitions, variables, and a variety of standard globals.
+
+These are used to:
+- manage complex battles with automatic responses to various enemies
+- solve spatial puzzles by moving things conditionally
+- solve magical puzzles that basically work like APIs
+- out-perform standard spell macros that most other characters know
