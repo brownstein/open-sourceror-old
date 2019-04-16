@@ -49,7 +49,8 @@ function fibo (n) {
   log(n);
   return fibo(n - 1) + fibo(n - 2);
 }
-log(fibo(5));
+log(testing);
+log(fibo(10));
 `;
 
 const parsed = acorn.parse(scr, {
@@ -110,9 +111,12 @@ async function init () {
     interpreter.setProperty(
       scope,
       "log",
-      interpreter.createNativeFunction(f => {
-        console.log("VALUE", f);
-      })
+      interpreter.createNativeFunction(f => console.log(f.data))
+    );
+    interpreter.setProperty(
+      scope,
+      "testing",
+      { data: "foo bar" }
     );
   });
 
@@ -132,7 +136,7 @@ async function init () {
         }
       });
       renderer.render(scene, camera);
-      await delay(50);
+      await delay(30);
       lastParts.forEach(part => {
         if (part.textMeshes) {
           part.textMeshes.forEach(m => {
@@ -151,3 +155,21 @@ async function init () {
 }
 
 init();
+
+// sourcemap experiment here
+const babel = require("@babel/core");
+const vlq = require("vlq");
+const esScr = `
+  const funky = ({ a }) => console.log(...a);
+`;
+
+babel.transform(esScr, {
+  plugins: [],
+  presets: ["@babel/preset-env"],
+  generatorOpts: {
+    sourceMaps: true
+  }
+}, (err, result) => {
+  console.log(result.code);
+  console.log(result.map);
+});

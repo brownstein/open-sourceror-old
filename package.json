@@ -7,7 +7,8 @@
     "bluebird": "^3.5.3",
     "commander": "^2.19.0",
     "delay": "^4.2.0",
-    "electron": "^4.0.1"
+    "electron": "^4.0.1",
+    "vlq": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
