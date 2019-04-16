@@ -89,9 +89,33 @@ const typesOfThings = {
     value: new CircleTextSlice(u.operator),
     expand: [u.argument]
   }),
-  IfStatement: i => ({
-    expand: [i.test, i.consequent],
-    andThen: slices => new CircleGroupSlice(slices)
+  IfStatement: (i, ctx) => {
+    const test = _entityToSlices(ctx, i.test);
+    const consequent = _entityToSlices(ctx, i.consequent);
+    return {
+      value: new CircleStackSlice([
+        new CircleTextSlice("IF:"),
+        ...test,
+        new CircleTextSlice("|"),
+        ...consequent
+      ])
+    };
+  },
+  LogicalExpression: exp => ({
+    expand: [exp.left, exp.right],
+    andThen: leftAndRight => new CircleGroupSlice([
+      leftAndRight[0],
+      new CircleTextSlice(exp.operator),
+      leftAndRight[1]
+    ])
+  }),
+  BinaryExpression: exp => ({
+    expand: [exp.left, exp.right],
+    andThen: leftAndRight => new CircleGroupSlice([
+      leftAndRight[0],
+      new CircleTextSlice(exp.operator),
+      leftAndRight[1]
+    ])
   }),
   ReturnStatement: r => ({
     expand: [r.argument]
@@ -122,7 +146,7 @@ function _entityToSlices (ctx, node) {
   }
   if (typesOfThings[node.type]) {
     const thingHandler = typesOfThings[node.type];
-    const thingHandlerResult = thingHandler(node);
+    const thingHandlerResult = thingHandler(node, ctx);
     if (thingHandlerResult) {
       let ret = [];
       if (thingHandlerResult.value || thingHandlerResult.values) {

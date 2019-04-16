@@ -41,14 +41,15 @@ const {
 } = require("./dist");
 
 const scr = `
-function doStuff () {
-  var i = 0;
-  i += 1;
-  log(i);
-  return i;
+"use strict";
+function fibo (n) {
+  if (n === 0 || n === 1) {
+    return 1;
+  }
+  log(n);
+  return fibo(n - 1) + fibo(n - 2);
 }
-log("test");
-doStuff();
+log(fibo(5));
 `;
 
 const parsed = acorn.parse(scr, {
@@ -117,6 +118,7 @@ async function init () {
 
   console.log({ interp });
 
+  let lastParts = [];
   while (interp.stateStack.length) {
     const node = interp.stateStack[interp.stateStack.length - 1].node;
     const nodeKey = `${node.start}:${node.end}`;
@@ -128,10 +130,19 @@ async function init () {
             m.material.uniforms.color.value = new Color(255, 0, 0);
           });
         }
+      });
+      renderer.render(scene, camera);
+      await delay(50);
+      lastParts.forEach(part => {
+        if (part.textMeshes) {
+          part.textMeshes.forEach(m => {
+            m.material.uniforms.color.value = new Color(255, 255, 255);
+          });
+        }
         renderer.render(scene, camera);
       });
+      lastParts = partsByKey;
     }
-    await delay(200);
     if (!interp.step()) {
       break;
     }
