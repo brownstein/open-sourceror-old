@@ -96,7 +96,7 @@ const typesOfThings = {
       value: new CircleStackSlice([
         new CircleTextSlice("IF:"),
         ...test,
-        new CircleTextSlice("|"),
+        new CircleTextSlice("---"),
         ...consequent
       ])
     };
@@ -118,7 +118,11 @@ const typesOfThings = {
     ])
   }),
   ReturnStatement: r => ({
-    expand: [r.argument]
+    expand: [r.argument],
+    andThen: result => [
+      new CircleTextSlice("return"),
+      ...result
+    ]
   }),
   ObjectExpression: r => ({
     expand: r.properties,

@@ -159,17 +159,23 @@ init();
 // sourcemap experiment here
 const babel = require("@babel/core");
 const vlq = require("vlq");
-const esScr = `
-  const funky = ({ a }) => console.log(...a);
-`;
+const esScr = `const funky = ({ a }) => console.log(...a);`;
 
 babel.transform(esScr, {
   plugins: [],
   presets: ["@babel/preset-env"],
+  ast: true,
   generatorOpts: {
     sourceMaps: true
   }
 }, (err, result) => {
+  console.log(result.ast);
   console.log(result.code);
   console.log(result.map);
+  result.map.mappings.split(";").forEach(n => {
+    n.split(",").forEach(m => {
+      const decoded = vlq.decode(m);
+      console.log(m, decoded);
+    })
+  });
 });
