@@ -1,6 +1,7 @@
 "use strict";
 const { ipcRenderer } = require("electron");
 const Interpreter = require("js-interpreter");
+const patchJSInterpreter = require("./async-js-interpreter-patch");
 const acorn = require("acorn");
 const fs = require("fs");
 const delay = require("delay");
@@ -70,7 +71,12 @@ function doSomething () {
   }
 }
 doSomething();
-log(test2(function vv (val) { log(val); }) * 2);
+log(test2(function vv (val) {
+  for (var i=0; i < 2; i++) {
+    log(val);
+  }
+  log(val);
+}) * 2);
 log(test3);
 `;
 
@@ -134,39 +140,7 @@ async function init () {
   renderer.render(scene, camera);
 
   // interp patch here
-  /**
-  * Shifts the given function at the bottom of the state stack, delaying the call.
-  * @param {Interpreter.Object} func Pseudo function to call.
-  * @param {Interpreter.Object[]} args Arguments to provide to the function.
-  */
-  Interpreter.prototype.queueCall = function(func, args) {
-    var state = this.stateStack[0];
-    var interpreter = this;
-    if (!state || state.node.type != 'Program') {
-      throw Error('Expecting original AST to start with a Program node.');
-    }
-    state.done = false;
-    var scope = this.createScope(func.node.body, func.parentScope);
-    func.node.params.forEach(function(p, i) {
-      interpreter.setProperty(scope, interpreter.createPrimitive(p.name), args[i]);
-    })
-    var argsList = this.createObject(this.ARRAY);
-    args.forEach(function(arg, i) {
-      interpreter.setProperty(argsList, interpreter.createPrimitive(i), arg);
-    })
-    this.setProperty(scope, 'arguments', argsList);
-    var last = func.node.body.body[func.node.body.body.length - 1];
-    if(last.type == 'ReturnStatement') {
-      last.type = 'ExpressionStatement';
-      last.expression = last.argument;
-      delete last.argument;
-    }
-    this.stateStack.splice(1, 0, {
-      node: func.node.body,
-      scope: scope,
-      value: this.getScope().strict ? this.UNDEFINED : this.global
-    });
-  };
+  patchJSInterpreter(Interpreter);
 
   const interp = new Interpreter(scr, (interpreter, scope) => {
     interpreter.setProperty(
@@ -201,7 +175,7 @@ async function init () {
               f,
               [interpreter.nativeToPseudo("hi world I'm bob")]
             ),
-            1000
+            2000
           )
           return interpreter.nativeToPseudo(10);
         }
@@ -241,7 +215,7 @@ async function init () {
           container.rotation.z -= Math.PI * 2;
         }
         renderer.render(scene, camera);
-        await delay(5);
+        await delay(15);
       }
       if (lastPart) {
         lastPart.recolor(new Color(255, 255, 255));
