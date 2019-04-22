@@ -22,13 +22,15 @@ const typesOfThings = {
     value: new CircleTextSlice(`${l.value}`)
   }),
   CallExpression: exp => ({
-    expand: [exp.callee, ...exp.arguments],
+    expand: [exp.callee, ...(exp.arguments || [])],
     andThen: slices => [
       new CircleStackSlice([
         new CircleGroupSlice([
           slices[0]
         ]),
-        new CircleGroupSlice(slices.slice(1, slices.length))
+        slices.length > 1 ?
+          new CircleGroupSlice(slices.slice(1, slices.length)) :
+          null
       ])
     ]
   }),
@@ -40,7 +42,7 @@ const typesOfThings = {
     andThen: slices => new CircleGroupSlice(slices)
   }),
   FunctionDeclaration: f => ({
-    expand: [...f.params, f.body],
+    expand: [...(f.params||[]), f.body],
     andThen: slices => [
       new CircleStackSlice([
         new CircleGroupSlice([
@@ -133,6 +135,26 @@ const typesOfThings = {
   }),
   ArrayExpression: a => ({
     expand: a.elements
+  }),
+  ForStatement: f => ({
+    expand: [
+      f.init,
+      f.test,
+      f.update,
+      f.body
+    ],
+    value: new CircleTextSlice("FOR"),
+    andThen: res => new CircleStackSlice([
+      new CircleGroupSlice(res.slice(0, 6)),
+      new CircleGroupSlice(res.slice(6, res.length))
+    ])
+  }),
+  UpdateExpression: u => ({
+    expand: u.argument,
+    andThen: arg => new CircleGroupSlice([
+      ...arg,
+      new CircleTextSlice(u.operator)
+    ])
   })
 };
 

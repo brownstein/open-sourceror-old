@@ -10,6 +10,7 @@ var {
   Box3,
   Scene,
   Vector3,
+  Vector2,
   Face3,
   Mesh,
   Geometry,
@@ -37,20 +38,40 @@ const {
   CircleGroupSlice,
   CircleStackSlice,
   CircleTextSlice,
-  runLayout
+  runLayout,
+
+  convertScriptToSlices
 } = require("./dist");
 
-const scr = `
+let scr = `
 "use strict";
+var cache = {0: 1, 1: 1};
 function fibo (n) {
   if (n === 0 || n === 1) {
     return 1;
   }
+  // if (cache[n]) {
+  //   return cache[n];
+  // }
   log(n);
-  return fibo(n - 1) + fibo(n - 2);
+  var sum = fibo(n - 1) + fibo(n - 2);
+  //cache[n] = sum;
+  return sum;
 }
 log(testing);
 log(fibo(10));
+`;
+
+scr = `
+"use strict";
+function doSomething () {
+  for (var i=0; i < 2; i++) {
+    log(i);
+  }
+}
+doSomething();
+log(test2(function vv (val) { log(val); }) * 2);
+log(test3);
 `;
 
 const parsed = acorn.parse(scr, {
@@ -96,16 +117,56 @@ async function init () {
 
   await loadAllFonts();
 
-  const [ctx, mainSlices] = scriptToCircle(parsed);
+  //const [ctx, mainSlices] = scriptToCircle(parsed);
+  const [ctx, mainSlice] = convertScriptToSlices(parsed);
+  const mainSlices = [mainSlice];
   runLayout(mainSlices[0]);
+
+  console.log(mainSlices);
 
   const container = new Object3D();
   mainSlices.forEach(s => s.addMeshesToContainer(container));
   const maxRadius = mainSlices[0].getMaxRadius();
   container.scale.multiplyScalar(80 / maxRadius);
+  console.log({ maxRadius });
   scene.add(container);
 
   renderer.render(scene, camera);
+
+  // interp patch here
+  /**
+  * Shifts the given function at the bottom of the state stack, delaying the call.
+  * @param {Interpreter.Object} func Pseudo function to call.
+  * @param {Interpreter.Object[]} args Arguments to provide to the function.
+  */
+  Interpreter.prototype.queueCall = function(func, args) {
+    var state = this.stateStack[0];
+    var interpreter = this;
+    if (!state || state.node.type != 'Program') {
+      throw Error('Expecting original AST to start with a Program node.');
+    }
+    state.done = false;
+    var scope = this.createScope(func.node.body, func.parentScope);
+    func.node.params.forEach(function(p, i) {
+      interpreter.setProperty(scope, interpreter.createPrimitive(p.name), args[i]);
+    })
+    var argsList = this.createObject(this.ARRAY);
+    args.forEach(function(arg, i) {
+      interpreter.setProperty(argsList, interpreter.createPrimitive(i), arg);
+    })
+    this.setProperty(scope, 'arguments', argsList);
+    var last = func.node.body.body[func.node.body.body.length - 1];
+    if(last.type == 'ReturnStatement') {
+      last.type = 'ExpressionStatement';
+      last.expression = last.argument;
+      delete last.argument;
+    }
+    this.stateStack.splice(1, 0, {
+      node: func.node.body,
+      scope: scope,
+      value: this.getScope().strict ? this.UNDEFINED : this.global
+    });
+  };
 
   const interp = new Interpreter(scr, (interpreter, scope) => {
     interpreter.setProperty(
@@ -118,37 +179,77 @@ async function init () {
       "testing",
       { data: "foo bar" }
     );
+    interpreter.setProperty(
+      scope,
+      "test",
+      interpreter.createAsyncFunction(
+        function (f, callback){
+          Promise.resolve().then(() => {
+            callback({ data: f.data * 2 });
+          });
+        }
+      )
+    );
+    interpreter.setProperty(
+      scope,
+      "test2",
+      interpreter.createNativeFunction(
+        function (f) {
+          interpreter.setProperty(scope, "test3", interpreter.nativeToPseudo("amazing"));
+          setTimeout(
+            () => interpreter.queueCall(
+              f,
+              [interpreter.nativeToPseudo("hi world I'm bob")]
+            ),
+            1000
+          )
+          return interpreter.nativeToPseudo(10);
+        }
+      )
+    );
   });
 
   console.log({ interp });
 
-  let lastParts = [];
+  let lastPart = null;
   while (interp.stateStack.length) {
     const node = interp.stateStack[interp.stateStack.length - 1].node;
     const nodeKey = `${node.start}:${node.end}`;
-    const partsByKey = ctx.slicesByPosition[nodeKey];
-    if (partsByKey) {
-      partsByKey.forEach(part => {
-        if (part.textMeshes) {
-          part.textMeshes.forEach(m => {
-            m.material.uniforms.color.value = new Color(255, 0, 0);
-          });
+    const partByKey = ctx.slicesByPosition[nodeKey];
+    if (partByKey) {
+      const center = new Vector2();
+      partByKey.recolor(new Color(255, 0, 0));
+      center.add(partByKey.getMeshCenter());
+
+      let nextRotation = -center.angle() - Math.PI / 2;
+      if (nextRotation < 0) {
+        nextRotation += Math.PI * 2;
+      }
+      if ((nextRotation - container.rotation.z) > Math.PI) {
+        nextRotation -= Math.PI * 2;
+      }
+      else if ((nextRotation - container.rotation.z) < -Math.PI) {
+        nextRotation += Math.PI * 2;
+      }
+      const rotDelta = (nextRotation - container.rotation.z) / 10;
+      for (let i = 0; i < 10; i++) {
+        container.rotation.z += rotDelta;
+        if (container.rotation.z < 0) {
+          container.rotation.z += Math.PI * 2;
         }
-      });
-      renderer.render(scene, camera);
-      await delay(30);
-      lastParts.forEach(part => {
-        if (part.textMeshes) {
-          part.textMeshes.forEach(m => {
-            m.material.uniforms.color.value = new Color(255, 255, 255);
-          });
+        else if (container.rotation.z > Math.PI * 2) {
+          container.rotation.z -= Math.PI * 2;
         }
         renderer.render(scene, camera);
-      });
-      lastParts = partsByKey;
+        await delay(5);
+      }
+      if (lastPart) {
+        lastPart.recolor(new Color(255, 255, 255));
+      }
+      lastPart = partByKey;
     }
     if (!interp.step()) {
-      break;
+      continue;
     }
   }
 
@@ -157,25 +258,25 @@ async function init () {
 init();
 
 // sourcemap experiment here
-const babel = require("@babel/core");
-const vlq = require("vlq");
-const esScr = `const funky = ({ a }) => console.log(...a);`;
-
-babel.transform(esScr, {
-  plugins: [],
-  presets: ["@babel/preset-env"],
-  ast: true,
-  generatorOpts: {
-    sourceMaps: true
-  }
-}, (err, result) => {
-  console.log(result.ast);
-  console.log(result.code);
-  console.log(result.map);
-  result.map.mappings.split(";").forEach(n => {
-    n.split(",").forEach(m => {
-      const decoded = vlq.decode(m);
-      console.log(m, decoded);
-    })
-  });
-});
+// const babel = require("@babel/core");
+// const vlq = require("vlq");
+// const esScr = `const funky = ({ a }) => console.log(...a);`;
+//
+// babel.transform(esScr, {
+//   plugins: [],
+//   presets: ["@babel/preset-env"],
+//   ast: true,
+//   generatorOpts: {
+//     sourceMaps: true
+//   }
+// }, (err, result) => {
+//   console.log(result.ast);
+//   console.log(result.code);
+//   console.log(result.map);
+//   result.map.mappings.split(";").forEach(n => {
+//     n.split(",").forEach(m => {
+//       const decoded = vlq.decode(m);
+//       console.log(m, decoded);
+//     })
+//   });
+// });

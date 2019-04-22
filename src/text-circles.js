@@ -13,7 +13,7 @@ const CIRCLE_UNDERLINE_RESOLUTION = Math.PI / 32;
  */
 export class CircleGroupSlice {
   constructor (children = []) {
-    this.children = children;
+    this.children = children.filter(c => c);
     this.radius = 1;
     this.scale = 1;
     this.underline = true;
@@ -46,6 +46,15 @@ export class CircleGroupSlice {
        // underline geometry code here
     }
   }
+  recolor (color) {
+    this.children.forEach(child => child.recolor(color));
+  }
+  getMeshCenter () {
+    const position = new Vector3();
+    this.children.forEach(m => position.add(m.getMeshCenter()));
+    position.multiplyScalar(1 / this.children.length);
+    return position;
+  }
   getMaxRadius () {
     return this.children.reduce(
       (r, c) => Math.max(r, c.getMaxRadius()),
@@ -59,7 +68,7 @@ export class CircleGroupSlice {
  */
 export class CircleStackSlice {
   constructor (children = []) {
-    this.children = children;
+    this.children = children.filter(c => c);
     this.radius = 1;
     this.scale = 1;
     this.totalWidthInRadians = 0;
@@ -86,6 +95,15 @@ export class CircleStackSlice {
       const childStartTheta = midpointTheta - childElement.totalWidthInRadians / 2;
       childElement.addMeshesToContainer(container, childStartTheta);
     });
+  }
+  recolor (color) {
+    this.children.forEach(child => child.recolor(color));
+  }
+  getMeshCenter () {
+    const position = new Vector3();
+    this.children.forEach(m => position.add(m.getMeshCenter()));
+    position.multiplyScalar(1 / this.children.length);
+    return position;
   }
   getMaxRadius () {
     return this.children.reduce(
@@ -159,6 +177,18 @@ export class CircleTextSlice {
       theta += layoutWidth * this.scale / this.radius;
       theta += this.characterSpacing * this.scale / this.radius;
     });
+    this.centerTheta = (startTheta + theta) / 2;
+  }
+  recolor (color) {
+    this.textMeshes.forEach(mesh => {
+      mesh.material.uniforms.color.value = color;
+    });
+  }
+  getMeshCenter () {
+    const position = new Vector3();
+    this.textMeshes.forEach(m => position.add(m.position));
+    position.multiplyScalar(1 / this.textMeshes.length);
+    return position;
   }
   getMaxRadius () {
     return this.radius;
@@ -176,4 +206,5 @@ export function runLayout (circleSlice) {
     radius *= radiusAdjustment;
     totalWidthInRadians = circleSlice.runLayout(radius);
   }
+  return circleSlice;
 }
