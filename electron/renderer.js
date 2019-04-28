@@ -80,11 +80,14 @@ log(test2(function vv (val) {
 log(test3);
 `;
 
+const { script, hookIntoInterpreter } = require("./player-script");
+scr = script;
+
 const parsed = acorn.parse(scr, {
   locations: true
 });
 function visitor (node) {
-  console.log(node);
+  console.log("Logging AST", node);
   fs.writeFileSync("temp1.json", JSON.stringify(node, 0, 2));
 }
 visitor(parsed);
@@ -134,7 +137,6 @@ async function init () {
   mainSlices.forEach(s => s.addMeshesToContainer(container));
   const maxRadius = mainSlices[0].getMaxRadius();
   container.scale.multiplyScalar(80 / maxRadius);
-  console.log({ maxRadius });
   scene.add(container);
 
   renderer.render(scene, camera);
@@ -148,6 +150,9 @@ async function init () {
       "log",
       interpreter.createNativeFunction(f => console.log(f.data))
     );
+
+    hookIntoInterpreter(interpreter, scope);
+
     interpreter.setProperty(
       scope,
       "testing",
@@ -226,31 +231,67 @@ async function init () {
       continue;
     }
   }
-
 }
 
-init();
+// init();
 
-// sourcemap experiment here
-// const babel = require("@babel/core");
-// const vlq = require("vlq");
-// const esScr = `const funky = ({ a }) => console.log(...a);`;
-//
-// babel.transform(esScr, {
-//   plugins: [],
-//   presets: ["@babel/preset-env"],
-//   ast: true,
-//   generatorOpts: {
-//     sourceMaps: true
-//   }
-// }, (err, result) => {
-//   console.log(result.ast);
-//   console.log(result.code);
-//   console.log(result.map);
-//   result.map.mappings.split(";").forEach(n => {
-//     n.split(",").forEach(m => {
-//       const decoded = vlq.decode(m);
-//       console.log(m, decoded);
-//     })
-//   });
-// });
+const babel = require("@babel/core");
+const babelParser = require("@babel/parser");
+
+const vlq = require("vlq");
+const esScr = `
+"use strict";
+function func ({ a }) {
+  console.log(a);
+}`;
+
+const ASTLocationMap = require("./ast-location-map");
+const SourceMapMap = require("./source-map-map");
+
+babel.transform(esScr, {
+  plugins: [],
+  presets: ["@babel/preset-env"],
+  ast: true,
+  generatorOpts: {
+    sourceMaps: true
+  }
+}, (err, result) => {
+
+  const sourceAST = babelParser.parse(esScr);
+  const destAST = acorn.parse(result.code, { locations: true });
+
+  console.log("SOURCE AST", sourceAST);
+  console.log("DEST AST", destAST);
+
+  function _getAllASTNodes (ast, nodes = []) {
+    if (Array.isArray(ast)) {
+      ast.forEach(n => _getAllASTNodes(n, nodes));
+      return nodes;
+    }
+    if (!ast || !ast.type) {
+      return nodes;
+    }
+    nodes.push(ast);
+    Object.keys(ast).forEach(key => _getAllASTNodes(ast[key], nodes));
+    return nodes;
+  }
+
+  console.log("SOURCE AST NODES", _getAllASTNodes(sourceAST, []));
+  console.log("DEST AST NODES", _getAllASTNodes(destAST, []));
+
+  console.log(result.map.mappings.replace(/;/g, "\n"));
+
+  const sm = new SourceMapMap(result.map);
+  console.log(result.code);
+
+  console.log(sm);
+  console.log(sm.getSourceLocation({ line: 15, column: 10 }));
+
+  // console.log(result.map);
+  // result.map.mappings.split(";").forEach(n => {
+  //   n.split(",").forEach(m => {
+  //     const decoded = vlq.decode(m);
+  //     console.log(m, decoded);
+  //   })
+  // });
+});
