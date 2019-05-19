@@ -14,6 +14,15 @@ class SourceMapMap {
       this.mapsByLine[destLine] = [];
       let destColumn = 0;
       encodedLine.split(",").forEach(part => {
+        // empty parts should have zeroed columns but match lines
+        if (part === "") {
+          this.mapsByLine[destLine].push({
+            destColumn: 0,
+            sourceColumn: 0,
+            sourceLine
+          });
+          return;
+        }
         const [
           destColumnIncr,
           sourceFile,

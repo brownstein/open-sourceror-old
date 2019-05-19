@@ -12,6 +12,13 @@ module.exports = function setupInterpreter (script) {
     script,
     (interpreter, globalScope) => {
 
+      // setup logging
+      interpreter.setProperty(
+        globalScope,
+        "log",
+        interpreter.createNativeFunction(f => console.log(f.data))
+      );
+
       // setup event listener pattern
       interpreter.setProperty(
         globalScope,
@@ -28,4 +35,9 @@ module.exports = function setupInterpreter (script) {
       );
     }
   );
+
+  return {
+    interpreter,
+    playerEventCallbacks
+  };
 };

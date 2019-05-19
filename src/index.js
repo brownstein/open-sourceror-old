@@ -16,8 +16,6 @@ import {
   runLayout
 } from "./text-circles";
 
-console.log({ CircleGroupSlice });
-
 const RPGLangLib = {
   createText,
   createRunicText,

@@ -1,9 +1,9 @@
 "use strict";
 
-const script = `
-"use strict";
-// language of the ancients (es5)
-on(NEARBY_ENEMY, function(enemy) {
+const script =
+`"use strict"; // language of the ancients (es5)
+
+on(NEARBY_ENEMY, function (enemy) {
   log(1);
   fire(getDirection(enemy));
 });

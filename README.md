@@ -1,2 +1,3 @@
-antlr4
-antlr4 -Dlanguage=JavaScript test.g4
+NOTES:
+
+babel's source maps map the end of a closure to its' start
