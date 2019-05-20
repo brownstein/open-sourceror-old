@@ -192,7 +192,7 @@ async function doCrossCompileSequence () {
   console.log(transpiled);
   console.log(sm);
   const ast1 = ast;
-  const ast2 = acorn.parse(script, { locations: true });
+  const ast2 = acorn.parse(transpiled, { locations: true });
 
   function _getAllASTNodes (ast, nodes = []) {
     if (Array.isArray(ast)) {
@@ -210,13 +210,15 @@ async function doCrossCompileSequence () {
   const nodes1 = _getAllASTNodes(ast1);
   const nodes2 = _getAllASTNodes(ast2);
 
+  const astLocationMap = new ASTLocationMap();
+  console.log(nodes1);
+  nodes1.forEach(node => astLocationMap.addASTNode(node));
+
   nodes2.forEach(n2 => {
     const destLoc = n2.loc.start;
     const srcLoc = sm.getSourceLocation(destLoc);
-    console.log([ destLoc, srcLoc ]);
-    let bestN1 = null;
-    nodes1.forEach(n1 => {
-    });
+    const matchedN1 = astLocationMap.getMatchingNode(n2, srcLoc.line, srcLoc.column);
+    console.log("N1->N2", matchedN1, n2);
   });
 
 }

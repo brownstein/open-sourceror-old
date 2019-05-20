@@ -8,6 +8,9 @@ class ASTLocationMap {
     this.nodesByLine = {};
   }
   addASTNode (node) {
+    if (!node.loc) {
+      return;
+    }
     const start = node.loc.start;
     const end = node.loc.end;
     for (let line = start.line; line <= end.line; line++) {
@@ -17,33 +20,44 @@ class ASTLocationMap {
       this.nodesByLine[line].push(node);
     }
   }
-  getClosestNode (start, end) {
-    const startLine = start.line;
-    const endLine = end.line;
+  getMatchingNode (node, sourceStartLine, sourceStartCol) {
     let leastDistance = Infinity;
     let closestNode = null;
-    for (let line = startLine; line <= endLine; line++) {
-      const lineNodes = this.nodesByLine[line];
-      if (!lineNodes) {
-        continue;
-      }
-      for (let ln = 0; ln < lineNodes.length; ln++) {
-        const lineNode = lineNodes[ln];
-        const nodeDistance = this._getASTDistance(startPos, endPos, lineNode.start, lineNode.end);
-        if (nodeDistance <= leastDistance) {
-          leastDistance = nodeDistance;
-          closestNode = lineNode;
-        }
+    const lineNodes = this.nodesByLine[sourceStartLine];
+    if (!lineNodes || !lineNodes.length) {
+      return null;
+    }
+    for (let ln = 0; ln < lineNodes.length; ln++) {
+      const lineNode = lineNodes[ln];
+      const nodeDistance = this._getASTDistance(node, sourceStartLine, sourceStartCol, lineNode);
+      if (nodeDistance <= leastDistance) {
+        leastDistance = nodeDistance;
+        closestNode = lineNode;
       }
     }
     return closestNode;
   }
-  _getASTDistance (start1, end1, start2, end2) {
+  _getASTDistance (destNode, srcStartLine, srcStartCol, srcNode) {
+    let typeDiffCost = 0;
+    if (destNode.type !== srcNode.type) {
+      switch (destNode.type) {
+        case "NumericLiteral":
+        case "Literal":
+          switch (srcNode.type) {
+            case "NumericLiteral":
+            case "Literal":
+              break;
+            default:
+              typeDiffCost = 1;
+          }
+        default:
+          typeDiffCost = 1;
+      }
+    }
     return (
-      Math.abs(start1.line   - start2.line) +
-      Math.abs(start1.column - start2.column) +
-      Math.abs(end1.line     - end2.line) +
-      Math.abs(end1.column   - end2.column)
+      Math.abs(srcStartLine - srcNode.loc.start.line) +
+      Math.abs(srcStartCol - srcNode.loc.start.column) +
+      ((destNode.type === srcNode.type ? 0 : 1))
     );
   }
 }

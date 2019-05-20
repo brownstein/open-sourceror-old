@@ -1,13 +1,19 @@
 "use strict";
 
-const script =
-`"use strict"; // language of the ancients (es5)
+const _script =
+`"use strict";
+// language of the ancients (es5)
 
 on(NEARBY_ENEMY, function (enemy) {
   log(1);
   fire(getDirection(enemy));
 });
 log(0);
+`;
+
+const script =
+`
+const a = () => console.log(1);
 `;
 
 function hookIntoInterpreter (interpreter, scope) {
