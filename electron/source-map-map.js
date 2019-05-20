@@ -51,12 +51,8 @@ class SourceMapMap {
     let lastSourceColumn = 0;
     for (let i = 0; i < lineMap.length; i++) {
       const { destColumn, sourceLine, sourceColumn } = lineMap[i];
-      console.log({ destColumn, sourceColumn, sourceLine });
-      if (destColumn > column) {
-        if (!lastSourceLine && !lastSourceColumn) {
-          return { line: sourceLine || 0, column: sourceColumn || 0 };
-        }
-        return { line: lastSourceLine || 0, column: lastSourceColumn || 0 };
+      if (destColumn >= column) {
+        return { line: sourceLine || 0, column: sourceColumn || 0 };
       }
       lastSourceLine = sourceLine || 0;
       lastSourceColumn = sourceColumn || 0;

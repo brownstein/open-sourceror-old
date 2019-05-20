@@ -191,63 +191,34 @@ async function doCrossCompileSequence () {
   const [ast, transpiled, sm] = await transpileAndCreateSourcemap(script);
   console.log(transpiled);
   console.log(sm);
+  const ast1 = ast;
+  const ast2 = acorn.parse(script, { locations: true });
+
+  function _getAllASTNodes (ast, nodes = []) {
+    if (Array.isArray(ast)) {
+      ast.forEach(n => _getAllASTNodes(n, nodes));
+      return nodes;
+    }
+    if (!ast || !ast.type) {
+      return nodes;
+    }
+    nodes.push(ast);
+    Object.keys(ast).forEach(key => _getAllASTNodes(ast[key], nodes));
+    return nodes;
+  }
+
+  const nodes1 = _getAllASTNodes(ast1);
+  const nodes2 = _getAllASTNodes(ast2);
+
+  nodes2.forEach(n2 => {
+    const destLoc = n2.loc.start;
+    const srcLoc = sm.getSourceLocation(destLoc);
+    console.log([ destLoc, srcLoc ]);
+    let bestN1 = null;
+    nodes1.forEach(n1 => {
+    });
+  });
+
 }
 
-// doCrossCompileSequence();
-
-
-
-//
-// const esScr = `
-// "use strict";
-// function func ({ a }) {
-//   console.log(a);
-// }`;
-//
-// babel.transform(esScr, {
-//   plugins: [],
-//   presets: ["@babel/preset-env"],
-//   ast: true,
-//   generatorOpts: {
-//     sourceMaps: true
-//   }
-// }, (err, result) => {
-//
-//   const sourceAST = babelParser.parse(esScr);
-//   const destAST = acorn.parse(result.code, { locations: true });
-//
-//   console.log("SOURCE AST", sourceAST);
-//   console.log("DEST AST", destAST);
-//
-//   function _getAllASTNodes (ast, nodes = []) {
-//     if (Array.isArray(ast)) {
-//       ast.forEach(n => _getAllASTNodes(n, nodes));
-//       return nodes;
-//     }
-//     if (!ast || !ast.type) {
-//       return nodes;
-//     }
-//     nodes.push(ast);
-//     Object.keys(ast).forEach(key => _getAllASTNodes(ast[key], nodes));
-//     return nodes;
-//   }
-//
-//   console.log("SOURCE AST NODES", _getAllASTNodes(sourceAST, []));
-//   console.log("DEST AST NODES", _getAllASTNodes(destAST, []));
-//
-//   console.log(result.map.mappings.replace(/;/g, "\n"));
-//
-  // const sm = new SourceMapMap(result.map);
-  // console.log(result.code);
-//
-//   console.log(sm);
-//   console.log(sm.getSourceLocation({ line: 15, column: 10 }));
-//
-//   // console.log(result.map);
-//   // result.map.mappings.split(";").forEach(n => {
-//   //   n.split(",").forEach(m => {
-//   //     const decoded = vlq.decode(m);
-//   //     console.log(m, decoded);
-//   //   })
-//   // });
-// });
+doCrossCompileSequence();
