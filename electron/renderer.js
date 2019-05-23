@@ -107,7 +107,7 @@ async function init () {
   // interp patch here
   patchJSInterpreter(Interpreter);
 
-  const interp = new Interpreter(script, (interpreter, scope) => {
+  const interp = new Interpreter(transpiled, (interpreter, scope) => {
     interpreter.setProperty(
       scope,
       "log",
@@ -124,6 +124,7 @@ async function init () {
     const rawNodeKey = `${node.start}:${node.end}`;
     const nodeKey = destToSrcMap[rawNodeKey];
     const partByKey = ctx.slicesByPosition[nodeKey];
+    console.log({ partByKey });
     if (partByKey) {
       const center = new Vector2();
       partByKey.recolor(new Color(255, 0, 0));

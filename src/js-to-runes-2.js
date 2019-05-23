@@ -14,6 +14,7 @@ const bindEntityExpansions = expand => ({
   ExpressionStatement: exp => expand(exp.expression),
   Literal: l => new CircleTextSlice(`${l.value}`),
   NumericLiteral: l => new CircleTextSlice(`${l.value}`),
+  StringLiteral: l => new CircleTextSlice(`${l.value}`),
   CallExpression: exp => {
     const expCallee = expand(exp.callee);
     let expArguments = [new CircleTextSlice("-")];
@@ -114,7 +115,9 @@ const bindEntityExpansions = expand => ({
   UpdateExpression: u => new CircleGroupSlice([
     expand(u.argument),
     new CircleTextSlice(u.operator)
-  ])
+  ]),
+  TryStatement: t => expand(t.block),
+  ThisExpression: t => new CircleTextSlice("this")
 });
 
 export function convertScriptToSlices (script) {
