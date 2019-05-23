@@ -52,13 +52,10 @@ const {
 } = require("./dist");
 
 const { script, hookIntoInterpreter } = require("./player-script");
+const transpileAndGetASTAndMapping = require("./get-ast-and-transpiled-code");
 
 let renderEl;
 let scene, camera, renderer;
-
-const parsed = acorn.parse(script, {
-  locations: true
-});
 
 async function init () {
   const containerEl = document.getElementById("container");
@@ -90,16 +87,18 @@ async function init () {
 
   await loadAllFonts();
 
-  //const [ctx, mainSlices] = scriptToCircle(parsed);
-  const [ctx, mainSlice] = convertScriptToSlices(parsed);
+  const [ transpiled, ast, destToSrcMap ] = await transpileAndGetASTAndMapping(script);
+  const [ctx, mainSlice] = convertScriptToSlices(ast);
   const mainSlices = [mainSlice];
   runLayout(mainSlices[0]);
 
-  console.log(mainSlices);
-
   const container = new Object3D();
-  mainSlices.forEach(s => s.addMeshesToContainer(container));
+  mainSlices.forEach(s => {
+    console.log("SLICE", s);
+    s.addMeshesToContainer(container);
+  });
   const maxRadius = mainSlices[0].getMaxRadius();
+  console.log({ maxRadius });
   container.scale.multiplyScalar(80 / maxRadius);
   scene.add(container);
 
@@ -122,7 +121,8 @@ async function init () {
   let lastPart = null;
   while (interp.stateStack.length) {
     const node = interp.stateStack[interp.stateStack.length - 1].node;
-    const nodeKey = `${node.start}:${node.end}`;
+    const rawNodeKey = `${node.start}:${node.end}`;
+    const nodeKey = destToSrcMap[rawNodeKey];
     const partByKey = ctx.slicesByPosition[nodeKey];
     if (partByKey) {
       const center = new Vector2();
@@ -157,12 +157,13 @@ async function init () {
       lastPart = partByKey;
     }
     if (!interp.step()) {
-      continue;
+      break;
     }
   }
+  console.log("DONE");
 }
 
-// init();
+init();
 
 function transpileAndCreateSourcemap (sourceScript) {
   return new Promise((resolve, reject) => {
@@ -189,8 +190,6 @@ function transpileAndCreateSourcemap (sourceScript) {
 
 async function doCrossCompileSequence () {
   const [ast, transpiled, sm] = await transpileAndCreateSourcemap(script);
-  console.log(transpiled);
-  console.log(sm);
   const ast1 = ast;
   const ast2 = acorn.parse(transpiled, { locations: true });
 
@@ -211,16 +210,15 @@ async function doCrossCompileSequence () {
   const nodes2 = _getAllASTNodes(ast2);
 
   const astLocationMap = new ASTLocationMap();
-  console.log(nodes1);
   nodes1.forEach(node => astLocationMap.addASTNode(node));
 
+  const destNodesToSourceNodes = new Map();
   nodes2.forEach(n2 => {
     const destLoc = n2.loc.start;
     const srcLoc = sm.getSourceLocation(destLoc);
     const matchedN1 = astLocationMap.getMatchingNode(n2, srcLoc.line, srcLoc.column);
-    console.log("N1->N2", matchedN1, n2);
   });
 
 }
 
-doCrossCompileSequence();
+// doCrossCompileSequence();

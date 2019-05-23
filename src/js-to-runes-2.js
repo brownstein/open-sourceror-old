@@ -6,14 +6,14 @@ import {
 } from "./text-circles";
 
 const bindEntityExpansions = expand => ({
+  File: f => expand(f.program),
   Program: script => {
     const body = new CircleGroupSlice(script.body.map(expand));
-    console.log({ body });
-    runLayout(body);
     return body;
   },
   ExpressionStatement: exp => expand(exp.expression),
   Literal: l => new CircleTextSlice(`${l.value}`),
+  NumericLiteral: l => new CircleTextSlice(`${l.value}`),
   CallExpression: exp => {
     const expCallee = expand(exp.callee);
     let expArguments = [new CircleTextSlice("-")];
