@@ -88,6 +88,9 @@ async function init () {
   await loadAllFonts();
 
   const [ transpiled, ast, destToSrcMap ] = await transpileAndGetASTAndMapping(script);
+
+  console.log(transpiled);
+
   const [ctx, mainSlice] = convertScriptToSlices(ast);
   const mainSlices = [mainSlice];
   runLayout(mainSlices[0]);

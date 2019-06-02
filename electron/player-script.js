@@ -13,14 +13,15 @@ log(0);
 
 const script =
 `"use strict";
-on(NEARBY_ENEMY, () => {
-  try {
-    log(enemy);
-  }
-  catch (err) {
-    log(err);
-  }
-});
+setTimeout(() => log(1), 100);
+// on(NEARBY_ENEMY, (enemy) => {
+//   try {
+//     log(enemy);
+//   }
+//   catch (err) {
+//     log(err);
+//   }
+// });
 `;
 
 function hookIntoInterpreter (interpreter, scope) {
@@ -55,6 +56,16 @@ function hookIntoInterpreter (interpreter, scope) {
     interpreter.createNativeFunction(
       direction => {
         console.log("fire cast:", interpreter.pseudoToNative(direction));
+      }
+    )
+  );
+  interpreter.setProperty(
+    scope,
+    "setTimeout",
+    interpreter.createNativeFunction(
+      (nativeCB, nativeTimeout) => {
+        const timeout = interpreter.pseudoToNative(nativeTimeout);
+        setTimeout(() => interpreter.queueCall(nativeCB, []), timeout);
       }
     )
   );
