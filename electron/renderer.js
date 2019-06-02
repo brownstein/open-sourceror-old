@@ -114,7 +114,7 @@ async function init () {
     interpreter.setProperty(
       scope,
       "log",
-      interpreter.createNativeFunction(f => console.log(f.data))
+      interpreter.createNativeFunction(f => console.log(interpreter.pseudoToNative(f)))
     );
 
     // add functions found in player-script.js
@@ -127,7 +127,6 @@ async function init () {
     const rawNodeKey = `${node.start}:${node.end}`;
     const nodeKey = destToSrcMap[rawNodeKey];
     const partByKey = ctx.slicesByPosition[nodeKey];
-    console.log({ partByKey });
     if (partByKey) {
       const center = new Vector2();
       partByKey.recolor(new Color(255, 0, 0));

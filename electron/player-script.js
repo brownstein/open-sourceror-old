@@ -13,15 +13,17 @@ log(0);
 
 const script =
 `"use strict";
-setTimeout(() => log(1), 100);
-// on(NEARBY_ENEMY, (enemy) => {
-//   try {
-//     log(enemy);
-//   }
-//   catch (err) {
-//     log(err);
-//   }
-// });
+on(NEARBY_ENEMY, () => {
+  log("...");
+  setTimeout(() => log(1), 10);
+  try {
+    log(1, enemy);
+  }
+  catch (err) {
+    log("error");
+    log(err);
+  }
+});
 `;
 
 function hookIntoInterpreter (interpreter, scope) {
@@ -30,10 +32,9 @@ function hookIntoInterpreter (interpreter, scope) {
     "on",
     interpreter.createNativeFunction(
       (condition, func) => {
-        console.log(interpreter.pseudoToNative(condition));
         setTimeout(
           () => interpreter.queueCall(func, [null]),
-          1000
+          10
         );
       }
     )
