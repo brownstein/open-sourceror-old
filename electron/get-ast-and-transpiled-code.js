@@ -21,6 +21,7 @@ function _transpileAndCreateSourcemap (sourceScript) {
       },
       (err, result) => {
         if (err) {
+          console.log("ERROR", err.loc);
           return reject(err);
         }
         const sm = new SourceMapMap(result.map);

@@ -124,7 +124,9 @@ export function convertScriptToSlices (script) {
   const slicesByPosition = [];
   let entityExpansions;
   function expand (node) {
-    console.log(node, node.type);
+    if (!node) {
+      return null;
+    }
     const expandEntity = entityExpansions[node.type];
     if (expandEntity) {
       const result = expandEntity(node);

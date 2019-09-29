@@ -1,58 +1,22 @@
 "use strict";
 const { ipcRenderer } = require("electron");
-const Interpreter = require("js-interpreter");
-const patchJSInterpreter = require("./async-js-interpreter-patch");
-const acorn = require("acorn");
-const fs = require("fs");
 const delay = require("delay");
-
-// transpiler stuff
-const babel = require("@babel/core");
-const babelParser = require("@babel/parser");
-const vlq = require("vlq");
-const ASTLocationMap = require("./ast-location-map");
-const SourceMapMap = require("./source-map-map");
-
-var THREE = require("three");
-var {
-  Box3,
+const {
   Scene,
   Vector3,
   Vector2,
-  Face3,
-  Mesh,
-  Geometry,
-  MeshBasicMaterial,
   WebGLRenderer,
   OrthographicCamera,
   Color,
-  DoubleSide,
-  ShaderMaterial,
-  Object3D,
-  TextureLoader
-} = THREE;
+  Object3D
+} = require("three");
 
 const {
-  loadAllFonts,
-  createText,
-  createRunicText,
-
-  CircleSlice,
-  SymbolText,
-  applyCircularLayout,
-
-  scriptToCircle,
-
-  CircleGroupSlice,
-  CircleStackSlice,
-  CircleTextSlice,
-  runLayout,
-
-  convertScriptToSlices
+  loadAllFonts
 } = require("./dist");
 
-const { script, hookIntoInterpreter } = require("./player-script");
-const transpileAndGetASTAndMapping = require("./get-ast-and-transpiled-code");
+const script = require("./player-script");
+const { createScriptRunner } = require("./script-runner");
 
 let renderEl;
 let scene, camera, renderer;
@@ -87,50 +51,24 @@ async function init () {
 
   await loadAllFonts();
 
-  const [ transpiled, ast, destToSrcMap ] = await transpileAndGetASTAndMapping(script);
-
-  console.log(transpiled);
-
-  const [ctx, mainSlice] = convertScriptToSlices(ast);
-  const mainSlices = [mainSlice];
-  runLayout(mainSlices[0]);
+  const scriptRunner = await createScriptRunner(script);
+  const mainSlice = scriptRunner.mainSlice;
 
   const container = new Object3D();
-  mainSlices.forEach(s => {
-    console.log("SLICE", s);
-    s.addMeshesToContainer(container);
-  });
-  const maxRadius = mainSlices[0].getMaxRadius();
-  console.log({ maxRadius });
+  mainSlice.addMeshesToContainer(container);
+  const maxRadius = mainSlice.getMaxRadius();
   container.scale.multiplyScalar(80 / maxRadius);
   scene.add(container);
 
   renderer.render(scene, camera);
 
-  // interp patch here
-  patchJSInterpreter(Interpreter);
-
-  const interp = new Interpreter(transpiled, (interpreter, scope) => {
-    interpreter.setProperty(
-      scope,
-      "log",
-      interpreter.createNativeFunction(f => console.log(interpreter.pseudoToNative(f)))
-    );
-
-    // add functions found in player-script.js
-    hookIntoInterpreter(interpreter, scope);
-  });
-
   let lastPart = null;
-  while (interp.stateStack.length) {
-    const node = interp.stateStack[interp.stateStack.length - 1].node;
-    const rawNodeKey = `${node.start}:${node.end}`;
-    const nodeKey = destToSrcMap[rawNodeKey];
-    const partByKey = ctx.slicesByPosition[nodeKey];
-    if (partByKey) {
+  while (scriptRunner.hasNextStep()) {
+    const nextSlice = scriptRunner.getCurrentSlice();
+    if (nextSlice) {
       const center = new Vector2();
-      partByKey.recolor(new Color(255, 0, 0));
-      center.add(partByKey.getMeshCenter());
+      nextSlice.recolor(new Color(255, 0, 0));
+      center.add(nextSlice.getMeshCenter());
 
       let nextRotation = -center.angle() - Math.PI / 2;
       if (nextRotation < 0) {
@@ -157,71 +95,14 @@ async function init () {
       if (lastPart) {
         lastPart.recolor(new Color(255, 255, 255));
       }
-      lastPart = partByKey;
+      lastPart = nextSlice;
     }
-    if (!interp.step()) {
-      break;
+    if (!scriptRunner.doNextStep()) {
+      console.log("nothing to do, waiting...");
+      await delay(1000);
     }
   }
   console.log("DONE");
 }
 
 init();
-
-function transpileAndCreateSourcemap (sourceScript) {
-  return new Promise((resolve, reject) => {
-    babel.transform(
-      sourceScript,
-      {
-        plugins: [],
-        presets: ["@babel/preset-env"],
-        ast: true,
-        generatorOpts: {
-          sourceMaps: true
-        }
-      },
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        const sm = new SourceMapMap(result.map);
-        resolve([result.ast, result.code, sm]);
-      }
-    );
-  });
-}
-
-async function doCrossCompileSequence () {
-  const [ast, transpiled, sm] = await transpileAndCreateSourcemap(script);
-  const ast1 = ast;
-  const ast2 = acorn.parse(transpiled, { locations: true });
-
-  function _getAllASTNodes (ast, nodes = []) {
-    if (Array.isArray(ast)) {
-      ast.forEach(n => _getAllASTNodes(n, nodes));
-      return nodes;
-    }
-    if (!ast || !ast.type) {
-      return nodes;
-    }
-    nodes.push(ast);
-    Object.keys(ast).forEach(key => _getAllASTNodes(ast[key], nodes));
-    return nodes;
-  }
-
-  const nodes1 = _getAllASTNodes(ast1);
-  const nodes2 = _getAllASTNodes(ast2);
-
-  const astLocationMap = new ASTLocationMap();
-  nodes1.forEach(node => astLocationMap.addASTNode(node));
-
-  const destNodesToSourceNodes = new Map();
-  nodes2.forEach(n2 => {
-    const destLoc = n2.loc.start;
-    const srcLoc = sm.getSourceLocation(destLoc);
-    const matchedN1 = astLocationMap.getMatchingNode(n2, srcLoc.line, srcLoc.column);
-  });
-
-}
-
-// doCrossCompileSequence();
