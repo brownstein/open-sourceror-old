@@ -1,4 +1,3 @@
-import esprima from "esprima";
 import {
   runLayout,
   CircleGroupSlice,
@@ -6,196 +5,138 @@ import {
   CircleTextSlice
 } from "./text-circles";
 
-const typesOfThings = {
-  Program: script => ({
-      expand: script.body,
-      andThen: slices => {
-        const csg = new CircleGroupSlice(slices);
-        csg.runLayout();
-        return csg;
-      }
-  }),
-  ExpressionStatement: expStatement => ({
-    expand: expStatement.expression
-  }),
-  Literal: l => ({
-    value: new CircleTextSlice(`${l.value}`)
-  }),
-  CallExpression: exp => ({
-    expand: [exp.callee, ...(exp.arguments || [])],
-    andThen: slices => [
-      new CircleStackSlice([
-        new CircleGroupSlice([
-          slices[0]
-        ]),
-        slices.length > 1 ?
-          new CircleGroupSlice(slices.slice(1, slices.length)) :
-          null
-      ])
-    ]
-  }),
-  Identifier: i => ({
-    value: new CircleTextSlice(i.name)
-  }),
-  ArrowFunctionExpression: f => ({
-    expand: [...f.params, f.body],
-    andThen: slices => new CircleGroupSlice(slices)
-  }),
-  FunctionDeclaration: f => ({
-    expand: [...(f.params||[]), f.body],
-    andThen: slices => [
-      new CircleStackSlice([
-        new CircleGroupSlice([
-          new CircleTextSlice(`${f.id.name}()`)
-        ]),
-        new CircleGroupSlice(slices)
-      ])
-    ]
-  }),
-  BlockStatement: b => ({
-    expand: b.body
-  }),
-  VariableDeclaration: v => ({
-    expand: v.declarations
-  }),
-  VariableDeclarator: v => ({
-    expand: [
-      v.id,
-      v.init,
-    ],
-    andThen: dec => [
-      dec[0],
-      new CircleTextSlice("<-"),
-      ...dec.slice(1)
-    ]
-  }),
-  AssignmentExpression: a => ({
-    expand: [
-      a.left,
-      a.right
-    ],
-    andThen: dec => [
-      dec[0],
-      new CircleTextSlice("<-"),
-      ...dec.slice(1)
-    ]
-  }),
-  MemberExpression: m => ({
-    expand: [m.object, m.property]
-  }),
-  NewExpression: n => ({
-    expand: [n.callee, ...n.arguments],
-    andThen: slices => new CircleGroupSlice(slices)
-  }),
-  UnaryExpression: u => ({
-    value: new CircleTextSlice(u.operator),
-    expand: [u.argument]
-  }),
-  IfStatement: (i, ctx) => {
-    const test = _entityToSlices(ctx, i.test);
-    const consequent = _entityToSlices(ctx, i.consequent);
-    return {
-      value: new CircleStackSlice([
-        new CircleTextSlice("IF:"),
-        ...test,
-        new CircleTextSlice("---"),
-        ...consequent
-      ])
-    };
+const bindEntityExpansions = expand => ({
+  File: f => expand(f.program),
+  Program: script => {
+    const body = new CircleGroupSlice(script.body.map(expand));
+    return body;
   },
-  LogicalExpression: exp => ({
-    expand: [exp.left, exp.right],
-    andThen: leftAndRight => new CircleGroupSlice([
-      leftAndRight[0],
-      new CircleTextSlice(exp.operator),
-      leftAndRight[1]
+  ExpressionStatement: exp => expand(exp.expression),
+  Literal: l => new CircleTextSlice(`${l.value}`),
+  NumericLiteral: l => new CircleTextSlice(`${l.value}`),
+  StringLiteral: l => new CircleTextSlice(`${l.value}`),
+  CallExpression: exp => {
+    const expCallee = expand(exp.callee);
+    let expArguments = [new CircleTextSlice("-")];
+    if (exp.arguments && exp.arguments.length) {
+      expArguments = exp.arguments.map(expand);
+    }
+    return new CircleStackSlice([
+      expCallee,
+      new CircleGroupSlice(expArguments)
+    ].filter(v => v));
+  },
+  Identifier: i => new CircleTextSlice(i.name),
+  ArrowFunctionExpression: f => new CircleGroupSlice([
+    ...([f.params || []].map(expand)),
+    expand(f.body)
+  ]),
+  FunctionDeclaration: f => new CircleStackSlice([
+    new CircleTextSlice(`${f.id.name}()`),
+    new CircleGroupSlice([
+      ...((f.params || []).map(expand)),
+      expand(f.body)
     ])
-  }),
-  BinaryExpression: exp => ({
-    expand: [exp.left, exp.right],
-    andThen: leftAndRight => new CircleGroupSlice([
-      leftAndRight[0],
-      new CircleTextSlice(exp.operator),
-      leftAndRight[1]
+  ]),
+  FunctionExpression: f => new CircleStackSlice([
+    new CircleTextSlice(`${f.id ? f.id.name : "F"}()`),
+    new CircleGroupSlice([
+      ...((f.params || []).map(expand)),
+      expand(f.body)
     ])
-  }),
-  ReturnStatement: r => ({
-    expand: [r.argument],
-    andThen: result => [
-      new CircleTextSlice("return"),
-      ...result
-    ]
-  }),
-  ObjectExpression: r => ({
-    expand: r.properties,
-    andThen: slices => new CircleGroupSlice(slices)
-  }),
-  Property: p => ({
-    expand: [p.key, p.value]
-  }),
-  ArrayExpression: a => ({
-    expand: a.elements
-  }),
-  ForStatement: f => ({
-    expand: [
-      f.init,
-      f.test,
-      f.update,
-      f.body
-    ],
-    value: new CircleTextSlice("FOR"),
-    andThen: res => new CircleStackSlice([
-      new CircleGroupSlice(res.slice(0, 6)),
-      new CircleGroupSlice(res.slice(6, res.length))
-    ])
-  }),
-  UpdateExpression: u => ({
-    expand: u.argument,
-    andThen: arg => new CircleGroupSlice([
-      ...arg,
-      new CircleTextSlice(u.operator)
-    ])
-  })
-};
+  ]),
+  BlockStatement: b => new CircleGroupSlice(b.body.map(expand)),
+  VariableDeclaration: v => new CircleGroupSlice(v.declarations.map(expand)),
+  VariableDeclarator: v => new CircleGroupSlice([
+    expand(v.id),
+    new CircleTextSlice("<-"),
+    expand(v.init)
+  ]),
+  AssignmentExpression: a => new CircleGroupSlice([
+    expand(a.left),
+    new CircleTextSlice("<-"),
+    expand(a.right)
+  ]),
+  MemberExpression: m => new CircleGroupSlice([
+    expand(m.object),
+    expand(m.property)
+  ]),
+  NewExpression: n => new CircleGroupSlice([
+    expand(n.callee),
+    ...(n.arguments || []).map(expand)
+  ]),
+  UnaryExpression: u => new CircleGroupSlice([
+    new CircleTextSlice(u.operator),
+    expand(u.argument)
+  ]),
+  IfStatement: i => new CircleStackSlice([
+    new CircleGroupSlice([
+      new CircleTextSlice("IF"),
+      expand(i.test)
+    ]),
+    expand(i.consequent)
+  ]),
+  LogicalExpression: exp => new CircleGroupSlice([
+    expand(exp.left),
+    new CircleTextSlice(exp.operator),
+    expand(exp.right)
+  ]),
+  BinaryExpression: exp => new CircleGroupSlice([
+    expand(exp.left),
+    new CircleTextSlice(exp.operator),
+    expand(exp.right)
+  ]),
+  ReturnStatement: r => new CircleGroupSlice([
+    new CircleTextSlice("return"),
+    r.argument ? expand(r.argument) : null
+  ]),
+  ObjectExpression: r => new CircleGroupSlice([
+    new CircleTextSlice("{"),
+    ...(r.properties || []).map(expand),
+    new CircleTextSlice("}")
+  ]),
+  Property: p => new CircleGroupSlice([
+    expand(p.key),
+    expand(p.value)
+  ]),
+  ArrayExpression: r => new CircleGroupSlice([
+    new CircleTextSlice("["),
+    ...(r.elements || []).map(expand),
+    new CircleTextSlice("]")
+  ]),
+  ForStatement: f => new CircleStackSlice([
+    new CircleGroupSlice([
+      expand(f.init),
+      expand(f.test),
+      expand(f.update)
+    ]),
+    expand(f.body)
+  ]),
+  UpdateExpression: u => new CircleGroupSlice([
+    expand(u.argument),
+    new CircleTextSlice(u.operator)
+  ]),
+  TryStatement: t => expand(t.block),
+  ThisExpression: t => new CircleTextSlice("this")
+});
 
-function _ensureArray (v) {
-  if (Array.isArray(v)) {
-    return v;
-  }
-  return [v];
-}
-
-function _entityToSlices (ctx, node) {
-  if (Array.isArray(node)) {
-    return node.map(_entityToSlices.bind(null, ctx))
-    .reduce((m, arr) => m.concat(arr), []);
-  }
-  if (typesOfThings[node.type]) {
-    const thingHandler = typesOfThings[node.type];
-    const thingHandlerResult = thingHandler(node, ctx);
-    if (thingHandlerResult) {
-      let ret = [];
-      if (thingHandlerResult.value || thingHandlerResult.values) {
-        ret.push(..._ensureArray(thingHandlerResult.value || thingHandlerResult.values));
-      }
-      if (thingHandlerResult.expand) {
-        _ensureArray(thingHandlerResult.expand).forEach(expandSlice => {
-          ret.push(..._entityToSlices(ctx, expandSlice));
-        });
-      }
-      if (thingHandlerResult.andThen) {
-        ret = _ensureArray(thingHandlerResult.andThen(ret));
-      }
-      ctx.slicesByPosition[`${node.start}:${node.end}`] = ret;
-      return ret;
+export function convertScriptToSlices (script) {
+  const slicesByPosition = [];
+  let entityExpansions;
+  function expand (node) {
+    if (!node) {
+      return null;
+    }
+    const expandEntity = entityExpansions[node.type];
+    if (expandEntity) {
+      const result = expandEntity(node);
+      slicesByPosition[`${node.start}:${node.end}`] = result;
+      return result;
+    }
+    else {
+      return null;
     }
   }
-  return [];
-}
-
-export function scriptToCircle (script) {
-  const ctx = {
-    slicesByPosition: {}
-  };
-  return [ctx, _entityToSlices(ctx, script)];
+  entityExpansions = bindEntityExpansions(expand);
+  return [{ slicesByPosition }, expand(script)];
 }

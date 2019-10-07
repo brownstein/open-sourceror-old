@@ -4,11 +4,8 @@ import {
   loadAllFonts
 } from "./text";
 import {
-  scriptToCircle
-} from "./js-to-runes";
-import {
   convertScriptToSlices
-} from "./js-to-runes-2";
+} from "./js-to-runes";
 import {
   CircleGroupSlice,
   CircleStackSlice,
@@ -20,8 +17,6 @@ const RPGLangLib = {
   createText,
   createRunicText,
   loadAllFonts,
-
-  scriptToCircle,
 
   CircleGroupSlice,
   CircleStackSlice,
