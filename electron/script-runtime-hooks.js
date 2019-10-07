@@ -1,6 +1,8 @@
 "use strict";
+const acorn = require("acorn");
+const fs = require("fs");
 
-function hookIntoInterpreter (interpreter, scope) {
+function initScope (interpreter, scope) {
   interpreter.setProperty(
     scope,
     "on",
@@ -57,36 +59,27 @@ function hookIntoInterpreter (interpreter, scope) {
       }
     )
   );
-
-  return;
-
-  const PROMISE = interpreter.createNativeFunction(
-    function (nativeCB) {
-      if (interpreter.calledWithNew()) {
-        console.log("new Promise");
-      }
-    },
-    true
-  );
-
-  interpreter.setProperty(scope, "Promise", PROMISE);
-
-  interpreter.setProperty(
-    PROMISE,
-    "resolve",
-    interpreter.createNativeFunction(
-      function (resolveValue) {
-        console.log("RESOLVE");
-        console.log(resolveValue);
-        const resolution = Promise.resolve(resolveValue);
-        return interpreter.createObject({
-          then: interpreter.createNativeFunction(thenBody => {
-            console.log(thenBody);
-          })
-        });
-      }
-    )
-  );
 }
 
-module.exports = hookIntoInterpreter;
+function doPolyfills (interpreter) {
+  const promisePolyfill = fs.readFileSync("./electron/promise-polyfill.js");
+  const _ast = interpreter.ast;
+  const _stateStack = interpreter.stateStack;
+  interpreter.ast = acorn.parse(promisePolyfill, Interpreter.PARSE_OPTIONS);
+  interpreter.stripLocations_(interpreter.ast, undefined, undefined);
+  interpreter.stateStack = [{
+    node: interpreter.ast,
+    scope: interpreter.global,
+    thisExpression: interpreter.global,
+    done: false
+  }];
+  interpreter.run();
+  interpreter.value = interpreter.UNDEFINED;
+  interpreter.ast = _ast;
+  interpreter.stateStack = _stateStack;
+}
+
+module.exports = {
+  doPolyfills,
+  initScope
+};
