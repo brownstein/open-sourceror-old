@@ -59,9 +59,9 @@ function createWindow () {
 
     // init all the things
   mainWindow = new BrowserWindow({
-    width: cmdArgs.dev ? 800 : 300,
-    height: cmdArgs.dev ? 500 : 300,
-    title: cmdArgs.file ? `RPGLang - ${cmdArgs.file}` : "RPGLand",
+    width: cmdArgs.dev ? 1000 : 700,
+    height: cmdArgs.dev ? 700 : 700,
+    title: cmdArgs.file ? `Open Sourceror - ${cmdArgs.file}` : "Open Sourceror",
     webPreferences: {
       nodeIntegration: true
     }

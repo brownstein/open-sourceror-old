@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://RGPLang/./src/style.less"],"names":[],"mappings":"AAAA;AACA;AACA;AACA;AACA","file":"index.css","sourcesContent":["html,\nbody {\n  margin: 0;\n  padding: 0;\n}\n"],"sourceRoot":""}

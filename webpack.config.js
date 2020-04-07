@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
-const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // build variant for electron renderer
 const isDev = (process.env.NODE_ENV === "development");
@@ -38,21 +38,23 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        loader: MiniCSSExtractPlugin.loader,
-        options: {
-          fallback: "style-loader",
-          use: ["css-loader", "less-loader"],
-          publicPath: 'dist/'
-        }
-      },
-      {
-        test: /\.less$/,
-        loader: MiniCSSExtractPlugin.loader,
-        options: {
-          fallback: "style-loader",
-          use: ["css-loader"],
-          publicPath: 'dist/'
-        }
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
+            loader: "css-loader",
+          },
+          {
+            loader: "less-loader",
+            options: {
+              lessOptions: {
+                strictMath: true,
+                noIeCompat: true,
+              },
+            },
+          },
+        ],
       },
       {
         test: /[^s][^d][^f]\.(jpg|png)$/,
@@ -85,6 +87,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new MiniCssExtractPlugin(),
     new webpack.ProvidePlugin({
       React: "react",
       THREE: "three"
@@ -93,10 +96,6 @@ module.exports = {
       "process.env.NODE_ENV": JSON.stringify(isDev ? "development" : "production"),
       "process.env.DEBUG": `(process ? process.env.DEBUG : null) || ${JSON.stringify(process.env.DEBUG)}`,
       "window.__DEV__": isDev ? "true" : "false"
-    }),
-    new MiniCSSExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[name].css"
     }),
     !isDev && new UglifyJSPlugin({
       include: /\.min\.js$/

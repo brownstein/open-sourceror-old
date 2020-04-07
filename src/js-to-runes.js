@@ -121,7 +121,7 @@ const bindEntityExpansions = expand => ({
 });
 
 export function convertScriptToSlices (script) {
-  const slicesByPosition = [];
+  const slicesByPosition = {};
   let entityExpansions;
   function expand (node) {
     if (!node) {
