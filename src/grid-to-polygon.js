@@ -112,7 +112,7 @@ class Block {
     }
     const edge = this.edges[side];
     const neighborEdge = neighbor.edges[oppositeSide];
-    if (edge !== null && neighborEdge !== null) {
+    if (edge && neighborEdge) {
       edge.merged = true;
       neighborEdge.merged = true;
       edge.prev.next = neighborEdge.next;
@@ -140,16 +140,21 @@ class AngleBlock extends Block {
     super(x, y, size);
     this.edges = {
       left:   new Edge(this, x, y + size, 0, -1),
-      right:  new Edge(this, x, y, 1, 1),
+      topright:  new Edge(this, x, y, 1, 1),
       bottom: new Edge(this, x + size, y + size, -1, 0)
     };
-    this.edges.top = this.edges.right;
     this.edges.left.prev = this.edges.bottom;
-    this.edges.left.next = this.edges.right;
-    this.edges.right.prev = this.edges.left;
-    this.edges.right.next = this.edges.bottom;
-    this.edges.bottom.prev = this.edges.right;
+    this.edges.left.next = this.edges.topright;
+    this.edges.topright.prev = this.edges.left;
+    this.edges.topright.next = this.edges.bottom;
+    this.edges.bottom.prev = this.edges.topright;
     this.edges.bottom.next = this.edges.left;
+  }
+  getRightmostEdge () {
+    return this.edges.topright;
+  }
+  getTopmostEdge () {
+    return this.edges.topright;
   }
 }
 
