@@ -18,7 +18,7 @@ import "./style.less";
 let renderEl;
 let scene, camera, renderer;
 
-const windowSize = { width: 300, height: 300 };
+const windowSize = { width: 400, height: 400 };
 
 export default function initScene() {
   const containerEl = document.getElementById("container");
@@ -34,8 +34,8 @@ export default function initScene() {
   // set up three.js world and renderer
   scene = new Scene();
   camera = new OrthographicCamera(
-    -100, 100,
-    -100, 100,
+    -100, 300,
+    -100, 300,
     -100, 100
   );
   camera.lookAt(new Vector3(0, 0, -1));
@@ -59,48 +59,24 @@ export default function initScene() {
   const triverts = [{ x: 0, y: 0 }, { x: 10, y: -50 }, { x: 50, y: 0 }];
   const thing = new SimpleShape(triverts, {
     mass: 5,
-    damping: 0.5
+    damping: 0.5,
+    angularVelocity: 20
   });
 
   scene.add(thing.mesh);
   world.addBody(thing.body);
 
-  // const groundVerts = [
-  //   { x: 0, y: 0 },
-  //   { x: 200, y: -30 },
-  //   { x: 200, y: 10 },
-  //   { x: 0, y: 10 },
-  // ];
-  // const _ground = new SimpleShape(groundVerts, {
-  //   //isStatic: true,
-  //   mass: 0,
-  //   fixedY: true,
-  //   fixedRotation: true,
-  //   position: [0, 80]
-  // });
-
-  const groundPolygons = traverseGrid(levelData, levelDataWidth, 32);
+  const groundPolygons = traverseGrid(levelData, levelDataWidth, 24);
 
   console.log(groundPolygons);
 
-  const groundPolygons = [
-    [[[0, 0], [-10, -5], [0, -5]]],
-    [[[-10, -5], [-20, -10], [-10, -10]]]
-  ];
-
-  groundPolygons.forEach(g => g.forEach(p => p.forEach(v => {
-    v[0] *= -5;
-    v[1] *= -5;
-    v[0] -= 40;
-    v[1] += 30;
-  })));
-
   const groundShapes = groundPolygons.map(g => {
-    return new SimpleShape(
-      g[0].map(([x, y]) => ({ x, y })),
+    return new ComplexShape(
+      g,
       {
         mass: 0,
-        position: [...g[0][1]]
+        isStatic: true,
+        position: [-96, -96]
       }
     );
   });
@@ -121,13 +97,26 @@ export default function initScene() {
     groundShapes.forEach(p => p.syncMeshWithBody());
     renderer.render(scene, camera);
     requestAnimationFrame(renderNextFrame);
+    groundShapes[0].angle += 0.05;
   }
   requestAnimationFrame(renderNextFrame);
 }
 
 const levelData = [
-  1,1,1,1,
-  1,0,0,1,
-  1,1,1,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,
+  1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,
+  1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,
+  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,1,2,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,1,2,0,0,0,0,0,0,0,0,0,0,1,
+  1,0,0,1,1,1,2,0,0,0,0,0,0,0,0,1,
+  1,0,0,1,1,2,1,2,0,0,0,0,0,0,0,1,
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 ];
-const levelDataWidth = 4;
+const levelDataWidth = 16;
