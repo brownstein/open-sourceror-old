@@ -144,7 +144,7 @@ class AngleBlock extends Block {
   constructor (x, y, size, angleType) {
     super(x, y, size);
     switch (angleType) {
-      case 2:
+      case 'topright':
         delete this.edges.top;
         delete this.edges.right;
         this.edges.topright = new Edge(this, x, y, 1, 1);
@@ -153,7 +153,7 @@ class AngleBlock extends Block {
         this.edges.topright.next = this.edges.bottom;
         this.edges.bottom.prev = this.edges.topright;
         break;
-      case 3:
+      case 'bottomright':
         delete this.edges.right;
         delete this.edges.bottom;
         this.edges.bottomright = new Edge(this, x + size, y, -1, 1);
@@ -162,7 +162,7 @@ class AngleBlock extends Block {
         this.edges.bottomright.next = this.edges.left;
         this.edges.left.prev = this.edges.bottomright;
         break;
-      case 4:
+      case 'bottomleft':
         delete this.edges.bottom;
         delete this.edges.left;
         this.edges.bottomleft = new Edge(this, x + size, y + size, -1, -1);
@@ -171,7 +171,7 @@ class AngleBlock extends Block {
         this.edges.bottomleft.next = this.edges.top;
         this.edges.top.prev = this.edges.bottomleft;
         break;
-      case 5:
+      case 'topleft':
         delete this.edges.left;
         delete this.edges.top;
         this.edges.topleft = new Edge(this, x, y + size, 1, -1);
@@ -214,7 +214,13 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
         case 3:
         case 4:
         case 5:
-          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, sourceVal);
+          const angleType = [
+            'topright',
+            'bottomright',
+            'bottomleft',
+            'topleft'
+          ][sourceVal - 2];
+          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, angleType);
           break;
       }
       column.push(block);

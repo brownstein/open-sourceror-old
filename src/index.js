@@ -15,6 +15,8 @@ import { traverseGrid } from "./grid-to-polygon";
 window.decomp = decomp;
 import "./style.less";
 
+import level from "./tiles-level-test.json";
+
 let renderEl;
 let scene, camera, renderer;
 
@@ -66,7 +68,12 @@ export default function initScene() {
   scene.add(thing.mesh);
   world.addBody(thing.body);
 
-  const groundPolygons = traverseGrid(levelData, levelDataWidth, 24);
+  console.log(level);
+  const _levelData = level.layers[0].data;
+  const _levelDataWidth = level.layers[0].width;
+  const _levelDataTileWidth = level.tilewidth;
+
+  const groundPolygons = traverseGrid(_levelData, _levelDataWidth, _levelDataTileWidth);
 
   console.log(groundPolygons);
 
@@ -123,18 +130,18 @@ const levelData = [
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+  1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
   1,0,0,0,0,0,0,0,0,5,1,1,2,0,0,1,
   1,0,0,0,0,0,0,0,0,1,3,4,1,0,0,1,
   1,0,0,0,0,0,0,0,0,1,2,5,1,0,0,1,
-  1,1,0,0,0,0,0,0,0,4,1,1,3,0,0,1,
+  1,2,0,0,0,0,0,0,0,4,1,1,3,0,0,1,
   1,1,1,2,0,0,0,0,0,0,0,0,0,0,0,1,
-  1,1,1,1,2,0,0,0,0,0,0,0,0,0,0,1,
-  1,0,0,4,1,1,2,0,0,0,0,0,0,0,0,1,
+  1,1,1,1,2,0,0,0,0,5,1,2,0,0,0,1,
+  1,0,0,4,1,1,2,0,0,4,1,3,0,0,0,1,
   1,1,0,0,1,1,1,2,0,0,0,0,0,0,0,1,
-  1,1,0,0,1,1,1,4,2,0,0,0,0,0,0,1,
+  1,1,0,0,1,1,1,1,2,0,0,0,0,0,0,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 ];
 // const levelData = [
