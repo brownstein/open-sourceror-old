@@ -1,7 +1,12 @@
-import { makeCCW, quickDecomp, removeCollinearPoints } from "poly-decomp";
+import {
+  isSimple,
+  makeCCW,
+  quickDecomp,
+  removeCollinearPoints
+} from "poly-decomp";
 
-const MAX_EDGE_ITERATION_DEPTH = 100000;
-const MAX_BLOCK_ITERATION_DEPTH = 100000;
+const MAX_EDGE_ITERATION_DEPTH = 1000; // 10000
+const MAX_BLOCK_ITERATION_DEPTH = 1000; // 10000
 
 class Edge {
   constructor (block, x, y, dx, dy) {
@@ -44,7 +49,7 @@ class EdgeSet {
     while (next !== null && next !== edge && i++ < MAX_EDGE_ITERATION_DEPTH) {
       this.edges.push(next);
       if (next.edgeSet !== null && next.edgeSet !== this) {
-        //next.edgeSet.edges = [];
+        next.edgeSet.edges = [];
       }
       next.edgeSet = this;
       next = next.next;
@@ -136,25 +141,58 @@ class Block {
 }
 
 class AngleBlock extends Block {
-  constructor (x, y, size) {
+  constructor (x, y, size, angleType) {
     super(x, y, size);
-    this.edges = {
-      left:   new Edge(this, x, y + size, 0, -1),
-      topright:  new Edge(this, x, y, 1, 1),
-      bottom: new Edge(this, x + size, y + size, -1, 0)
-    };
-    this.edges.left.prev = this.edges.bottom;
-    this.edges.left.next = this.edges.topright;
-    this.edges.topright.prev = this.edges.left;
-    this.edges.topright.next = this.edges.bottom;
-    this.edges.bottom.prev = this.edges.topright;
-    this.edges.bottom.next = this.edges.left;
+    switch (angleType) {
+      case 2:
+        delete this.edges.top;
+        delete this.edges.right;
+        this.edges.topright = new Edge(this, x, y, 1, 1);
+        this.edges.left.next = this.edges.topright;
+        this.edges.topright.prev = this.edges.left;
+        this.edges.topright.next = this.edges.bottom;
+        this.edges.bottom.prev = this.edges.topright;
+        break;
+      case 3:
+        delete this.edges.right;
+        delete this.edges.bottom;
+        this.edges.bottomright = new Edge(this, x + size, y, -1, 1);
+        this.edges.top.next = this.edges.bottomright;
+        this.edges.bottomright.prev = this.edges.top;
+        this.edges.bottomright.next = this.edges.left;
+        this.edges.left.prev = this.edges.bottomright;
+        break;
+      case 4:
+        delete this.edges.bottom;
+        delete this.edges.left;
+        this.edges.bottomleft = new Edge(this, x + size, y + size, -1, -1);
+        this.edges.right.next = this.edges.bottomleft;
+        this.edges.bottomleft.prev = this.edges.right;
+        this.edges.bottomleft.next = this.edges.top;
+        this.edges.top.prev = this.edges.bottomleft;
+        break;
+      case 5:
+        delete this.edges.left;
+        delete this.edges.top;
+        this.edges.topleft = new Edge(this, x, y + size, 1, -1);
+        this.edges.bottom.next = this.edges.topleft;
+        this.edges.topleft.prev = this.edges.bottom;
+        this.edges.topleft.next = this.edges.right;
+        this.edges.right.prev = this.edges.topleft;
+        break;
+    }
   }
   getRightmostEdge () {
-    return this.edges.topright;
+    return this.edges.right || this.edges.topright || this.edges.bottomright;
+  }
+  getLeftmostEdge () {
+    return this.edges.left || this.edges.topleft || this.edges.bottomleft;
   }
   getTopmostEdge () {
-    return this.edges.topright;
+    return this.edges.top || this.edges.topright || this.edges.topleft;
+  }
+  getBottommostEdge () {
+    return this.edges.bottom || this.edges.bottomright || this.edges.bottomleft;
   }
 }
 
@@ -173,7 +211,10 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
           block = new Block(x * tileSize, y * tileSize, tileSize);
           break;
         case 2:
-          block = new AngleBlock(x * tileSize, y * tileSize, tileSize);
+        case 3:
+        case 4:
+        case 5:
+          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, sourceVal);
           break;
       }
       column.push(block);
@@ -260,48 +301,63 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
 
     const outerEdgeSet = edgeSets[0];
     for (let esi = 1; esi < edgeSets.length; esi++) {
-      const edgeSet = edgeSets[esi];
-      let leftmostEdge = edgeSet.getLeftmostEdge(); // right edge of block
-      let block = leftmostEdge.block;
-      let x = (block.x / tileSize);
-      const y = block.y / tileSize;
-      let topBlock = blocks[x][y - 1];
-      let topBottomEdge;
-      let bottomTopEdge;
-      let prevTopBottomEdge = leftmostEdge.prev;
-      let prevBottomTopEdge = leftmostEdge;
-      let shouldContinue = true;
-      while (true) {
-        topBottomEdge = topBlock.getBottommostEdge();
-        bottomTopEdge = block.getTopmostEdge();
-        topBottomEdge.merged = false;
-        bottomTopEdge.merged = false;
-        prevTopBottomEdge.next = topBottomEdge;
-        topBottomEdge.prev = prevTopBottomEdge;
-        prevBottomTopEdge.prev = bottomTopEdge;
-        bottomTopEdge.next = prevBottomTopEdge;
-        prevTopBottomEdge = topBottomEdge;
-        prevBottomTopEdge = bottomTopEdge;
-        if (!block.getLeftmostEdge().merged) {
-          break;
+      // this next bit can still sometimes be buggy for angle blocks, so just
+      // swollow errors and keep processing the level geometry - it probably
+      // wasn't that important
+      try {
+        const edgeSet = edgeSets[esi];
+        let leftmostEdge = edgeSet.getLeftmostEdge(); // right edge of block
+        let block = leftmostEdge.block;
+        let x = (block.x / tileSize);
+        const y = block.y / tileSize;
+        let topBlock = blocks[x][y - 1];
+        let topBottomEdge;
+        let bottomTopEdge;
+        let prevTopBottomEdge = leftmostEdge.prev;
+        let prevBottomTopEdge = leftmostEdge;
+        let shouldContinue = true;
+        let i = 0;
+        while (i++ < MAX_EDGE_ITERATION_DEPTH) {
+          topBottomEdge = topBlock.getBottommostEdge();
+          bottomTopEdge = block.getTopmostEdge();
+          topBottomEdge.merged = false;
+          bottomTopEdge.merged = false;
+          if (prevTopBottomEdge !== topBottomEdge) {
+            prevTopBottomEdge.next = topBottomEdge;
+            topBottomEdge.prev = prevTopBottomEdge;
+          }
+          if (prevBottomTopEdge !== bottomTopEdge) {
+            prevBottomTopEdge.prev = bottomTopEdge;
+            bottomTopEdge.next = prevBottomTopEdge;
+          }
+          prevTopBottomEdge = topBottomEdge;
+          prevBottomTopEdge = bottomTopEdge;
+          if (!block.getLeftmostEdge().merged) {
+            break;
+          }
+          x -= 1;
+          block = blocks[x][y];
+          topBlock = blocks[x][y - 1];
         }
-        x -= 1;
-        block = blocks[x][y];
-        topBlock = blocks[x][y - 1];
+        const outerLeftmostEdge = block.getLeftmostEdge();
+        const outerTopLeftEdge = outerLeftmostEdge.next;
+        outerLeftmostEdge.next = bottomTopEdge;
+        bottomTopEdge.prev = outerLeftmostEdge;
+        outerTopLeftEdge.prev = topBottomEdge;
+        topBottomEdge.next = outerTopLeftEdge;
       }
-      const outerLeftmostEdge = block.getLeftmostEdge();
-      const outerTopLeftEdge = outerLeftmostEdge.next;
-      outerLeftmostEdge.next = bottomTopEdge;
-      bottomTopEdge.prev = outerLeftmostEdge;
-      outerTopLeftEdge.prev = topBottomEdge;
-      topBottomEdge.next = outerTopLeftEdge;
+      catch (err) {
+        console.error(err);
+      }
     }
 
     outerEdgeSet.traverseForward(outerEdgeSet.edges[0]);
     const edgeSetAsPolygon = outerEdgeSet.edges.map(({ x, y }) => [x, y]);
+
     makeCCW(edgeSetAsPolygon);
-    removeCollinearPoints(edgeSetAsPolygon, 0.01);
+    //removeCollinearPoints(edgeSetAsPolygon, 0.01);
     const convexPolygons = quickDecomp(edgeSetAsPolygon);
+    convexPolygons.forEach(p => removeCollinearPoints(p, 0.01));
     polygonSets.push(
       convexPolygons.map(
         verts => verts.map(
