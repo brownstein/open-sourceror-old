@@ -61,7 +61,7 @@ module.exports = {
         loader: "url-loader?limit=10000"
       },
       {
-        test: /-sdf\.(fnt|png)$/,
+        test: /(-sdf|.*)\.(fnt|png)$/,
         loader: "file-loader",
         options: {
           publicPath: 'dist/'

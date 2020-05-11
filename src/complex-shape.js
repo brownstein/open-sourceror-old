@@ -7,6 +7,8 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
+  TextureLoader,
+  Vector2,
   Vector3,
 } from "three";
 import {
@@ -23,8 +25,7 @@ const _simpleEdgeMaterial = new MeshBasicMaterial({
 });
 
 export default class ComplexShape {
-  constructor (polygons, p2Props = {}) {
-
+  constructor (polygons, tiles = [], p2Props = {}) {
     const _simpleMaterial = new MeshBasicMaterial({
       side: DoubleSide,
       color: new Color(
@@ -34,7 +35,6 @@ export default class ComplexShape {
       )
     });
 
-    console.log(polygons);
     const geometry = new Geometry();
     this.body = new Body(p2Props);
 
@@ -67,6 +67,40 @@ export default class ComplexShape {
     this.mesh = new Object3D();
     this.mesh.add(fillMesh);
     this.mesh.add(edgeMesh);
+
+    fillMesh.visible = false;
+
+    // add tiles
+    const textureLoader = new TextureLoader();
+    const texture = textureLoader.load(tiles[0].tile.srcImage);
+    const tileMat = new MeshBasicMaterial({
+      side: DoubleSide,
+      map: texture,
+      transparent: true
+    });
+    tiles.forEach(tileInstance => {
+      const tile = tileInstance.tile;
+      const tileGeom = new Geometry();
+      tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y, 0));
+      tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y, 0));
+      tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y + tile.srcHeight, 0));
+      tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y + tile.srcHeight, 0));
+      tileGeom.faces.push(new Face3(0, 1, 2));
+      tileGeom.faces.push(new Face3(0, 2, 3));
+      [
+        [[0, 0], [1, 0], [1, 1]],
+        [[0, 0], [1, 1], [0, 1]]
+      ].forEach(faceUVs => {
+        tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
+        new Vector2(
+          (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
+          1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
+        )));
+      });
+      const tileMesh = new Mesh(tileGeom, tileMat);
+      tileMesh.position.z = 0.5;
+      this.mesh.add(tileMesh);
+    });
   }
   syncMeshWithBody () {
     this.mesh.position.x = this.body.interpolatedPosition[0];

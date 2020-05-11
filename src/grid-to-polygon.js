@@ -91,10 +91,12 @@ const oppositeSides = {
 };
 
 class AbstractBlock {
-  constructor (x, y) {
+  constructor (x, y, blockType, tileDef) {
     this.x = x;
     this.y = y;
+    this.blockType = blockType;
     this.blockSet = null;
+    this.tileDef = tileDef;
   }
   mergeNeighborEdge (neighbor, side) {
     const oppositeSide = oppositeSides[side];
@@ -127,8 +129,8 @@ class AbstractBlock {
 }
 
 class Block extends AbstractBlock {
-  constructor (x, y, size) {
-    super(x, y);
+  constructor (x, y, size, blockType, tileDef) {
+    super(x, y, blockType, tileDef);
     this.edges = {
       left:   new Edge(this, x, y + size, 0, -1),
       top:    new Edge(this, x, y, 1, 0),
@@ -147,17 +149,17 @@ class Block extends AbstractBlock {
 }
 
 class CustomBlock extends AbstractBlock {
-  constructor (x, y, size, tileDef) {
-    super(x, y);
+  constructor (x, y, size, blockType, tileDef) {
+    super(x, y, blockType, tileDef);
     this.edges = {};
     this.sideMapping = tileDef.sideMapping;
     const edgesByIndex = tileDef.sides.map(side => {
       const edge = new Edge(
         this,
-        x + side.x,
-        y + side.y,
-        side.dx,
-        side.dy
+        x + side.x * size,
+        y + side.y * size,
+        side.dx * size,
+        side.dy * size
       );
       this.edges[side.name] = edge;
       return edge;
@@ -184,8 +186,8 @@ class CustomBlock extends AbstractBlock {
 }
 
 class AngleBlock extends Block {
-  constructor (x, y, size, angleType) {
-    super(x, y, size);
+  constructor (x, y, size, blockType, angleType) {
+    super(x, y, blockType);
     switch (angleType) {
       case 'topright':
         delete this.edges.top;
@@ -223,16 +225,6 @@ class AngleBlock extends Block {
         this.edges.topleft.next = this.edges.right;
         this.edges.right.prev = this.edges.topleft;
         break;
-      case 'topright2':
-        this.edges.top.dx = 0.5;
-        this.edges.right.dy = 0.5;
-        this.edges.right.y = y + size / 2;
-        this.edges.topright = new Edge(this, x + size / 2, y, 0.5, 0.5);
-        this.edges.top.next = this.edges.topright;
-        this.edges.topright.prev = this.edges.top;
-        this.edges.topright.next = this.edges.right;
-        this.edges.right.prev = this.edges.topright;
-        break;
     }
   }
   getRightmostEdge () {
@@ -263,30 +255,28 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
         case 0:
           break;
         case 1:
-          block = new Block(x * tileSize, y * tileSize, tileSize);
+          block = new Block(x * tileSize, y * tileSize, tileSize, 'base');
           break;
         case 2:
         case 3:
         case 4:
         case 5:
-        case 6:
           const angleType = [
             'topright',
             'bottomright',
             'bottomleft',
-            'topleft',
-            'topright2'
+            'topleft'
           ][sourceVal - 2];
-          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, angleType);
+          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, 'base', angleType);
           break;
         default:
           const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
-          if (tileDef && tileDef.type === "ground") {
+          if (tileDef && tileDef.type) {
             if (tileDef.sides) {
-              block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef);
+              block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
             }
             else {
-              block = new Block(x * tileSize, y * tileSize, tileSize);
+              block = new Block(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
             }
           }
           break;
@@ -303,10 +293,10 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
       }
       const leftNeighbor = x > 0 ? blocks[x - 1][y] : null;
       const topNeighbor = y > 0 ? blocks[x][y - 1] : null;
-      if (leftNeighbor !== null) {
+      if (leftNeighbor !== null && leftNeighbor.blockType === block.blockType) {
         block.mergeNeighborEdge(leftNeighbor, "left");
       }
-      if (topNeighbor !== null) {
+      if (topNeighbor !== null && topNeighbor.blockType === block.blockType) {
         block.mergeNeighborEdge(topNeighbor, "top");
       }
     }
@@ -329,11 +319,18 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
       const blockSet = [];
       const frontier = [];
       function expand(nextX, nextY) {
-        if (nextX < 0 || nextX >= gridWidth || nextY < 0 || nextY >= gridHeight) {
+        if (
+          nextX < 0 || nextX >= gridWidth ||
+          nextY < 0 || nextY >= gridHeight
+        ) {
           return false;
         }
         const nextBlock = blocks[nextX][nextY];
-        if (nextBlock === null || nextBlock.blockSet !== null) {
+        if (
+          nextBlock === null ||
+          nextBlock.blockSet !== null ||
+          nextBlock.blockType !== block.blockType
+        ) {
           return false;
         }
         blockSet.push(nextBlock);
@@ -355,7 +352,7 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
   }
   // trace all edge loops in block set
   // connect edge loops to each other
-  const polygonSets = [];
+  const polygonAndTileSets = [];
   for (let bsi = 0; bsi < blockSets.length; bsi++) {
     const blockSet = blockSets[bsi];
     const edgeSets = [];
@@ -435,14 +432,23 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
     // removeCollinearPoints(edgeSetAsPolygon, 0.01);
     const convexPolygons = quickDecomp(edgeSetAsPolygon);
     convexPolygons.forEach(p => removeCollinearPoints(p, 0.01));
-    polygonSets.push(
-      convexPolygons.map(
-        verts => verts.map(
-          ([x, y]) => ({ x, y })
-        )
+    const polygons = convexPolygons.map(
+      verts => verts.map(
+        ([x, y]) => ({ x, y })
       )
     );
+    const tiles = blockSet.map(block => ({
+      x: block.x,
+      y: block.y,
+      width: tileSize,
+      heigth: tileSize,
+      tile: block.tileDef
+    }));
+    polygonAndTileSets.push({
+      polygons,
+      tiles
+    });
   }
 
-  return polygonSets;
+  return polygonAndTileSets;
 }

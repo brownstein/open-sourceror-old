@@ -23,6 +23,7 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="133" type="tree"/>
  <tile id="177" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="6.95067" y="17.0836">
@@ -41,6 +42,11 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="188" type="tree"/>
+ <tile id="189" type="tree"/>
+ <tile id="190" type="tree"/>
+ <tile id="191" type="tree"/>
+ <tile id="192" type="tree"/>
  <tile id="194" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="3" x="9.36982" y="-0.171923">
@@ -77,6 +83,14 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="244" type="tree"/>
+ <tile id="245" type="tree"/>
+ <tile id="246" type="tree"/>
+ <tile id="247" type="tree"/>
+ <tile id="248" type="tree"/>
+ <tile id="249" type="tree"/>
+ <tile id="250" type="tree"/>
+ <tile id="251" type="tree"/>
  <tile id="253" type="ground"/>
  <tile id="254" type="ground"/>
  <tile id="255" type="ground"/>
@@ -104,15 +118,38 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="302" type="tree"/>
+ <tile id="303" type="tree"/>
+ <tile id="304" type="tree"/>
+ <tile id="305" type="tree"/>
+ <tile id="306" type="tree"/>
+ <tile id="307" type="tree"/>
+ <tile id="308" type="tree"/>
+ <tile id="309" type="tree"/>
  <tile id="311" type="ground"/>
  <tile id="312" type="ground"/>
  <tile id="313" type="ground"/>
  <tile id="333" type="ground"/>
  <tile id="334" type="ground"/>
  <tile id="335" type="ground"/>
+ <tile id="360" type="tree"/>
+ <tile id="361" type="tree"/>
+ <tile id="362" type="tree"/>
+ <tile id="363" type="tree"/>
+ <tile id="364" type="tree"/>
+ <tile id="365" type="tree"/>
+ <tile id="366" type="tree"/>
+ <tile id="367" type="tree"/>
  <tile id="369" type="ground"/>
  <tile id="370" type="ground"/>
  <tile id="371" type="ground"/>
+ <tile id="418" type="tree"/>
+ <tile id="419" type="tree"/>
+ <tile id="420" type="tree"/>
+ <tile id="421" type="tree"/>
+ <tile id="422" type="tree"/>
+ <tile id="423" type="tree"/>
+ <tile id="424" type="tree"/>
  <tile id="427" type="ground"/>
  <tile id="428" type="ground"/>
  <tile id="429" type="ground"/>
@@ -127,6 +164,9 @@
  <tile id="469" type="ground"/>
  <tile id="473" type="ground"/>
  <tile id="474" type="ground"/>
+ <tile id="477" type="tree"/>
+ <tile id="479" type="tree"/>
+ <tile id="480" type="tree"/>
  <tile id="525" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="15.9889" y="12.2065">
@@ -150,6 +190,7 @@
  </tile>
  <tile id="531" type="ground"/>
  <tile id="532" type="ground"/>
+ <tile id="538" type="tree"/>
  <tile id="699" type="ground"/>
  <tile id="700" type="ground"/>
  <tile id="701" type="ground"/>

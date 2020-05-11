@@ -1,24 +1,43 @@
 import clipping from "polygon-clipping";
 
 const ANGLE_TOLERANCE = 0.05;
-const DISTANCE_TOLERANCE = 1;
+const DISTANCE_TOLERANCE = 0.05;
 
-export function loadTileset (tilesetSrc) {
-  const { tilewidth, tileheight } = tilesetSrc;
+export function loadTileset (tilesetSrc, tilesetImage) {
+  const {
+    tilewidth,
+    tileheight,
+    columns,
+    imagewidth,
+    imageheight
+  } = tilesetSrc;
   const tileSquare = [[
     [0, 0],
-    [tilewidth, 0],
-    [tilewidth, tileheight],
-    [0, tileheight]
+    [1, 0],
+    [1, 1],
+    [0, 1]
   ]];
   const tiles = tilesetSrc.tiles.map(tileSrc => {
     const { id, type, objectgroup = null } = tileSrc;
-    const tile = { id, type, sides: null, sideMapping: null };
+    const tileIndex = id;
+    const tile = {
+      id,
+      type,
+      sides: null,
+      sideMapping: null,
+      srcWidth: tilewidth,
+      srcHeight: tileheight,
+      srcX: tilewidth * (tileIndex % columns),
+      srcY: tileheight * Math.floor(tileIndex / columns),
+      srcImage: tilesetImage,
+      srcImageWidth: imagewidth,
+      srcImageHeight: imageheight
+    };
     if (objectgroup && objectgroup.objects[0].polygon) {
       const object = objectgroup.objects[0];
       const rawPolygon = object.polygon.map(v => ([
-        v.x + object.x,
-        v.y + object.y
+        (v.x + object.x) / tilewidth,
+        (v.y + object.y) / tileheight
       ]));
       const clippedPolygons = clipping.intersection(tileSquare, [rawPolygon]);
       const clippedPolygon = clippedPolygons[0][0];
@@ -40,7 +59,7 @@ export function loadTileset (tilesetSrc) {
             side.name = "top";
             sideMapping.top = "top";
           }
-          else if (Math.abs(side.y - tileheight) < DISTANCE_TOLERANCE) {
+          else if (Math.abs(side.y - 1) < DISTANCE_TOLERANCE) {
             side.name = "bottom";
             sideMapping.bottom = "bottom";
           }
@@ -50,7 +69,7 @@ export function loadTileset (tilesetSrc) {
             side.name = "left";
             sideMapping.left = "left";
           }
-          else if (Math.abs(side.x - tilewidth) < DISTANCE_TOLERANCE) {
+          else if (Math.abs(side.x - 1) < DISTANCE_TOLERANCE) {
             side.name = "right";
             sideMapping.right = "right";
           }

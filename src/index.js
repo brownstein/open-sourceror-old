@@ -18,6 +18,7 @@ import "./style.less";
 
 import level1 from "./tilesets/magic-cliffs/level1.json";
 import tilesetJson from "./tilesets/magic-cliffs/tileset.json";
+import tilesetPng from "./tilesets/magic-cliffs/PNG/tileset.png";
 
 let renderEl;
 let scene, camera, renderer;
@@ -70,22 +71,25 @@ export default function initScene() {
   scene.add(thing.mesh);
   world.addBody(thing.body);
 
-  const tileset = loadTileset(tilesetJson);
+  const tileset = loadTileset(tilesetJson, tilesetPng);
 
   const levelData = level1.layers[0].data;
   const levelDataWidth = level1.layers[0].width;
   const levelDataTileWidth = level1.tilewidth;
 
-  const groundPolygons = traverseGrid(
+  const groundPolygonsAndTiles = traverseGrid(
     levelData,
     levelDataWidth,
-    levelDataTileWidth,
+    15, //levelDataTileWidth,
     tileset
   );
 
-  const groundShapes = groundPolygons.map(g => {
+  console.log(groundPolygonsAndTiles);
+
+  const groundShapes = groundPolygonsAndTiles.map(g => {
     return new ComplexShape(
-      g,
+      g.polygons,
+      g.tiles,
       {
         mass: 0,
         isStatic: true,
@@ -113,46 +117,3 @@ export default function initScene() {
   }
   requestAnimationFrame(renderNextFrame);
 }
-
-// const levelData = [
-//   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-//   1,0,0,0,0,0,0,0,0,0,0,2,0,0,0,1,
-//   1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,
-//   1,0,0,0,0,0,5,0,0,0,0,2,0,0,0,1,
-//   1,0,0,0,0,5,1,0,0,0,0,1,2,0,0,1,
-//   1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,
-//   1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
-//   1,0,0,0,0,0,0,0,0,0,0,1,2,0,0,1,
-//   1,1,0,0,0,0,0,0,0,0,0,1,1,2,0,1,
-//   1,0,1,2,0,0,0,0,0,0,0,0,1,1,1,1,
-//   1,0,0,1,2,0,0,0,0,0,0,0,0,0,0,1,
-//   1,0,0,1,1,1,2,0,0,0,0,0,0,0,0,1,
-//   1,0,0,1,1,2,1,1,2,0,0,0,0,0,0,1,
-//   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-// ];
-// const levelData = [
-//   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-//   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-//   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-//   1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-//   1,3,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-//   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-//   1,0,0,0,0,0,0,0,0,5,1,1,2,0,0,1,
-//   1,0,0,0,0,0,0,0,0,1,3,4,1,6,0,1,
-//   1,0,0,0,0,0,0,0,0,1,2,5,1,0,0,1,
-//   1,2,0,0,0,0,0,0,0,4,1,1,3,0,0,1,
-//   1,1,1,2,0,0,0,0,0,0,0,0,0,0,0,1,
-//   1,1,1,1,2,0,0,0,0,5,1,2,0,0,0,1,
-//   1,0,0,4,1,1,2,0,0,4,1,3,0,0,0,1,
-//   1,1,0,0,1,1,1,2,0,0,0,0,0,0,0,1,
-//   1,1,0,0,1,1,1,1,6,0,6,6,0,0,0,1,
-//   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-// ];
-// const levelData = [
-//   5,1,1,1,2,
-//   1,3,0,4,1,
-//   1,2,0,5,1,
-//   4,1,1,1,3,
-// ]
-//const levelDataWidth = 16;
