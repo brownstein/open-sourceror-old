@@ -5,8 +5,8 @@ import {
   removeCollinearPoints
 } from "poly-decomp";
 
-const MAX_EDGE_ITERATION_DEPTH = 1000; // 10000
-const MAX_BLOCK_ITERATION_DEPTH = 1000; // 10000
+const MAX_EDGE_ITERATION_DEPTH = 10000; // 10000
+const MAX_BLOCK_ITERATION_DEPTH = 10000; // 10000
 
 class Edge {
   constructor (block, x, y, dx, dy) {
@@ -63,7 +63,7 @@ class EdgeSet {
     while (next !== null && next !== edge && i++ < MAX_EDGE_ITERATION_DEPTH) {
       this.edges.push(next);
       if (next.edgeSet !== null && next.edgeSet !== this) {
-        //next.edgeSet.edges = [];
+        next.edgeSet.edges = [];
       }
       next.edgeSet = this;
       next = next.prev;
@@ -90,24 +90,10 @@ const oppositeSides = {
   bottom: "top"
 };
 
-class Block {
-  constructor (x, y, size) {
+class AbstractBlock {
+  constructor (x, y) {
     this.x = x;
     this.y = y;
-    this.edges = {
-      left:   new Edge(this, x, y + size, 0, -1),
-      top:    new Edge(this, x, y, 1, 0),
-      right:  new Edge(this, x + size, y, 0, 1),
-      bottom: new Edge(this, x + size, y + size, -1, 0)
-    };
-    this.edges.left.prev = this.edges.bottom;
-    this.edges.left.next = this.edges.top;
-    this.edges.top.prev = this.edges.left;
-    this.edges.top.next = this.edges.right;
-    this.edges.right.prev = this.edges.top;
-    this.edges.right.next = this.edges.bottom;
-    this.edges.bottom.prev = this.edges.right;
-    this.edges.bottom.next = this.edges.left;
     this.blockSet = null;
   }
   mergeNeighborEdge (neighbor, side) {
@@ -137,6 +123,63 @@ class Block {
   }
   getBottommostEdge () {
     return this.edges.bottom;
+  }
+}
+
+class Block extends AbstractBlock {
+  constructor (x, y, size) {
+    super(x, y);
+    this.edges = {
+      left:   new Edge(this, x, y + size, 0, -1),
+      top:    new Edge(this, x, y, 1, 0),
+      right:  new Edge(this, x + size, y, 0, 1),
+      bottom: new Edge(this, x + size, y + size, -1, 0)
+    };
+    this.edges.left.prev = this.edges.bottom;
+    this.edges.left.next = this.edges.top;
+    this.edges.top.prev = this.edges.left;
+    this.edges.top.next = this.edges.right;
+    this.edges.right.prev = this.edges.top;
+    this.edges.right.next = this.edges.bottom;
+    this.edges.bottom.prev = this.edges.right;
+    this.edges.bottom.next = this.edges.left;
+  }
+}
+
+class CustomBlock extends AbstractBlock {
+  constructor (x, y, size, tileDef) {
+    super(x, y);
+    this.edges = {};
+    this.sideMapping = tileDef.sideMapping;
+    const edgesByIndex = tileDef.sides.map(side => {
+      const edge = new Edge(
+        this,
+        x + side.x,
+        y + side.y,
+        side.dx,
+        side.dy
+      );
+      this.edges[side.name] = edge;
+      return edge;
+    });
+    for (let ei = 0; ei < edgesByIndex.length; ei++) {
+      const prev = edgesByIndex[ei];
+      const next = edgesByIndex[(ei + 1) % edgesByIndex.length];
+      prev.next = next;
+      next.prev = prev;
+    }
+  }
+  getLeftmostEdge () {
+    return this.edges[this.sideMapping.left];
+  }
+  getRightmostEdge () {
+    return this.edges[this.sideMapping.right];
+  }
+  getTopmostEdge () {
+    return this.edges[this.sideMapping.top];
+  }
+  getBottommostEdge () {
+    return this.edges[this.sideMapping.bottom];
   }
 }
 
@@ -180,6 +223,16 @@ class AngleBlock extends Block {
         this.edges.topleft.next = this.edges.right;
         this.edges.right.prev = this.edges.topleft;
         break;
+      case 'topright2':
+        this.edges.top.dx = 0.5;
+        this.edges.right.dy = 0.5;
+        this.edges.right.y = y + size / 2;
+        this.edges.topright = new Edge(this, x + size / 2, y, 0.5, 0.5);
+        this.edges.top.next = this.edges.topright;
+        this.edges.topright.prev = this.edges.top;
+        this.edges.topright.next = this.edges.right;
+        this.edges.right.prev = this.edges.topright;
+        break;
     }
   }
   getRightmostEdge () {
@@ -196,7 +249,7 @@ class AngleBlock extends Block {
   }
 }
 
-export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
+export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
   // fill a grid with blocks
   const blocks = [];
   const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
@@ -207,6 +260,8 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
       const sourceVal = sourceGridArr[x + y * gridWidth];
       let block = null;
       switch (sourceVal) {
+        case 0:
+          break;
         case 1:
           block = new Block(x * tileSize, y * tileSize, tileSize);
           break;
@@ -214,13 +269,26 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
         case 3:
         case 4:
         case 5:
+        case 6:
           const angleType = [
             'topright',
             'bottomright',
             'bottomleft',
-            'topleft'
+            'topleft',
+            'topright2'
           ][sourceVal - 2];
           block = new AngleBlock(x * tileSize, y * tileSize, tileSize, angleType);
+          break;
+        default:
+          const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
+          if (tileDef && tileDef.type === "ground") {
+            if (tileDef.sides) {
+              block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef);
+            }
+            else {
+              block = new Block(x * tileSize, y * tileSize, tileSize);
+            }
+          }
           break;
       }
       column.push(block);
@@ -287,7 +355,6 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
   }
   // trace all edge loops in block set
   // connect edge loops to each other
-
   const polygonSets = [];
   for (let bsi = 0; bsi < blockSets.length; bsi++) {
     const blockSet = blockSets[bsi];
@@ -357,11 +424,15 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize) {
       }
     }
 
+    if (!outerEdgeSet) {
+      continue;
+    }
     outerEdgeSet.traverseForward(outerEdgeSet.edges[0]);
     const edgeSetAsPolygon = outerEdgeSet.edges.map(({ x, y }) => [x, y]);
 
     makeCCW(edgeSetAsPolygon);
-    //removeCollinearPoints(edgeSetAsPolygon, 0.01);
+    // can optionaslly remove collinear points here for performance
+    // removeCollinearPoints(edgeSetAsPolygon, 0.01);
     const convexPolygons = quickDecomp(edgeSetAsPolygon);
     convexPolygons.forEach(p => removeCollinearPoints(p, 0.01));
     polygonSets.push(

@@ -83,7 +83,11 @@ module.exports = {
         test: /\.(glsl|frag|vert)$/,
         loader: "glslify-loader",
         exclude: /node_modules/
-      }
+      },
+      {
+        test: /\.(tsx)$/i,
+        use: "raw-loader",
+      },
     ]
   },
   plugins: [
