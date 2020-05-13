@@ -6,6 +6,7 @@ import {
   Geometry,
   Mesh,
   MeshBasicMaterial,
+  NearestFilter,
   Object3D,
   TextureLoader,
   Vector2,
@@ -16,6 +17,7 @@ import {
   Convex,
   vec2
 } from "p2";
+import getThreeJsObjectForP2Body from "./p2-utils/get-threejs-mesh";
 
 const _center = new Vector3();
 const _simpleEdgeMaterial = new MeshBasicMaterial({
@@ -70,9 +72,12 @@ export default class ComplexShape {
 
     fillMesh.visible = false;
 
+    // this.mesh.add(getThreeJsObjectForP2Body(this.body));
+
     // add tiles
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(tiles[0].tile.srcImage);
+    texture.magFilter = NearestFilter;
     const tileMat = new MeshBasicMaterial({
       side: DoubleSide,
       map: texture,

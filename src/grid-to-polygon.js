@@ -241,7 +241,7 @@ class AngleBlock extends Block {
   }
 }
 
-export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
+export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTileTypes=['ground']) {
   // fill a grid with blocks
   const blocks = [];
   const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
@@ -271,7 +271,7 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset) {
           break;
         default:
           const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
-          if (tileDef && tileDef.type) {
+          if (tileDef && tileDef.type && useTileTypes.includes(tileDef.type)) {
             if (tileDef.sides) {
               block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
             }

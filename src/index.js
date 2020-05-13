@@ -12,12 +12,12 @@ import SimpleShape from "./simple-shape";
 import ComplexShape from "./complex-shape";
 import { traverseGrid } from "./grid-to-polygon";
 import { loadTileset } from "./tileset-loader";
+import KeyState from "./key-state";
+import { Character } from "./character/base";
 
 window.decomp = decomp;
 import "./style.less";
 
-import level1 from "./tilesets/magic-cliffs/level1.json";
-import tilesetJson from "./tilesets/magic-cliffs/tileset.json";
 import tilesetPng from "./tilesets/magic-cliffs/PNG/tileset.png";
 
 let renderEl;
@@ -25,7 +25,9 @@ let scene, camera, renderer;
 
 const windowSize = { width: 400, height: 400 };
 
-export default function initScene() {
+export default async function initScene() {
+  const ks = new KeyState();
+  ks.mount(document);
   const containerEl = document.getElementById("container");
 
   renderEl = document.createElement("canvas");
@@ -39,8 +41,8 @@ export default function initScene() {
   // set up three.js world and renderer
   scene = new Scene();
   camera = new OrthographicCamera(
-    -100, 300,
-    -100, 300,
+    -100, 250,
+    -100, 250,
     -100, 100
   );
   camera.lookAt(new Vector3(0, 0, -1));
@@ -60,16 +62,18 @@ export default function initScene() {
     gravity:[0, 300]
   });
 
-  // add things to the world
-  const triverts = [{ x: 0, y: 0 }, { x: 10, y: -50 }, { x: 50, y: 0 }];
-  const thing = new SimpleShape(triverts, {
-    mass: 5,
-    damping: 0.5,
-    angularVelocity: 5
-  });
+  // add a character
+  const character = new Character();
+  scene.add(character.mesh);
+  world.addBody(character.body);
 
-  scene.add(thing.mesh);
-  world.addBody(thing.body);
+  const [
+    level1,
+    tilesetJson,
+  ] = await Promise.all([
+    import("./tilesets/magic-cliffs/level1.json"),
+    import("./tilesets/magic-cliffs/tileset.json"),
+  ]);
 
   const tileset = loadTileset(tilesetJson, tilesetPng);
 
@@ -80,11 +84,11 @@ export default function initScene() {
   const groundPolygonsAndTiles = traverseGrid(
     levelData,
     levelDataWidth,
-    15, //levelDataTileWidth,
+    levelDataTileWidth,
     tileset
   );
 
-  console.log(groundPolygonsAndTiles);
+  console.log({ groundPolygonsAndTiles });
 
   const groundShapes = groundPolygonsAndTiles.map(g => {
     return new ComplexShape(
@@ -110,8 +114,13 @@ export default function initScene() {
     var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
     world.step(fixedTimeStep, deltaTime, maxSubSteps);
     lastTime = time;
-    thing.syncMeshWithBody();
-    groundShapes.forEach(p => p.syncMeshWithBody());
+    character.runKeyboardMotion(ks);
+    character.syncMeshWithBody();
+    groundShapes.forEach(p => {
+      // p.body.velocity[0] = -16;
+      // p.body.angularVelocity = 0.4;
+      p.syncMeshWithBody()
+    });
     renderer.render(scene, camera);
     requestAnimationFrame(renderNextFrame);
   }

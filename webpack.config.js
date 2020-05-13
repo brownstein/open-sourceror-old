@@ -14,6 +14,8 @@ module.exports = {
   output: {
     path: path.join(__dirname, "electron", "dist"),
     filename: "[name].js",
+    chunkFilename: "[name].bundle.js",
+    publicPath: "dist/",
     library: "RGPLang",
     libraryExport: "default",
     libraryTarget: "commonjs2"
@@ -105,5 +107,8 @@ module.exports = {
       include: /\.min\.js$/
     })
   ]
-  .filter(p => p)
+  .filter(p => p),
+  optimization: {
+    splitChunks: {}
+  }
 };
