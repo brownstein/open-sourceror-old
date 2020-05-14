@@ -302,6 +302,27 @@
  <tile id="650" type="grass"/>
  <tile id="651" type="grass"/>
  <tile id="652" type="grass"/>
+ <tile id="662" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.204259" y="16.0003">
+    <polygon points="0,0 16.3408,-5.0384 16.2727,0.136173"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="663" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.340432" y="10.9619">
+    <polygon points="0,0 16.6131,1.15747 16.545,5.37883 0.136173,5.24266"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="668" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.612778" y="14.5705">
+    <polygon points="0,0 7.69377,-4.28945 16.8174,-4.69797 16.8174,1.70216 0,1.70216"/>
+   </object>
+  </objectgroup>
+ </tile>
  <tile id="698" type="decal">
   <properties>
    <property name="anchor" value="right"/>
@@ -321,6 +342,9 @@
  <tile id="713" type="ground"/>
  <tile id="715" type="ground"/>
  <tile id="716" type="ground"/>
+ <tile id="720" type="ground"/>
+ <tile id="721" type="ground"/>
+ <tile id="726" type="ground"/>
  <tile id="756" type="decal">
   <properties>
    <property name="anchor" value="right"/>
@@ -348,28 +372,28 @@
  <tile id="817" type="ground"/>
  <tile id="818" type="ground"/>
  <tile id="819" type="ground"/>
- <tile id="833">
+ <tile id="833" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="6.53883" y="16.5752">
     <polygon points="0,0 9.88428,-5.01817 9.88428,0.304132"/>
    </object>
   </objectgroup>
  </tile>
- <tile id="835">
+ <tile id="835" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.760329" y="10.7967">
     <polygon points="0,0 6.08263,1.52066 17.0314,-3.49751 17.0314,6.08263 -0.152066,5.62644"/>
    </object>
   </objectgroup>
  </tile>
- <tile id="836">
+ <tile id="836" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.912395" y="7.60329">
     <polygon points="0,0 17.6396,5.01817 17.3355,8.97188 0.152066,9.12395"/>
    </object>
   </objectgroup>
  </tile>
- <tile id="838">
+ <tile id="838" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.760329" y="10.9487">
     <polygon points="0,0 10.4925,5.47437 0,5.3223"/>
@@ -394,31 +418,48 @@
  <tile id="886" type="ground"/>
  <tile id="887" type="ground"/>
  <tile id="888" type="ground"/>
- <tile id="890">
+ <tile id="890" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.760329" y="11.8611">
     <polygon points="0,0 7.60329,-6.2347 11.8611,-5.93057 17.1834,-9.27601 17.0314,4.71404 0.608263,4.71404"/>
    </object>
   </objectgroup>
  </tile>
- <tile id="891">
+ <tile id="891" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.760329" y="3.64958">
     <polygon points="0,0 6.99503,-4.25784 17.3355,-4.10578 17.1834,13.0777 0,12.9256"/>
    </object>
   </objectgroup>
  </tile>
- <tile id="896">
+ <tile id="893" type="ground"/>
+ <tile id="894" type="ground"/>
+ <tile id="896" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="9.12395" y="-0.608263">
     <polygon points="0,0 7.60329,4.71404 7.29916,17.0314 -9.88428,17.1834 -10.0363,0.152066"/>
    </object>
   </objectgroup>
  </tile>
- <tile id="897">
+ <tile id="897" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.608263" y="2.58512">
     <polygon points="0,0 10.3405,3.95371 17.0314,8.81982 16.8793,13.9901 -0.304132,13.838"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="908" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.760329" y="16.271">
+    <polygon points="0,0 17.1834,-16.8793 17.0314,0.304132"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="909" type="ground"/>
+ <tile id="911" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.608263" y="-0.608263">
+    <polygon points="0,0 17.0314,17.0314 0.152066,16.8793"/>
    </object>
   </objectgroup>
  </tile>
@@ -440,6 +481,29 @@
  <tile id="944" type="ground"/>
  <tile id="945" type="ground"/>
  <tile id="946" type="ground"/>
+ <tile id="948" type="ground"/>
+ <tile id="949" type="ground"/>
+ <tile id="951" type="ground"/>
+ <tile id="952" type="ground"/>
+ <tile id="954" type="ground"/>
+ <tile id="955" type="ground"/>
+ <tile id="965" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.608263" y="16.119">
+    <polygon points="0,0 16.8793,-16.8793 16.8793,0.304132"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="966" type="ground"/>
+ <tile id="967" type="ground"/>
+ <tile id="969" type="ground"/>
+ <tile id="970" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.304132" y="-0.304132">
+    <polygon points="0,0 0,16.7272 17.0314,16.271"/>
+   </object>
+  </objectgroup>
+ </tile>
  <tile id="988" type="decal">
   <properties>
    <property name="anchor" value="right"/>
@@ -452,6 +516,25 @@
  <tile id="993" type="ground"/>
  <tile id="998" type="ground"/>
  <tile id="999" type="ground"/>
+ <tile id="1022" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.456197" y="16.271">
+    <polygon points="0.136173,-0.0680865 16.7272,-16.8793 16.7272,0"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="1023" type="ground"/>
+ <tile id="1024" type="ground"/>
+ <tile id="1025" type="ground"/>
+ <tile id="1027" type="ground"/>
+ <tile id="1028" type="ground"/>
+ <tile id="1029" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="15.8148" y="15.8148">
+    <polygon points="0,0 -16.4231,-16.4231 -16.119,0.608263"/>
+   </object>
+  </objectgroup>
+ </tile>
  <tile id="1056" type="ground"/>
  <tile id="1057" type="ground"/>
 </tileset>

@@ -18,7 +18,7 @@ const simpleEdgeMaterial = new MeshBasicMaterial({
   color: "#000000"
 });
 
-export default function getThreeJsObjectForP2Body (body) {
+export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
   const shapes = body.shapes;
 
   const obj3 = new Object3D();
@@ -46,11 +46,16 @@ export default function getThreeJsObjectForP2Body (body) {
         geom.faces.push(new Face3(0, i - 1, i));
       }
       const mesh = new Mesh(geom, mat);
-      if (body.shapes.length > 1) {
-        mesh.position.x = shape.centerOfMass[0];
-        mesh.position.y = shape.centerOfMass[1];
-      }
+      mesh.position.x = shape.centerOfMass[0];
+      mesh.position.y = shape.centerOfMass[1];
       obj3.add(mesh);
+      if (addWireframe) {
+        const wireframeMesh = new Mesh(geom, simpleEdgeMaterial);
+        wireframeMesh.z = 1;
+        wireframeMesh.position.x = shape.centerOfMass[0];
+        wireframeMesh.position.y = shape.centerOfMass[1];
+        obj3.add(wireframeMesh);
+      }
     }
   });
 

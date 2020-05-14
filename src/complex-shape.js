@@ -15,6 +15,7 @@ import {
 import {
   Body,
   Convex,
+  Material,
   vec2
 } from "p2";
 import getThreeJsObjectForP2Body from "./p2-utils/get-threejs-mesh";
@@ -25,6 +26,8 @@ const _simpleEdgeMaterial = new MeshBasicMaterial({
   wireframe: true,
   color: "#000000"
 });
+
+export const groundMaterial = new Material();
 
 export default class ComplexShape {
   constructor (polygons, tiles = [], p2Props = {}) {
@@ -54,6 +57,7 @@ export default class ComplexShape {
       }
       vertexStartIndex += polygon.length;
       const convex = new Convex({ vertices: polygon.map(({x, y}) => [x, y])});
+      convex.material = groundMaterial;
       const cm = vec2.create();
       for(let j = 0; j !== convex.vertices.length; j++){
         const v = convex.vertices[j];
@@ -67,12 +71,12 @@ export default class ComplexShape {
     const edgeMesh = new Mesh(geometry, _simpleEdgeMaterial);
     edgeMesh.position.z = 1;
     this.mesh = new Object3D();
-    this.mesh.add(fillMesh);
-    this.mesh.add(edgeMesh);
+    //this.mesh.add(fillMesh);
+    //this.mesh.add(edgeMesh);
 
     fillMesh.visible = false;
 
-    // this.mesh.add(getThreeJsObjectForP2Body(this.body));
+    this.mesh.add(getThreeJsObjectForP2Body(this.body, true));
 
     // add tiles
     const textureLoader = new TextureLoader();
@@ -81,7 +85,8 @@ export default class ComplexShape {
     const tileMat = new MeshBasicMaterial({
       side: DoubleSide,
       map: texture,
-      transparent: true
+      transparent: true,
+      opacity: 0.5
     });
     tiles.forEach(tileInstance => {
       const tile = tileInstance.tile;
