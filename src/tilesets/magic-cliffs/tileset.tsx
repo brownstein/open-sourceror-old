@@ -58,7 +58,11 @@
  <tile id="195" type="ground"/>
  <tile id="196" type="ground"/>
  <tile id="197" type="ground"/>
- <tile id="204">
+ <tile id="199" type="ground"/>
+ <tile id="201" type="ground"/>
+ <tile id="202" type="ground"/>
+ <tile id="203" type="ground"/>
+ <tile id="204" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="6.08263" y="-0.456197">
     <polygon points="0,0 4.86611,3.04132 4.86611,12.1653 -1.52066,17.3355 -7.14709,16.7272 -6.84296,-0.608263"/>
@@ -91,17 +95,29 @@
    </object>
   </objectgroup>
  </tile>
- <tile id="244" type="tree"/>
+ <tile id="244" type="tree">
+  <properties>
+   <property name="anchor" value="right"/>
+  </properties>
+ </tile>
  <tile id="245" type="tree"/>
  <tile id="246" type="tree"/>
  <tile id="247" type="tree"/>
  <tile id="248" type="tree"/>
  <tile id="249" type="tree"/>
  <tile id="250" type="tree"/>
- <tile id="251" type="tree"/>
+ <tile id="251" type="tree">
+  <properties>
+   <property name="anchor" value="left"/>
+  </properties>
+ </tile>
  <tile id="253" type="ground"/>
  <tile id="254" type="ground"/>
  <tile id="255" type="ground"/>
+ <tile id="257" type="ground"/>
+ <tile id="259" type="ground"/>
+ <tile id="260" type="ground"/>
+ <tile id="261" type="ground"/>
  <tile id="275" type="ground"/>
  <tile id="276" type="ground"/>
  <tile id="277" type="ground"/>
@@ -126,23 +142,39 @@
    </object>
   </objectgroup>
  </tile>
- <tile id="302" type="tree"/>
+ <tile id="302" type="tree">
+  <properties>
+   <property name="anchor" value="right"/>
+  </properties>
+ </tile>
  <tile id="303" type="tree"/>
  <tile id="304" type="tree"/>
  <tile id="305" type="tree"/>
  <tile id="306" type="tree"/>
  <tile id="307" type="tree"/>
  <tile id="308" type="tree"/>
- <tile id="309" type="tree"/>
+ <tile id="309" type="tree">
+  <properties>
+   <property name="anchor" value="left"/>
+  </properties>
+ </tile>
  <tile id="311" type="ground"/>
  <tile id="312" type="ground"/>
  <tile id="313" type="ground"/>
+ <tile id="315" type="ground"/>
+ <tile id="317" type="ground"/>
+ <tile id="318" type="ground"/>
+ <tile id="319" type="ground"/>
  <tile id="333" type="ground"/>
  <tile id="334" type="ground"/>
  <tile id="335" type="ground"/>
  <tile id="357" type="decal"/>
  <tile id="358" type="decal"/>
- <tile id="360" type="tree"/>
+ <tile id="360" type="tree">
+  <properties>
+   <property name="anchor" value="right"/>
+  </properties>
+ </tile>
  <tile id="361" type="tree"/>
  <tile id="362" type="tree">
   <objectgroup draworder="index" id="2">
@@ -180,6 +212,10 @@
  <tile id="369" type="ground"/>
  <tile id="370" type="ground"/>
  <tile id="371" type="ground"/>
+ <tile id="373" type="ground"/>
+ <tile id="375" type="ground"/>
+ <tile id="376" type="ground"/>
+ <tile id="377" type="ground"/>
  <tile id="382" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="8.51081" y="16.2046">
@@ -225,7 +261,11 @@
  </tile>
  <tile id="415" type="decal"/>
  <tile id="416" type="decal"/>
- <tile id="418" type="tree"/>
+ <tile id="418" type="tree">
+  <properties>
+   <property name="anchor" value="right"/>
+  </properties>
+ </tile>
  <tile id="419" type="tree"/>
  <tile id="420" type="tree"/>
  <tile id="421" type="tree">
@@ -253,6 +293,10 @@
  <tile id="427" type="ground"/>
  <tile id="428" type="ground"/>
  <tile id="429" type="ground"/>
+ <tile id="431" type="ground"/>
+ <tile id="433" type="ground"/>
+ <tile id="434" type="ground"/>
+ <tile id="435" type="ground"/>
  <tile id="440" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.0680865" y="10.7577">
@@ -288,7 +332,11 @@
  <tile id="474" type="ground"/>
  <tile id="477" type="tree"/>
  <tile id="479" type="tree"/>
- <tile id="480" type="tree"/>
+ <tile id="480" type="tree">
+  <properties>
+   <property name="anchor" value="down"/>
+  </properties>
+ </tile>
  <tile id="498" type="ground"/>
  <tile id="499" type="ground"/>
  <tile id="500" type="ground"/>
@@ -316,7 +364,11 @@
  </tile>
  <tile id="531" type="ground"/>
  <tile id="532" type="ground"/>
- <tile id="538" type="tree"/>
+ <tile id="538" type="tree">
+  <properties>
+   <property name="anchor" value="down"/>
+  </properties>
+ </tile>
  <tile id="640" type="decal">
   <properties>
    <property name="anchor" value="down"/>
@@ -347,9 +399,21 @@
    <property name="anchor" value="down"/>
   </properties>
  </tile>
- <tile id="650" type="grass"/>
- <tile id="651" type="grass"/>
- <tile id="652" type="grass"/>
+ <tile id="650" type="grass">
+  <properties>
+   <property name="anchor" value="down"/>
+  </properties>
+ </tile>
+ <tile id="651" type="grass">
+  <properties>
+   <property name="anchor" value="down"/>
+  </properties>
+ </tile>
+ <tile id="652" type="grass">
+  <properties>
+   <property name="anchor" value="down"/>
+  </properties>
+ </tile>
  <tile id="662" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-0.204259" y="16.0003">
@@ -371,6 +435,14 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="674" type="decal"/>
+ <tile id="675" type="decal"/>
+ <tile id="676" type="decal"/>
+ <tile id="678" type="decal"/>
+ <tile id="679" type="decal"/>
+ <tile id="681" type="decal"/>
+ <tile id="682" type="decal"/>
+ <tile id="683" type="decal"/>
  <tile id="698" type="decal">
   <properties>
    <property name="anchor" value="right"/>
@@ -416,6 +488,14 @@
  <tile id="768" type="ground"/>
  <tile id="770" type="ground"/>
  <tile id="771" type="ground"/>
+ <tile id="790" type="decal"/>
+ <tile id="791" type="decal"/>
+ <tile id="792" type="decal"/>
+ <tile id="794" type="decal"/>
+ <tile id="795" type="decal"/>
+ <tile id="797" type="decal"/>
+ <tile id="798" type="decal"/>
+ <tile id="799" type="decal"/>
  <tile id="814" type="decal">
   <properties>
    <property name="anchor" value="right"/>

@@ -586,7 +586,7 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
   const decalsWithoutBlockset = [];
   const decalsByBlockset = blockSets.map(() => []);
   let nextFrontier = [];
-  function expand(nextX, nextY, bsi, r) {
+  function expand(nextX, nextY, anchor, bsi, r) {
     if (
       nextX < 0 || nextX >= gridWidth ||
       nextY < 0 || nextY >= gridHeight
@@ -597,9 +597,16 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
     if (!decal || decal.traversed) {
       return;
     }
+    if (
+      anchor &&
+      decal.tileDef.anchor &&
+      anchor !== decal.tileDef.anchor
+    ) {
+      return;
+    }
     decal.traversed = true;
     decal.blockSet = bsi;
-    if (r < 3) {
+    if (r < 20) {
       decalsByBlockset[bsi].push(decal);
       nextFrontier.push([nextX, nextY, bsi, r]);
     }
@@ -612,7 +619,7 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
     const blockSet = blockSets[bsi];
     for (let bi = 0; bi < blockSet.length; bi++) {
       const block = blockSet[bi];
-      expand(block.x, block.y, bsi, 0);
+      expand(block.x, block.y, null, bsi, 0);
     }
   }
   let frontier = nextFrontier;
@@ -620,10 +627,10 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
     nextFrontier = [];
     while (frontier.length > 0) {
       const [nextX, nextY, bsi, r] = frontier.pop();
-      expand(nextX, nextY - 1, bsi, r + 1);
-      expand(nextX, nextY + 1, bsi, r + 1);
-      expand(nextX - 1, nextY, bsi, r + 1);
-      expand(nextX + 1, nextY, bsi, r + 1);
+      expand(nextX, nextY - 1, "down", bsi, r + 1);
+      expand(nextX, nextY + 1, "up", bsi, r + 1);
+      expand(nextX - 1, nextY, "right", bsi, r + 1);
+      expand(nextX + 1, nextY, "left", bsi, r + 1);
     }
     frontier = nextFrontier;
   }

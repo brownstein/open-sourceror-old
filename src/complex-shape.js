@@ -68,7 +68,7 @@ export default class ComplexShape {
         side: DoubleSide,
         map: texture,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.8
       });
       const tileGeom = new Geometry();
       tiles.forEach(tileInstance => {
@@ -96,12 +96,12 @@ export default class ComplexShape {
       this.mesh.add(tileMesh);
     }
 
-    this.t = Math.floor(Math.random() * 1000);
+    //this.t = Math.floor(Math.random() * 1000);
   }
   syncMeshWithBody () {
     this.mesh.position.x = this.body.interpolatedPosition[0];
     this.mesh.position.y = this.body.interpolatedPosition[1];
     this.mesh.rotation.z = this.body.interpolatedAngle;
-    this.body.velocity[0] = 16 * Math.cos(this.t++ / 100);
+    //this.body.velocity[0] = 16 * Math.cos(this.t++ / 100);
   }
 }

@@ -309,6 +309,22 @@
          "type":"ground"
         }, 
         {
+         "id":199,
+         "type":"ground"
+        }, 
+        {
+         "id":201,
+         "type":"ground"
+        }, 
+        {
+         "id":202,
+         "type":"ground"
+        }, 
+        {
+         "id":203,
+         "type":"ground"
+        }, 
+        {
          "id":204,
          "objectgroup":
             {
@@ -357,7 +373,8 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "type":"ground"
         }, 
         {
          "id":217,
@@ -508,6 +525,12 @@
         }, 
         {
          "id":244,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"right"
+                }],
          "type":"tree"
         }, 
         {
@@ -536,6 +559,12 @@
         }, 
         {
          "id":251,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"left"
+                }],
          "type":"tree"
         }, 
         {
@@ -548,6 +577,22 @@
         }, 
         {
          "id":255,
+         "type":"ground"
+        }, 
+        {
+         "id":257,
+         "type":"ground"
+        }, 
+        {
+         "id":259,
+         "type":"ground"
+        }, 
+        {
+         "id":260,
+         "type":"ground"
+        }, 
+        {
+         "id":261,
          "type":"ground"
         }, 
         {
@@ -700,6 +745,12 @@
         }, 
         {
          "id":302,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"right"
+                }],
          "type":"tree"
         }, 
         {
@@ -728,6 +779,12 @@
         }, 
         {
          "id":309,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"left"
+                }],
          "type":"tree"
         }, 
         {
@@ -740,6 +797,22 @@
         }, 
         {
          "id":313,
+         "type":"ground"
+        }, 
+        {
+         "id":315,
+         "type":"ground"
+        }, 
+        {
+         "id":317,
+         "type":"ground"
+        }, 
+        {
+         "id":318,
+         "type":"ground"
+        }, 
+        {
+         "id":319,
          "type":"ground"
         }, 
         {
@@ -764,6 +837,12 @@
         }, 
         {
          "id":360,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"right"
+                }],
          "type":"tree"
         }, 
         {
@@ -1011,6 +1090,22 @@
          "type":"ground"
         }, 
         {
+         "id":373,
+         "type":"ground"
+        }, 
+        {
+         "id":375,
+         "type":"ground"
+        }, 
+        {
+         "id":376,
+         "type":"ground"
+        }, 
+        {
+         "id":377,
+         "type":"ground"
+        }, 
+        {
          "id":382,
          "objectgroup":
             {
@@ -1235,6 +1330,12 @@
         }, 
         {
          "id":418,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"right"
+                }],
          "type":"tree"
         }, 
         {
@@ -1407,6 +1508,22 @@
         }, 
         {
          "id":429,
+         "type":"ground"
+        }, 
+        {
+         "id":431,
+         "type":"ground"
+        }, 
+        {
+         "id":433,
+         "type":"ground"
+        }, 
+        {
+         "id":434,
+         "type":"ground"
+        }, 
+        {
+         "id":435,
          "type":"ground"
         }, 
         {
@@ -1643,6 +1760,12 @@
         }, 
         {
          "id":480,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"down"
+                }],
          "type":"tree"
         }, 
         {
@@ -1811,6 +1934,12 @@
         }, 
         {
          "id":538,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"down"
+                }],
          "type":"tree"
         }, 
         {
@@ -1875,14 +2004,32 @@
         }, 
         {
          "id":650,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"down"
+                }],
          "type":"grass"
         }, 
         {
          "id":651,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"down"
+                }],
          "type":"grass"
         }, 
         {
          "id":652,
+         "properties":[
+                {
+                 "name":"anchor",
+                 "type":"string",
+                 "value":"down"
+                }],
          "type":"grass"
         }, 
         {
@@ -2016,6 +2163,38 @@
              "y":0
             },
          "type":"ground"
+        }, 
+        {
+         "id":674,
+         "type":"decal"
+        }, 
+        {
+         "id":675,
+         "type":"decal"
+        }, 
+        {
+         "id":676,
+         "type":"decal"
+        }, 
+        {
+         "id":678,
+         "type":"decal"
+        }, 
+        {
+         "id":679,
+         "type":"decal"
+        }, 
+        {
+         "id":681,
+         "type":"decal"
+        }, 
+        {
+         "id":682,
+         "type":"decal"
+        }, 
+        {
+         "id":683,
+         "type":"decal"
         }, 
         {
          "id":698,
@@ -2176,6 +2355,38 @@
         {
          "id":771,
          "type":"ground"
+        }, 
+        {
+         "id":790,
+         "type":"decal"
+        }, 
+        {
+         "id":791,
+         "type":"decal"
+        }, 
+        {
+         "id":792,
+         "type":"decal"
+        }, 
+        {
+         "id":794,
+         "type":"decal"
+        }, 
+        {
+         "id":795,
+         "type":"decal"
+        }, 
+        {
+         "id":797,
+         "type":"decal"
+        }, 
+        {
+         "id":798,
+         "type":"decal"
+        }, 
+        {
+         "id":799,
+         "type":"decal"
         }, 
         {
          "id":814,
