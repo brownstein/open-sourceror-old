@@ -44,7 +44,7 @@ export default class ComplexShape {
     this.body = new Body(p2Props);
 
     let vertexStartIndex = 0;
-    polygons.forEach(polygon => {
+    polygons && polygons.forEach(polygon => {
       polygon.forEach(({ x, y }) => {
         geometry.vertices.push(new Vector3(x, y, 0));
       });

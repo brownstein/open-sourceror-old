@@ -18,13 +18,14 @@ export function loadTileset (tilesetSrc, tilesetImage) {
     [0, 1]
   ]];
   const tiles = tilesetSrc.tiles.map(tileSrc => {
-    const { id, type, objectgroup = null } = tileSrc;
+    const { id, type, objectgroup = null, properties = null } = tileSrc;
     const tileIndex = id;
     const tile = {
       id,
       type,
       sides: null,
       sideMapping: null,
+      anchor: false,
       srcWidth: tilewidth,
       srcHeight: tileheight,
       srcX: tilewidth * (tileIndex % columns),
@@ -33,6 +34,17 @@ export function loadTileset (tilesetSrc, tilesetImage) {
       srcImageWidth: imagewidth,
       srcImageHeight: imageheight
     };
+    if (properties) {
+      properties.forEach(p => {
+        switch (p.name) {
+          case "anchor":
+            tile.anchor = p.value;
+            break;
+          default:
+            break;
+        }
+      });
+    }
     if (objectgroup && objectgroup.objects[0].polygon) {
       const object = objectgroup.objects[0];
       const rawPolygon = object.polygon.map(v => ([

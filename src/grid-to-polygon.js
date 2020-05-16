@@ -105,8 +105,8 @@ class AbstractBlock {
     this.x = x;
     this.y = y;
     this.blockType = blockType;
-    this.blockSet = null;
     this.tileDef = tileDef;
+    this.blockSet = null;
   }
   mergeNeighborEdge (neighbor, side) {
     const oppositeSide = oppositeSides[side];
@@ -142,13 +142,13 @@ class AbstractBlock {
  * Basic blocks - solid squares
  */
 class Block extends AbstractBlock {
-  constructor (x, y, size, blockType, tileDef) {
+  constructor (x, y, blockType, tileDef) {
     super(x, y, blockType, tileDef);
     this.edges = {
-      left:   new Edge(this, x, y + size, 0, -1),
+      left:   new Edge(this, x, y + 1, 0, -1),
       top:    new Edge(this, x, y, 1, 0),
-      right:  new Edge(this, x + size, y, 0, 1),
-      bottom: new Edge(this, x + size, y + size, -1, 0)
+      right:  new Edge(this, x + 1, y, 0, 1),
+      bottom: new Edge(this, x + 1, y + 1, -1, 0)
     };
     this.edges.left.prev = this.edges.bottom;
     this.edges.left.next = this.edges.top;
@@ -165,17 +165,17 @@ class Block extends AbstractBlock {
  * Polygon-based blocks for use with tile-defined polygon shapes
  */
 class CustomBlock extends AbstractBlock {
-  constructor (x, y, size, blockType, tileDef) {
+  constructor (x, y, blockType, tileDef) {
     super(x, y, blockType, tileDef);
     this.edges = {};
     this.sideMapping = tileDef.sideMapping;
     const edgesByIndex = tileDef.sides.map(side => {
       const edge = new Edge(
         this,
-        x + side.x * size,
-        y + side.y * size,
-        side.dx * size,
-        side.dy * size
+        x + side.x,
+        y + side.y,
+        side.dx,
+        side.dy
       );
       this.edges[side.name] = edge;
       return edge;
@@ -202,10 +202,21 @@ class CustomBlock extends AbstractBlock {
 }
 
 /**
+ * Empty blocks used to represent decal tiles
+ * still need to see if this is relevant
+ */
+class DecalBlock extends AbstractBlock {
+  constructor (x, y, size, blockType, tileDef) {
+    super(x, y, blockType, tileDef);
+    this.edges = {};
+  }
+}
+
+/**
  * Simple angular blocks
  */
 class AngleBlock extends Block {
-  constructor (x, y, size, blockType, angleType) {
+  constructor (x, y, blockType, angleType) {
     super(x, y, blockType);
     switch (angleType) {
       case 'topright':
@@ -220,7 +231,7 @@ class AngleBlock extends Block {
       case 'bottomright':
         delete this.edges.right;
         delete this.edges.bottom;
-        this.edges.bottomright = new Edge(this, x + size, y, -1, 1);
+        this.edges.bottomright = new Edge(this, x + 1, y, -1, 1);
         this.edges.top.next = this.edges.bottomright;
         this.edges.bottomright.prev = this.edges.top;
         this.edges.bottomright.next = this.edges.left;
@@ -229,7 +240,7 @@ class AngleBlock extends Block {
       case 'bottomleft':
         delete this.edges.bottom;
         delete this.edges.left;
-        this.edges.bottomleft = new Edge(this, x + size, y + size, -1, -1);
+        this.edges.bottomleft = new Edge(this, x + 1, y + 1, -1, -1);
         this.edges.right.next = this.edges.bottomleft;
         this.edges.bottomleft.prev = this.edges.right;
         this.edges.bottomleft.next = this.edges.top;
@@ -238,7 +249,7 @@ class AngleBlock extends Block {
       case 'topleft':
         delete this.edges.left;
         delete this.edges.top;
-        this.edges.topleft = new Edge(this, x, y + size, 1, -1);
+        this.edges.topleft = new Edge(this, x, y + 1, 1, -1);
         this.edges.bottom.next = this.edges.topleft;
         this.edges.topleft.prev = this.edges.bottom;
         this.edges.topleft.next = this.edges.right;
@@ -349,6 +360,9 @@ function _getPolygonsForBlockset(blockSet) {
   for (let bi = 0; bi < blockSet.length; bi++) {
     const block = blockSet[bi];
     const leftmostEdge = block.getLeftmostEdge();
+    if (!leftmostEdge) {
+      continue;
+    }
     if (!leftmostEdge.merged && leftmostEdge.edgeSet === null) {
       const edgeSet = new EdgeSet();
       edgeSet.traverseForward(leftmostEdge);
@@ -365,8 +379,8 @@ function _getPolygonsForBlockset(blockSet) {
       const edgeSet = edgeSets[esi];
       let leftmostEdge = edgeSet.getLeftmostEdge(); // right edge of block
       let block = leftmostEdge.block;
-      let x = (block.x / tileSize);
-      const y = block.y / tileSize;
+      let x = block.x;
+      const y = block.y;
       let topBlock = blocks[x][y - 1];
       let topBottomEdge;
       let bottomTopEdge;
@@ -432,16 +446,41 @@ function _getPolygonsForBlockset(blockSet) {
 }
 
 /**
+ * Internal polygon rescale utility
+ */
+function _scalePolygons(polygons, tileSize) {
+  return polygons.map(polygon => polygon.map(vtx => ({
+    x: vtx.x * tileSize,
+    y: vtx.y * tileSize
+  })));
+}
+
+/**
  * Get tiles for a given blockSet
  */
 function _getTilesForBlockset(blockSet, tileSize) {
   return blockSet.map(block => ({
-    x: block.x,
-    y: block.y,
+    x: block.x * tileSize,
+    y: block.y * tileSize,
     width: tileSize,
     heigth: tileSize,
     tile: block.tileDef
   }));
+}
+
+/**
+ * Get a mapping of decals to blocksets (by index), plus any free-floating
+ * decals
+ */
+function _getBlocksetDecalTiles(
+  sourceGridArr,
+  blockSets,
+  tileSize,
+  gridWidth,
+  gridHeight,
+  connectionRadius = 2
+) {
+  return null;
 }
 
 export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
@@ -456,7 +495,7 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
       let block = null;
       switch (sourceVal) {
         case 1:
-          block = new Block(x * tileSize, y * tileSize, tileSize, 'base');
+          block = new Block(x, y, 'base');
           break;
         case 2:
         case 3:
@@ -468,7 +507,7 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
             'bottomleft',
             'topleft'
           ][sourceVal - 2];
-          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, 'base', angleType);
+          block = new AngleBlock(x, y, 'base', angleType);
           break;
         case 0:
         default:
@@ -490,7 +529,7 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
     const tiles = _getTilesForBlockset(blockSet, tileSize);
 
     polygonAndTileSets.push({
-      polygons,
+      polygons: _scalePolygons(polygons, tileSize),
       tiles
     });
   }
@@ -499,6 +538,14 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
 }
 
 export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, useTileTypes=['ground']) {
+
+  // map tile definitions by ID for faster reference
+  const tileDefsById = {};
+  for (let ti = 0; ti < tileset.tiles.length; ti++) {
+    const tileDef = tileset.tiles[ti];
+    tileDefsById[tileDef.id] = tileDef;
+  }
+
   // fill a grid with blocks
   const blocks = [];
   const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
@@ -507,29 +554,46 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
     blocks[x] = column;
     for (let y = 0; y < gridHeight; y++) {
       const sourceVal = sourceGridArr[x + y * gridWidth];
-      let block = null;
-      const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
-      if (tileDef && tileDef.type && useTileTypes.includes(tileDef.type)) {
+      const tileDef = tileDefsById[sourceVal - 1];
+      if (!tileDef) {
+        column.push(null);
+        continue;
+      }
+      if (useTileTypes.includes(tileDef.type)) {
         if (tileDef.sides) {
-          block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
+          const block = new CustomBlock(x, y, tileDef.type, tileDef);
+          column.push(block);
+          continue;
         }
         else {
-          block = new Block(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
+          const block = new Block(x, y, tileDef.type, tileDef);
+          column.push(block);
+          continue;
         }
       }
-      column.push(block);
+      else {
+        const block = new DecalBlock(x, y, tileSize, tileDef.type, tileDef);
+        column.push(block);
+        continue;
+      }
+      column.push(null);
     }
   }
 
   _mergeNeighbors(blocks, gridWidth, gridHeight);
   const blockSets = _createBlockSets(blocks, gridWidth, gridHeight);
 
+  // find decal tiles to blocksets
+  const tilesByBlockset = blockSets.map(() => []);
+
+
   // trace all edge loops in block set
   // connect edge loops to each other
   const polygonAndTileSets = [];
   for (let bsi = 0; bsi < blockSets.length; bsi++) {
     const blockSet = blockSets[bsi];
-    const polygons = _getPolygonsForBlockset(blockSet);
+    let polygons = _getPolygonsForBlockset(blockSet);
+    polygons = polygons && _scalePolygons(polygons, tileSize);
     const tiles = _getTilesForBlockset(blockSet, tileSize);
 
     polygonAndTileSets.push({
