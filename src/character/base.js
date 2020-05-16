@@ -7,7 +7,8 @@ export class Character {
       mass: 20,
       damping: 0.1,
       friction: 0.9,
-      fixedRotation: true
+      fixedRotation: true,
+      position: [200 + Math.random() * 200, -Math.random() * 100]
     });
     const convex = new Convex({
       vertices: [

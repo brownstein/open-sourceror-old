@@ -35,9 +35,9 @@ export default async function initScene() {
   engine.run();
 
   // add a character
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 10; i++) {
     const character = new Character();
-    
+
     engine.addEntity(character);
     engine.world.addContactMaterial(new p2.ContactMaterial(
       character.body.shapes[0].material,
@@ -50,7 +50,7 @@ export default async function initScene() {
     level1,
     tilesetJson,
   ] = await Promise.all([
-    import("./tilesets/magic-cliffs/level1.json"),
+    import("./tilesets/magic-cliffs/level2.json"),
     import("./tilesets/magic-cliffs/tileset.json"),
   ]);
 

@@ -24,8 +24,8 @@ export default class Engine {
     this.renderer = null;
     this.scene = new Scene();
     this.camera = new OrthographicCamera(
-      -100, 600,
-      -100, 600,
+      -100, 1000,
+      -100, 1000,
       -100, 100
     );
     this.camera.lookAt(new Vector3(0, 0, -1));
@@ -111,7 +111,9 @@ export default class Engine {
     });
 
     // run per-entity contact equation handlers
-    this.world.narrowphase.contactEquations.forEach(eq => {
+    const contactEquations = this.world.narrowphase.contactEquations;
+    for (let eqi = 0; eqi < contactEquations.length; eqi++) {
+      const eq = contactEquations[eqi];
       const entityA = this.activeEntitiesByBodyId[eq.bodyA.id];
       const entityB = this.activeEntitiesByBodyId[eq.bodyB.id];
       if (entityA && entityA.handleContactEquation) {
@@ -120,7 +122,7 @@ export default class Engine {
       if (entityB && entityB.handleContactEquation) {
         entityB.handleContactEquation(eq, entityA);
       }
-    });
+    }
 
     // render the current frame
     this.renderer.render(this.scene, this.camera);
