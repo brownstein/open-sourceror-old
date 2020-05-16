@@ -241,50 +241,10 @@ class AngleBlock extends Block {
   }
 }
 
-export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTileTypes=['ground']) {
-  // fill a grid with blocks
-  const blocks = [];
-  const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
-  for (let x = 0; x < gridWidth; x++) {
-    const column = [];
-    blocks[x] = column;
-    for (let y = 0; y < gridHeight; y++) {
-      const sourceVal = sourceGridArr[x + y * gridWidth];
-      let block = null;
-      switch (sourceVal) {
-        case 0:
-          break;
-        case 1:
-          block = new Block(x * tileSize, y * tileSize, tileSize, 'base');
-          break;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-          const angleType = [
-            'topright',
-            'bottomright',
-            'bottomleft',
-            'topleft'
-          ][sourceVal - 2];
-          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, 'base', angleType);
-          break;
-        default:
-          const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
-          if (tileDef && tileDef.type && useTileTypes.includes(tileDef.type)) {
-            if (tileDef.sides) {
-              block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
-            }
-            else {
-              block = new Block(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
-            }
-          }
-          break;
-      }
-      column.push(block);
-    }
-  }
-  // merge neighboring edges
+/**
+ * Internal function to merge neighboring blocks' edges
+ */
+function _mergeNeighbors (blocks, gridWidth, gridHeight) {
   for (let x = 0; x < gridWidth; x++) {
     for (let y = 0; y < gridHeight; y++) {
       const block = blocks[x][y];
@@ -301,6 +261,12 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTil
       }
     }
   }
+}
+
+/**
+ * Internal function to traverse blocks to identify connected block sets
+ */
+function _createBlockSets (blocks, gridWidth, gridHeight) {
   // find sets of connected blocks
   // since this is a left-to-right traversal, and therefore starting each DFS
   // traversal on each blockset's left side when encountering it for the first
@@ -350,100 +316,170 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTil
       }
     }
   }
+  return blockSets;
+}
+
+/**
+ * Internal function to traverse polygons for a given block set
+ */
+function _getPolygonsForBlockset(blockSet) {
+  const edgeSets = [];
+  // traverse all blocks and run edge set tracing where necessary
+  // we can assume that the first traced edge represents the outer loop
+  // and all subsequent traces are interior loops that need to be bridged
+  for (let bi = 0; bi < blockSet.length; bi++) {
+    const block = blockSet[bi];
+    const leftmostEdge = block.getLeftmostEdge();
+    if (!leftmostEdge.merged && leftmostEdge.edgeSet === null) {
+      const edgeSet = new EdgeSet();
+      edgeSet.traverseForward(leftmostEdge);
+      edgeSets.push(edgeSet);
+    }
+  }
+
+  const outerEdgeSet = edgeSets[0];
+  for (let esi = 1; esi < edgeSets.length; esi++) {
+    // this next bit can still sometimes be buggy for angle blocks, so just
+    // swollow errors and keep processing the level geometry - it probably
+    // wasn't that important
+    try {
+      const edgeSet = edgeSets[esi];
+      let leftmostEdge = edgeSet.getLeftmostEdge(); // right edge of block
+      let block = leftmostEdge.block;
+      let x = (block.x / tileSize);
+      const y = block.y / tileSize;
+      let topBlock = blocks[x][y - 1];
+      let topBottomEdge;
+      let bottomTopEdge;
+      let prevTopBottomEdge = leftmostEdge.prev;
+      let prevBottomTopEdge = leftmostEdge;
+      let shouldContinue = true;
+      let i = 0;
+      while (i++ < MAX_EDGE_ITERATION_DEPTH) {
+        topBottomEdge = topBlock.getBottommostEdge();
+        bottomTopEdge = block.getTopmostEdge();
+        topBottomEdge.merged = false;
+        bottomTopEdge.merged = false;
+        if (prevTopBottomEdge !== topBottomEdge) {
+          prevTopBottomEdge.next = topBottomEdge;
+          topBottomEdge.prev = prevTopBottomEdge;
+        }
+        if (prevBottomTopEdge !== bottomTopEdge) {
+          prevBottomTopEdge.prev = bottomTopEdge;
+          bottomTopEdge.next = prevBottomTopEdge;
+        }
+        prevTopBottomEdge = topBottomEdge;
+        prevBottomTopEdge = bottomTopEdge;
+        if (!block.getLeftmostEdge().merged) {
+          break;
+        }
+        x -= 1;
+        block = blocks[x][y];
+        topBlock = blocks[x][y - 1];
+      }
+      const outerLeftmostEdge = block.getLeftmostEdge();
+      const outerTopLeftEdge = outerLeftmostEdge.next;
+      outerLeftmostEdge.next = bottomTopEdge;
+      bottomTopEdge.prev = outerLeftmostEdge;
+      outerTopLeftEdge.prev = topBottomEdge;
+      topBottomEdge.next = outerTopLeftEdge;
+    }
+    catch (err) {
+      console.error(err);
+    }
+  }
+
+  // this should never happen
+  if (!outerEdgeSet) {
+    return null;
+  }
+
+  outerEdgeSet.traverseForward(outerEdgeSet.edges[0]);
+  const edgeSetAsPolygon = outerEdgeSet.edges.map(({ x, y }) => [x, y]);
+
+  makeCCW(edgeSetAsPolygon);
+
+  // we can optionaslly remove collinear points here for performance
+  // removeCollinearPoints(edgeSetAsPolygon, 0.01);
+  const convexPolygons = quickDecomp(edgeSetAsPolygon);
+  convexPolygons.forEach(p => removeCollinearPoints(p, 0.01));
+  const polygons = convexPolygons.map(
+    verts => verts.map(
+      ([x, y]) => ({ x, y })
+    )
+  );
+
+  return polygons;
+}
+
+/**
+ * Get tiles for a given blockSet
+ */
+function _getTilesForBlockset(blockSet, tileSize) {
+  return blockSet.map(block => ({
+    x: block.x,
+    y: block.y,
+    width: tileSize,
+    heigth: tileSize,
+    tile: block.tileDef
+  }));
+}
+
+export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTileTypes=['ground']) {
+  // fill a grid with blocks
+  const blocks = [];
+  const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
+  for (let x = 0; x < gridWidth; x++) {
+    const column = [];
+    blocks[x] = column;
+    for (let y = 0; y < gridHeight; y++) {
+      const sourceVal = sourceGridArr[x + y * gridWidth];
+      let block = null;
+      switch (sourceVal) {
+        case 0:
+          break;
+        case 1:
+          block = new Block(x * tileSize, y * tileSize, tileSize, 'base');
+          break;
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+          const angleType = [
+            'topright',
+            'bottomright',
+            'bottomleft',
+            'topleft'
+          ][sourceVal - 2];
+          block = new AngleBlock(x * tileSize, y * tileSize, tileSize, 'base', angleType);
+          break;
+        default:
+          const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
+          if (tileDef && tileDef.type && useTileTypes.includes(tileDef.type)) {
+            if (tileDef.sides) {
+              block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
+            }
+            else {
+              block = new Block(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
+            }
+          }
+          break;
+      }
+      column.push(block);
+    }
+  }
+
+  _mergeNeighbors(blocks, gridWidth, gridHeight);
+  const blockSets = _createBlockSets(blocks, gridWidth, gridHeight);
+
   // trace all edge loops in block set
   // connect edge loops to each other
   const polygonAndTileSets = [];
   for (let bsi = 0; bsi < blockSets.length; bsi++) {
     const blockSet = blockSets[bsi];
-    const edgeSets = [];
-    // traverse all blocks and run edge set tracing where necessary
-    // we can assume that the first traced edge represents the outer loop
-    // and all subsequent traces are interior loops that need to be bridged
-    for (let bi = 0; bi < blockSet.length; bi++) {
-      const block = blockSet[bi];
-      const leftmostEdge = block.getLeftmostEdge();
-      if (!leftmostEdge.merged && leftmostEdge.edgeSet === null) {
-        const edgeSet = new EdgeSet();
-        edgeSet.traverseForward(leftmostEdge);
-        edgeSets.push(edgeSet);
-      }
-    }
-
-    const outerEdgeSet = edgeSets[0];
-    for (let esi = 1; esi < edgeSets.length; esi++) {
-      // this next bit can still sometimes be buggy for angle blocks, so just
-      // swollow errors and keep processing the level geometry - it probably
-      // wasn't that important
-      try {
-        const edgeSet = edgeSets[esi];
-        let leftmostEdge = edgeSet.getLeftmostEdge(); // right edge of block
-        let block = leftmostEdge.block;
-        let x = (block.x / tileSize);
-        const y = block.y / tileSize;
-        let topBlock = blocks[x][y - 1];
-        let topBottomEdge;
-        let bottomTopEdge;
-        let prevTopBottomEdge = leftmostEdge.prev;
-        let prevBottomTopEdge = leftmostEdge;
-        let shouldContinue = true;
-        let i = 0;
-        while (i++ < MAX_EDGE_ITERATION_DEPTH) {
-          topBottomEdge = topBlock.getBottommostEdge();
-          bottomTopEdge = block.getTopmostEdge();
-          topBottomEdge.merged = false;
-          bottomTopEdge.merged = false;
-          if (prevTopBottomEdge !== topBottomEdge) {
-            prevTopBottomEdge.next = topBottomEdge;
-            topBottomEdge.prev = prevTopBottomEdge;
-          }
-          if (prevBottomTopEdge !== bottomTopEdge) {
-            prevBottomTopEdge.prev = bottomTopEdge;
-            bottomTopEdge.next = prevBottomTopEdge;
-          }
-          prevTopBottomEdge = topBottomEdge;
-          prevBottomTopEdge = bottomTopEdge;
-          if (!block.getLeftmostEdge().merged) {
-            break;
-          }
-          x -= 1;
-          block = blocks[x][y];
-          topBlock = blocks[x][y - 1];
-        }
-        const outerLeftmostEdge = block.getLeftmostEdge();
-        const outerTopLeftEdge = outerLeftmostEdge.next;
-        outerLeftmostEdge.next = bottomTopEdge;
-        bottomTopEdge.prev = outerLeftmostEdge;
-        outerTopLeftEdge.prev = topBottomEdge;
-        topBottomEdge.next = outerTopLeftEdge;
-      }
-      catch (err) {
-        console.error(err);
-      }
-    }
-
-    if (!outerEdgeSet) {
-      continue;
-    }
-    outerEdgeSet.traverseForward(outerEdgeSet.edges[0]);
-    const edgeSetAsPolygon = outerEdgeSet.edges.map(({ x, y }) => [x, y]);
-
-    makeCCW(edgeSetAsPolygon);
-    // can optionaslly remove collinear points here for performance
-    // removeCollinearPoints(edgeSetAsPolygon, 0.01);
-    const convexPolygons = quickDecomp(edgeSetAsPolygon);
-    convexPolygons.forEach(p => removeCollinearPoints(p, 0.01));
-    const polygons = convexPolygons.map(
-      verts => verts.map(
-        ([x, y]) => ({ x, y })
-      )
-    );
-    const tiles = blockSet.map(block => ({
-      x: block.x,
-      y: block.y,
-      width: tileSize,
-      heigth: tileSize,
-      tile: block.tileDef
-    }));
+    const polygons = _getPolygonsForBlockset(blockSet);
+    const tiles = _getTilesForBlockset(blockSet, tileSize);
+    
     polygonAndTileSets.push({
       polygons,
       tiles
