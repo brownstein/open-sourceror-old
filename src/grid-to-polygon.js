@@ -351,6 +351,77 @@ function _createBlockSets (blocks, gridWidth, gridHeight) {
 }
 
 /**
+ * Map decals to block sets
+ */
+function _mapDecalsToBlocksets(blockSets, decals, gridWidth, gridHeight) {
+  // find decal tiles to blocksets
+  const decalsWithoutBlockset = [];
+  const decalsByBlockset = blockSets.map(() => []);
+  let nextFrontier = [];
+  function expand(nextX, nextY, anchor, bsi, r) {
+    if (
+      nextX < 0 || nextX >= gridWidth ||
+      nextY < 0 || nextY >= gridHeight
+    ) {
+      return;
+    }
+    const decal = decals[nextX][nextY];
+    if (!decal || decal.traversed) {
+      return;
+    }
+    if (
+      anchor &&
+      decal.tileDef.anchor &&
+      anchor !== decal.tileDef.anchor
+    ) {
+      return;
+    }
+    decal.traversed = true;
+    decal.blockSet = bsi;
+    if (r < 20) {
+      decalsByBlockset[bsi].push(decal);
+      nextFrontier.push([nextX, nextY, bsi, r]);
+    }
+    else {
+      decalsWithoutBlockset.push(decal);
+      nextFrontier.push([nextX, nextY, null, r]);
+    }
+  }
+  for (let bsi = 0; bsi < blockSets.length; bsi++) {
+    const blockSet = blockSets[bsi];
+    for (let bi = 0; bi < blockSet.length; bi++) {
+      const block = blockSet[bi];
+      expand(block.x, block.y, null, bsi, 0);
+    }
+  }
+  let frontier = nextFrontier;
+  while (nextFrontier.length > 0) {
+    nextFrontier = [];
+    while (frontier.length > 0) {
+      const [nextX, nextY, bsi, r] = frontier.pop();
+      expand(nextX, nextY - 1, "down", bsi, r + 1);
+      expand(nextX, nextY + 1, "up", bsi, r + 1);
+      expand(nextX - 1, nextY, "right", bsi, r + 1);
+      expand(nextX + 1, nextY, "left", bsi, r + 1);
+    }
+    frontier = nextFrontier;
+  }
+  for (let x = 0; x < decals.length; x++) {
+    const column = decals[x];
+    for (let y = 0; y < decals.length; y++) {
+      const decal = column[y];
+      if (!decal) {
+        continue;
+      }
+      if (!decal.traversed) {
+        decalsWithoutBlockset.push(decal);
+      }
+    }
+  }
+  return [decalsWithoutBlockset, decalsByBlockset];
+}
+
+/**
  * Internal function to traverse polygons for a given block set
  */
 function _getPolygonsForBlockset(blockSet) {
@@ -457,31 +528,16 @@ function _scalePolygons(polygons, tileSize) {
 }
 
 /**
- * Get tiles for a given blockSet
+ * Get tiles for a given decal array
  */
-function _getTilesForBlockset(blockSet, tileSize) {
-  return blockSet.map(block => ({
-    x: block.x * tileSize,
-    y: block.y * tileSize,
+function _getTilesForDecals(decals, tileSize) {
+  return decals.map(decal => ({
+    x: decal.x * tileSize,
+    y: decal.y * tileSize,
     width: tileSize,
     height: tileSize,
-    tile: block.tileDef
+    tile: decal.tileDef
   }));
-}
-
-/**
- * Get a mapping of decals to blocksets (by index), plus any free-floating
- * decals
- */
-function _getBlocksetDecalTiles(
-  sourceGridArr,
-  blockSets,
-  tileSize,
-  gridWidth,
-  gridHeight,
-  connectionRadius = 2
-) {
-  return null;
 }
 
 export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
@@ -579,93 +635,28 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
     }
   }
 
+  // link blocks that are next to eachother
   _mergeNeighbors(blocks, gridWidth, gridHeight);
+
+  // create block sets
   const blockSets = _createBlockSets(blocks, gridWidth, gridHeight);
 
-  // find decal tiles to blocksets
-  const decalsWithoutBlockset = [];
-  const decalsByBlockset = blockSets.map(() => []);
-  let nextFrontier = [];
-  function expand(nextX, nextY, anchor, bsi, r) {
-    if (
-      nextX < 0 || nextX >= gridWidth ||
-      nextY < 0 || nextY >= gridHeight
-    ) {
-      return;
-    }
-    const decal = decals[nextX][nextY];
-    if (!decal || decal.traversed) {
-      return;
-    }
-    if (
-      anchor &&
-      decal.tileDef.anchor &&
-      anchor !== decal.tileDef.anchor
-    ) {
-      return;
-    }
-    decal.traversed = true;
-    decal.blockSet = bsi;
-    if (r < 20) {
-      decalsByBlockset[bsi].push(decal);
-      nextFrontier.push([nextX, nextY, bsi, r]);
-    }
-    else {
-      decalsWithoutBlockset.push(decal);
-      nextFrontier.push([nextX, nextY, null, r]);
-    }
-  }
-  for (let bsi = 0; bsi < blockSets.length; bsi++) {
-    const blockSet = blockSets[bsi];
-    for (let bi = 0; bi < blockSet.length; bi++) {
-      const block = blockSet[bi];
-      expand(block.x, block.y, null, bsi, 0);
-    }
-  }
-  let frontier = nextFrontier;
-  while (nextFrontier.length > 0) {
-    nextFrontier = [];
-    while (frontier.length > 0) {
-      const [nextX, nextY, bsi, r] = frontier.pop();
-      expand(nextX, nextY - 1, "down", bsi, r + 1);
-      expand(nextX, nextY + 1, "up", bsi, r + 1);
-      expand(nextX - 1, nextY, "right", bsi, r + 1);
-      expand(nextX + 1, nextY, "left", bsi, r + 1);
-    }
-    frontier = nextFrontier;
-  }
-  for (let x = 0; x < decals.length; x++) {
-    const column = decals[x];
-    for (let y = 0; y < decals.length; y++) {
-      const decal = column[y];
-      if (!decal) {
-        continue;
-      }
-      if (!decal.traversed) {
-        decalsWithoutBlockset.push(decal);
-      }
-    }
-  }
-  console.log(decalsByBlockset);
+  // find the block set (or lack thereof) for each decal
+  const [decalsWithoutBlockset, decalsByBlockset] = _mapDecalsToBlocksets(
+    blockSets,
+    decals,
+    gridWidth,
+    gridHeight
+  );
 
-
-  // trace all edge loops in block set
-  // connect edge loops to each other
+  // trace all edge loops in block sets, connect edge loops to each other,
+  // and add tiles
   const polygonAndTileSets = [];
   for (let bsi = 0; bsi < blockSets.length; bsi++) {
     const blockSet = blockSets[bsi];
     let polygons = _getPolygonsForBlockset(blockSet);
     polygons = polygons && _scalePolygons(polygons, tileSize);
-    //const tiles = _getTilesForBlockset(blockSet, tileSize);
-
-    const tiles = decalsByBlockset[bsi].map(decal => ({
-      x: decal.x * tileSize,
-      y: decal.y * tileSize,
-      width: tileSize,
-      height: tileSize,
-      tile: decal.tileDef
-    }));
-
+    const tiles = _getTilesForDecals(decalsByBlockset[bsi], tileSize);
     polygonAndTileSets.push({
       polygons,
       tiles
@@ -676,13 +667,7 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
   if (decalsWithoutBlockset.length) {
     polygonAndTileSets.push({
       polygons: null,
-      tiles: decalsWithoutBlockset.map(decal => ({
-        x: decal.x * tileSize,
-        y: decal.y * tileSize,
-        width: tileSize,
-        height: tileSize,
-        tile: decal.tileDef
-      }))
+      tiles: _getTilesForDecals(decalsWithoutBlockset, tileSize)
     });
   }
 
