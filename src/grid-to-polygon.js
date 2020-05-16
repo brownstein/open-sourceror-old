@@ -205,10 +205,13 @@ class CustomBlock extends AbstractBlock {
  * Empty blocks used to represent decal tiles
  * still need to see if this is relevant
  */
-class DecalBlock extends AbstractBlock {
-  constructor (x, y, size, blockType, tileDef) {
-    super(x, y, blockType, tileDef);
-    this.edges = {};
+class Decal {
+  constructor (x, y, tileDef) {
+    this.x = x;
+    this.y = y;
+    this.tileDef = tileDef;
+    this.blockSet = null;
+    this.traversed = false;
   }
 }
 
@@ -310,8 +313,6 @@ function _createBlockSets (blocks, gridWidth, gridHeight) {
       if (block === null || block.blockSet !== null) {
         continue;
       }
-      const leftAnchor = { x, y };
-      let rightAnchor = { x, y };
       const blockSet = [];
       const frontier = [];
       function expand(nextX, nextY) {
@@ -319,7 +320,7 @@ function _createBlockSets (blocks, gridWidth, gridHeight) {
           nextX < 0 || nextX >= gridWidth ||
           nextY < 0 || nextY >= gridHeight
         ) {
-          return false;
+          return;
         }
         const nextBlock = blocks[nextX][nextY];
         if (
@@ -327,7 +328,7 @@ function _createBlockSets (blocks, gridWidth, gridHeight) {
           nextBlock.blockSet !== null ||
           nextBlock.blockType !== block.blockType
         ) {
-          return false;
+          return;
         }
         blockSet.push(nextBlock);
         nextBlock.blockSet = blockSet;
@@ -463,7 +464,7 @@ function _getTilesForBlockset(blockSet, tileSize) {
     x: block.x * tileSize,
     y: block.y * tileSize,
     width: tileSize,
-    heigth: tileSize,
+    height: tileSize,
     tile: block.tileDef
   }));
 }
@@ -548,35 +549,33 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
 
   // fill a grid with blocks
   const blocks = [];
+  const decals = [];
   const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
   for (let x = 0; x < gridWidth; x++) {
     const column = [];
     blocks[x] = column;
+    const decalColumn = [];
+    decals[x] = decalColumn;
     for (let y = 0; y < gridHeight; y++) {
       const sourceVal = sourceGridArr[x + y * gridWidth];
       const tileDef = tileDefsById[sourceVal - 1];
       if (!tileDef) {
         column.push(null);
+        decalColumn.push(null);
         continue;
       }
       if (useTileTypes.includes(tileDef.type)) {
         if (tileDef.sides) {
-          const block = new CustomBlock(x, y, tileDef.type, tileDef);
-          column.push(block);
+          column.push(new CustomBlock(x, y, tileDef.type, tileDef));
+          decalColumn.push(new Decal(x, y, tileDef));
           continue;
         }
-        else {
-          const block = new Block(x, y, tileDef.type, tileDef);
-          column.push(block);
-          continue;
-        }
-      }
-      else {
-        const block = new DecalBlock(x, y, tileSize, tileDef.type, tileDef);
-        column.push(block);
+        column.push(new Block(x, y, tileDef.type, tileDef));
+        decalColumn.push(new Decal(x, y, tileDef));
         continue;
       }
       column.push(null);
+      decalColumn.push(new Decal(x, y, tileDef));
     }
   }
 
@@ -584,7 +583,63 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
   const blockSets = _createBlockSets(blocks, gridWidth, gridHeight);
 
   // find decal tiles to blocksets
-  const tilesByBlockset = blockSets.map(() => []);
+  const decalsWithoutBlockset = [];
+  const decalsByBlockset = blockSets.map(() => []);
+  let nextFrontier = [];
+  function expand(nextX, nextY, bsi, r) {
+    if (
+      nextX < 0 || nextX >= gridWidth ||
+      nextY < 0 || nextY >= gridHeight
+    ) {
+      return;
+    }
+    const decal = decals[nextX][nextY];
+    if (!decal || decal.traversed) {
+      return;
+    }
+    decal.traversed = true;
+    decal.blockSet = bsi;
+    if (r < 3) {
+      decalsByBlockset[bsi].push(decal);
+      nextFrontier.push([nextX, nextY, bsi, r]);
+    }
+    else {
+      decalsWithoutBlockset.push(decal);
+      nextFrontier.push([nextX, nextY, null, r]);
+    }
+  }
+  for (let bsi = 0; bsi < blockSets.length; bsi++) {
+    const blockSet = blockSets[bsi];
+    for (let bi = 0; bi < blockSet.length; bi++) {
+      const block = blockSet[bi];
+      expand(block.x, block.y, bsi, 0);
+    }
+  }
+  let frontier = nextFrontier;
+  while (nextFrontier.length > 0) {
+    nextFrontier = [];
+    while (frontier.length > 0) {
+      const [nextX, nextY, bsi, r] = frontier.pop();
+      expand(nextX, nextY - 1, bsi, r + 1);
+      expand(nextX, nextY + 1, bsi, r + 1);
+      expand(nextX - 1, nextY, bsi, r + 1);
+      expand(nextX + 1, nextY, bsi, r + 1);
+    }
+    frontier = nextFrontier;
+  }
+  for (let x = 0; x < decals.length; x++) {
+    const column = decals[x];
+    for (let y = 0; y < decals.length; y++) {
+      const decal = column[y];
+      if (!decal) {
+        continue;
+      }
+      if (!decal.traversed) {
+        decalsWithoutBlockset.push(decal);
+      }
+    }
+  }
+  console.log(decalsByBlockset);
 
 
   // trace all edge loops in block set
@@ -594,11 +649,33 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, us
     const blockSet = blockSets[bsi];
     let polygons = _getPolygonsForBlockset(blockSet);
     polygons = polygons && _scalePolygons(polygons, tileSize);
-    const tiles = _getTilesForBlockset(blockSet, tileSize);
+    //const tiles = _getTilesForBlockset(blockSet, tileSize);
+
+    const tiles = decalsByBlockset[bsi].map(decal => ({
+      x: decal.x * tileSize,
+      y: decal.y * tileSize,
+      width: tileSize,
+      height: tileSize,
+      tile: decal.tileDef
+    }));
 
     polygonAndTileSets.push({
       polygons,
       tiles
+    });
+  }
+
+  // include free-floating decals in their own set
+  if (decalsWithoutBlockset.length) {
+    polygonAndTileSets.push({
+      polygons: null,
+      tiles: decalsWithoutBlockset.map(decal => ({
+        x: decal.x * tileSize,
+        y: decal.y * tileSize,
+        width: tileSize,
+        height: tileSize,
+        tile: decal.tileDef
+      }))
     });
   }
 

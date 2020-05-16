@@ -45,17 +45,6 @@ export default class ComplexShape {
 
     let vertexStartIndex = 0;
     polygons && polygons.forEach(polygon => {
-      polygon.forEach(({ x, y }) => {
-        geometry.vertices.push(new Vector3(x, y, 0));
-      });
-      for (let fi = 2; fi < polygon.length; fi++) {
-        geometry.faces.push(new Face3(
-          vertexStartIndex,
-          vertexStartIndex + fi - 1,
-          vertexStartIndex + fi
-        ));
-      }
-      vertexStartIndex += polygon.length;
       const convex = new Convex({ vertices: polygon.map(({x, y}) => [x, y])});
       convex.material = groundMaterial;
       const cm = vec2.create();
@@ -67,19 +56,11 @@ export default class ComplexShape {
       this.body.addShape(convex, cm);
     });
 
-    const fillMesh = new Mesh(geometry, _simpleMaterial);
-    const edgeMesh = new Mesh(geometry, _simpleEdgeMaterial);
-    edgeMesh.position.z = 1;
     this.mesh = new Object3D();
-    //this.mesh.add(fillMesh);
-    //this.mesh.add(edgeMesh);
-
-    fillMesh.visible = false;
-
     this.mesh.add(getThreeJsObjectForP2Body(this.body, true));
 
     // add tiles
-    if (tiles.length) {
+    if (tiles && tiles.length) {
       const textureLoader = new TextureLoader();
       const texture = textureLoader.load(tiles[0].tile.srcImage);
       texture.magFilter = NearestFilter;
@@ -113,9 +94,9 @@ export default class ComplexShape {
       const tileMesh = new Mesh(tileGeom, tileMat);
       tileMesh.position.z = 0.5;
       this.mesh.add(tileMesh);
-
-      this.t = Math.floor(Math.random() * 1000);
     }
+
+    this.t = Math.floor(Math.random() * 1000);
   }
   syncMeshWithBody () {
     this.mesh.position.x = this.body.interpolatedPosition[0];
