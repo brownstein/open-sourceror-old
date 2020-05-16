@@ -10,7 +10,7 @@ import * as p2 from "p2";
 import * as decomp from "poly-decomp";
 import SimpleShape from "./simple-shape";
 import ComplexShape, { groundMaterial } from "./complex-shape";
-import { traverseGrid } from "./grid-to-polygon";
+import { traverseTileGrid } from "./grid-to-polygon";
 import { loadTileset } from "./tileset-loader";
 import KeyState from "./key-state";
 import { Character } from "./character/base";
@@ -62,7 +62,7 @@ export default async function initScene() {
   const levelDataWidth = level1.layers[0].width;
   const levelDataTileWidth = level1.tilewidth;
 
-  const groundPolygonsAndTiles = traverseGrid(
+  const groundPolygonsAndTiles = traverseTileGrid(
     levelData,
     levelDataWidth,
     levelDataTileWidth,

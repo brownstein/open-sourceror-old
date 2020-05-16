@@ -425,7 +425,7 @@ function _getTilesForBlockset(blockSet, tileSize) {
   }));
 }
 
-export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTileTypes=['ground']) {
+export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
   // fill a grid with blocks
   const blocks = [];
   const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
@@ -454,15 +454,6 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTil
           block = new AngleBlock(x * tileSize, y * tileSize, tileSize, 'base', angleType);
           break;
         default:
-          const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
-          if (tileDef && tileDef.type && useTileTypes.includes(tileDef.type)) {
-            if (tileDef.sides) {
-              block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
-            }
-            else {
-              block = new Block(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
-            }
-          }
           break;
       }
       column.push(block);
@@ -479,7 +470,50 @@ export function traverseGrid(sourceGridArr, gridWidth, tileSize, tileset, useTil
     const blockSet = blockSets[bsi];
     const polygons = _getPolygonsForBlockset(blockSet);
     const tiles = _getTilesForBlockset(blockSet, tileSize);
-    
+
+    polygonAndTileSets.push({
+      polygons,
+      tiles
+    });
+  }
+
+  return polygonAndTileSets;
+}
+
+export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset, useTileTypes=['ground']) {
+  // fill a grid with blocks
+  const blocks = [];
+  const gridHeight = Math.floor(sourceGridArr.length / gridWidth);
+  for (let x = 0; x < gridWidth; x++) {
+    const column = [];
+    blocks[x] = column;
+    for (let y = 0; y < gridHeight; y++) {
+      const sourceVal = sourceGridArr[x + y * gridWidth];
+      let block = null;
+      const tileDef = tileset.tiles.find(t => t.id === sourceVal - 1);
+      if (tileDef && tileDef.type && useTileTypes.includes(tileDef.type)) {
+        if (tileDef.sides) {
+          block = new CustomBlock(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
+        }
+        else {
+          block = new Block(x * tileSize, y * tileSize, tileSize, tileDef.type, tileDef);
+        }
+      }
+      column.push(block);
+    }
+  }
+
+  _mergeNeighbors(blocks, gridWidth, gridHeight);
+  const blockSets = _createBlockSets(blocks, gridWidth, gridHeight);
+
+  // trace all edge loops in block set
+  // connect edge loops to each other
+  const polygonAndTileSets = [];
+  for (let bsi = 0; bsi < blockSets.length; bsi++) {
+    const blockSet = blockSets[bsi];
+    const polygons = _getPolygonsForBlockset(blockSet);
+    const tiles = _getTilesForBlockset(blockSet, tileSize);
+
     polygonAndTileSets.push({
       polygons,
       tiles
