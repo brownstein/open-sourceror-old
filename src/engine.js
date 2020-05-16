@@ -23,9 +23,10 @@ export default class Engine {
     this.renderEl = null;
     this.renderer = null;
     this.scene = new Scene();
+    this.cameraSize = { width: 400, height: 400 };
     this.camera = new OrthographicCamera(
-      -100, 1000,
-      -100, 1000,
+      -this.cameraSize.width / 2, this.cameraSize.width / 2,
+      -this.cameraSize.height / 2, this.cameraSize.height / 2,
       -100, 100
     );
     this.camera.lookAt(new Vector3(0, 0, -1));
@@ -44,12 +45,17 @@ export default class Engine {
     // engine-level entities
     this.activeEntities = [];
     this.activeEntitiesByBodyId = {};
+
+    this.followingEntity = null;
   }
   addEntity (entity) {
     this.activeEntities.push(entity);
     this.activeEntitiesByBodyId[entity.body.id] = entity;
     this.world.addBody(entity.body);
     this.scene.add(entity.mesh);
+  }
+  followEntity (entity) {
+    this.followingEntity = entity;
   }
   removeEntity (entity) {
     this.activeEntities = this.activeEntities.filter(e => e !== entity);
@@ -122,6 +128,12 @@ export default class Engine {
       if (entityB && entityB.handleContactEquation) {
         entityB.handleContactEquation(eq, entityA);
       }
+    }
+
+    // track camera
+    if (this.followingEntity) {
+      this.camera.position.x = this.followingEntity.mesh.position.x;
+      this.camera.position.y = this.followingEntity.mesh.position.y;
     }
 
     // render the current frame

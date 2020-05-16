@@ -79,38 +79,41 @@ export default class ComplexShape {
     this.mesh.add(getThreeJsObjectForP2Body(this.body, true));
 
     // add tiles
-    const textureLoader = new TextureLoader();
-    const texture = textureLoader.load(tiles[0].tile.srcImage);
-    texture.magFilter = NearestFilter;
-    const tileMat = new MeshBasicMaterial({
-      side: DoubleSide,
-      map: texture,
-      transparent: true,
-      opacity: 0.5
-    });
-    tiles.forEach(tileInstance => {
-      const tile = tileInstance.tile;
+    if (tiles.length) {
+      const textureLoader = new TextureLoader();
+      const texture = textureLoader.load(tiles[0].tile.srcImage);
+      texture.magFilter = NearestFilter;
+      const tileMat = new MeshBasicMaterial({
+        side: DoubleSide,
+        map: texture,
+        transparent: true,
+        opacity: 0.5
+      });
       const tileGeom = new Geometry();
-      tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y, 0));
-      tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y, 0));
-      tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y + tile.srcHeight, 0));
-      tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y + tile.srcHeight, 0));
-      tileGeom.faces.push(new Face3(0, 1, 2));
-      tileGeom.faces.push(new Face3(0, 2, 3));
-      [
-        [[0, 0], [1, 0], [1, 1]],
-        [[0, 0], [1, 1], [0, 1]]
-      ].forEach(faceUVs => {
-        tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
-        new Vector2(
-          (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
-          1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
-        )));
+      tiles.forEach(tileInstance => {
+        const tile = tileInstance.tile;
+        tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y, 0));
+        tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y, 0));
+        tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y + tile.srcHeight, 0));
+        tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y + tile.srcHeight, 0));
+        const vtxIndex = tileGeom.vertices.length - 4;
+        tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
+        tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));
+        [
+          [[0, 0], [1, 0], [1, 1]],
+          [[0, 0], [1, 1], [0, 1]]
+        ].forEach(faceUVs => {
+          tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
+          new Vector2(
+            (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
+            1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
+          )));
+        });
       });
       const tileMesh = new Mesh(tileGeom, tileMat);
       tileMesh.position.z = 0.5;
       this.mesh.add(tileMesh);
-    });
+    }
   }
   syncMeshWithBody () {
     this.mesh.position.x = this.body.interpolatedPosition[0];

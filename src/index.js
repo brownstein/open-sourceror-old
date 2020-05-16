@@ -35,7 +35,7 @@ export default async function initScene() {
   engine.run();
 
   // add a character
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 2; i++) {
     const character = new Character();
 
     engine.addEntity(character);
@@ -44,6 +44,8 @@ export default async function initScene() {
       groundMaterial,
       { friction: 0.8 }
     ));
+
+    engine.followEntity(character);
   }
 
   const [
@@ -66,8 +68,6 @@ export default async function initScene() {
     levelDataTileWidth,
     tileset
   );
-
-  console.log({ groundPolygonsAndTiles });
 
   const groundShapes = groundPolygonsAndTiles.map(g => {
     return new ComplexShape(

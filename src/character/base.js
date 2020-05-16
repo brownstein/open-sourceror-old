@@ -1,5 +1,7 @@
-import { Body, Convex, Material } from "p2";
+import { Body, Convex, Material, vec2 } from "p2";
 import getThreeJsObjectForP2Body from "../p2-utils/get-threejs-mesh";
+
+import characterPolygon from "./base.json";
 
 export class Character {
   constructor () {
@@ -11,17 +13,20 @@ export class Character {
       position: [200 + Math.random() * 200, -Math.random() * 100]
     });
     const convex = new Convex({
-      vertices: [
-        [-18, 10],
-        [-20, 6],
-        [0, -10],
-        [20, 6],
-        [18, 10]
-      ]
+      vertices: characterPolygon.vertices
     });
     convex.material = new Material();
-    this.body.addShape(convex, [0, 4]);
-    console.log(this.body);
+
+    // find center of mass for convex vertices
+    const cm = vec2.create();
+    for(let j = 0; j !== convex.vertices.length; j++){
+      const v = convex.vertices[j];
+      vec2.sub(v, v, convex.centerOfMass);
+    }
+    vec2.scale(cm, convex.centerOfMass, 1);
+
+    // add the convex
+    this.body.addShape(convex, cm);
     this.mesh = getThreeJsObjectForP2Body(this.body);
     this.onSurface = false;
     this.accellerationX = 50;
