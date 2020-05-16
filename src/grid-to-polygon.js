@@ -8,6 +8,9 @@ import {
 const MAX_EDGE_ITERATION_DEPTH = 10000; // 10000
 const MAX_BLOCK_ITERATION_DEPTH = 10000; // 10000
 
+/**
+ * Internal representation of block edges
+ */
 class Edge {
   constructor (block, x, y, dx, dy) {
     this.x = x;
@@ -37,6 +40,9 @@ class Edge {
   }
 }
 
+/**
+ * Internal representation of edge loops
+ */
 class EdgeSet {
   constructor () {
     this.edges = [];
@@ -83,6 +89,7 @@ class EdgeSet {
   }
 }
 
+// opposite sides for block merging
 const oppositeSides = {
   left: "right",
   top: "bottom",
@@ -90,6 +97,9 @@ const oppositeSides = {
   bottom: "top"
 };
 
+/**
+ * Base class for blocks - square blocks in a grid
+ */
 class AbstractBlock {
   constructor (x, y, blockType, tileDef) {
     this.x = x;
@@ -128,6 +138,9 @@ class AbstractBlock {
   }
 }
 
+/**
+ * Basic blocks - solid squares
+ */
 class Block extends AbstractBlock {
   constructor (x, y, size, blockType, tileDef) {
     super(x, y, blockType, tileDef);
@@ -148,6 +161,9 @@ class Block extends AbstractBlock {
   }
 }
 
+/**
+ * Polygon-based blocks for use with tile-defined polygon shapes
+ */
 class CustomBlock extends AbstractBlock {
   constructor (x, y, size, blockType, tileDef) {
     super(x, y, blockType, tileDef);
@@ -185,6 +201,9 @@ class CustomBlock extends AbstractBlock {
   }
 }
 
+/**
+ * Simple angular blocks
+ */
 class AngleBlock extends Block {
   constructor (x, y, size, blockType, angleType) {
     super(x, y, blockType);
@@ -436,8 +455,6 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
       const sourceVal = sourceGridArr[x + y * gridWidth];
       let block = null;
       switch (sourceVal) {
-        case 0:
-          break;
         case 1:
           block = new Block(x * tileSize, y * tileSize, tileSize, 'base');
           break;
@@ -453,6 +470,7 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
           ][sourceVal - 2];
           block = new AngleBlock(x * tileSize, y * tileSize, tileSize, 'base', angleType);
           break;
+        case 0:
         default:
           break;
       }
