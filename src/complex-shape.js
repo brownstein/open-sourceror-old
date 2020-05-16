@@ -113,11 +113,14 @@ export default class ComplexShape {
       const tileMesh = new Mesh(tileGeom, tileMat);
       tileMesh.position.z = 0.5;
       this.mesh.add(tileMesh);
+
+      this.t = Math.floor(Math.random() * 1000);
     }
   }
   syncMeshWithBody () {
     this.mesh.position.x = this.body.interpolatedPosition[0];
     this.mesh.position.y = this.body.interpolatedPosition[1];
     this.mesh.rotation.z = this.body.interpolatedAngle;
+    this.body.velocity[0] = 16 * Math.cos(this.t++ / 100);
   }
 }
