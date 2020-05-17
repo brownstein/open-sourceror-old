@@ -8,6 +8,8 @@ import {
 } from "three";
 import * as p2 from "p2";
 import * as decomp from "poly-decomp";
+import ReactDom from "react-dom";
+
 import SimpleShape from "./simple-shape";
 import ComplexShape, { groundMaterial } from "./complex-shape";
 import { traverseTileGrid } from "./grid-to-polygon";
@@ -17,7 +19,10 @@ import { Player } from "./character/player";
 import { Enemy } from "./character/enemy";
 import Engine from "./engine";
 
+// patch things
 window.decomp = decomp;
+import regeneratorRuntime from "regenerator-runtime";
+
 import "./style.less";
 
 import tilesetPng from "./tilesets/magic-cliffs/PNG/tileset.png";
@@ -27,6 +32,10 @@ let scene, camera, renderer;
 
 const windowSize = { width: 400, height: 400 };
 
+function App () {
+  return <div>test</div>;
+}
+
 export default async function initScene() {
 
   // init game engine
@@ -34,6 +43,14 @@ export default async function initScene() {
   const viewContainerEl = document.getElementById("container");
   engine.initWithContainerElement(viewContainerEl);
   engine.run();
+
+  // init React
+  const rContainer = document.createElement('div');
+  viewContainerEl.appendChild(rContainer);
+
+  const app = <App/>;
+
+  ReactDom.render(app, rContainer);
 
   // add a character
   const player = new Player();
