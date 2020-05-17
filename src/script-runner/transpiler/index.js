@@ -26,7 +26,7 @@ function _traverseAST (ast, nodes) {
  * @param rawCode - raw ES6 code
  * @returns - [the transpiled code, the raw code's AST, and a position mapping]
  */
-export default async function transpileScript (rawCode) {
+export default async function transpileScript(rawCode) {
 
   // transpile the (possibly ES6) code down to ES5
   let rawAST, transpiledCode, sourceMap;
