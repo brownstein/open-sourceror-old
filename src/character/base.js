@@ -32,7 +32,7 @@ export class Character {
     this.onSurface = false;
 
     this.accelleration = [50, 50]; // rate of character speed increase
-    this.jumpAccelleration = 400; // velocity delta of jump
+    this.jumpAccelleration = 300; // velocity delta of jump
     this.maxControlledVelocity = [200, 400]; // max controlled speed
     this.plannedAccelleration = [0, 0]; // accelleration to apply on next frame
   }

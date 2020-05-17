@@ -42,7 +42,7 @@ export default async function initScene() {
   engine.world.addContactMaterial(new p2.ContactMaterial(
     player.body.shapes[0].material,
     groundMaterial,
-    { friction: 0.8 }
+    { friction: 1 }
   ));
 
   const enemy = new Enemy();

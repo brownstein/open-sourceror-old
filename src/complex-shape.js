@@ -61,7 +61,7 @@ export default class ComplexShape {
 
     // add a basic polygon mesh
     const debugMesh = getThreeJsObjectForP2Body(this.body, true);
-    // debugMesh.visible = false;
+    debugMesh.visible = false;
     this.mesh.add(debugMesh);
 
     // add tiles
@@ -104,12 +104,15 @@ export default class ComplexShape {
       this.mesh.add(tileMesh);
     }
 
-    //this.t = Math.floor(Math.random() * 1000);
+    // test motion
+    // this.t = Math.floor(Math.random() * 1000);
   }
   syncMeshWithBody () {
     this.mesh.position.x = this.body.interpolatedPosition[0];
     this.mesh.position.y = this.body.interpolatedPosition[1];
     this.mesh.rotation.z = this.body.interpolatedAngle;
-    //this.body.velocity[0] = 16 * Math.cos(this.t++ / 100);
+
+    // test motion
+    // this.body.velocity[0] = 32 * Math.cos(this.t++ / 100);
   }
 }
