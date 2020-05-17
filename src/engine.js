@@ -1,4 +1,5 @@
 import {
+  Box3,
   Color,
   OrthographicCamera,
   Scene,
@@ -31,6 +32,9 @@ export default class Engine {
     );
     this.camera.lookAt(new Vector3(0, 0, -1));
     this.camera.position.copy(new Vector3(0, 0, 1));
+    this.levelBBox = new Box3();
+    this.levelBBox.expandByPoint(new Vector3(0, 0, 0));
+    this.levelBBox.expandByPoint(new Vector3(64, 64, 0));
 
     // physics
     this.world = new World({
@@ -53,6 +57,14 @@ export default class Engine {
     this.activeEntitiesByBodyId[entity.body.id] = entity;
     this.world.addBody(entity.body);
     this.scene.add(entity.mesh);
+  }
+  addLevelEntity (entity) {
+    // TODO revise room geometry
+    this.activeEntities.push(entity);
+    this.activeEntitiesByBodyId[entity.body.id] = entity;
+    this.world.addBody(entity.body);
+    this.scene.add(entity.mesh);
+    this.levelBBox.expandByObject(entity.mesh);
   }
   followEntity (entity) {
     this.followingEntity = entity;
@@ -132,8 +144,20 @@ export default class Engine {
 
     // track camera
     if (this.followingEntity) {
-      this.camera.position.x = this.followingEntity.mesh.position.x;
-      this.camera.position.y = this.followingEntity.mesh.position.y;
+      this.camera.position.x = Math.max(
+        this.levelBBox.min.x + this.cameraSize.width / 2,
+        Math.min(
+          this.levelBBox.max.x - this.cameraSize.width / 2,
+          this.followingEntity.mesh.position.x
+        )
+      );
+      this.camera.position.y = Math.max(
+        this.levelBBox.min.y + this.cameraSize.height / 2,
+        Math.min(
+          this.levelBBox.max.y - this.cameraSize.height / 2,
+          this.followingEntity.mesh.position.y
+        )
+      );
     }
 
     // render the current frame

@@ -57,7 +57,12 @@ export default class ComplexShape {
     });
 
     this.mesh = new Object3D();
-    this.mesh.add(getThreeJsObjectForP2Body(this.body, true));
+    this.mesh.z = -10;
+
+    // add a basic polygon mesh
+    const debugMesh = getThreeJsObjectForP2Body(this.body, true);
+    debugMesh.visible = false;
+    this.mesh.add(debugMesh);
 
     // add tiles
     if (tiles && tiles.length) {
@@ -67,16 +72,20 @@ export default class ComplexShape {
       const tileMat = new MeshBasicMaterial({
         side: DoubleSide,
         map: texture,
-        transparent: true,
-        opacity: 0.8
+        transparent: true
       });
       const tileGeom = new Geometry();
       tiles.forEach(tileInstance => {
         const tile = tileInstance.tile;
-        tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y, 0));
-        tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y, 0));
-        tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y + tile.srcHeight, 0));
-        tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y + tile.srcHeight, 0));
+        let z = 0;
+        if (tile.depthBias) {
+          console.log(tile.depthBias);
+          z = tile.depthBias;
+        }
+        tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y, z));
+        tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y, z));
+        tileGeom.vertices.push(new Vector3(tileInstance.x + tile.srcWidth, tileInstance.y + tile.srcHeight, z));
+        tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y + tile.srcHeight, z));
         const vtxIndex = tileGeom.vertices.length - 4;
         tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
         tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));

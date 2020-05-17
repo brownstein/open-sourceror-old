@@ -13,7 +13,8 @@ import ComplexShape, { groundMaterial } from "./complex-shape";
 import { traverseTileGrid } from "./grid-to-polygon";
 import { loadTileset } from "./tileset-loader";
 import KeyState from "./key-state";
-import { Character } from "./character/base";
+import { Player } from "./character/player";
+import { Enemy } from "./character/enemy";
 import Engine from "./engine";
 
 window.decomp = decomp;
@@ -30,23 +31,24 @@ export default async function initScene() {
 
   // init game engine
   const engine = new Engine();
-  const containerEl = document.getElementById("container");
-  engine.initWithContainerElement(containerEl);
+  const viewContainerEl = document.getElementById("container");
+  engine.initWithContainerElement(viewContainerEl);
   engine.run();
 
   // add a character
-  for (let i = 0; i < 2; i++) {
-    const character = new Character();
+  const player = new Player();
 
-    engine.addEntity(character);
-    engine.world.addContactMaterial(new p2.ContactMaterial(
-      character.body.shapes[0].material,
-      groundMaterial,
-      { friction: 0.8 }
-    ));
+  engine.addEntity(player);
+  engine.world.addContactMaterial(new p2.ContactMaterial(
+    player.body.shapes[0].material,
+    groundMaterial,
+    { friction: 0.8 }
+  ));
 
-    engine.followEntity(character);
-  }
+  const enemy = new Enemy();
+  engine.addEntity(enemy);
+
+  engine.followEntity(player);
 
   const [
     level1,
@@ -77,9 +79,9 @@ export default async function initScene() {
         mass: 0,
         isStatic: true,
         friction: 0.9,
-        position: [-96, -96]
+        position: [0, 0]
       }
     );
   });
-  groundShapes.forEach(s => engine.addEntity(s));
+  groundShapes.forEach(s => engine.addLevelEntity(s));
 }

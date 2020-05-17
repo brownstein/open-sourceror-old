@@ -26,6 +26,7 @@ export function loadTileset (tilesetSrc, tilesetImage) {
       sides: null,
       sideMapping: null,
       anchor: false,
+      depthBias: 0,
       srcWidth: tilewidth,
       srcHeight: tileheight,
       srcX: tilewidth * (tileIndex % columns),
@@ -39,6 +40,9 @@ export function loadTileset (tilesetSrc, tilesetImage) {
         switch (p.name) {
           case "anchor":
             tile.anchor = p.value;
+            break;
+          case "depthBias":
+            tile.depthBias = p.value;
             break;
           default:
             break;
