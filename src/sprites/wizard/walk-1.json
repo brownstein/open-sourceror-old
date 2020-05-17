@@ -1,0 +1,53 @@
+{ "frames": {
+   "Walkstartmaybe1 0.gif": {
+    "frame": { "x": 0, "y": 0, "w": 22, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 32 },
+    "sourceSize": { "w": 22, "h": 32 },
+    "duration": 200
+   },
+   "Walkstartmaybe1 1.gif": {
+    "frame": { "x": 22, "y": 0, "w": 22, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 32 },
+    "sourceSize": { "w": 22, "h": 32 },
+    "duration": 200
+   },
+   "Walkstartmaybe1 2.gif": {
+    "frame": { "x": 44, "y": 0, "w": 22, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 32 },
+    "sourceSize": { "w": 22, "h": 32 },
+    "duration": 200
+   },
+   "Walkstartmaybe1 3.gif": {
+    "frame": { "x": 66, "y": 0, "w": 22, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 22, "h": 32 },
+    "sourceSize": { "w": 22, "h": 32 },
+    "duration": 200
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.18-x64",
+  "image": "Walkstartmaybe1.png",
+  "format": "RGBA8888",
+  "size": { "w": 88, "h": 32 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 4", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 3", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 2", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

@@ -14,7 +14,6 @@ import SimpleShape from "./simple-shape";
 import ComplexShape, { groundMaterial } from "./complex-shape";
 import { traverseTileGrid } from "./grid-to-polygon";
 import { loadTileset } from "./tileset-loader";
-import KeyState from "./key-state";
 import { Player } from "./character/player";
 import { Enemy } from "./character/enemy";
 import Engine from "./engine";
