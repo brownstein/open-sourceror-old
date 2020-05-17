@@ -61,7 +61,7 @@ export default class ComplexShape {
 
     // add a basic polygon mesh
     const debugMesh = getThreeJsObjectForP2Body(this.body, true);
-    debugMesh.visible = false;
+    // debugMesh.visible = false;
     this.mesh.add(debugMesh);
 
     // add tiles
@@ -79,7 +79,6 @@ export default class ComplexShape {
         const tile = tileInstance.tile;
         let z = 0;
         if (tile.depthBias) {
-          console.log(tile.depthBias);
           z = tile.depthBias;
         }
         tileGeom.vertices.push(new Vector3(tileInstance.x, tileInstance.y, z));

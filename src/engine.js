@@ -28,7 +28,7 @@ export default class Engine {
     this.camera = new OrthographicCamera(
       -this.cameraSize.width / 2, this.cameraSize.width / 2,
       -this.cameraSize.height / 2, this.cameraSize.height / 2,
-      -100, 100
+      -64, 64
     );
     this.camera.lookAt(new Vector3(0, 0, -1));
     this.camera.position.copy(new Vector3(0, 0, 1));

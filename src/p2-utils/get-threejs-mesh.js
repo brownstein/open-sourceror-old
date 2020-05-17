@@ -51,7 +51,7 @@ export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
       obj3.add(mesh);
       if (addWireframe) {
         const wireframeMesh = new Mesh(geom, simpleEdgeMaterial);
-        wireframeMesh.z = 1;
+        wireframeMesh.position.z = 10;
         wireframeMesh.position.x = shape.centerOfMass[0];
         wireframeMesh.position.y = shape.centerOfMass[1];
         obj3.add(wireframeMesh);
