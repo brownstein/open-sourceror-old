@@ -14,4 +14,18 @@ html, body {
 .highlighted {
   display: inline;
   color: #f00;
+  position: relative;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.highlighted::before {
+  position: absolute;
+  left: -20px;
+  top: -0.25em;
+  content: ">";
+  color: #800;
+  font-weight: bold;
+  z-index: 10;
+  font-size: 2em;
 }

@@ -62,7 +62,7 @@ function App () {
     setState({ ...state, scriptRunner });
     let t = 0;
     function onFrame () {
-      if (scriptRunner.ready && !(t++ % 4)) {
+      if (scriptRunner.ready && !(t++ % 10)) {
         if (!scriptRunner.hasNextStep) {
           return;
         }
