@@ -38,56 +38,65 @@ const windowSize = { width: 400, height: 400 };
 
 // source script to run
 const srcScript = `
-console.log('START');
-async function go(n) {
+async function go (n) {
   if (n < 1) {
     return;
   }
-  await Promise.resolve(n - 1).then(v => {
-    console.log(v);
-    return go(v);
-  });
-  console.log('done');
+  // console.log(n, 'starting');
+  await go(n - 1);
+  console.log(n, 'done');
 }
-go(5);
+go(100);
 `
 
 function App () {
   const [state, setState] = useState({
     scriptRunner: null,
-    highlightedTextSegment: [null, null]
+    highlightedTextSegment: [null, null],
+    currentLine: null
   });
   useEffect(() => {
     const scriptRunner = new ScriptRunner(srcScript);
     setState({ ...state, scriptRunner });
     let t = 0;
     function onFrame () {
-      if (scriptRunner.ready && !(t++ % 10)) {
+      if (scriptRunner.ready && !(t++ % 2)) {
         if (!scriptRunner.hasNextStep) {
           return;
         }
         let highlightedTextSegment = [null, null];
         let start = null;
-        let end = null;
+        let currentLine = null;
         let i = 0;
         while (!start && scriptRunner.hasNextStep() && i++ < 1000) {
-          scriptRunner.doNextStep();
+          scriptRunner.doCurrentLine();
           highlightedTextSegment = scriptRunner.getExecutingSection();
-          [start, end] = highlightedTextSegment;
+          [start] = highlightedTextSegment;
+          currentLine = scriptRunner.getExecutingLine();
         }
-        setState({ ...state, highlightedTextSegment });
+        setState({ ...state, highlightedTextSegment, currentLine });
       }
       requestAnimationFrame(onFrame);
     }
     onFrame();
   }, []);
-  const { highlightedTextSegment } = state;
+  const { highlightedTextSegment, currentLine } = state;
   const [start, end] = highlightedTextSegment;
   const parts = [];
   parts.push(srcScript.slice(0, start || 0));
   parts.push(<span key={1} className="highlighted">{srcScript.slice(start || 0, end || 0)}</span>);
   parts.push(srcScript.slice(end || 0, srcScript.length));
-  return <div className="script-display">{parts}</div>;
+  let lineIndicator = null;
+  if (currentLine) {
+    const lineIndicatorStyle = {
+      top: `${currentLine * 16 + 16}px`
+    };
+    lineIndicator = <span
+      className="line-indicator"
+      style={lineIndicatorStyle}
+      >{">"}</span>;
+  }
+  return <div className="script-display">{parts}{lineIndicator}</div>;
 }
 
 export default async function initScene() {

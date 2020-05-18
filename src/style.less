@@ -8,7 +8,9 @@ html, body {
   padding: 16px;
   font-weight: bold;
   font-family: monospace;
+  line-height: 16px;
   white-space: pre;
+  position: relative;
 }
 
 .highlighted {
@@ -16,16 +18,13 @@ html, body {
   color: #f00;
   position: relative;
   background-color: #fff;
-  border-radius: 4px;
 }
 
-.highlighted::before {
+.line-indicator {
   position: absolute;
-  left: -20px;
-  top: -0.25em;
-  content: ">";
+  left: 0;
+  top: 0;
   color: #800;
   font-weight: bold;
   z-index: 10;
-  font-size: 2em;
 }

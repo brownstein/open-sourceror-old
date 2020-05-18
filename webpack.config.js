@@ -30,6 +30,8 @@ module.exports = {
     "@babel/core": "@babel/core",
     // "@babel/preset-env": "@babel/preset-env",
     "@babel/plugin-transform-arrow-functions": "@babel/plugin-transform-arrow-functions",
+    "@babel/plugin-transform-block-scoping": "@babel/plugin-transform-block-scoping",
+    "babel-plugin-transform-async-to-promises": "babel-plugin-transform-async-to-promises",
   },
   devtool: isDev ? "cheap-module-eval-source-map" : "source-map",
   module: {
