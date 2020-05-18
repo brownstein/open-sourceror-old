@@ -5,6 +5,9 @@ import ASTLocationMap from "./ast-location-map";
 import SourceMapMap from "./source-map-map";
 import TranspilationMap from "./transpilation-map";
 
+// make sure we're including everything we need in the bundle
+import "@babel/plugin-transform-arrow-functions";
+
 /**
  * Internal helper to dump AST nodes into an array
  */
@@ -34,8 +37,10 @@ export default async function transpileScript(rawCode) {
     babel.transform(
       rawCode,
       {
-        plugins: [],
-        presets: [/* "@babel/preset-env" // has browser issue */],
+        plugins: [
+          "@babel/plugin-transform-arrow-functions"
+        ],
+        presets: [],
         ast: true,
         generatorOpts: {
           sourceMaps: true

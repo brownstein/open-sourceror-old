@@ -38,14 +38,7 @@ const windowSize = { width: 400, height: 400 };
 
 // source script to run
 const srcScript = `
-function fibo(n) {
-  if (n < 2) {
-    return 1;
-  }
-  return fibo(n - 1) + fibo(n - 2);
-}
-
-fibo(5);
+setTimeout(() => console.log("DONE"), 2000);
 `
 
 function App () {
@@ -58,7 +51,7 @@ function App () {
     setState({ ...state, scriptRunner });
     let t = 0;
     function onFrame () {
-      if (scriptRunner.ready && !(t++ % 10)) {
+      if (scriptRunner.ready && !(t++ % 2)) {
         if (!scriptRunner.hasNextStep) {
           return;
         }
