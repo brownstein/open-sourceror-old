@@ -26,7 +26,8 @@ module.exports = {
     react: "react",
     "react-redux": "react-redux",
     three: "three",
-    ajv: "ajv"
+    ajv: "ajv",
+    "@babel/core": "@babel/core",
   },
   devtool: isDev ? "cheap-module-eval-source-map" : "source-map",
   module: {

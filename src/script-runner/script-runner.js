@@ -5,7 +5,7 @@ import transpileScript from "./transpiler";
 /**
  * Script execution container - runs code and shows what's running when
  */
-class ScriptRunner {
+export default class ScriptRunner {
   constructor(scriptSrc) {
     this.transpiledScript = null;
     this.sourceAST = null;
@@ -14,13 +14,13 @@ class ScriptRunner {
     this.interpreter = null;
 
     this.ready = false;
-    this.readyPromise = this._init(srcScript);
+    this.readyPromise = this._init(scriptSrc);
   }
   /**
    * Internal asynchronous constructor extension
    */
   async _init(srcScript) {
-    const [script, ast, transpilationMap] = await transpileScript(srcSrcipt);
+    const [script, ast, transpilationMap] = await transpileScript(srcScript);
     this.transpiledScript = script;
     this.sourceAST = ast;
     this.transpilationMap = transpilationMap;
@@ -50,6 +50,8 @@ class ScriptRunner {
   getExecutingSection() {
     const stateStackIndex = this.interpreter.stateStack.length - 1;
     const exNode = this.interpreter.stateStack[stateStackIndex].node;
-    return this.transpilationMap.getSourceLocation(exNode.start, exNode.end);
+    const { start, end } = exNode;
+    const srcExNode = this.transpilationMap.getSourceLocation(start, end);
+    return srcExNode;
   }
 }

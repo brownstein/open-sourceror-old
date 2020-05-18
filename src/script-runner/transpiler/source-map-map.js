@@ -1,4 +1,4 @@
-import vlq from "vlq";
+import * as vlq from "vlq";
 
 /**
  * Helper class for translating transpiled locations back to their sources

@@ -8,6 +8,13 @@ import {
 } from "three";
 import * as p2 from "p2";
 import * as decomp from "poly-decomp";
+
+// patch things
+window.decomp = decomp;
+import regeneratorRuntime from "regenerator-runtime";
+
+// pull in React
+import { useState, useEffect } from "react";
 import ReactDom from "react-dom";
 
 import SimpleShape from "./simple-shape";
@@ -18,9 +25,7 @@ import { Player } from "./character/player";
 import { Enemy } from "./character/enemy";
 import Engine from "./engine";
 
-// patch things
-window.decomp = decomp;
-import regeneratorRuntime from "regenerator-runtime";
+import ScriptRunner from "./script-runner/script-runner";
 
 import "./style.less";
 
@@ -31,8 +36,50 @@ let scene, camera, renderer;
 
 const windowSize = { width: 400, height: 400 };
 
+// source script to run
+const srcScript = `
+function fibo(n) {
+  if (n < 2) {
+    return 1;
+  }
+  return fibo(n - 1) + fibo(n - 2);
+}
+
+fibo(5);
+`
+
 function App () {
-  return <div>test</div>;
+  const [state, setState] = useState({
+    scriptRunner: null,
+    highlightedTextSegment: [null, null]
+  });
+  useEffect(() => {
+    const scriptRunner = new ScriptRunner(srcScript);
+    setState({ ...state, scriptRunner });
+    let t = 0;
+    function onFrame () {
+      if (scriptRunner.ready && !(t++ % 10)) {
+        if (!scriptRunner.hasNextStep) {
+          return;
+        }
+        scriptRunner.doNextStep();
+        const highlightedTextSegment = scriptRunner.getExecutingSection();
+        const [start, end] = highlightedTextSegment;
+        if (start && end) {
+          setState({ ...state, highlightedTextSegment });
+        }
+      }
+      requestAnimationFrame(onFrame);
+    }
+    onFrame();
+  }, []);
+  const { highlightedTextSegment } = state;
+  const [start, end] = highlightedTextSegment;
+  const parts = [];
+  parts.push(srcScript.slice(0, start || 0));
+  parts.push(<span key={1} className="highlighted">{srcScript.slice(start || 0, end || 0)}</span>);
+  parts.push(srcScript.slice(end || 0, srcScript.length));
+  return <div className="script-display">{parts}</div>;
 }
 
 export default async function initScene() {

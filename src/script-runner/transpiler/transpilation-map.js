@@ -9,7 +9,7 @@ export default class TranspilationMap {
     let tokensAtIndex = this.tokensByDestStartIndex[destStart];
     if (!tokensAtIndex) {
       tokensAtIndex = [];
-      this.tokensByDestStartIndex[destStart] = [];
+      this.tokensByDestStartIndex[destStart] = tokensAtIndex;
     }
     tokensAtIndex.push([destEnd, srcStart, srcEnd]);
   }

@@ -1,5 +1,5 @@
-import acorn from "acorn";
-import babel from "@babel/core";
+import * as acorn from "acorn";
+import * as babel from "@babel/core";
 
 import ASTLocationMap from "./ast-location-map";
 import SourceMapMap from "./source-map-map";
@@ -35,7 +35,7 @@ export default async function transpileScript(rawCode) {
       rawCode,
       {
         plugins: [],
-        presets: ["@babel/preset-env"],,
+        presets: [/* "@babel/preset-env" // has browser issue */],
         ast: true,
         generatorOpts: {
           sourceMaps: true
