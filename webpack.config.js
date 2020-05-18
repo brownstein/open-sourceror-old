@@ -102,7 +102,7 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(tsx)$/i,
+        test: /\.(tsx|txt)$/,
         use: "raw-loader",
       },
     ]

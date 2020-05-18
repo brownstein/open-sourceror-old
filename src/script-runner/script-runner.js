@@ -1,7 +1,7 @@
 import Interpreter from "js-interpreter";
 
 import transpileScript from "./transpiler";
-import { initializeScope } from "./runtime-hooks";
+import { initializeScope, runPolyfills } from "./runtime-hooks";
 
 // patch the interpreter class to support queueCall
 
@@ -66,6 +66,8 @@ export default class ScriptRunner {
     this.interpreter = new Interpreter(script, (interpreter, scope) => {
       initializeScope(interpreter, scope);
     });
+
+    runPolyfills(this.interpreter);
 
     this.ready = true;
   }

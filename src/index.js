@@ -38,13 +38,14 @@ const windowSize = { width: 400, height: 400 };
 
 // source script to run
 const srcScript = `
-setTimeout(() => console.log("DONE"), 2000);
-setTimeout(() => console.log("DONE"), 1000);
-setTimeout(() => console.log("DONE"), 4000);
-setTimeout(() => console.log("DONE"), 5000);
-setTimeout(() => console.log("DONE"), 2000);
-setTimeout(() => console.log("DONE"), 2000);
-setTimeout(() => console.log("DONE"), 2000);
+console.log('START');
+function go() {
+  console.log('starting');
+  Promise.resolve(1).then(l => {
+    go();
+  });
+}
+go();
 `
 
 function App () {
