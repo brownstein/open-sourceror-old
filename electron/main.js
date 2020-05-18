@@ -63,7 +63,8 @@ function createWindow () {
     height: cmdArgs.dev ? 700 : 700,
     title: cmdArgs.file ? `Open Sourceror - ${cmdArgs.file}` : "Open Sourceror",
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true
     }
   });
 

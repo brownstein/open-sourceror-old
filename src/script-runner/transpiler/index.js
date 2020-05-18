@@ -1,12 +1,15 @@
 import * as acorn from "acorn";
-import * as babel from "@babel/core";
+// import * as babel from "@babel/core";
 
 import ASTLocationMap from "./ast-location-map";
 import SourceMapMap from "./source-map-map";
 import TranspilationMap from "./transpilation-map";
 
 // make sure we're including everything we need in the bundle
-import "@babel/plugin-transform-arrow-functions";
+// import "@babel/plugin-transform-arrow-functions";
+
+// import Worker from "./babel.worker";
+
 
 /**
  * Internal helper to dump AST nodes into an array
@@ -33,29 +36,46 @@ export default async function transpileScript(rawCode) {
 
   // transpile the (possibly ES6) code down to ES5
   let rawAST, transpiledCode, sourceMap;
+
+  // replaced with worker for performance
+  // await new Promise((resolve, reject) => {
+  //   babel.transform(
+  //     rawCode,
+  //     {
+  //       plugins: [
+  //         "@babel/plugin-transform-arrow-functions"
+  //       ],
+  //       presets: [],
+  //       ast: true,
+  //       generatorOpts: {
+  //         sourceMaps: true
+  //       }
+  //     },
+  //     (err, result) => {
+  //       if (err) {
+  //         return reject(err);
+  //       }
+  //       rawAST = result.ast;
+  //       transpiledCode = result.code;
+  //       sourceMap = result.map;
+  //       resolve();
+  //     }
+  //   )
+  // });
+
+  // dynamically require a worker module to do the heavy transpilation op
+  const workerModule = await import("./babel.worker");
+  const Worker = workerModule.default;
   await new Promise((resolve, reject) => {
-    babel.transform(
-      rawCode,
-      {
-        plugins: [
-          "@babel/plugin-transform-arrow-functions"
-        ],
-        presets: [],
-        ast: true,
-        generatorOpts: {
-          sourceMaps: true
-        }
-      },
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        rawAST = result.ast;
-        transpiledCode = result.code;
-        sourceMap = result.map;
-        resolve();
+    const worker = new Worker();
+    worker.onmessage = event => {
+      if (event.data.error) {
+        return reject(event.data.error);
       }
-    )
+      [rawAST, transpiledCode, sourceMap] = event.data.result;
+      resolve();
+    };
+    worker.postMessage(rawCode);
   });
 
   // map the raw source map into something more usable

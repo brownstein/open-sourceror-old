@@ -28,7 +28,7 @@ module.exports = {
     three: "three",
     ajv: "ajv",
     "@babel/core": "@babel/core",
-    // "@babel/preset-env": "@babel/preset-env",
+    "@babel/plugin-transform-arrow-functions": "@babel/plugin-transform-arrow-functions",
   },
   devtool: isDev ? "cheap-module-eval-source-map" : "source-map",
   module: {
@@ -39,6 +39,18 @@ module.exports = {
         use: {
           loader: "babel-loader"
         }
+      },
+      {
+        exclude: /node_modules/,
+        test: /\.worker\.js$/,
+        use: [
+          {
+            loader: "worker-loader"
+          },
+          {
+            loader: "babel-loader"
+          }
+        ]
       },
       {
         test: /\.less$/,
