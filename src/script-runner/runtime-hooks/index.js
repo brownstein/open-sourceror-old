@@ -1,6 +1,9 @@
 import * as acorn from "acorn";
 import promisePolyfill from "./promise-polyfill.txt";
 
+/**
+ * Initialize the interpreter scope with global functions
+ */
 export function initializeScope(interpreter, scope) {
 
   // add support for console.log and 'log' shorthand
@@ -24,6 +27,9 @@ export function initializeScope(interpreter, scope) {
   interpreter.setProperty(scope, "setTimeout", nativeSetTimeout);
 }
 
+/**
+ * Run standard polyfulls within the interpreter
+ */
 export function runPolyfills (interpreter) {
   const _ast = interpreter.ast;
   const _stateStack = interpreter.stateStack;

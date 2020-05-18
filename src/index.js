@@ -39,13 +39,17 @@ const windowSize = { width: 400, height: 400 };
 // source script to run
 const srcScript = `
 console.log('START');
-function go() {
-  console.log('starting');
-  Promise.resolve(1).then(l => {
-    go();
+async function go(n) {
+  if (n < 1) {
+    return;
+  }
+  await Promise.resolve(n - 1).then(v => {
+    console.log(v);
+    return go(v);
   });
+  console.log('done');
 }
-go();
+go(5);
 `
 
 function App () {
@@ -58,16 +62,20 @@ function App () {
     setState({ ...state, scriptRunner });
     let t = 0;
     function onFrame () {
-      if (scriptRunner.ready && !(t++ % 2)) {
+      if (scriptRunner.ready && !(t++ % 4)) {
         if (!scriptRunner.hasNextStep) {
           return;
         }
-        scriptRunner.doNextStep();
-        const highlightedTextSegment = scriptRunner.getExecutingSection();
-        const [start, end] = highlightedTextSegment;
-        if (start && end) {
-          setState({ ...state, highlightedTextSegment });
+        let highlightedTextSegment = [null, null];
+        let start = null;
+        let end = null;
+        let i = 0;
+        while (!start && scriptRunner.hasNextStep() && i++ < 1000) {
+          scriptRunner.doNextStep();
+          highlightedTextSegment = scriptRunner.getExecutingSection();
+          [start, end] = highlightedTextSegment;
         }
+        setState({ ...state, highlightedTextSegment });
       }
       requestAnimationFrame(onFrame);
     }

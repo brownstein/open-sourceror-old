@@ -3,6 +3,8 @@ import * as babel from "@babel/core";
 // we have to pull in all babel plugins and presets as browser imports and
 // include them as direct references
 import transformArrowFunctions from "@babel/plugin-transform-arrow-functions";
+import transformBlockScoping from "@babel/plugin-transform-block-scoping";
+import asyncToPromises from "babel-plugin-transform-async-to-promises";
 // import presetEnv from "@babel/preset-env";
 
 /**
@@ -16,9 +18,11 @@ function justTranspile (event) {
     {
       plugins: [
         transformArrowFunctions,
+        transformBlockScoping,
+        asyncToPromises
       ],
       presets: [
-        //presetEnv,
+        // presetEnv,
       ],
       ast: true,
       generatorOpts: {
