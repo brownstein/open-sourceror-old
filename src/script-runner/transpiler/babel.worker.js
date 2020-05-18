@@ -1,7 +1,9 @@
 import * as babel from "@babel/core";
 
-// make sure we're including everything we need in the bundle
+// we have to pull in all babel plugins and presets as browser imports and
+// include them as direct references
 import transformArrowFunctions from "@babel/plugin-transform-arrow-functions";
+// import presetEnv from "@babel/preset-env";
 
 /**
  * Expensive transpilation function
@@ -14,9 +16,10 @@ function justTranspile (event) {
     {
       plugins: [
         transformArrowFunctions,
-        // "@babel/plugin-transform-arrow-functions",
       ],
-      presets: [],
+      presets: [
+        //presetEnv,
+      ],
       ast: true,
       generatorOpts: {
         sourceMaps: true

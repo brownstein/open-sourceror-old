@@ -28,6 +28,7 @@ module.exports = {
     three: "three",
     ajv: "ajv",
     "@babel/core": "@babel/core",
+    // "@babel/preset-env": "@babel/preset-env",
     "@babel/plugin-transform-arrow-functions": "@babel/plugin-transform-arrow-functions",
   },
   devtool: isDev ? "cheap-module-eval-source-map" : "source-map",
