@@ -36,17 +36,21 @@ let scene, camera, renderer;
 
 const windowSize = { width: 400, height: 400 };
 
-// source script to run
+// source script to run - this gets transpiled from ES6 to normal ES5, then
+// run inside of a JS-based JS interpreter so that it is totally sandboxed
 const srcScript = `
-function go (n) {
+async function transpiled (n) {
   if (n < 1) {
     return;
   }
-  console.log(n, 'starting');
-  go(n - 1);
+  console.log(n);
+  await Promise.all([
+    transpiled(n - 1),
+    transpiled(n - 2)
+  ]);
   console.log(n, 'done');
 }
-go(100);
+transpiled(10);
 `
 
 function App () {

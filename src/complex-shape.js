@@ -72,12 +72,13 @@ export default class ComplexShape {
       const tileMat = new MeshBasicMaterial({
         side: DoubleSide,
         map: texture,
-        transparent: true
+        transparent: true,
+        alphaTest: 0.1
       });
       const tileGeom = new Geometry();
       tiles.forEach(tileInstance => {
         const tile = tileInstance.tile;
-        let z = 0;
+        let z = 0.6;
         if (tile.depthBias) {
           z = tile.depthBias;
         }

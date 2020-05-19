@@ -11,40 +11,49 @@ import {
   Vector3,
 } from "three";
 import { Character } from "./base";
+import { AnimatedSprite } from "../engine/sprites";
 import {
-  cycles as characterSpriteCycles,
-  image as characterSpriteSheet
+  cycles as spriteCycles,
+  image as spriteSheet
 } from "../sprites/wizard";
 
 export class Player extends Character {
   constructor() {
     super();
-    const spriteGeom = new Geometry();
-    spriteGeom.vertices.push(new Vector3(-8, -8, 0));
-    spriteGeom.vertices.push(new Vector3(8, -8, 0));
-    spriteGeom.vertices.push(new Vector3(8, 24, 0));
-    spriteGeom.vertices.push(new Vector3(-8, 24, 0));
-    spriteGeom.faces.push(new Face3(0, 1, 2));
-    spriteGeom.faces.push(new Face3(0, 2, 3));
-    const tx = new TextureLoader();
-    const tex = tx.load(characterSpriteSheet, () => {
-      console.log(tex.image.naturalWidth);
-    });
-    console.log(tex);
+    this.spritesLoaded = false;
+    this.loadSprites();
   }
-  async loadTextures() {
+  async loadSprites() {
+    const relativeCenter = new Vector2(0, 8);
+    const sprite = new AnimatedSprite(spriteSheet, spriteCycles);
+    await sprite.readyPromise;
 
+    this.sprite = sprite;
+    sprite.mesh.position.x = relativeCenter.x;
+    sprite.mesh.position.y = relativeCenter.y;
+    sprite.mesh.position.z = 1;
+    this.mesh.add(sprite.mesh);
+
+    this.mesh.children[0].visible = false;
+    this.mesh.children[1].visible = false;
+
+    this.spritesLoaded = true;
   }
-  syncMeshWithBody() {
+  syncMeshWithBody(timeDelta) {
     super.syncMeshWithBody();
-
+    if (!this.spritesLoaded) {
+      return;
+    }
+    this.sprite.animate();
   }
   runKeyboardMotion(ks) {
     if (ks.isKeyDown("d")) {
       this.plannedAccelleration[0] = this.accelleration[0];
+      this.sprite.mesh.scale.x = 1;
     }
     if (ks.isKeyDown("a")) {
       this.plannedAccelleration[0] = -this.accelleration[0];
+      this.sprite.mesh.scale.x = -1;
     }
     if (ks.isKeyDown("w")) {
       this.plannedAccelleration[1] = -this.jumpAccelleration;

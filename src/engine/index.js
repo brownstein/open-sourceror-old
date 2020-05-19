@@ -28,7 +28,7 @@ export default class Engine {
     this.camera = new OrthographicCamera(
       -this.cameraSize.width / 2, this.cameraSize.width / 2,
       -this.cameraSize.height / 2, this.cameraSize.height / 2,
-      -64, 64
+      -32, 32
     );
     this.camera.lookAt(new Vector3(0, 0, -1));
     this.camera.position.copy(new Vector3(0, 0, 1));
@@ -115,17 +115,18 @@ export default class Engine {
     const fixedTimeStep = 1 / 60; // seconds
     const maxSubSteps = 10; // Max sub steps to catch up with the wall clock
     const time = new Date().getTime();
-    const deltaTime = this.lastFrameTime ?
-      (time - this.lastFrameTime) / 1000 :
+    const rawDeltaTime = this.lastFrameTime ?
+      time - this.lastFrameTime :
       0;
+    const deltaTime = rawDeltaTime / 1000;
     this.lastFrameTime = time;
     this.world.step(fixedTimeStep, deltaTime, maxSubSteps);
 
     // sync everything with the physics engine
     this.activeEntities.forEach(e => {
-      e.syncMeshWithBody && e.syncMeshWithBody();
+      e.syncMeshWithBody && e.syncMeshWithBody(rawDeltaTime);
       e.runKeyboardMotion && e.runKeyboardMotion(this.ks);
-      e.onFrame && e.onFrame();
+      e.onFrame && e.onFrame(rawDeltaTime);
     });
 
     // run per-entity contact equation handlers
