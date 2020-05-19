@@ -494,7 +494,13 @@
    </object>
   </objectgroup>
  </tile>
- <tile id="360" type="ground"/>
+ <tile id="360" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.613475" y="2.0157">
+    <polygon points="0,0 3.68085,-2.27862 0,-2.27862"/>
+   </object>
+  </objectgroup>
+ </tile>
  <tile id="363" type="ground"/>
  <tile id="364" type="ground"/>
  <tile id="365" type="ground"/>

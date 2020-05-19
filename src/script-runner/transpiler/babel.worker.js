@@ -5,7 +5,6 @@ import * as babel from "@babel/core";
 import transformArrowFunctions from "@babel/plugin-transform-arrow-functions";
 import transformBlockScoping from "@babel/plugin-transform-block-scoping";
 import asyncToPromises from "babel-plugin-transform-async-to-promises";
-// import presetEnv from "@babel/preset-env";
 
 /**
  * Expensive transpilation function
@@ -17,12 +16,12 @@ function justTranspile (event) {
     rawCode,
     {
       plugins: [
+        // support enough ES6 to get things done
         transformArrowFunctions,
         transformBlockScoping,
         asyncToPromises
       ],
       presets: [
-        // presetEnv,
       ],
       ast: true,
       generatorOpts: {

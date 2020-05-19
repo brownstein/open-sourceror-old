@@ -38,12 +38,12 @@ const windowSize = { width: 400, height: 400 };
 
 // source script to run
 const srcScript = `
-async function go (n) {
+function go (n) {
   if (n < 1) {
     return;
   }
-  // console.log(n, 'starting');
-  await go(n - 1);
+  console.log(n, 'starting');
+  go(n - 1);
   console.log(n, 'done');
 }
 go(100);
@@ -60,7 +60,7 @@ function App () {
     setState({ ...state, scriptRunner });
     let t = 0;
     function onFrame () {
-      if (scriptRunner.ready && !(t++ % 2)) {
+      if (scriptRunner.ready && !(t++ % 10)) {
         if (!scriptRunner.hasNextStep) {
           return;
         }

@@ -1,7 +1,8 @@
 const path = require("path");
 const webpack = require("webpack");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 // build variant for electron renderer
 const isDev = (process.env.NODE_ENV === "development");
@@ -76,10 +77,6 @@ module.exports = {
         ],
       },
       {
-        test: /[^s][^d][^f]\.(jpg|png)$/,
-        loader: "url-loader?limit=10000"
-      },
-      {
         test: /(-sdf|.*)\.(fnt|png)$/,
         loader: "file-loader",
         options: {
@@ -110,6 +107,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
     new webpack.ProvidePlugin({
       React: "react",
