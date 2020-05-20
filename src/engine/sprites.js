@@ -130,7 +130,7 @@ export class AnimatedSprite {
     }
   }
   pauseCurrentAnimation() {
-
+    this.playingCurrentAnimation = false;
   }
   animate(timeDelta = 1000 / 60) {
     if (!this.playingCurrentAnimation) {
