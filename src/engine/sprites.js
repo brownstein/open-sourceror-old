@@ -130,10 +130,12 @@ export class AnimatedSprite {
   }
   animate(timeDelta = 1000 / 60) {
     this.frameTime += timeDelta;
-    if (this.frameTime > 100) {
-      this.frameTime = 0;
+    const animationFrames = this.spriteAnimations[this.currentAnimationName];
+    const animationFrame = animationFrames[this.currentAnimationFrame % animationFrames.length];
+    const duration = animationFrame.duration || 10;
+    if (this.frameTime >= duration) {
+      this.frameTime -= duration;
       this._gotoFrame(this.currentAnimationFrame + 1);
-      console.log(this.currentAnimationFrame);
     }
   }
 }

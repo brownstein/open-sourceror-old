@@ -192,38 +192,92 @@
         }, 
         {
          "id":148,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":149,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":150,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":151,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":153,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":155,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":156,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":157,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":158,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
@@ -2151,19 +2205,19 @@
                              "y":0
                             }, 
                             {
-                             "x":3.68085255556335,
-                             "y":-2.27862301058683
+                             "x":3.68085,
+                             "y":-2.27862
                             }, 
                             {
                              "x":0,
-                             "y":-2.27862301058683
+                             "y":-2.27862
                             }],
                      "rotation":0,
                      "type":"",
                      "visible":true,
                      "width":0,
-                     "x":-0.613475425927224,
-                     "y":2.01570497090374
+                     "x":-0.613475,
+                     "y":2.0157
                     }],
              "opacity":1,
              "type":"objectgroup",

@@ -89,15 +89,51 @@
    <property name="depthBias" type="int" value="-1"/>
   </properties>
  </tile>
- <tile id="148" type="decal"/>
- <tile id="149" type="decal"/>
- <tile id="150" type="decal"/>
- <tile id="151" type="decal"/>
- <tile id="153" type="decal"/>
- <tile id="155" type="decal"/>
- <tile id="156" type="decal"/>
- <tile id="157" type="decal"/>
- <tile id="158" type="decal"/>
+ <tile id="148" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="149" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="150" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="151" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="153" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="155" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="156" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="157" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="158" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
  <tile id="195" type="ground">
   <objectgroup draworder="index" id="2">
    <object id="1" x="6.80865" y="16.8174">
