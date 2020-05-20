@@ -51,6 +51,16 @@ export default class Engine {
     this.activeEntitiesByBodyId = {};
 
     this.followingEntity = null;
+
+    // window defocus pausing
+    this.paused = false;
+    window.onblur = () => {
+      this.paused = true;
+    };
+    window.onfocus = () => {
+      this.paused = false;
+      this.lastFrameTime = new Date().getTime();
+    };
   }
   addEntity (entity) {
     this.activeEntities.push(entity);
@@ -109,6 +119,10 @@ export default class Engine {
   }
   onFrame() {
     if (!this.running) {
+      return;
+    }
+    if (this.paused) {
+      requestAnimationFrame(this.onFrame);
       return;
     }
     // find time delta and update the p2 world
