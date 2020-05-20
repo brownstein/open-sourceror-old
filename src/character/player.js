@@ -44,14 +44,20 @@ export class Player extends Character {
     if (!this.spritesLoaded) {
       return;
     }
-    this.sprite.animate();
+    if (Math.abs(this.body.velocity[0]) < 0.5) {
+      this.sprite.switchToAnimation("danceCycle");
+    }
+    else {
+      this.sprite.switchToAnimation("walkCycle");
+    }
+    this.sprite.animate(timeDelta);
   }
   runKeyboardMotion(ks) {
     if (ks.isKeyDown("d")) {
       this.plannedAccelleration[0] = this.accelleration[0];
       this.sprite.mesh.scale.x = 1;
     }
-    if (ks.isKeyDown("a")) {
+    else if (ks.isKeyDown("a")) {
       this.plannedAccelleration[0] = -this.accelleration[0];
       this.sprite.mesh.scale.x = -1;
     }

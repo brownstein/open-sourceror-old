@@ -123,12 +123,19 @@ export class AnimatedSprite {
     this.currentAnimationFrame = frame;
   }
   switchToAnimation(animationName, playAnimation = true) {
-
+    this.playingCurrentAnimation = playAnimation;
+    if (animationName !== this.currentAnimationName) {
+      this.currentAnimationName = animationName;
+      this._gotoFrame(0);
+    }
   }
   pauseCurrentAnimation() {
 
   }
   animate(timeDelta = 1000 / 60) {
+    if (!this.playingCurrentAnimation) {
+      return;
+    }
     this.frameTime += timeDelta;
     const animationFrames = this.spriteAnimations[this.currentAnimationName];
     const animationFrame = animationFrames[this.currentAnimationFrame % animationFrames.length];
