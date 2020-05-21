@@ -20,6 +20,12 @@ import {
   walkLayersImage,
 } from "../sprites/wizard";
 
+const CHARACTER_COLOR_SCHEME = {
+  shoes: "#ffffff",
+  skin: "#ecbcb4",
+  cape: "#aaccff"
+};
+
 export class Player extends Character {
   constructor() {
     super();
@@ -34,11 +40,7 @@ export class Player extends Character {
       walkLayersSheet
     );
     await sprite.readyPromise;
-    sprite.recolor({
-      shoes: "#ffffff",
-      skin: "#ffee00",
-      cape: "#0055ff"
-    });
+    sprite.recolor(CHARACTER_COLOR_SCHEME);
 
     this.sprite = sprite;
     sprite.mesh.position.x = relativeCenter.x;

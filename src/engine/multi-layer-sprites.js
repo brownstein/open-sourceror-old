@@ -3,7 +3,6 @@ import {
   DoubleSide,
   Face3,
   Geometry,
-  Texture,
   TextureLoader,
   Mesh,
   MeshBasicMaterial,
@@ -181,12 +180,11 @@ export class MultiLayerAnimatedSprite {
 
        const faceOffset = layerIndex * 2;
        this.geometry.faces[faceOffset + 0].color.setStyle(color);
-       this.geometry.faces[faceOffset + 1].color.setStyle(color);
      });
      this.geometry.elementsNeedUpdate = true;
    }
    switchToAnimation() {
-
+     return;
    }
    pauseCurrentAnimation() {
      this.playingCurrentAnimation = false;
@@ -195,7 +193,7 @@ export class MultiLayerAnimatedSprite {
      if (!this.playingCurrentAnimation) {
        return;
      }
-     this.frameTime += timeDelta;
+     this.frameTime += timeDelta * 2;
      const durations = this.frameDurations;
      const duration = durations[this.currentAnimationFrame % durations.length];
      if (this.frameTime >= duration) {
