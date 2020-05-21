@@ -29,6 +29,7 @@ export class Character {
     this.body.addShape(convex, cm);
     this.mesh = getThreeJsObjectForP2Body(this.body);
 
+    this.facingRight = true;
     this.onSurface = false;
 
     this.accelleration = [50, 50]; // rate of character speed increase
@@ -74,6 +75,7 @@ export class Character {
   onFrame() {
     // move the character
     if (this.plannedAccelleration[0]) {
+      this.facingRight = this.plannedAccelleration[0] > 0;
       this.accellerate(
         [this.plannedAccelleration[0], 0],
         this.maxControlledVelocity[0]

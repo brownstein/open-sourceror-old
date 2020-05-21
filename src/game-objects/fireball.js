@@ -11,14 +11,21 @@ export class Fireball {
       position: vec2.clone(position)
     });
 
-    const circleShape = new Circle({ radius: 4 });
+    const circleShape = new Circle({
+      radius: 4,
+      sensor: true
+    });
 
     this.body.addShape(circleShape);
-    this.mesh = getThreeJsObjectForP2Body(this.body);
+
+    this.mesh = getThreeJsObjectForP2Body(this.body, false);
   }
   syncMeshWithBody(timeDelta) {
     this.mesh.position.x = this.body.interpolatedPosition[0];
     this.mesh.position.y = this.body.interpolatedPosition[1];
     this.mesh.rotation.z = this.body.interpolatedAngle;
+  }
+  _onContact(localShape, otherBody) {
+    
   }
 }
