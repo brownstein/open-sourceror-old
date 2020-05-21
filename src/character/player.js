@@ -12,9 +12,12 @@ import {
 } from "three";
 import { Character } from "./base";
 import { AnimatedSprite } from "../engine/sprites";
+import { MultiLayerAnimatedSprite } from "../engine/multi-layer-sprites";
 import {
   cycles as spriteCycles,
-  image as spriteSheet
+  image as spriteSheet,
+  walkLayersSheet,
+  walkLayersImage,
 } from "../sprites/wizard";
 
 export class Player extends Character {
@@ -25,7 +28,11 @@ export class Player extends Character {
   }
   async loadSprites() {
     const relativeCenter = new Vector2(0, 8);
-    const sprite = new AnimatedSprite(spriteSheet, spriteCycles);
+    // const sprite = new AnimatedSprite(spriteSheet, spriteCycles);
+    const sprite = new MultiLayerAnimatedSprite(
+      walkLayersImage,
+      walkLayersSheet
+    );
     await sprite.readyPromise;
 
     this.sprite = sprite;

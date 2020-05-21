@@ -31,6 +31,12 @@ import "./style.less";
 
 import tilesetPng from "./tilesets/magic-cliffs/PNG/tileset.png";
 
+// ace editor
+import AceEditor from "react-ace";
+// import "ace-builds/webpack-resolver";
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/theme-tomorrow";
+
 let renderEl;
 let scene, camera, renderer;
 
@@ -50,21 +56,22 @@ async function transpiled (n) {
   ]);
   console.log(n, 'done');
 }
-transpiled(10);
+transpiled(5);
 `
 
 function App () {
   const [state, setState] = useState({
     scriptRunner: null,
     highlightedTextSegment: [null, null],
-    currentLine: null
+    currentLine: null,
+    editorContents: srcScript,
   });
   useEffect(() => {
     const scriptRunner = new ScriptRunner(srcScript);
     setState({ ...state, scriptRunner });
     let t = 0;
     function onFrame () {
-      if (scriptRunner.ready && !(t++ % 10)) {
+      if (scriptRunner.ready && !(t++ % 2)) {
         if (!scriptRunner.hasNextStep) {
           return;
         }
@@ -78,7 +85,7 @@ function App () {
           [start] = highlightedTextSegment;
           currentLine = scriptRunner.getExecutingLine();
         }
-        setState({ ...state, highlightedTextSegment, currentLine });
+        setState(s => ({ ...s, highlightedTextSegment, currentLine }));
       }
       requestAnimationFrame(onFrame);
     }
@@ -100,7 +107,34 @@ function App () {
       style={lineIndicatorStyle}
       >{">"}</span>;
   }
-  return <div className="script-display">{parts}{lineIndicator}</div>;
+  const { editorContents } = state;
+  return <div>
+    <div className="script-display">{parts}{lineIndicator}</div>
+    { null
+    // <div>
+    //   <AceEditor
+    //     mode="javascript"
+    //     theme="tomorrow"
+    //     onChange={v => {
+    //       console.log(v)
+    //       setState(s => ({ ...s, editorContents: v }));
+    //     }}
+    //     name="ACE_DIV_NAME"
+    //     value={editorContents}
+    //     setOptions={{
+    //       showLineNumbers: true,
+    //       enableBasicAutocompletion: false,
+    //       enableLiveAutocompletion: false,
+    //     }}
+    //     annotations={[{
+    //       row: 2,
+    //       type: 'info',
+    //       text: 'executing here'
+    //     }]}
+    //   />
+    // </div>
+  }
+  </div>;
 }
 
 export default async function initScene() {
