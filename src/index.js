@@ -32,10 +32,10 @@ import "./style.less";
 import tilesetPng from "./tilesets/magic-cliffs/PNG/tileset.png";
 
 // ace editor
-import AceEditor from "react-ace";
+// import AceEditor from "react-ace";
 // import "ace-builds/webpack-resolver";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-tomorrow";
+// import "ace-builds/src-noconflict/mode-javascript";
+// import "ace-builds/src-noconflict/theme-tomorrow";
 
 let renderEl;
 let scene, camera, renderer;
