@@ -8,7 +8,8 @@ export class Fireball {
       mass: 2,
       damping: 0.1,
       friction: 0.9,
-      position: vec2.clone(position)
+      position: vec2.clone(position),
+      gravityScale: 0.5
     });
 
     const circleShape = new Circle({
@@ -26,6 +27,6 @@ export class Fireball {
     this.mesh.rotation.z = this.body.interpolatedAngle;
   }
   _onContact(localShape, otherBody) {
-    
+
   }
 }

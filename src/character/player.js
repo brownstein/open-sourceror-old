@@ -102,10 +102,12 @@ export class Player extends Character {
       if (this.facingRight) {
         fireball.body.position[0] += 30;
         fireball.body.velocity[0] = 200;
+        fireball.body.velocity[1] = -100;
       }
       else {
         fireball.body.position[0] -= 30;
         fireball.body.velocity[0] = -200;
+        fireball.body.velocity[1] = -100;
       }
       engine.addEntity(fireball);
     };
