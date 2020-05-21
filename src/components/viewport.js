@@ -17,6 +17,7 @@ export class EngineViewport extends Component {
   static contextType = EngineContext;
   constructor(props) {
     super(props);
+    this.constrainCameraToScene = true;
 
     this.camera = null;
     this.needsRender = false;
@@ -28,18 +29,16 @@ export class EngineViewport extends Component {
     this._onResize = this._onResize.bind(this);
   }
   componentDidMount() {
-    const { ee, cameraPosition } = this.context;
+    const engine = this.context;
+    const { minCameraSize } = engine.cameras[0];
 
-    this.cameraSize = { width: 400, height: 400 };
+    this.cameraSize = { ...minCameraSize };
     this.camera = new OrthographicCamera(
-      -this.cameraSize.width / 2, this.cameraSize.width / 2,
-      -this.cameraSize.height / 2, this.cameraSize.height / 2,
+      -this.cameraSize.width * 0.5, this.cameraSize.width * 0.5,
+      -this.cameraSize.height * 0.5, this.cameraSize.height * 0.5,
       -32, 32
     );
     this.camera.lookAt(new Vector3(0, 0, -1));
-    if (cameraPosition) {
-      this.camera.position.copy(cameraPosition);
-    }
 
     this.renderer = new WebGLRenderer({
       canvas: this.canvasEl,
@@ -57,19 +56,15 @@ export class EngineViewport extends Component {
     this._renderFrame();
 
     // start listening for rendering queues
-    if (ee) {
-      ee.on("frame", this._renderFrame);
-    }
+    engine.on("frame", this._renderFrame);
   }
   componentDidUpdate(prevProps) {
 
   }
   componentWillUnmount() {
-    const { ee } = this.context;
+    const engine = this.context;
     window.removeEventListener("resize", this._onResize);
-    if (ee) {
-      ee.off("frame", this._renderFrame);
-    }
+    engine.off("frame", this._renderFrame);
   }
   render() {
     return <div ref={r => this.viewportEl = r} className="viewport">
@@ -77,28 +72,36 @@ export class EngineViewport extends Component {
     </div>;
   }
   _renderFrame() {
-    const { engine, cameraPosition } = this.context;
-    const { scene } = engine || {};
-    if (!scene || !cameraPosition) {
+    const engine = this.context;
+    const { scene, levelBBox, followingEntity } = engine;
+    if (!scene) {
       return;
     }
 
-    const { levelBBox } = engine;
-    this.camera.position.x = Math.max(
-      levelBBox.min.x + this.cameraSize.width / 2,
-      Math.min(
-        levelBBox.max.x - this.cameraSize.width / 2,
-        cameraPosition.x
-      )
-    );
-    this.camera.position.y = Math.max(
-      levelBBox.min.y + this.cameraSize.height / 2,
-      Math.min(
-        levelBBox.max.y - this.cameraSize.height / 2,
-        cameraPosition.y
-      )
-    );
+    // track camera to whatever we're following
+    if (followingEntity) {
+      const cameraPosition = followingEntity.mesh.position;
+      this.camera.position.x = cameraPosition.x;
+      this.camera.position.y = cameraPosition.y;
+      if (this.constrainCameraToScene) {
+        this.camera.position.x = Math.max(
+          levelBBox.min.x + this.cameraSize.width / 2,
+          Math.min(
+            levelBBox.max.x - this.cameraSize.width / 2,
+            this.camera.position.x
+          )
+        );
+        this.camera.position.y = Math.max(
+          levelBBox.min.y + this.cameraSize.height / 2,
+          Math.min(
+            levelBBox.max.y - this.cameraSize.height / 2,
+            this.camera.position.y
+          )
+        );
+      }
+    }
 
+    // render the frame
     this.renderer.render(scene, this.camera);
   }
   _onResize() {
@@ -108,7 +111,7 @@ export class EngineViewport extends Component {
     this.camera.left = -width / 2;
     this.camera.right = width / 2;
     this.camera.top = -height / 2;
-    this.camera.bottom / height / 2;
+    this.camera.bottom = height / 2;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
     this._renderFrame();
