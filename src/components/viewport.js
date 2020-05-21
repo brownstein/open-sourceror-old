@@ -58,9 +58,6 @@ export class EngineViewport extends Component {
     // start listening for rendering queues
     engine.on("frame", this._renderFrame);
   }
-  componentDidUpdate(prevProps) {
-
-  }
   componentWillUnmount() {
     const engine = this.context;
     window.removeEventListener("resize", this._onResize);

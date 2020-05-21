@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import ScriptRunner from "../script-runner/script-runner";
+
 // ace editor
 // import AceEditor from "react-ace";
 // import "ace-builds/webpack-resolver";
@@ -23,7 +25,7 @@ async function transpiled (n) {
 transpiled(5);
 `
 
-function CodeExecutor () {
+export default function CodeExecutor () {
   const [state, setState] = useState({
     scriptRunner: null,
     highlightedTextSegment: [null, null],

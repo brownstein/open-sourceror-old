@@ -26,8 +26,7 @@ import Engine from "./engine";
 
 import { EngineProvider } from "./components/engine";
 import { EngineViewport } from "./components/viewport";
-
-import ScriptRunner from "./script-runner/script-runner";
+import CodeExecutor from "./components/code-executor";
 
 import "./style.less";
 
@@ -41,6 +40,7 @@ const windowSize = { width: 400, height: 400 };
 function App () {
   return <EngineProvider addThings={addThings}>
     <EngineViewport/>
+    <CodeExecutor/>
   </EngineProvider>;
 }
 
@@ -100,17 +100,9 @@ async function addThings(engine) {
 export default async function initScene() {
   const viewContainerEl = document.getElementById("container");
 
-  // init game engine
-  // const engine = new Engine();
-  // engine.initWithContainerElement(viewContainerEl);
-  // engine.run();
-  //
-  // addThings(engine);
-
   // init React
   const rContainer = document.createElement('div');
   viewContainerEl.appendChild(rContainer);
-
   const app = <App/>;
   ReactDom.render(app, rContainer);
 }

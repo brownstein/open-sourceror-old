@@ -48,6 +48,7 @@ export class EngineProvider extends Component {
     this.lastFrameTime = new Date().getTime();
     this._updateLoop();
 
+    // bootstrap the scene
     const { addThings } = this.props;
     if (addThings) {
       addThings(this.engine);
