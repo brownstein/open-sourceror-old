@@ -1,0 +1,24 @@
+.code-executor {
+
+  .toolbar {
+    height: 32px;
+  }
+
+  .active-line-marker {
+    background-color: #0ef;
+    position: relative;
+  }
+
+  .active-line-gutter {
+    background-color: #0ef;
+    position: relative;
+    &::after {
+      content: ">";
+      font-weight: bold;
+      color: #000;
+      position: absolute;
+      top: 0;
+      left: 4px;
+    }
+  }
+}

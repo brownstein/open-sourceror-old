@@ -50,6 +50,7 @@ const _CONTAINER_TYPES = {
  * Script execution container - runs code and shows what's running when
  */
 export default class ScriptRunner {
+  static _transpileCache = {};
   constructor(scriptSrc) {
     // code
     this.transpiledScript = null;
@@ -86,7 +87,14 @@ export default class ScriptRunner {
    * Internal asynchronous constructor extension
    */
   async _init(srcScript) {
-    const [script, ast, transpilationMap] = await transpileScript(srcScript);
+    let script, ast, transpilationMap;
+    if (ScriptRunner._transpileCache[srcScript]) {
+      [script, ast, transpilationMap] = ScriptRunner._transpileCache[srcScript];
+    }
+    else {
+      [script, ast, transpilationMap] = await transpileScript(srcScript);
+      ScriptRunner._transpileCache[srcScript] = [script, ast, transpilationMap];
+    }
     this.transpiledScript = script;
     this.sourceAST = ast;
     this.transpilationMap = transpilationMap;
