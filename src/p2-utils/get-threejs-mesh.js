@@ -1,5 +1,6 @@
 import {
   Color,
+  CircleGeometry,
   DoubleSide,
   Face3,
   Geometry,
@@ -9,6 +10,7 @@ import {
   Vector3,
 } from "three";
 import {
+  Circle,
   Convex
 } from "p2";
 
@@ -55,6 +57,21 @@ export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
         wireframeMesh.position.z = 1;
         wireframeMesh.position.x = shape.centerOfMass[0];
         wireframeMesh.position.y = shape.centerOfMass[1];
+        obj3.add(wireframeMesh);
+      }
+    }
+    else if (shape instanceof Circle) {
+      const geom = new CircleGeometry(shape.radius, 32);
+      const mesh = new Mesh(geom, mat);
+      mesh.position.z = -1;
+      mesh.position.x = shape.position[0];
+      mesh.position.y = shape.position[1];
+      obj3.add(mesh);
+      if (addWireframe) {
+        const wireframeMesh = new Mesh(geom, simpleEdgeMaterial);
+        wireframeMesh.position.z = 1;
+        wireframeMesh.position.x = shape.position[0];
+        wireframeMesh.position.y = shape.position[1];
         obj3.add(wireframeMesh);
       }
     }

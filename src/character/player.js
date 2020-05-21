@@ -21,6 +21,8 @@ import {
   walkLayersImage,
 } from "../sprites/wizard";
 
+import { Fireball } from "../game-objects/fireball";
+
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#ffffff",
   skin: "#ecbcb4",
@@ -78,7 +80,7 @@ export class Player extends Character {
     }
     this.sprite.animate(timeDelta);
   }
-  runKeyboardMotion(ks) {
+  runKeyboardMotion(engine, ks) {
     if (ks.isKeyDown("d")) {
       this.plannedAccelleration[0] = this.accelleration[0];
       this.sprite.mesh.scale.x = 1;
@@ -93,6 +95,12 @@ export class Player extends Character {
     if (ks.isKeyDown("s")) {
       this.plannedAccelleration[1] = this.accelleration[1];
     }
+
+    // fireball
+    if (ks.isKeyDown("e")) {
+      const fireball = new Fireball(this.body.position);
+      engine.addEntity(fireball);
+    };
   }
   _onContact(localShape, otherBody, otherShape) {
     // TODO: this
