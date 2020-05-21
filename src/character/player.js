@@ -34,6 +34,11 @@ export class Player extends Character {
       walkLayersSheet
     );
     await sprite.readyPromise;
+    sprite.recolor({
+      shoes: "#ffffff",
+      skin: "#ffee00",
+      cape: "#0055ff"
+    });
 
     this.sprite = sprite;
     sprite.mesh.position.x = relativeCenter.x;

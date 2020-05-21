@@ -79,11 +79,7 @@ export class MultiLayerAnimatedSprite {
        // map frame data
        const layerIndex = li;
        const layerName = meta.layers[li].name;
-       const layerColor = new Color(
-         Math.random() * 0.4 + 0.6,
-         Math.random() * 0.4 + 0.6,
-         Math.random() * 0.4 + 0.6
-       );
+       const layerColor = new Color(1, 1, 1);
        this.orderedLayers.push({ layerName, layerColor });
        const layerFrames = [];
        _iterateFrames(frames, layerName, (frameNo, frame) => {
@@ -169,13 +165,33 @@ export class MultiLayerAnimatedSprite {
 
      this.currentAnimationFrame = frameNo;
    }
-   switchToAnimation () {
+   recolor(layersToColors) {
+     Object.keys(layersToColors).forEach(layerName => {
+       const color = layersToColors[layerName];
+       let layerIndex = -1;
+       for (let li = 0; li < this.orderedLayers.length; li++) {
+         if (this.orderedLayers[li].layerName === layerName) {
+           layerIndex = li;
+           break;
+         }
+       }
+       if (layerIndex === -1) {
+         return;
+       }
+
+       const faceOffset = layerIndex * 2;
+       this.geometry.faces[faceOffset + 0].color.setStyle(color);
+       this.geometry.faces[faceOffset + 1].color.setStyle(color);
+     });
+     this.geometry.elementsNeedUpdate = true;
+   }
+   switchToAnimation() {
 
    }
-   pauseCurrentAnimation () {
+   pauseCurrentAnimation() {
      this.playingCurrentAnimation = false;
    }
-   animate (timeDelta = 1000 / 60) {
+   animate(timeDelta = 1000 / 60) {
      if (!this.playingCurrentAnimation) {
        return;
      }
