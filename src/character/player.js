@@ -10,6 +10,7 @@ import {
   Vector2,
   Vector3,
 } from "three";
+import { Body, Circle } from "p2";
 import { Character } from "./base";
 import { AnimatedSprite } from "../engine/sprites";
 import { MultiLayerAnimatedSprite } from "../engine/multi-layer-sprites";
@@ -29,6 +30,17 @@ const CHARACTER_COLOR_SCHEME = {
 export class Player extends Character {
   constructor() {
     super();
+
+    const detector = new Circle({
+      radius: 64,
+      sensor: true
+    });
+    this.body.addShape(detector);
+
+    this.contactListeners = [
+      this._onContact.bind(this)
+    ];
+
     this.spritesLoaded = false;
     this.loadSprites();
   }
@@ -81,5 +93,9 @@ export class Player extends Character {
     if (ks.isKeyDown("s")) {
       this.plannedAccelleration[1] = this.accelleration[1];
     }
+  }
+  _onContact(localShape, otherBody, otherShape) {
+    // TODO: this
+    // console.log('TODO implement contact event');
   }
 }

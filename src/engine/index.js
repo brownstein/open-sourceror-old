@@ -53,12 +53,38 @@ export default class Engine extends EventEmitter {
     this.activeEntities = [];
     this.activeEntitiesByBodyId = {};
     this.followingEntity = null;
+
+    // keep track of contacts
+    this.contactRegistry = {};
+    this.contactListeners = {};
+    this._initializeContactRegistry();
+  }
+  _initializeContactRegistry () {
+    this.world.on("beginContact", event => {
+      const { bodyA, bodyB, shapeA, shapeB } = event;
+      const bodyAListeners = this.contactListeners[bodyA.id];
+      const bodyBListeners = this.contactListeners[bodyB.id];
+      if (bodyAListeners) {
+        bodyAListeners.forEach(l => l(shapeA, bodyB, shapeB));
+      }
+      if (bodyBListeners) {
+        bodyBListeners.forEach(l => l(shapeB, bodyA, shapeA));
+      }
+    });
+    this.world.on("endContact", event => {
+      const { bodyA, bodyB, shapeA, shapeB } = event;
+    });
   }
   addEntity(entity) {
     this.activeEntities.push(entity);
     this.activeEntitiesByBodyId[entity.body.id] = entity;
     this.world.addBody(entity.body);
     this.scene.add(entity.mesh);
+
+    if (entity.contactListeners) {
+      const [onContact, offContact = null] = entity.contactListeners;
+      this.contactListeners[entity.body.id] = [onContact];
+    }
   }
   addLevelEntity(entity) {
     // TODO revise room geometry

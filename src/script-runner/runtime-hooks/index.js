@@ -25,6 +25,14 @@ export function initializeScope(interpreter, scope) {
     }
   );
   interpreter.setProperty(scope, "setTimeout", nativeSetTimeout);
+
+  // add support for some engine-level hooks
+  const nativeOn = interpreter.createNativeFunction(
+    (nativeFuncName, nativeCB) => {
+      return;
+    }
+  );
+  interpreter.setProperty(scope, "on", nativeOn);
 }
 
 /**
