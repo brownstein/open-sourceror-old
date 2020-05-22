@@ -139,7 +139,8 @@ export default class CodeExecutor extends Component {
     }
 
     // stop execution if we're finished
-    if (!this.scriptRunner.hasNextStep()) {
+    if (this.scriptRunner.hasCompletedExecution()) {
+      console.log("done");
       // update running state
       this.currentLine = null;
       this.setState({ running: false });

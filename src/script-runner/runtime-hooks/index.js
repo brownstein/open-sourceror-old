@@ -5,13 +5,14 @@ import promisePolyfill from "./promise-polyfill.txt";
  * Initialize the interpreter scope with global functions
  */
 export function initializeScope(interpreter, scope, runner) {
+  console.log('initScope');
 
   // add support for console.log and 'log' shorthand
   const nativeConsole = interpreter.createObject();
   const nativeLogFunc = interpreter.createNativeFunction((...args) => {
     const nativeArgs = args.map(a => interpreter.pseudoToNative(a));
     console.log(...nativeArgs);
-    // return interpreter.nativeToPseudo(undefined);
+    return interpreter.nativeToPseudo(undefined);
   });
   interpreter.setProperty(scope, "log", nativeLogFunc);
   interpreter.setProperty(scope, "console", nativeConsole);
@@ -21,7 +22,11 @@ export function initializeScope(interpreter, scope, runner) {
   const nativeSetTimeout = interpreter.createNativeFunction(
     (nativeCB, nativeTimeout) => {
       const timeout = interpreter.pseudoToNative(nativeTimeout);
-      setTimeout(() => interpreter.queueCall(nativeCB, []), timeout);
+      runner.outstandingCallbackCount++;
+      setTimeout(() => {
+        interpreter.queueCall(nativeCB, []);
+        runner.outstandingCallbackCount--;
+      }, timeout);
     }
   );
   interpreter.setProperty(scope, "setTimeout", nativeSetTimeout);

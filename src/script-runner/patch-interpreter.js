@@ -17,7 +17,11 @@ export default function patchInterpreter(Interpreter) {
     state.done = false;
     var scope = this.createScope(func.node.body, func.parentScope);
     func.node.params.forEach(function(p, i) {
-      interpreter.setProperty(scope, interpreter.createPrimitive(p.name), args[i]);
+      interpreter.setProperty(
+        scope,
+        interpreter.createPrimitive(p.name),
+        args[i] || interpreter.createPrimitive(undefined)
+      );
     })
     var argsList = this.createObject(this.ARRAY);
     args.forEach(function(arg, i) {

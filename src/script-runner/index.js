@@ -30,6 +30,8 @@ export default class ScriptRunner {
     // interpreter instance
     this.interpreter = null;
 
+    this.outstandingCallbackCount = 0;
+
     // map source indices to lines
     this.scriptPositionToLine = [];
     let line = 0;
@@ -93,6 +95,12 @@ export default class ScriptRunner {
       }
     }
     return true;
+  }
+  /**
+   * Check whether the script has fully executed
+   */
+  hasCompletedExecution() {
+    return !(this.outstandingCallbackCount > 0 || this.hasNextStep());
   }
   /**
    * Runs a single operation in the script
