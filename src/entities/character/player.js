@@ -10,7 +10,7 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import { Body, Circle } from "p2";
+import { Body, Circle, vec2 } from "p2";
 import { Character } from "./base";
 import { AnimatedSprite } from "engine/sprites";
 import { MultiLayerAnimatedSprite } from "engine/multi-layer-sprites";
@@ -38,10 +38,6 @@ export class Player extends Character {
       sensor: true
     });
     this.body.addShape(detector);
-
-    this.contactListeners = [
-      this._onContact.bind(this)
-    ];
 
     this.spritesLoaded = false;
     this.loadSprites();
@@ -78,7 +74,14 @@ export class Player extends Character {
     else {
       this.sprite.switchToAnimation("walkCycle");
     }
-    this.sprite.animate(timeDelta);
+    if (!this.previousPosition) {
+      this.previousPosition = vec2.clone(this.body.position);
+    }
+    const distDelta = Math.abs(this.previousPosition[0] - this.body.position[0]);
+    vec2.copy(this.previousPosition, this.body.position);
+    if (this.onSurface) {
+      this.sprite.animate(distDelta * 10);
+    }
   }
   runKeyboardMotion(engine, ks) {
     if (ks.isKeyDown("d")) {
@@ -111,9 +114,5 @@ export class Player extends Character {
       }
       engine.addEntity(fireball);
     };
-  }
-  _onContact(localShape, otherBody, otherShape) {
-    // TODO: this
-    // console.log('TODO implement contact event');
   }
 }

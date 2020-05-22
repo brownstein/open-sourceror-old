@@ -54,11 +54,10 @@ export default class Engine extends EventEmitter {
     this.activeEntitiesByBodyId = {};
     this.followingEntity = null;
 
-    // keep track of contacts
-    this.contactRegistry = {};
-    this._initializeContactRegistry();
+    // set up P2 contact handlers
+    this._initializeContactHandlers();
   }
-  _initializeContactRegistry () {
+  _initializeContactHandlers () {
     this.world.on("beginContact", event => {
       const { bodyA, bodyB, shapeA, shapeB } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
@@ -70,8 +69,22 @@ export default class Engine extends EventEmitter {
         entityB.collisionHandler(this, entityA);
       }
     });
-    this.world.on("endContact", event => {
-      const { bodyA, bodyB, shapeA, shapeB } = event;
+    // this.world.on("endContact", event => {
+    //   const { bodyA, bodyB, shapeA, shapeB } = event;
+    // });
+    this.world.on("preSolve", event => {
+      const { contactEquations } = event;
+      for (let eqi = 0; eqi < contactEquations.length; eqi++) {
+        const eq = contactEquations[eqi];
+        const entityA = this.activeEntitiesByBodyId[eq.bodyA.id];
+        const entityB = this.activeEntitiesByBodyId[eq.bodyB.id];
+        if (entityA && entityA.handleContactEquation) {
+          entityA.handleContactEquation(eq, entityB);
+        }
+        if (entityB && entityB.handleContactEquation) {
+          entityB.handleContactEquation(eq, entityA);
+        }
+      }
     });
   }
   addEntity(entity) {
@@ -113,20 +126,6 @@ export default class Engine extends EventEmitter {
       e.runKeyboardMotion && e.runKeyboardMotion(this, this.ks);
       e.onFrame && e.onFrame(deltaTimeMs);
     });
-
-    // run per-entity contact equation handlers
-    const contactEquations = this.world.narrowphase.contactEquations;
-    for (let eqi = 0; eqi < contactEquations.length; eqi++) {
-      const eq = contactEquations[eqi];
-      const entityA = this.activeEntitiesByBodyId[eq.bodyA.id];
-      const entityB = this.activeEntitiesByBodyId[eq.bodyB.id];
-      if (entityA && entityA.handleContactEquation) {
-        entityA.handleContactEquation(eq, entityB);
-      }
-      if (entityB && entityB.handleContactEquation) {
-        entityB.handleContactEquation(eq, entityA);
-      }
-    }
 
     // track camera
     if (this.followingEntity) {
