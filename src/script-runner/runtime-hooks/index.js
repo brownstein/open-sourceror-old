@@ -50,13 +50,12 @@ export function initializeScope(interpreter, scope, runner) {
   const nativeRequire = interpreter.createNativeFunction(
     rawModuleName => {
       const moduleName = interpreter.pseudoToNative(rawModuleName);
-      console.log(moduleName);
       let requirement = null;
       switch (moduleName) {
         case "fire":
           return nativeFireball;
         default:
-          throw new Error("Unknown module");
+          throw new Error("Unknown module - have you tried getting gud?");
       }
     }
   );

@@ -21,6 +21,7 @@ import "./code-executor.less";
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
 const srcScript =
 `"use strict";
+const fire = require("fire");
 while (true) {
   fire();
   console.log("fired");
@@ -38,6 +39,7 @@ export default class CodeExecutor extends Component {
       compileTimeException: null,
       editorSize: null
     };
+    this.exSpeed = 0.15;
 
     this.scriptRunner = null;
     this.editor = null;
@@ -206,11 +208,21 @@ export default class CodeExecutor extends Component {
   _continueRunning() {
     const engine = this.context;
     const { running } = this.state;
+
+    // don't execute while script is paused
     if (!running) {
       return;
     }
 
-    if (this.t++ % 5 !== 0 || !engine.running) {
+    // don't execute while game is paused
+    if (!engine.running) {
+      requestAnimationFrame(this._continueRunning);
+      return;
+    }
+
+    // limit execution speed
+    this.t += this.exSpeed;
+    if (this.t < 1) {
       requestAnimationFrame(this._continueRunning);
       return;
     }
@@ -231,7 +243,8 @@ export default class CodeExecutor extends Component {
     let start = null;
     let currentLine = null;
     let i = 0;
-    while (!start && scriptRunner.hasNextStep() && i++ < 1000) {
+    while (!start && scriptRunner.hasNextStep() && this.t > 0 && i++ < 1000) {
+      this.t -= 1
       try {
         scriptRunner.doCurrentLine();
       }
