@@ -1,8 +1,9 @@
 import { Body, Circle, vec2 } from "p2";
 
 import getThreeJsObjectForP2Body from "../p2-utils/get-threejs-mesh";
+import BaseEntity from "entities/base";
 
-export class Fireball {
+export class Fireball extends BaseEntity {
   constructor (spawnedByEntiy, position) {
     this.spawnedByEntiy = spawnedByEntiy;
 

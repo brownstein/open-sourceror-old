@@ -37,37 +37,12 @@ export default async function transpileScript(rawCode) {
   // transpile the (possibly ES6) code down to ES5
   let rawAST, transpiledCode, sourceMap;
 
-  // replaced with worker for performance
-  // await new Promise((resolve, reject) => {
-  //   babel.transform(
-  //     rawCode,
-  //     {
-  //       plugins: [
-  //         "@babel/plugin-transform-arrow-functions"
-  //       ],
-  //       presets: [],
-  //       ast: true,
-  //       generatorOpts: {
-  //         sourceMaps: true
-  //       }
-  //     },
-  //     (err, result) => {
-  //       if (err) {
-  //         return reject(err);
-  //       }
-  //       rawAST = result.ast;
-  //       transpiledCode = result.code;
-  //       sourceMap = result.map;
-  //       resolve();
-  //     }
-  //   )
-  // });
-
   // dynamically require a worker module to do the heavy transpilation op
   const workerModule = await import("./babel.worker");
   const Worker = workerModule.default;
+  let worker;
   await new Promise((resolve, reject) => {
-    const worker = new Worker();
+    worker = new Worker();
     worker.onmessage = event => {
       if (event.data.error) {
         return reject(event.data.error);
@@ -77,6 +52,7 @@ export default async function transpileScript(rawCode) {
     };
     worker.postMessage(rawCode);
   });
+  worker.terminate();
 
   // map the raw source map into something more usable
   const sourceMapMap = new SourceMapMap(sourceMap);

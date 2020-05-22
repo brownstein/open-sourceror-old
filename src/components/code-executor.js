@@ -6,7 +6,7 @@ import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-tomorrow";
 
 import { EngineContext } from "./engine";
-import ScriptRunner from "../script-runner/script-runner";
+import ScriptRunner from "script-runner";
 
 import "./code-executor.less";
 

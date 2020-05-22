@@ -1,7 +1,7 @@
 class ScriptExecutionContext {
-  constructor(engine, entity) {
+  constructor(engine, boundToEntity) {
     this.engine = engine;
-    
+    this.boundToEntity = boundToEntity;
   }
   performFrameUpdates() {
 

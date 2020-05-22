@@ -54,6 +54,9 @@ export default class Engine extends EventEmitter {
     this.activeEntitiesByBodyId = {};
     this.followingEntity = null;
 
+    // running scripts
+    this.attachedScriptsByBodyId = {};
+
     // set up P2 contact handlers
     this._initializeContactHandlers();
   }

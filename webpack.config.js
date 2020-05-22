@@ -36,9 +36,11 @@ module.exports = {
   },
   resolve: {
     alias: {
+      entities: path.resolve(__dirname, "src/entities"),
       components: path.resolve(__dirname, "src/components"),
       engine: path.resolve(__dirname, "src/engine"),
-      "p2-utils": path.resolve(__dirname, "src/p2-utils")
+      "p2-utils": path.resolve(__dirname, "src/p2-utils"),
+      "script-runner": path.resolve(__dirname, "src/script-runner"),
     }
   },
   devtool: isDev ? "cheap-module-eval-source-map" : "source-map",

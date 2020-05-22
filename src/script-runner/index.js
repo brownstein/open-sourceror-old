@@ -2,43 +2,10 @@ import Interpreter from "js-interpreter";
 
 import transpileScript from "./transpiler";
 import { initializeScope, runPolyfills } from "./runtime-hooks";
+import patchInterpreter from "./patch-interpreter";
 
 // patch the interpreter class to support queueCall
-
-/**
-* Shifts the given function at the bottom of the state stack, delaying the call.
-* @param {Interpreter.Object} func Pseudo function to call.
-* @param {Interpreter.Object[]} args Arguments to provide to the function.
-*/
-Interpreter.prototype.queueCall = function(func, args) {
-  var state = this.stateStack[0];
-  var interpreter = this;
-  if (!state || state.node.type != 'Program') {
-    throw Error('Expecting original AST to start with a Program node.');
-  }
-  state.done = false;
-  var scope = this.createScope(func.node.body, func.parentScope);
-  func.node.params.forEach(function(p, i) {
-    interpreter.setProperty(scope, interpreter.createPrimitive(p.name), args[i]);
-  })
-  var argsList = this.createObject(this.ARRAY);
-  args.forEach(function(arg, i) {
-    interpreter.setProperty(argsList, interpreter.createPrimitive(i), arg);
-  })
-  this.setProperty(scope, 'arguments', argsList);
-  var last = func.node.body.body[func.node.body.body.length - 1];
-  if(last.type == 'ReturnStatement') {
-    last.type = 'ExpressionStatement';
-    last.expression = last.argument;
-    delete last.argument;
-  }
-  this.stateStack.splice(1, 0, {
-    node: func.node.body,
-    scope: scope,
-    value: this.getScope().strict ? this.UNDEFINED : this.global
-  });
-};
-Interpreter.prototype['queueCall'] = Interpreter.prototype.queueCall;
+patchInterpreter(Interpreter);
 
 // AST node types to ignore in line-by-line traversal
 const _CONTAINER_TYPES = {
@@ -54,7 +21,6 @@ export default class ScriptRunner {
   constructor(scriptSrc) {
     // code
     this.transpiledScript = null;
-    this.sourceAST = null;
     this.transpilationMap = null;
 
     // interpreter instance
@@ -88,6 +54,7 @@ export default class ScriptRunner {
    */
   async _init(srcScript) {
     let script, ast, transpilationMap;
+    // use transpilation cache to avoid repeating expensive operations
     if (ScriptRunner._transpileCache[srcScript]) {
       [script, ast, transpilationMap] = ScriptRunner._transpileCache[srcScript];
     }
@@ -96,7 +63,8 @@ export default class ScriptRunner {
       ScriptRunner._transpileCache[srcScript] = [script, ast, transpilationMap];
     }
     this.transpiledScript = script;
-    this.sourceAST = ast;
+    // this.sourceAST = ast; // this turns out to be expensive to store - only
+    // do so if we end up needing it for graphical representation as a spell
     this.transpilationMap = transpilationMap;
 
     this.interpreter = new Interpreter(script, (interpreter, scope) => {

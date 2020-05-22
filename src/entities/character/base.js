@@ -1,10 +1,12 @@
 import { Body, Convex, Material, vec2 } from "p2";
 import getThreeJsObjectForP2Body from "../../p2-utils/get-threejs-mesh";
+import BaseEntity from "entities/base";
 
 import characterPolygon from "./base.json";
 
-export class Character {
+export class Character extends BaseEntity {
   constructor () {
+    super();
     this.body = new Body({
       mass: 20,
       damping: 0.1,
