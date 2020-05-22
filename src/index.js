@@ -20,8 +20,8 @@ import SimpleShape from "./simple-shape";
 import ComplexShape, { groundMaterial } from "./complex-shape";
 import { traverseTileGrid } from "./grid-to-polygon";
 import { loadTileset } from "./tileset-loader";
-import { Player } from "./character/player";
-import { Enemy } from "./character/enemy";
+import { Player } from "./entities/character/player";
+import { Enemy } from "./entities/character/enemy";
 import Engine from "./engine";
 
 import { EngineProvider } from "./components/engine";

@@ -67,5 +67,8 @@
     "test": "mocha test"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "moduleRoots": [
+    "src"
+  ]
 }

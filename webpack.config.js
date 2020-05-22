@@ -34,6 +34,13 @@ module.exports = {
     "@babel/plugin-transform-block-scoping": "@babel/plugin-transform-block-scoping",
     "babel-plugin-transform-async-to-promises": "babel-plugin-transform-async-to-promises",
   },
+  resolve: {
+    alias: {
+      components: path.resolve(__dirname, "src/components"),
+      engine: path.resolve(__dirname, "src/engine"),
+      "p2-utils": path.resolve(__dirname, "src/p2-utils")
+    }
+  },
   devtool: isDev ? "cheap-module-eval-source-map" : "source-map",
   module: {
     rules: [

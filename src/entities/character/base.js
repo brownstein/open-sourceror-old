@@ -1,5 +1,5 @@
 import { Body, Convex, Material, vec2 } from "p2";
-import getThreeJsObjectForP2Body from "../p2-utils/get-threejs-mesh";
+import getThreeJsObjectForP2Body from "../../p2-utils/get-threejs-mesh";
 
 import characterPolygon from "./base.json";
 

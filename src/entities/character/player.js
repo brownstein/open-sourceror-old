@@ -12,16 +12,16 @@ import {
 } from "three";
 import { Body, Circle } from "p2";
 import { Character } from "./base";
-import { AnimatedSprite } from "../engine/sprites";
-import { MultiLayerAnimatedSprite } from "../engine/multi-layer-sprites";
+import { AnimatedSprite } from "engine/sprites";
+import { MultiLayerAnimatedSprite } from "engine/multi-layer-sprites";
 import {
   cycles as spriteCycles,
   image as spriteSheet,
   walkLayersSheet,
   walkLayersImage,
-} from "../sprites/wizard";
+} from "./sprites/wizard";
 
-import { Fireball } from "../game-objects/fireball";
+import { Fireball } from "../fireball";
 
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#ffffff",
