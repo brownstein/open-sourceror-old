@@ -55,6 +55,7 @@ export default class Engine extends EventEmitter {
     this.followingEntity = null;
 
     // running scripts
+    this.running = false;
     this.attachedScriptsByBodyId = {};
 
     // set up P2 contact handlers
@@ -91,6 +92,7 @@ export default class Engine extends EventEmitter {
     });
   }
   addEntity(entity) {
+    entity.engine = this;
     this.activeEntities.push(entity);
     this.activeEntitiesByBodyId[entity.body.id] = entity;
     this.world.addBody(entity.body);
@@ -98,6 +100,7 @@ export default class Engine extends EventEmitter {
   }
   addLevelEntity(entity) {
     // TODO revise room geometry
+    entity.engine = this;
     this.activeEntities.push(entity);
     this.activeEntitiesByBodyId[entity.body.id] = entity;
     this.world.addBody(entity.body);

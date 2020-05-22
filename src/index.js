@@ -47,7 +47,9 @@ function App () {
 async function addThings(engine) {
 
   // add a character
-  const player = new Player();
+  const player = new Player({
+    position: [200, 100]
+  });
 
   engine.addEntity(player);
   engine.world.addContactMaterial(new p2.ContactMaterial(

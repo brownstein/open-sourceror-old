@@ -34,6 +34,7 @@ export function initializeScope(interpreter, scope, runner) {
   );
   interpreter.setProperty(scope, "on", nativeOn);
 
+  // add support for casting fireball
   const nativeFireball = interpreter.createNativeFunction(
     () => {
       runner.callingEntity.castFireball(runner.engine);

@@ -45,6 +45,7 @@ export class EngineProvider extends Component {
 
     // start the engine
     this.running = true;
+    this.engine.running = true;
     this.lastFrameTime = new Date().getTime();
     this._updateLoop();
 
@@ -89,9 +90,11 @@ export class EngineProvider extends Component {
   }
   _focusLost() {
     this.running = false;
+    this.engine.running = false;
   }
   _focusGained() {
     this.running = true;
+    this.engine.running = true;
     this.lastFrameTime = new Date().getTime();
   }
 };

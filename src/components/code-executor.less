@@ -21,4 +21,22 @@
       left: 4px;
     }
   }
+
+  .terminated-line-marker {
+    background-color: #fba;
+    position: relative;
+  }
+
+  .terminated-line-gutter {
+    background-color: #fba;
+    position: relative;
+    &::after {
+      content: "X";
+      font-weight: bold;
+      color: #000;
+      position: absolute;
+      top: 0;
+      left: 4px;
+    }
+  }
 }

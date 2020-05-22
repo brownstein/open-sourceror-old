@@ -14,18 +14,9 @@ import "./code-executor.less";
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
 const srcScript =
 `
-async function transpiled (n) {
-  if (n < 1) {
-    return;
-  }
-  console.log('N', n);
-  await Promise.all([
-    transpiled(n - 1),
-    transpiled(n - 2)
-  ]);
-  console.log(n, 'done');
+while (true) {
+  fire();
 }
-transpiled(4);
 `;
 
 export default class CodeExecutor extends Component {
@@ -43,6 +34,7 @@ export default class CodeExecutor extends Component {
     this._loadEditor = this._loadEditor.bind(this);
     this._onChange = this._onChange.bind(this);
     this._run = this._run.bind(this);
+    this._stop = this._stop.bind(this);
     this._continueRunning = this._continueRunning.bind(this);
   }
   render() {
@@ -53,6 +45,7 @@ export default class CodeExecutor extends Component {
     return <div className="code-executor">
       <div className="toolbar">
         <button onClick={this._run} disabled={running}>run</button>
+        <button onClick={this._stop} disabled={!running}>stop</button>
       </div>
       <AceEditor
         name="__editor__"
@@ -95,8 +88,41 @@ export default class CodeExecutor extends Component {
     this.setState({ running: true });
     this._continueRunning();
   }
+  _stop() {
+    const { running } = this.state;
+    if (!running) {
+      return;
+    }
+
+    const session = this.editor.getSession();
+
+    // clear current line indicator
+    if (this.currentLine !== null) {
+      session.removeGutterDecoration(this.currentLine, "active-line-gutter");
+    }
+    if (this.markerId !== null) {
+      session.removeMarker(this.markerId);
+      this.markerId = null;
+    }
+
+    // add terminating line indicator
+    const currentLine = this.currentLine;
+    if (currentLine !== null) {
+      const markerRange = new Range(currentLine, 0, currentLine + 1, 100);
+      this.markerId = session.addMarker(markerRange, "terminated-line-marker", "screenLine", false);
+      session.addGutterDecoration(currentLine, "terminated-line-gutter");
+    }
+
+    this.setState({ running: false });
+  }
   _continueRunning() {
-    if (this.t++ % 5 !== 0) {
+    const engine = this.context;
+    const { running } = this.state;
+    if (!running) {
+      return;
+    }
+
+    if (this.t++ % 5 !== 0 || !engine.running) {
       requestAnimationFrame(this._continueRunning);
       return;
     }

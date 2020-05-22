@@ -5,14 +5,14 @@ import BaseEntity from "entities/base";
 import characterPolygon from "./base.json";
 
 export class Character extends BaseEntity {
-  constructor () {
+  constructor (props = {}) {
     super();
     this.body = new Body({
       mass: 20,
       damping: 0.1,
       friction: 0.9,
       fixedRotation: true,
-      position: [200 + Math.random() * 200, -Math.random() * 100]
+      position: props.position || [10, 10]
     });
     const convex = new Convex({
       vertices: characterPolygon.vertices
