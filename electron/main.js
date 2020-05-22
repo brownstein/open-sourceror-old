@@ -1,11 +1,18 @@
 #!/usr/bin/env electron
 "use strict";
 const { app, BrowserWindow, ipcMain } = require("electron");
-const Promise = require("bluebird");
+const electronDevtoolsInstaller = require("electron-devtools-installer");
 const commander = require("commander");
 const fs = require("fs");
 const path = require("path");
 const url = require("url");
+
+// install developer tools
+const installExtension = electronDevtoolsInstaller.default;
+const {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS
+} = electronDevtoolsInstaller;
 
 // grab command line args
 const cmdArgs = {};
@@ -75,6 +82,10 @@ function createWindow () {
   }));
 
   if (cmdArgs.dev) {
+    app.whenReady().then(async () => {
+      await installExtension(REACT_DEVELOPER_TOOLS);
+      await installExtension(REDUX_DEVTOOLS);
+    });
     mainWindow.webContents.openDevTools();
   }
 
@@ -88,6 +99,7 @@ function createWindow () {
     process.exit(0);
   });
 
+  // UNUSED
   // when file and window are loaded, send file to window
   let fileContents;
   if (fileLoadStub) {

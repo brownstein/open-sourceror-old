@@ -46,6 +46,21 @@ export function initializeScope(interpreter, scope, runner) {
     }
   );
   interpreter.setProperty(scope, "fire", nativeFireball);
+
+  const nativeRequire = interpreter.createNativeFunction(
+    rawModuleName => {
+      const moduleName = interpreter.pseudoToNative(rawModuleName);
+      console.log(moduleName);
+      let requirement = null;
+      switch (moduleName) {
+        case "fire":
+          return nativeFireball;
+        default:
+          throw new Error("Unknown module");
+      }
+    }
+  );
+  interpreter.setProperty(scope, "require", nativeRequire);
 }
 
 /**

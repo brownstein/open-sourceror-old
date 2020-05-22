@@ -1,9 +1,16 @@
 import { Component, useState, useEffect, useRef } from "react";
 
-import AceEditor from "react-ace";
-import { Range } from "ace-builds/src-noconflict/ace";
+import Ace, { Range } from "ace-builds/src-noconflict/ace";
+import jsWorkerUrl from "file-loader!ace-builds/src-noconflict/worker-javascript";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-tomorrow";
+Ace.config.setModuleUrl(
+  "ace/mode/javascript_worker",
+  jsWorkerUrl
+);
+window.ace = Ace;
+
+import AceEditor from "react-ace";
 
 import { EngineContext } from "./engine";
 import ScriptRunner from "script-runner";
@@ -13,9 +20,10 @@ import "./code-executor.less";
 // source script to run - this gets transpiled from ES6 to normal ES5, then
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
 const srcScript =
-`
+`"use strict";
 while (true) {
   fire();
+  console.log("fired");
 }
 `;
 
@@ -94,7 +102,7 @@ export default class CodeExecutor extends Component {
             width={width}
             height={height}
             setOptions={{
-              showLineNumbers: true,
+              showLineNumbers: true
             }}
             />
           { errors }
@@ -106,6 +114,7 @@ export default class CodeExecutor extends Component {
     this.editor = editor;
   }
   _onChange(scriptContents) {
+    this._clearMarkings();
     this.setState({ scriptContents });
   }
   async _run() {

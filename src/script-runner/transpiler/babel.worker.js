@@ -26,8 +26,8 @@ function justTranspile (event) {
       ],
       ast: true,
       generatorOpts: {
-        sourceMaps: true
-      }
+        sourceMaps: true,
+      },
     },
     (error, result) => {
       if (error) {

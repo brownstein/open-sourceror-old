@@ -1,2 +1,2 @@
-const initScene = require("./dist");
-initScene();
+const init = require("./dist");
+init();

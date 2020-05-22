@@ -17,7 +17,7 @@ module.exports = {
     filename: "[name].js",
     chunkFilename: "[name].bundle.js",
     publicPath: "dist/",
-    library: "RGPLang",
+    library: "OpenSourceror",
     libraryExport: "default",
     libraryTarget: "commonjs2"
   },
@@ -29,7 +29,6 @@ module.exports = {
     three: "three",
     ajv: "ajv",
     "@babel/core": "@babel/core",
-    // "@babel/preset-env": "@babel/preset-env",
     "@babel/plugin-transform-arrow-functions": "@babel/plugin-transform-arrow-functions",
     "@babel/plugin-transform-block-scoping": "@babel/plugin-transform-block-scoping",
     "babel-plugin-transform-async-to-promises": "babel-plugin-transform-async-to-promises",

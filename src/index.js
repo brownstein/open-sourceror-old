@@ -99,7 +99,7 @@ async function addThings(engine) {
   groundShapes.forEach(s => engine.addLevelEntity(s));
 }
 
-export default async function initScene() {
+export default function initScene() {
   const viewContainerEl = document.getElementById("container");
 
   // init React
