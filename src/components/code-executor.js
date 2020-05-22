@@ -34,7 +34,7 @@ export default class CodeExecutor extends Component {
     this.editor = null;
 
     this.currentLine = null;
-    this.annotations = [];
+    this.annotated = false;
     this.decorations = [];
     this.markerIds = [];
 
@@ -118,9 +118,9 @@ export default class CodeExecutor extends Component {
   }
   _clearMarkings() {
     const session = this.editor.getSession();
-    if (this.annotations.length) {
+    if (this.annotated) {
       session.clearAnnotations();
-      this.annotations = [];
+      this.annotated = false;
     }
     if (this.decorations.length) {
       this.decorations.forEach(([l, clazz]) => session.removeGutterDecoration(l, clazz));
@@ -142,7 +142,7 @@ export default class CodeExecutor extends Component {
       row,
       column
     }]);
-    this.annotations = [1];
+    this.annotated = true;
 
     // mark error in text
     const markerRange = new Range(row, column ? column : 0, row, 100);
@@ -177,7 +177,7 @@ export default class CodeExecutor extends Component {
       return;
     }
 
-    if (this.t++ % 5 !== 0 || !engine.running) {
+    if (this.t++ % 2 !== 0 || !engine.running) {
       requestAnimationFrame(this._continueRunning);
       return;
     }

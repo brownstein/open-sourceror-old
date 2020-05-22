@@ -27,6 +27,8 @@ export class EngineViewport extends Component {
 
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
+    this._onFocus = this._onFocus.bind(this);
+    this._onBlur = this._onBlur.bind(this);
   }
   componentDidMount() {
     const engine = this.context;
@@ -50,6 +52,8 @@ export class EngineViewport extends Component {
 
     // attach event listeners
     window.addEventListener("resize", this._onResize);
+    this.canvasEl.addEventListener("focus", this._onFocus);
+    this.canvasEl.addEventListener("blur", this._onBlur);
 
     // size canvas to the current size of it's container
     this._onResize();
@@ -61,6 +65,8 @@ export class EngineViewport extends Component {
   componentWillUnmount() {
     const engine = this.context;
     window.removeEventListener("resize", this._onResize);
+    this.canvasEl.removeEventListener("focus", this._onFocus);
+    this.canvasEl.removeEventListener("blur", this._onBlur);
     engine.off("frame", this._renderFrame);
   }
   render() {
@@ -112,5 +118,13 @@ export class EngineViewport extends Component {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
     this._renderFrame();
+  }
+  _onFocus() {
+    const engine = this.context;
+    this.engine.handleViewportFocus(true);
+  }
+  _onBlur() {
+    const engine = this.context;
+    this.engine.handleViewportFocus(false);
   }
 }

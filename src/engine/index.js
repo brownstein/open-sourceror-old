@@ -143,4 +143,7 @@ export default class Engine extends EventEmitter {
     // emit frame event to child components for rendering
     this.emit("frame", { deltaTimeMs });
   }
+  handleViewportFocus(isFocused) {
+    console.log(isFocused);
+  }
 }
