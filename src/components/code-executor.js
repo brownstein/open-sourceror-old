@@ -153,7 +153,15 @@ export default class CodeExecutor extends Component {
     let currentLine = null;
     let i = 0;
     while (!start && scriptRunner.hasNextStep() && i++ < 1000) {
-      scriptRunner.doCurrentLine();
+      try {
+        scriptRunner.doCurrentLine();
+      }
+      catch (ex) {
+        // when exceptions are thrown, stop on the current line and log the error
+        console.error(ex);
+        this._stop();
+        return;
+      }
       highlightedTextSegment = scriptRunner.getExecutingSection();
       [start] = highlightedTextSegment;
     }

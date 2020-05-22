@@ -1,4 +1,5 @@
 import * as babel from "@babel/core";
+import { serializeError } from "serialize-error";
 
 // we have to pull in all babel plugins and presets as browser imports and
 // include them as direct references
@@ -30,7 +31,7 @@ function justTranspile (event) {
     },
     (error, result) => {
       if (error) {
-        self.postMessage({ error });
+        self.postMessage({ error: serializeError(error) });
         return;
       }
 

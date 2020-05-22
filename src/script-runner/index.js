@@ -65,7 +65,15 @@ export default class ScriptRunner {
       [script, ast, transpilationMap] = ScriptRunner._transpileCache[srcScript];
     }
     else {
-      [script, ast, transpilationMap] = await transpileScript(srcScript);
+      try {
+        [script, ast, transpilationMap] = await transpileScript(srcScript);
+      }
+      // compilation errors
+      catch (err) {
+        console.error(err);
+        console.log(err.loc);
+        return;
+      }
       ScriptRunner._transpileCache[srcScript] = [script, ast, transpilationMap];
     }
     this.transpiledScript = script;

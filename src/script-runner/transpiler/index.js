@@ -1,15 +1,11 @@
 import * as acorn from "acorn";
-// import * as babel from "@babel/core";
+import { deserializeError } from "serialize-error";
 
 import ASTLocationMap from "./ast-location-map";
 import SourceMapMap from "./source-map-map";
 import TranspilationMap from "./transpilation-map";
 
-// make sure we're including everything we need in the bundle
-// import "@babel/plugin-transform-arrow-functions";
-
 // import Worker from "./babel.worker";
-
 
 /**
  * Internal helper to dump AST nodes into an array
@@ -45,7 +41,8 @@ export default async function transpileScript(rawCode) {
     worker = new Worker();
     worker.onmessage = event => {
       if (event.data.error) {
-        return reject(event.data.error);
+        worker.terminate();
+        return reject(deserializeError(event.data.error));
       }
       [rawAST, transpiledCode, sourceMap] = event.data.result;
       resolve();

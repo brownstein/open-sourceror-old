@@ -33,7 +33,7 @@ export function initializeScope(interpreter, scope, runner) {
   // add support for some engine-level hooks
   const nativeOn = interpreter.createNativeFunction(
     (nativeFuncName, nativeCB) => {
-      return;
+      return interpreter.nativeToPseudo(undefined);
     }
   );
   interpreter.setProperty(scope, "on", nativeOn);
@@ -42,6 +42,7 @@ export function initializeScope(interpreter, scope, runner) {
   const nativeFireball = interpreter.createNativeFunction(
     () => {
       runner.callingEntity.castFireball(runner.engine);
+      return interpreter.nativeToPseudo(undefined);
     }
   );
   interpreter.setProperty(scope, "fire", nativeFireball);
