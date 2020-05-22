@@ -27,8 +27,8 @@ export class EngineViewport extends Component {
 
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
-    this._onFocus = this._onFocus.bind(this);
-    this._onBlur = this._onBlur.bind(this);
+    this._onMouseover = this._onMouseover.bind(this);
+    this._onMouseout = this._onMouseout.bind(this);
   }
   componentDidMount() {
     const engine = this.context;
@@ -52,8 +52,8 @@ export class EngineViewport extends Component {
 
     // attach event listeners
     window.addEventListener("resize", this._onResize);
-    this.canvasEl.addEventListener("focus", this._onFocus);
-    this.canvasEl.addEventListener("blur", this._onBlur);
+    this.canvasEl.addEventListener("mouseenter", this._onMouseover);;
+    this.canvasEl.addEventListener("mouseout", this._onMouseout);
 
     // size canvas to the current size of it's container
     this._onResize();
@@ -65,13 +65,25 @@ export class EngineViewport extends Component {
   componentWillUnmount() {
     const engine = this.context;
     window.removeEventListener("resize", this._onResize);
-    this.canvasEl.removeEventListener("focus", this._onFocus);
-    this.canvasEl.removeEventListener("blur", this._onBlur);
+    this.canvasEl.removeEventListener("mouseenter", this._onMouseover);
+    this.canvasEl.removeEventListener("mouseout", this._onMouseout);
     engine.off("frame", this._renderFrame);
   }
   render() {
     return <div ref={r => this.viewportEl = r} className="viewport">
       <canvas ref={r => this.canvasEl = r}/>
+      <div style={{
+        display: "block",
+        position: "absolute",
+        background: "rgba(255, 255, 255, 0.5)",
+        right: 20,
+        bottom: 20,
+        width: 40,
+        height: 30,
+        zIndex: 2
+      }}>
+        Overlay
+      </div>
     </div>;
   }
   _renderFrame() {
@@ -119,12 +131,12 @@ export class EngineViewport extends Component {
     this.renderer.setSize(width, height);
     this._renderFrame();
   }
-  _onFocus() {
+  _onMouseover() {
     const engine = this.context;
-    this.engine.handleViewportFocus(true);
+    engine.handleViewportFocus(true);
   }
-  _onBlur() {
+  _onMouseout() {
     const engine = this.context;
-    this.engine.handleViewportFocus(false);
+    engine.handleViewportFocus(false);
   }
 }

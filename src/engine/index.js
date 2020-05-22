@@ -144,6 +144,13 @@ export default class Engine extends EventEmitter {
     this.emit("frame", { deltaTimeMs });
   }
   handleViewportFocus(isFocused) {
-    console.log(isFocused);
+    if (this.controller) {
+      if (!isFocused) {
+        this.controller._focusLost();
+      }
+      else {
+        this.controller._focusGained();
+      }
+    }
   }
 }

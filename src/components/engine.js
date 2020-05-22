@@ -22,6 +22,7 @@ export class EngineProvider extends Component {
   constructor() {
     super();
     this.engine = new Engine();
+    this.engine.controller = this;
 
     // DOM handling
     this.domElement = null;

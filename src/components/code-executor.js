@@ -27,7 +27,8 @@ export default class CodeExecutor extends Component {
       running: false,
       scriptContents: srcScript,
       runtimeException: null,
-      compileTimeException: null
+      compileTimeException: null,
+      editorSize: null
     };
 
     this.scriptRunner = null;
@@ -38,18 +39,28 @@ export default class CodeExecutor extends Component {
     this.decorations = [];
     this.markerIds = [];
 
+    this.editorContainerEl = null;
+
     this._loadEditor = this._loadEditor.bind(this);
     this._onChange = this._onChange.bind(this);
     this._run = this._run.bind(this);
     this._stop = this._stop.bind(this);
     this._continueRunning = this._continueRunning.bind(this);
   }
+  componentDidMount() {
+    const bbox = this.editorContainerEl.getBoundingClientRect();
+    const { width, height } = bbox;
+    this.setState({
+      editorSize: { width, height }
+    });
+  }
   render() {
     const {
       scriptContents,
       running,
       runtimeException,
-      compileTimeException
+      compileTimeException,
+      editorSize
     } = this.state;
     const errors = [];
     if (runtimeException) {
@@ -58,25 +69,38 @@ export default class CodeExecutor extends Component {
     if (compileTimeException) {
       errors.push(JSON.stringify([compileTimeException.toString(), compileTimeException.loc]));
     }
-    return <div className="code-executor">
-      <div className="toolbar">
-        <button onClick={this._run} disabled={running}>run</button>
-        <button onClick={this._stop} disabled={!running}>stop</button>
+    let width = 400, height = 400;
+    if (editorSize) {
+      width = editorSize.width;
+      height = editorSize.height;
+    }
+    return (
+      <div className="code-executor">
+        <div className="toolbar">
+          <button onClick={this._run} disabled={running}>run</button>
+          <button onClick={this._stop} disabled={!running}>stop</button>
+        </div>
+        <div className="editor-container" ref={r => this.editorContainerEl = r}>
+          <AceEditor
+            name="__editor__"
+            mode="javascript"
+            theme="tomorrow"
+            onChange={this._onChange}
+            value={scriptContents}
+            readOnly={running}
+            onLoad={this._loadEditor}
+            onFocus={() => console.log('focus')}
+            onBlur={() => console.log('blur')}
+            width={width}
+            height={height}
+            setOptions={{
+              showLineNumbers: true,
+            }}
+            />
+          { errors }
+        </div>
       </div>
-      <AceEditor
-        name="__editor__"
-        mode="javascript"
-        theme="tomorrow"
-        onChange={this._onChange}
-        value={scriptContents}
-        readOnly={running}
-        onLoad={this._loadEditor}
-        setOptions={{
-          showLineNumbers: true,
-        }}
-        />
-      { errors }
-    </div>;
+    );
   }
   _loadEditor(editor) {
     this.editor = editor;
@@ -177,7 +201,7 @@ export default class CodeExecutor extends Component {
       return;
     }
 
-    if (this.t++ % 2 !== 0 || !engine.running) {
+    if (this.t++ % 5 !== 0 || !engine.running) {
       requestAnimationFrame(this._continueRunning);
       return;
     }
