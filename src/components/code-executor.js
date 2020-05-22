@@ -25,7 +25,9 @@ export default class CodeExecutor extends Component {
     super();
     this.state = {
       running: false,
-      scriptContents: srcScript
+      scriptContents: srcScript,
+      runtimeException: null,
+      compileTimeException: null
     };
 
     this.scriptRunner = null;
@@ -40,8 +42,17 @@ export default class CodeExecutor extends Component {
   render() {
     const {
       scriptContents,
-      running
+      running,
+      runtimeException,
+      compileTimeException
     } = this.state;
+    const errors = [];
+    if (runtimeException) {
+      errors.push(runtimeException);
+    }
+    if (compileTimeException) {
+      errors.push(JSON.stringify([compileTimeException.toString(), compileTimeException.loc]));
+    }
     return <div className="code-executor">
       <div className="toolbar">
         <button onClick={this._run} disabled={running}>run</button>
@@ -59,6 +70,7 @@ export default class CodeExecutor extends Component {
           showLineNumbers: true,
         }}
         />
+      { errors }
     </div>;
   }
   _loadEditor(editor) {
@@ -79,7 +91,14 @@ export default class CodeExecutor extends Component {
     }
 
     this.scriptRunner = new ScriptRunner(scriptContents, engine, player);
-    await this.scriptRunner.readyPromise;
+    try {
+      await this.scriptRunner.readyPromise;
+    }
+    catch (err) {
+      this.setState({ compileTimeException: err });
+      this.scriptRunner = null;
+      return;
+    }
 
     this.t = 0;
     this.currentLine = 0;
@@ -159,7 +178,9 @@ export default class CodeExecutor extends Component {
       catch (ex) {
         // when exceptions are thrown, stop on the current line and log the error
         console.error(ex);
+        this.setState({ runtimeException: ex.toString() });
         this._stop();
+        this.scriptRunner = null;
         return;
       }
       highlightedTextSegment = scriptRunner.getExecutingSection();

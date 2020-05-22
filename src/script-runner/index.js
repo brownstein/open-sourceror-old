@@ -30,7 +30,9 @@ export default class ScriptRunner {
     // interpreter instance
     this.interpreter = null;
 
+    // execution bookkeeping
     this.outstandingCallbackCount = 0;
+    this.transpilationError = null;
 
     // map source indices to lines
     this.scriptPositionToLine = [];
@@ -70,9 +72,9 @@ export default class ScriptRunner {
       }
       // compilation errors
       catch (err) {
-        console.error(err);
-        console.log(err.loc);
-        return;
+        console.error(err); // err.loc is useful here
+        this.transpilationError = err;
+        throw err;
       }
       ScriptRunner._transpileCache[srcScript] = [script, ast, transpilationMap];
     }
