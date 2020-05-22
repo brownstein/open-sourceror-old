@@ -56,19 +56,18 @@ export default class Engine extends EventEmitter {
 
     // keep track of contacts
     this.contactRegistry = {};
-    this.contactListeners = {};
     this._initializeContactRegistry();
   }
   _initializeContactRegistry () {
     this.world.on("beginContact", event => {
       const { bodyA, bodyB, shapeA, shapeB } = event;
-      const bodyAListeners = this.contactListeners[bodyA.id];
-      const bodyBListeners = this.contactListeners[bodyB.id];
-      if (bodyAListeners) {
-        bodyAListeners.forEach(l => l(shapeA, bodyB, shapeB));
+      const entityA = this.activeEntitiesByBodyId[bodyA.id];
+      const entityB = this.activeEntitiesByBodyId[bodyB.id];
+      if (entityA && entityA.collisionHandler) {
+        entityA.collisionHandler(this, entityB);
       }
-      if (bodyBListeners) {
-        bodyBListeners.forEach(l => l(shapeB, bodyA, shapeA));
+      if (entityB && entityB.collisionHandler) {
+        entityB.collisionHandler(this, entityA);
       }
     });
     this.world.on("endContact", event => {
@@ -80,11 +79,6 @@ export default class Engine extends EventEmitter {
     this.activeEntitiesByBodyId[entity.body.id] = entity;
     this.world.addBody(entity.body);
     this.scene.add(entity.mesh);
-
-    if (entity.contactListeners) {
-      const [onContact, offContact = null] = entity.contactListeners;
-      this.contactListeners[entity.body.id] = [onContact];
-    }
   }
   addLevelEntity(entity) {
     // TODO revise room geometry

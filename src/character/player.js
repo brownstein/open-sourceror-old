@@ -98,7 +98,7 @@ export class Player extends Character {
 
     // fireball
     if (ks.isKeyDown("e")) {
-      const fireball = new Fireball(this.body.position);
+      const fireball = new Fireball(this, this.body.position);
       if (this.facingRight) {
         fireball.body.position[0] += 30;
         fireball.body.velocity[0] = 200;

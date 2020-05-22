@@ -3,7 +3,9 @@ import { Body, Circle, vec2 } from "p2";
 import getThreeJsObjectForP2Body from "../p2-utils/get-threejs-mesh";
 
 export class Fireball {
-  constructor (position) {
+  constructor (spawnedByEntiy, position) {
+    this.spawnedByEntiy = spawnedByEntiy;
+
     this.body = new Body({
       mass: 2,
       damping: 0.1,
@@ -26,7 +28,13 @@ export class Fireball {
     this.mesh.position.y = this.body.interpolatedPosition[1];
     this.mesh.rotation.z = this.body.interpolatedAngle;
   }
-  _onContact(localShape, otherBody) {
-
+  collisionHandler(engine, otherEntity) {
+    if (
+      otherEntity === this.spawnedByEntiy ||
+      otherEntity instanceof Fireball
+    ) {
+      return;
+    }
+    engine.removeEntity(this);
   }
 }
