@@ -18,10 +18,14 @@ const _CONTAINER_TYPES = {
  */
 export default class ScriptRunner {
   static _transpileCache = {};
-  constructor(scriptSrc) {
+  constructor(scriptSrc, engine, callingEntity) {
     // code
     this.transpiledScript = null;
     this.transpilationMap = null;
+
+    // engine + caster (for interraction with game)
+    this.engine = engine;
+    this.callingEntity = callingEntity;
 
     // interpreter instance
     this.interpreter = null;
@@ -68,7 +72,7 @@ export default class ScriptRunner {
     this.transpilationMap = transpilationMap;
 
     this.interpreter = new Interpreter(script, (interpreter, scope) => {
-      initializeScope(interpreter, scope);
+      initializeScope(interpreter, scope, this);
     });
 
     runPolyfills(this.interpreter);

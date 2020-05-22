@@ -75,6 +75,8 @@ export default class CodeExecutor extends Component {
     this.setState({ scriptContents });
   }
   async _run() {
+    const engine = this.context;
+    const player = engine.activeEntities[0];
     const {
       running,
       scriptContents
@@ -83,7 +85,7 @@ export default class CodeExecutor extends Component {
       return;
     }
 
-    this.scriptRunner = new ScriptRunner(scriptContents);
+    this.scriptRunner = new ScriptRunner(scriptContents, engine, player);
     await this.scriptRunner.readyPromise;
 
     this.t = 0;

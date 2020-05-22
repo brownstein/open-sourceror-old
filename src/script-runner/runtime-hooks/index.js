@@ -4,7 +4,7 @@ import promisePolyfill from "./promise-polyfill.txt";
 /**
  * Initialize the interpreter scope with global functions
  */
-export function initializeScope(interpreter, scope) {
+export function initializeScope(interpreter, scope, runner) {
 
   // add support for console.log and 'log' shorthand
   const nativeConsole = interpreter.createObject();
@@ -33,6 +33,13 @@ export function initializeScope(interpreter, scope) {
     }
   );
   interpreter.setProperty(scope, "on", nativeOn);
+
+  const nativeFireball = interpreter.createNativeFunction(
+    () => {
+      runner.callingEntity.castFireball(runner.engine);
+    }
+  );
+  interpreter.setProperty(scope, "fire", nativeFireball);
 }
 
 /**

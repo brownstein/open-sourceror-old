@@ -5,6 +5,7 @@ import BaseEntity from "entities/base";
 
 export class Fireball extends BaseEntity {
   constructor (spawnedByEntiy, position) {
+    super();
     this.spawnedByEntiy = spawnedByEntiy;
 
     this.body = new Body({
