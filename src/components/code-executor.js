@@ -41,14 +41,17 @@ export default class CodeExecutor extends Component {
     };
     this.exSpeed = 0.15;
 
+    // runner, editor instance
     this.scriptRunner = null;
     this.editor = null;
 
+    // execution and markup state
     this.currentLine = null;
     this.annotated = false;
     this.decorations = [];
     this.markerIds = [];
 
+    // DOM element
     this.editorContainerEl = null;
 
     this._loadEditor = this._loadEditor.bind(this);
