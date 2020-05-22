@@ -33,6 +33,11 @@ export default class CodeExecutor extends Component {
     this.scriptRunner = null;
     this.editor = null;
 
+    this.currentLine = null;
+    this.annotations = [];
+    this.decorations = [];
+    this.markerIds = [];
+
     this._loadEditor = this._loadEditor.bind(this);
     this._onChange = this._onChange.bind(this);
     this._run = this._run.bind(this);
@@ -90,6 +95,8 @@ export default class CodeExecutor extends Component {
       return;
     }
 
+    this._clearMarkings();
+
     this.scriptRunner = new ScriptRunner(scriptContents, engine, player);
     try {
       await this.scriptRunner.readyPromise;
@@ -97,6 +104,8 @@ export default class CodeExecutor extends Component {
     catch (err) {
       this.setState({ compileTimeException: err });
       this.scriptRunner = null;
+      const { line, column } = err.loc;
+      this._markError(err.toString(), line - 1);
       return;
     }
 
@@ -107,29 +116,56 @@ export default class CodeExecutor extends Component {
     this.setState({ running: true });
     this._continueRunning();
   }
+  _clearMarkings() {
+    const session = this.editor.getSession();
+    if (this.annotations.length) {
+      session.clearAnnotations();
+      this.annotations = [];
+    }
+    if (this.decorations.length) {
+      this.decorations.forEach(([l, clazz]) => session.removeGutterDecoration(l, clazz));
+      this.decorations = [];
+    }
+    if (this.markerIds.length) {
+      this.markerIds.forEach(m => session.removeMarker(m));
+      this.markerIds = [];
+    }
+    this.markerIds = [];
+  }
+  _markError(text, row, column = null) {
+    this._clearMarkings();
+    // mark error in gutter
+    const session = this.editor.getSession();
+    session.setAnnotations([{
+      type: "error",
+      text,
+      row,
+      column
+    }]);
+    this.annotations = [1];
+
+    // mark error in text
+    const markerRange = new Range(row, column ? column : 0, row, 100);
+    const markerId = session.addMarker(markerRange, "terminated-line-marker", "screenLine", false);
+    this.markerIds.push(markerId);
+  }
   _stop() {
     const { running } = this.state;
     if (!running) {
       return;
     }
 
-    const session = this.editor.getSession();
-
-    // clear current line indicator
-    if (this.currentLine !== null) {
-      session.removeGutterDecoration(this.currentLine, "active-line-gutter");
-    }
-    if (this.markerId !== null) {
-      session.removeMarker(this.markerId);
-      this.markerId = null;
-    }
+    this._clearMarkings();
 
     // add terminating line indicator
+    const session = this.editor.getSession();
     const currentLine = this.currentLine;
     if (currentLine !== null) {
       const markerRange = new Range(currentLine, 0, currentLine + 1, 100);
-      this.markerId = session.addMarker(markerRange, "terminated-line-marker", "screenLine", false);
+      const markerId = session.addMarker(markerRange, "terminated-line-marker", "screenLine", false);
+      this.markerIds.push(markerId);
       session.addGutterDecoration(currentLine, "terminated-line-gutter");
+      this.decorations.push([currentLine, "terminated-line-gutter"]);
     }
 
     this.setState({ running: false });
@@ -146,16 +182,7 @@ export default class CodeExecutor extends Component {
       return;
     }
 
-    const session = this.editor.getSession();
-
-    // clear current line indicator
-    if (this.currentLine !== null) {
-      session.removeGutterDecoration(this.currentLine, "active-line-gutter");
-    }
-    if (this.markerId !== null) {
-      session.removeMarker(this.markerId);
-      this.markerId = null;
-    }
+    this._clearMarkings();
 
     // stop execution if we're finished
     if (this.scriptRunner.hasCompletedExecution()) {
@@ -180,6 +207,7 @@ export default class CodeExecutor extends Component {
         console.error(ex);
         this.setState({ runtimeException: ex.toString() });
         this._stop();
+        this._markError(ex.toString(), this.currentLine);
         this.scriptRunner = null;
         return;
       }
@@ -190,10 +218,13 @@ export default class CodeExecutor extends Component {
     this.currentLine = currentLine;
 
     // add current line indicator
+    const session = this.editor.getSession();
     if (currentLine !== null) {
       const markerRange = new Range(currentLine, 0, currentLine + 1, 100);
-      this.markerId = session.addMarker(markerRange, "active-line-marker", "screenLine", false);
+      const markerId = session.addMarker(markerRange, "active-line-marker", "screenLine", false);
+      this.markerIds.push(markerId);
       session.addGutterDecoration(currentLine, "active-line-gutter");
+      this.decorations.push([currentLine, "active-line-gutter"]);
     }
 
     // keep executing
