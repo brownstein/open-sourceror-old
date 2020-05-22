@@ -5,7 +5,6 @@ import promisePolyfill from "./promise-polyfill.txt";
  * Initialize the interpreter scope with global functions
  */
 export function initializeScope(interpreter, scope, runner) {
-  console.log('initScope');
 
   // add support for console.log and 'log' shorthand
   const nativeConsole = interpreter.createObject();
