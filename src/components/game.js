@@ -3,8 +3,8 @@ import { Component, createContext } from "react";
 import { ContactMaterial } from "p2";
 
 import ComplexShape, { groundMaterial } from "../complex-shape";
-import { traverseTileGrid } from "../grid-to-polygon";
-import { loadTileset } from "../tileset-loader";
+import { traverseTileGrid } from "../utils/grid-to-polygon";
+import { loadTileset } from "../utils/tileset-loader";
 
 import { Player } from "../entities/character/player";
 import { Enemy } from "../entities/character/enemy";
