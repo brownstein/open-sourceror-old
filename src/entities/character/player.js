@@ -24,9 +24,16 @@ import {
 import { Fireball } from "../fireball";
 
 const CHARACTER_COLOR_SCHEME = {
-  shoes: "#ffffff",
-  skin: "#ecbcb4",
-  cape: "#aaccff"
+  shoes: "#555555",
+  body: "#ecbcb4",
+  torso: "#444444",
+  cloak: "#4488ff",
+  pants: "#224488",
+  "hair - close": "#ff0000"
+};
+const CHARACTER_LAYERS = {
+  "hair - big": false,
+  "hood": false
 };
 
 export class Player extends Character {
@@ -47,7 +54,8 @@ export class Player extends Character {
     // const sprite = new AnimatedSprite(spriteSheet, spriteCycles);
     const sprite = new MultiLayerAnimatedSprite(
       walkLayersImage,
-      walkLayersSheet
+      walkLayersSheet,
+      CHARACTER_LAYERS
     );
     await sprite.readyPromise;
     sprite.recolor(CHARACTER_COLOR_SCHEME);
@@ -80,7 +88,7 @@ export class Player extends Character {
     const distDelta = Math.abs(this.previousPosition[0] - this.body.position[0]);
     vec2.copy(this.previousPosition, this.body.position);
     if (this.onSurface) {
-      this.sprite.animate(distDelta * 10);
+      this.sprite.animate(distDelta * 5);
     }
   }
   runKeyboardMotion(engine, ks) {

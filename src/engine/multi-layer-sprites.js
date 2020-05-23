@@ -34,10 +34,12 @@ export class MultiLayerAnimatedSprite {
    * @constructor
    * @param spriteSheetImage - image URL 0f sprite sheet
    * @param spriteAnimations - animation definitions of the sprite sheet
+   * @param layerSettings - layer visibility settings
    */
-   constructor(spriteSheetImage, spriteDefinition) {
+   constructor(spriteSheetImage, spriteDefinition, layerVisibility = null) {
      this.spriteSheetImage = spriteSheetImage;
      this.spriteDefinition = spriteDefinition;
+     this.layerVisibility = layerVisibility;
 
      this.texture = null;
      this.textureWidth = 128;
@@ -73,11 +75,18 @@ export class MultiLayerAnimatedSprite {
      this.geometry = new Geometry();
 
      const { frames, meta } = this.spriteDefinition;
+     let layerIndex = 0;
      for (let li = 0; li < meta.layers.length; li++) {
 
        // map frame data
-       const layerIndex = li;
        const layerName = meta.layers[li].name;
+
+       if (this.layerVisibility) {
+         if (this.layerVisibility[layerName] === false) {
+           continue;
+         }
+       }
+
        const layerColor = new Color(1, 1, 1);
        this.orderedLayers.push({ layerName, layerColor });
        const layerFrames = [];
@@ -89,7 +98,7 @@ export class MultiLayerAnimatedSprite {
 
        // seed geometry
        const z = layerIndex * 0.1;
-       const vi = li * 4;
+       const vi = layerIndex * 4;
        const n = null;
        this.geometry.vertices.push(new Vector3(-1, -1, z));
        this.geometry.vertices.push(new Vector3(1, -1, z));
@@ -107,6 +116,8 @@ export class MultiLayerAnimatedSprite {
          new Vector2(0, 1),
          new Vector2(1, 1)
        ]);
+
+       layerIndex++;
      }
 
      // load the material - we'll use it for the full geometry
