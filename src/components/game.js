@@ -1,5 +1,4 @@
 import EventEmitter from "events";
-import { Component, createContext } from "react";
 import { ContactMaterial } from "p2";
 
 import { traverseTileGrid } from "../utils/grid-to-polygon";
@@ -13,41 +12,31 @@ import { EngineProvider } from "./engine";
 import { EngineViewport } from "./viewport";
 import CodeExecutor from "./code-executor";
 
+import level1 from "../tilesets/magic-cliffs/level2.json";
+import tilesetJson from "../tilesets/magic-cliffs/tileset.json";
 import tilesetPng from "../tilesets/magic-cliffs/PNG/tileset.png";
 
 import "./game.less";
 
-export const GameContext = createContext({
-  engine: null,
-  paused: false
-});
-
 async function addThings(engine) {
 
-  // add a character
+  // add the player
   const player = new Player({
     position: [200, 100]
   });
-
   engine.addEntity(player);
   engine.followEntity(player);
 
+  // add friction between the player and the ground
   engine.world.addContactMaterial(new ContactMaterial(
     player.body.shapes[0].material,
     terrainMaterial,
     { friction: 1 }
   ));
 
+  // add an enemy
   const enemy = new Enemy();
   engine.addEntity(enemy);
-
-  const [
-    level1,
-    tilesetJson,
-  ] = await Promise.all([
-    import("../tilesets/magic-cliffs/level2.json"),
-    import("../tilesets/magic-cliffs/tileset.json"),
-  ]);
 
   const terrain = new TilesetTerrain(level1, tilesetJson, tilesetPng);
   await terrain.readyPromise;
