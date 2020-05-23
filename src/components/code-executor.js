@@ -1,7 +1,8 @@
 import { Component, useState, useEffect, useRef } from "react";
 
+// pull in Ace and configure it
 import Ace, { Range } from "ace-builds/src-noconflict/ace";
-import jsWorkerUrl from "file-loader!ace-builds/src-noconflict/worker-javascript";
+import jsWorkerUrl from "file-loader?name=mode-javascript.worker!ace-builds/src-noconflict/worker-javascript";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-tomorrow";
 Ace.config.setModuleUrl(
@@ -10,6 +11,7 @@ Ace.config.setModuleUrl(
 );
 window.ace = Ace;
 
+// pull in Ace editor afterwards
 import AceEditor from "react-ace";
 
 import { EngineContext } from "./engine";
@@ -21,7 +23,7 @@ import "./code-executor.less";
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
 const srcScript =
 `"use strict";
-const fire = require("fire");
+// const fire = require("fire");
 while (true) {
   fire();
 }
@@ -101,6 +103,7 @@ export default class CodeExecutor extends Component {
           <button onClick={this._stop} disabled={!running}>stop</button>
         </div>
         <div className="editor-container" ref={r => this.editorContainerEl = r}>
+          { errors }
           <AceEditor
             name="__editor__"
             mode="javascript"
@@ -118,7 +121,6 @@ export default class CodeExecutor extends Component {
               showLineNumbers: true
             }}
             />
-          { errors }
         </div>
       </div>
     );

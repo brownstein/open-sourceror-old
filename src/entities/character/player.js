@@ -80,7 +80,7 @@ export class Player extends Character {
       this.sprite.switchToAnimation("danceCycle");
     }
     else {
-      this.sprite.switchToAnimation("walkCycle");
+      this.sprite.switchToAnimation("walkCycle"); // TODO implement
     }
     if (!this.previousPosition) {
       this.previousPosition = vec2.clone(this.body.position);

@@ -1,6 +1,6 @@
 import shortid from "shortid";
 
-class RunningScript {
+export class RunningScript {
   constructor({
     scriptName,
     scriptRunner,
@@ -29,11 +29,11 @@ class RunningScript {
       while (this.executionTimeDelta > 1) {
         this.executionTimeDelta--;
         let start = null;
-        let cap = 0;
+        let exCap = 0;
         while (
           !start &&
           this.scriptRunner.hasNextStep() &&
-          cap++ < 1000
+          exCap++ < 1000
         ) {
           this.scriptRunner.doCurrentLine();
           const exSection = this.scriptRunner.getExecutingSection();
@@ -56,7 +56,7 @@ const RESERVED_SCRIPT_NAMES = {
   fire: 1
 };
 
-class ScriptExecutionContext {
+export class ScriptExecutionContext {
   constructor(engine) {
     this.engine = engine;
     this.runningScripts = [];
@@ -64,11 +64,11 @@ class ScriptExecutionContext {
   /**
    * Method to run on each frame of the game
    */
-  onFrame() {
+  onFrame(timeDelta) {
     if (!this.engine.running) {
       return;
     }
-    this.runningScripts.forEach(s => s._continueRunning());
+    this.runningScripts.forEach(s => s._continueRunning(timeDelta));
   }
   /**
    * Runs a script with a given name
@@ -94,6 +94,9 @@ class ScriptExecutionContext {
       scriptRunner,
       targetEntity: runningEntity
     });
+
+    exState.executionSpeed = 0.1;
+
     this.runningScripts.push(exState);
   }
   getRunningScripts() {

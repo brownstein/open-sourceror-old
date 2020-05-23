@@ -14,6 +14,7 @@ import {
 } from "p2";
 
 import KeyState from "./key-state";
+import { ScriptExecutionContext } from "../script-runner/execution-context";
 
 export default class Engine extends EventEmitter {
   constructor() {
@@ -29,6 +30,9 @@ export default class Engine extends EventEmitter {
     this.world = new World({
       gravity:[0, 900]
     });
+
+    // script execution context
+    this.scriptExecutionContext = new ScriptExecutionContext(this);
 
     // three.js camera positioning will be managed at the engine level for now
     const minCameraSize = { width: 200, height: 200 };
@@ -132,6 +136,9 @@ export default class Engine extends EventEmitter {
       e.runKeyboardMotion && e.runKeyboardMotion(this, this.ks);
       e.onFrame && e.onFrame(deltaTimeMs);
     });
+
+    // run scripts
+    this.scriptExecutionContext.onFrame(deltaTimeMs);
 
     // track camera
     if (this.followingEntity) {
