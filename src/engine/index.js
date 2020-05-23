@@ -133,7 +133,7 @@ export default class Engine extends EventEmitter {
     // sync three with P2, do keyboard events
     this.activeEntities.forEach(e => {
       e.syncMeshWithBody && e.syncMeshWithBody(deltaTimeMs);
-      e.runKeyboardMotion && e.runKeyboardMotion(this, this.ks);
+      // e.runKeyboardMotion && e.runKeyboardMotion(this, this.ks);
       e.onFrame && e.onFrame(deltaTimeMs);
     });
 
@@ -151,6 +151,8 @@ export default class Engine extends EventEmitter {
     this.emit("frame", { deltaTimeMs });
   }
   handleViewportFocus(isFocused) {
+    return;
+    // TODO: handle this gracefully
     if (this.controller) {
       if (!isFocused) {
         this.controller._focusLost();

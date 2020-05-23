@@ -35,7 +35,7 @@ export class EngineProvider extends Component {
   }
   componentDidMount() {
     // attach keyboard event listeners
-    this.engine.ks.mount(document);
+    // this.engine.ks.mount(document);
 
     // attach window focus events for automatic pausing
     window.onblur = this._focusLost;
@@ -54,7 +54,7 @@ export class EngineProvider extends Component {
     }
   }
   componentWillUnmount() {
-    this.engine.ks.unmount();
+    // this.engine.ks.unmount();
   }
   render() {
     const { children } = this.props;

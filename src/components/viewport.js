@@ -9,6 +9,7 @@ import {
   WebGLRenderer
 } from "three";
 
+import KeyState from "engine/key-state";
 import { EngineContext } from "./engine";
 
 import "./viewport.less";
@@ -25,6 +26,11 @@ export class EngineViewport extends Component {
 
     this.canvasEl = null;
 
+    // focus context and keyboard events
+    this.hasCursor = false;
+    this.ks = new KeyState();
+
+    this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
     this._onMouseover = this._onMouseover.bind(this);
@@ -33,6 +39,8 @@ export class EngineViewport extends Component {
   componentDidMount() {
     const engine = this.context;
     const { minCameraSize } = engine.cameras[0];
+
+    this.ks.mount(document);
 
     this.cameraSize = { ...minCameraSize };
     this.camera = new OrthographicCamera(
@@ -60,10 +68,11 @@ export class EngineViewport extends Component {
     this._renderFrame();
 
     // start listening for rendering queues
-    engine.on("frame", this._renderFrame);
+    engine.on("frame", this._onFrame);
   }
   componentWillUnmount() {
     const engine = this.context;
+    this.ks.unmount(document);
     window.removeEventListener("resize", this._onResize);
     this.canvasEl.removeEventListener("mouseenter", this._onMouseover);
     this.canvasEl.removeEventListener("mouseout", this._onMouseout);
@@ -85,6 +94,16 @@ export class EngineViewport extends Component {
         Overlay
       </div>
     </div>;
+  }
+  _onFrame() {
+    const engine = this.context;
+    const player = engine.followingEntity;
+
+    if (player && engine.running && this.hasCursor) {
+      player.runKeyboardMotion(engine, this.ks);
+    }
+
+    this._renderFrame();
   }
   _renderFrame() {
     const engine = this.context;
@@ -133,10 +152,12 @@ export class EngineViewport extends Component {
   }
   _onMouseover() {
     const engine = this.context;
+    this.hasCursor = true;
     engine.handleViewportFocus(true);
   }
   _onMouseout() {
     const engine = this.context;
+    this.hasCursor = false;
     engine.handleViewportFocus(false);
   }
 }

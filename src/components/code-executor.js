@@ -143,6 +143,7 @@ export default class CodeExecutor extends Component {
       return;
     }
 
+    this.setState({ running: true });
     this._clearMarkings();
 
     this.scriptRunner = new ScriptRunner(scriptContents, engine, player);
@@ -150,7 +151,7 @@ export default class CodeExecutor extends Component {
       await this.scriptRunner.readyPromise;
     }
     catch (err) {
-      this.setState({ compileTimeException: err });
+      this.setState({ running: false, compileTimeException: err });
       this.scriptRunner = null;
       const { line, column } = err.loc;
       this._markError(err.toString(), line - 1);
@@ -160,8 +161,6 @@ export default class CodeExecutor extends Component {
     this.t = 0;
     this.currentLine = 0;
     this.markerId = null;
-
-    this.setState({ running: true });
     this._continueRunning();
   }
   _clearMarkings() {

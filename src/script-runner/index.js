@@ -95,6 +95,9 @@ export default class ScriptRunner {
    * Check whether there's (currently) anything left to execute in the script
    */
   hasNextStep() {
+    if (!this.interpreter) {
+      return false;
+    }
     if (!this.interpreter.stateStack.length) {
       return false;
     }
@@ -110,7 +113,11 @@ export default class ScriptRunner {
    * Check whether the script has fully executed
    */
   hasCompletedExecution() {
-    return !(this.outstandingCallbackCount > 0 || this.hasNextStep());
+    return !(
+      this.interpreter &&
+      this.outstandingCallbackCount > 0 ||
+      this.hasNextStep()
+    );
   }
   /**
    * Runs a single operation in the script
