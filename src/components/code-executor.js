@@ -111,8 +111,8 @@ export default class CodeExecutor extends Component {
             onLoad={this._loadEditor}
             onFocus={() => {}}
             onBlur={() => {}}
-            width={width}
-            height={height}
+            width={`${width}px`}
+            height={`${height}px`}
             highlightActiveLine={!running}
             setOptions={{
               showLineNumbers: true

@@ -1,23 +1,26 @@
-import EventEmitter from "events";
 import { ContactMaterial } from "p2";
+import { Provider } from "react-redux";
 
-import { traverseTileGrid } from "../utils/grid-to-polygon";
-import { loadTileset } from "../utils/tileset-loader";
-
-import { Player } from "../entities/character/player";
-import { Enemy } from "../entities/character/enemy";
-import { TilesetTerrain, terrainMaterial } from "../entities/terrain";
-
+// engine-level constructs
 import { EngineProvider } from "./engine";
 import { EngineViewport } from "./viewport";
 import CodeExecutor from "./code-executor";
 
+// level entities
+import { Player } from "../entities/character/player";
+import { Enemy } from "../entities/character/enemy";
+import { TilesetTerrain, terrainMaterial } from "../entities/terrain";
+
+// level-specific constructs
 import level1 from "../tilesets/magic-cliffs/level2.json";
 import tilesetJson from "../tilesets/magic-cliffs/tileset.json";
 import tilesetPng from "../tilesets/magic-cliffs/PNG/tileset.png";
 
+// global styles
 import "./game.less";
 
+// current room loading construct
+// TODO: replace this with a room system
 async function addThings(engine) {
 
   // add the player
@@ -44,17 +47,20 @@ async function addThings(engine) {
   terrain.getEntities().forEach(e => engine.addLevelEntity(e));
 }
 
-export default function Game () {
+// default component for the game
+export default function Game({ store }) {
   return (
-    <EngineProvider addThings={addThings}>
-      <div className="game">
-        <div className="game-viewport">
-          <EngineViewport/>
+    <Provider store={store}>
+      <EngineProvider addThings={addThings}>
+        <div className="game">
+          <div className="game-viewport">
+            <EngineViewport/>
+          </div>
+          <div className="game-code-editor">
+            <CodeExecutor/>
+          </div>
         </div>
-        <div className="game-code-editor">
-          <CodeExecutor/>
-        </div>
-      </div>
-    </EngineProvider>
+      </EngineProvider>
+    </Provider>
   );
 }

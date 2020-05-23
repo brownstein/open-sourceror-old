@@ -4,7 +4,7 @@ import unhandledActions from "redux-unhandled-action";
 
 import rootReducer from "../reducers";
 
-export default function createStore() {
+export default function createGameStore() {
   const middleware = [thunk];
 
   // add dev middleware conditionally

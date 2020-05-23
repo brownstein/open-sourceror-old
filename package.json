@@ -53,6 +53,8 @@
     "react-redux": "^7.2.0",
     "react-simple-code-editor": "^0.11.0",
     "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "redux-unhandled-action": "^1.3.0",
     "regenerator-runtime": "^0.13.5",
     "serialize-error": "^7.0.1",
     "three": "^0.116.1",
