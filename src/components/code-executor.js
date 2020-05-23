@@ -59,8 +59,16 @@ export default class CodeExecutor extends Component {
     this._run = this._run.bind(this);
     this._stop = this._stop.bind(this);
     this._continueRunning = this._continueRunning.bind(this);
+    this._onResize = this._onResize.bind(this);
   }
   componentDidMount() {
+    window.addEventListener("resize", this._onResize);
+    this._onResize();
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this._onResize);
+  }
+  _onResize() {
     const bbox = this.editorContainerEl.getBoundingClientRect();
     const { width, height } = bbox;
     this.setState({
@@ -102,8 +110,8 @@ export default class CodeExecutor extends Component {
             value={scriptContents}
             readOnly={running}
             onLoad={this._loadEditor}
-            onFocus={() => console.log('focus')}
-            onBlur={() => console.log('blur')}
+            onFocus={() => {}}
+            onBlur={() => {}}
             width={width}
             height={height}
             setOptions={{

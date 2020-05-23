@@ -24,9 +24,6 @@ export class EngineProvider extends Component {
     this.engine = new Engine();
     this.engine.controller = this;
 
-    // DOM handling
-    this.domElement = null;
-
     // running properties
     this.running = false;
     this.lastFrameTime = null;
@@ -61,11 +58,11 @@ export class EngineProvider extends Component {
   }
   render() {
     const { children } = this.props;
-    return <div ref={r => this.domElement = r}>
+    return (
       <EngineContext.Provider value={this.engine}>
         { children }
       </EngineContext.Provider>
-    </div>;
+    );
   }
   _updateLoop() {
     try {

@@ -1,12 +1,15 @@
 .code-executor {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 
   .toolbar {
-    height: 32px;
+    flex-basis: 32px;
   }
 
   .editor-container {
     width: 100%;
-    min-height: 300px;
+    flex-grow: 1;
     overflow: hidden;
   }
 

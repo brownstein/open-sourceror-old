@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 // build variant for electron renderer
@@ -128,7 +129,8 @@ module.exports = {
     }),
     !isDev && new UglifyJSPlugin({
       include: /\.min\.js$/
-    })
+    }),
+    isDev && new BundleAnalyzerPlugin()
   ]
   .filter(p => p),
   optimization: {
