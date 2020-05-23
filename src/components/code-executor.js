@@ -143,7 +143,7 @@ export default class CodeExecutor extends Component {
       return;
     }
 
-    this.setState({ running: true });
+    this.setState({ running: true }); // mark as running to prevent double exec
     this._clearMarkings();
 
     this.scriptRunner = new ScriptRunner(scriptContents, engine, player);

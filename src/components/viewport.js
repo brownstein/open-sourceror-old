@@ -65,7 +65,7 @@ export class EngineViewport extends Component {
 
     // size canvas to the current size of it's container
     this._onResize();
-    this._renderFrame();
+    this._queueRender();
 
     // start listening for rendering queues
     engine.on("frame", this._onFrame);
@@ -76,7 +76,7 @@ export class EngineViewport extends Component {
     window.removeEventListener("resize", this._onResize);
     this.canvasEl.removeEventListener("mouseenter", this._onMouseover);
     this.canvasEl.removeEventListener("mouseout", this._onMouseout);
-    engine.off("frame", this._renderFrame);
+    engine.off("frame", this._onFrame);
   }
   render() {
     return <div ref={r => this.viewportEl = r} className="viewport">
@@ -103,9 +103,18 @@ export class EngineViewport extends Component {
       player.runKeyboardMotion(engine, this.ks);
     }
 
+    this.needsRender = true;
     this._renderFrame();
   }
+  _queueRender() {
+    this.needsRender = true;
+    requestAnimationFrame(this._renderFrame);
+  }
   _renderFrame() {
+    if (!this.needsRender) {
+      return;
+    }
+    this.needsRender = false;
     const engine = this.context;
     const { scene, levelBBox, followingEntity } = engine;
     if (!scene) {
@@ -148,7 +157,7 @@ export class EngineViewport extends Component {
     this.camera.bottom = height / 2;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
-    this._renderFrame();
+    this._queueRender();
   }
   _onMouseover() {
     const engine = this.context;
