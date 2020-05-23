@@ -24,7 +24,6 @@ const srcScript =
 const fire = require("fire");
 while (true) {
   fire();
-  console.log("fired");
 }
 `;
 
@@ -114,6 +113,7 @@ export default class CodeExecutor extends Component {
             onBlur={() => {}}
             width={width}
             height={height}
+            highlightActiveLine={!running}
             setOptions={{
               showLineNumbers: true
             }}
