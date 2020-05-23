@@ -2,12 +2,12 @@ import EventEmitter from "events";
 import { Component, createContext } from "react";
 import { ContactMaterial } from "p2";
 
-import ComplexShape, { groundMaterial } from "../complex-shape";
 import { traverseTileGrid } from "../utils/grid-to-polygon";
 import { loadTileset } from "../utils/tileset-loader";
 
 import { Player } from "../entities/character/player";
 import { Enemy } from "../entities/character/enemy";
+import { TilesetTerrain, terrainMaterial } from "../entities/terrain";
 
 import { EngineProvider } from "./engine";
 import { EngineViewport } from "./viewport";
@@ -22,7 +22,6 @@ export const GameContext = createContext({
   paused: false
 });
 
-
 async function addThings(engine) {
 
   // add a character
@@ -35,7 +34,7 @@ async function addThings(engine) {
 
   engine.world.addContactMaterial(new ContactMaterial(
     player.body.shapes[0].material,
-    groundMaterial,
+    terrainMaterial,
     { friction: 1 }
   ));
 
@@ -50,32 +49,10 @@ async function addThings(engine) {
     import("../tilesets/magic-cliffs/tileset.json"),
   ]);
 
-  const tileset = loadTileset(tilesetJson, tilesetPng);
+  const terrain = new TilesetTerrain(level1, tilesetJson, tilesetPng);
+  await terrain.readyPromise;
 
-  const levelData = level1.layers[0].data;
-  const levelDataWidth = level1.layers[0].width;
-  const levelDataTileWidth = level1.tilewidth;
-
-  const groundPolygonsAndTiles = traverseTileGrid(
-    levelData,
-    levelDataWidth,
-    levelDataTileWidth,
-    tileset
-  );
-
-  const groundShapes = groundPolygonsAndTiles.map(g => {
-    return new ComplexShape(
-      g.polygons,
-      g.tiles,
-      {
-        mass: 0,
-        isStatic: true,
-        friction: 0.9,
-        position: [0, 0]
-      }
-    );
-  });
-  groundShapes.forEach(s => engine.addLevelEntity(s));
+  terrain.getEntities().forEach(e => engine.addLevelEntity(e));
 }
 
 export default function Game () {
