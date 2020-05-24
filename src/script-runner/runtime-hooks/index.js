@@ -47,20 +47,6 @@ export function initializeScope(interpreter, scope, runner) {
   );
   interpreter.setProperty(scope, "fire", nativeFireball);
 
-  const nativeRequire = interpreter.createNativeFunction(
-    rawModuleName => {
-      const moduleName = interpreter.pseudoToNative(rawModuleName);
-      let requirement = null;
-      switch (moduleName) {
-        case "fire":
-          return nativeFireball;
-        default:
-          throw new Error("Unknown module - have you tried getting gud?");
-      }
-    }
-  );
-  interpreter.setProperty(scope, "require", nativeRequire);
-
   const nativeCreateSensor = interpreter.createNativeFunction(
     (radius) => {
       runner.cleanupEffects.push(() => console.log('S done'));
@@ -70,6 +56,23 @@ export function initializeScope(interpreter, scope, runner) {
     }
   );
   interpreter.setProperty(scope, "sensor", nativeCreateSensor);
+
+  const nativeRequire = interpreter.createNativeFunction(
+    rawModuleName => {
+      const moduleName = interpreter.pseudoToNative(rawModuleName);
+      let requirement = null;
+      switch (moduleName) {
+        case "fire":
+          return nativeFireball;
+        case "sensor":
+          return nativeCreateSensor;
+        default:
+          throw new Error("Unknown module - have you tried getting gud?");
+      }
+    }
+  );
+  interpreter.setProperty(scope, "require", nativeRequire);
+
 }
 
 /**

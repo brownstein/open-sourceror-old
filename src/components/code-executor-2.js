@@ -25,6 +25,9 @@ import "./code-executor.less";
 const srcScript =
 `"use strict";
 const fire = require("fire");
+const Sensor = require("sensor");
+const s = new Sensor(40);
+console.log(s);
 for (let i=0; i<10; i++) {
   fire();
 }
