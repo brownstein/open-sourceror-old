@@ -18,7 +18,7 @@ import {
   walkLayersSheet,
   walkLayersImage,
   castSheet,
-  caseImage,
+  castImage,
   midJumpSheet,
   midJumpImage
 } from "./sprites/wizard";
@@ -31,11 +31,12 @@ const CHARACTER_COLOR_SCHEME = {
   torso: "#444444",
   cloak: "#4488ff",
   pants: "#224488",
-  "hair - close": "#ff0000"
+  "hair - close": "#ff0000",
 };
 const CHARACTER_LAYERS = {
   "hair - big": false,
-  "hood": false
+  "hood": false,
+  "Hood": false,
 };
 
 export class Player extends Character {
@@ -48,25 +49,36 @@ export class Player extends Character {
     });
     this.body.addShape(detector);
 
+    this.sprites = {};
+
     this.spritesLoaded = false;
     this.loadSprites();
   }
   async loadSprites() {
-    const relativeCenter = new Vector2(0, 8);
-    // const sprite = new AnimatedSprite(spriteSheet, spriteCycles);
-    const sprite = new MultiLayerAnimatedSprite(
-      walkLayersImage,
-      walkLayersSheet,
-      CHARACTER_LAYERS
-    );
-    await sprite.readyPromise;
-    sprite.recolor(CHARACTER_COLOR_SCHEME);
+    const relativeCenter = new Vector3(0, 8, 1);
 
-    this.sprite = sprite;
-    sprite.mesh.position.x = relativeCenter.x;
-    sprite.mesh.position.y = relativeCenter.y;
-    sprite.mesh.position.z = 1;
-    this.mesh.add(sprite.mesh);
+    this.sprites = {};
+    await Promise.all(
+      [
+        ["walk", walkLayersImage, walkLayersSheet],
+        ["cast", castImage, castSheet],
+        ["midJump", midJumpImage, midJumpSheet]
+      ]
+      .map(async ([name, image, sheet]) => {
+        const sprite = new MultiLayerAnimatedSprite(image, sheet, CHARACTER_LAYERS);
+        await sprite.readyPromise;
+        sprite.mesh.visible = false;
+        sprite.recolor(CHARACTER_COLOR_SCHEME);
+        sprite.mesh.position.copy(relativeCenter);
+        this.mesh.add(sprite.mesh);
+        this.sprites[name] = sprite;
+      })
+    );
+
+    this.sprite = this.sprites.walk;
+    this.sprites.walk.mesh.visible = true;
+    // this.sprites.midJump.mesh.visible = true;
+    // this.sprites.cast.mesh.visible = true;
 
     this.mesh.children[0].visible = false;
     this.mesh.children[1].visible = false;

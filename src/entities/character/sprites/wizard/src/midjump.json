@@ -15,7 +15,7 @@
     "sourceSize": { "w": 19, "h": 36 },
     "duration": 40
    },
-   "top-0": {
+   "torso-0": {
     "frame": { "x": 0, "y": 72, "w": 19, "h": 36 },
     "rotated": false,
     "trimmed": false,
@@ -31,7 +31,7 @@
     "sourceSize": { "w": 19, "h": 36 },
     "duration": 40
    },
-   "head hands-0": {
+   "body-0": {
     "frame": { "x": 0, "y": 144, "w": 19, "h": 36 },
     "rotated": false,
     "trimmed": false,
@@ -47,7 +47,7 @@
     "sourceSize": { "w": 19, "h": 36 },
     "duration": 40
    },
-   "hair close-0": {
+   "hair - close-0": {
     "frame": { "x": 0, "y": 216, "w": 19, "h": 36 },
     "rotated": false,
     "trimmed": false,
@@ -55,7 +55,7 @@
     "sourceSize": { "w": 19, "h": 36 },
     "duration": 40
    },
-   "hair big-0": {
+   "hair - big-0": {
     "frame": { "x": 0, "y": 252, "w": 19, "h": 36 },
     "rotated": false,
     "trimmed": false,
@@ -76,12 +76,12 @@
   "layers": [
    { "name": "cloak", "opacity": 255, "blendMode": "normal" },
    { "name": "pants", "opacity": 255, "blendMode": "normal" },
-   { "name": "top", "opacity": 255, "blendMode": "normal" },
+   { "name": "torso", "opacity": 255, "blendMode": "normal" },
    { "name": "shoes", "opacity": 255, "blendMode": "normal" },
-   { "name": "head hands", "opacity": 255, "blendMode": "normal" },
+   { "name": "body", "opacity": 255, "blendMode": "normal" },
    { "name": "hood", "opacity": 255, "blendMode": "normal" },
-   { "name": "hair close", "opacity": 255, "blendMode": "normal" },
-   { "name": "hair big", "opacity": 255, "blendMode": "normal" }
+   { "name": "hair - close", "opacity": 255, "blendMode": "normal" },
+   { "name": "hair - big", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [
   ]
