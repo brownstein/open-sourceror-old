@@ -157,16 +157,13 @@ export default class Engine extends EventEmitter {
     // emit frame event to child components for rendering
     this.emit("frame", { deltaTimeMs });
   }
+  /**
+   * Viewport focus / defocus method - allows the character to react to the
+   * user's focus state
+   */
   handleViewportFocus(isFocused) {
-    return;
-    // TODO: handle this gracefully
-    if (this.controller) {
-      if (!isFocused) {
-        this.controller._focusLost();
-      }
-      else {
-        this.controller._focusGained();
-      }
+    if (this.controllingEntity && this.controllingEntity.handleViewportFocus) {
+      this.controllingEntity.handleViewportFocus(isFocused);
     }
   }
 }

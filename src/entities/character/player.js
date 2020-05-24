@@ -32,6 +32,8 @@ const CHARACTER_COLOR_SCHEME = {
   cloak: "#4488ff",
   pants: "#224488",
   "hair - close": "#ff0000",
+  Cast: "#f00",
+  code: "#0ff"
 };
 const CHARACTER_LAYERS = {
   "hair - big": false,
@@ -49,22 +51,24 @@ export class Player extends Character {
     });
     this.body.addShape(detector);
 
+    this.direction = "right";
+    this.activeSpriteName = null;
     this.sprites = {};
+    this.spriteOffsets = {};
+    this.engine = null;
 
     this.spritesLoaded = false;
     this.loadSprites();
   }
   async loadSprites() {
-    const relativeCenter = new Vector3(0, 8, 1);
-
     this.sprites = {};
     await Promise.all(
       [
-        ["walk", walkLayersImage, walkLayersSheet],
-        ["cast", castImage, castSheet],
-        ["midJump", midJumpImage, midJumpSheet]
+        ["walk", walkLayersImage, walkLayersSheet, new Vector3(0, 8, 1)],
+        ["cast", castImage, castSheet, new Vector3(7, 8, 1)],
+        ["midJump", midJumpImage, midJumpSheet, new Vector3(0, 8, 1)]
       ]
-      .map(async ([name, image, sheet]) => {
+      .map(async ([name, image, sheet, relativeCenter]) => {
         const sprite = new MultiLayerAnimatedSprite(image, sheet, CHARACTER_LAYERS);
         await sprite.readyPromise;
         sprite.mesh.visible = false;
@@ -72,37 +76,55 @@ export class Player extends Character {
         sprite.mesh.position.copy(relativeCenter);
         this.mesh.add(sprite.mesh);
         this.sprites[name] = sprite;
+        this.spriteOffsets[name] = relativeCenter;
       })
     );
 
+    this.activeSpriteName = "walk";
     this.sprite = this.sprites.walk;
     this.sprites.walk.mesh.visible = true;
-    // this.sprites.midJump.mesh.visible = true;
-    // this.sprites.cast.mesh.visible = true;
 
     this.mesh.children[0].visible = false;
     this.mesh.children[1].visible = false;
 
     this.spritesLoaded = true;
   }
+  _swapToSprite(spriteName) {
+    this.activeSpriteName = spriteName;
+    if (!this.spritesLoaded) {
+      return;
+    }
+    this.sprite.mesh.visible = false;
+    this.sprite = this.sprites[spriteName];
+    this.sprite.mesh.visible = true;
+    const relativeCenter = this.spriteOffsets[spriteName];
+    if (this.direction === "right") {
+      this.sprite.mesh.position.copy(relativeCenter);
+      this.sprite.mesh.scale.x = 1;
+    }
+    else {
+      this.sprite.mesh.position.copy(relativeCenter);
+      this.sprite.mesh.position.x *= -1;
+      this.sprite.mesh.scale.x = -1;
+    }
+  }
   syncMeshWithBody(timeDelta) {
     super.syncMeshWithBody();
     if (!this.spritesLoaded) {
       return;
-    }
-    if (Math.abs(this.body.velocity[0]) < 0.5) {
-      this.sprite.switchToAnimation("danceCycle");
-    }
-    else {
-      this.sprite.switchToAnimation("walkCycle"); // TODO implement
     }
     if (!this.previousPosition) {
       this.previousPosition = vec2.clone(this.body.position);
     }
     const distDelta = Math.abs(this.previousPosition[0] - this.body.position[0]);
     vec2.copy(this.previousPosition, this.body.position);
-    if (this.onSurface) {
-      this.sprite.animate(distDelta * 5);
+    if (this.activeSpriteName === "walk") {
+      if (this.onSurface) {
+        this.sprite.animate(distDelta * 5);
+      }
+    }
+    else {
+      this.sprite.animate(timeDelta);
     }
   }
   /**
@@ -111,10 +133,12 @@ export class Player extends Character {
   runKeyboardMotion(engine, ks) {
     if (ks.isKeyDown("d")) {
       this.plannedAccelleration[0] = this.accelleration[0];
+      this.direction = "right";
       this.sprite.mesh.scale.x = 1;
     }
     else if (ks.isKeyDown("a")) {
       this.plannedAccelleration[0] = -this.accelleration[0];
+      this.direction = "left";
       this.sprite.mesh.scale.x = -1;
     }
     if (ks.isKeyDown("w")) {
@@ -138,5 +162,13 @@ export class Player extends Character {
       fireball.body.velocity[1] -= 100;
     }
     this.engine.addEntity(fireball);
+  }
+  handleViewportFocus(isFocused) {
+    if (isFocused) {
+      this._swapToSprite("walk");
+    }
+    else {
+      this._swapToSprite("cast");
+    }
   }
 }
