@@ -82,6 +82,7 @@ export class RunningScript {
       console.error("script exception", ex);
       this.runtimeError = ex;
       this.running = false;
+      this.scriptRunner.cleanup();
       return true;
     }
 
