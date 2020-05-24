@@ -30,9 +30,8 @@ const s = new Sensor(40);
 console.log(s.G);
 console.log(s.G());
 for (let i=0; i<10; i++) {
-  fire();
-  fire({ x: 20, y: -50 }, { x: 300, y: -100 });
-  fire([-20, 0], [-300, 0]);
+  fire({ x: (i - 5) * 10, y: -10 }, { x: ( i - 5) * 100, y: -150 });
+  fire([-i + 5, 0], [-100 * (i - 5), 0]);
 }
 `;
 

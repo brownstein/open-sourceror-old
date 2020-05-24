@@ -29,7 +29,7 @@ export class RunningScript {
     this.scriptContents = scriptRunner.sourceScript;
     this.scriptRunner = scriptRunner;
     this.targetEntity = targetEntity;
-    this.executionSpeed = 0.01,
+    this.executionSpeed = 0.02,
     this.executionTimeDelta = 0,
     this.running = true,
     this.finished = false;

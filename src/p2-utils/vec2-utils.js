@@ -1,3 +1,8 @@
+
+/**
+ * Accepts either an array or an object representing 2D coordinates and
+ * produces an array - useful for sanitizing player input from scripts
+ */
 export function castToVec2(src) {
   if (Array.isArray(src)) {
     if (src.length === 2) {

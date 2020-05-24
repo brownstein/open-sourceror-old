@@ -60,8 +60,6 @@ export function initializeScope(interpreter, scope, runner) {
   );
   interpreter.setProperty(scope, "fire", nativeFireball);
 
-  const nativeSensorPrototype = interpreter.createObject();
-
   /**
    * Native sensor creation fucntion
    */
