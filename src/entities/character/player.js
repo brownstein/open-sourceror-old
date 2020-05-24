@@ -15,10 +15,12 @@ import { Character } from "./base";
 import { AnimatedSprite } from "engine/sprites";
 import { MultiLayerAnimatedSprite } from "engine/multi-layer-sprites";
 import {
-  cycles as spriteCycles,
-  image as spriteSheet,
   walkLayersSheet,
   walkLayersImage,
+  castSheet,
+  caseImage,
+  midJumpSheet,
+  midJumpImage
 } from "./sprites/wizard";
 
 import { Fireball } from "../fireball";

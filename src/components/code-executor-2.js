@@ -138,10 +138,7 @@ class CodeExecutor extends Component {
         this._markError(props.runTimeError.toString(), props.currentLine);
       }
       else if (props.compileTimeError) {
-        console.log(props.compileTimeError);
         const err = props.compileTimeError;
-        console.log(err.loc);
-        console.log(err.loc.line);
         this._markError(err, err.loc.line - 1);
       }
       else {
