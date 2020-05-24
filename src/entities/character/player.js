@@ -32,13 +32,13 @@ const CHARACTER_COLOR_SCHEME = {
   cloak: "#4488ff",
   pants: "#224488",
   "hair - close": "#ff0000",
-  Cast: "#f00",
+  Cast: "#00f", // TODO: lowercase
   code: "#0ff"
 };
 const CHARACTER_LAYERS = {
   "hair - big": false,
   "hood": false,
-  "Hood": false,
+  "Hood": false, // TODO: lowercase
 };
 
 export class Player extends Character {

@@ -120,6 +120,9 @@ export class TilesetTerrainEntity extends TerrainEntity {
         side: DoubleSide,
         map: texture,
         transparent: true,
+        // to swap this off, we have to use separate meshes for each Z index
+        // to deal with the fact that three.js's face sorting is geometry-
+        // internal
         alphaTest: 0.1
       });
       const tileGeom = new Geometry();
