@@ -25,11 +25,6 @@ export class Fireball extends BaseEntity {
 
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
   }
-  syncMeshWithBody(timeDelta) {
-    this.mesh.position.x = this.body.interpolatedPosition[0];
-    this.mesh.position.y = this.body.interpolatedPosition[1];
-    this.mesh.rotation.z = this.body.interpolatedAngle;
-  }
   collisionHandler(engine, otherEntity) {
     if (
       otherEntity === this.spawnedByEntiy ||
@@ -37,6 +32,36 @@ export class Fireball extends BaseEntity {
     ) {
       return;
     }
+    engine.addEntity(new FireballExplosion(this.body.interpolatedPosition));
     engine.removeEntity(this);
+  }
+}
+
+export class FireballExplosion extends BaseEntity {
+  constructor(position) {
+    super();
+    this.r = 5;
+    this.body = new Body({
+      mass: 0,
+      position: vec2.clone(position)
+    });
+    const circleShape = new Circle({
+      radius: 1,
+      sensor: true
+    });
+    this.body.addShape(circleShape);
+
+    this.mesh = getThreeJsObjectForP2Body(this.body, false);
+    this.mesh.scale.x = this.r;
+    this.mesh.scale.y = this.r;
+  }
+  onFrame(deltaTimeMs) {
+    this.r += deltaTimeMs * 0.02;
+    this.body.shapes[0].radius = this.r;
+    this.mesh.scale.x = this.r;
+    this.mesh.scale.y = this.r;
+    if (this.r > 10) {
+      this.engine.removeEntity(this);
+    }
   }
 }

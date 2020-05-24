@@ -1,4 +1,5 @@
 import * as acorn from "acorn";
+import { castToVec2 } from "p2-utils/vec2-utils";
 import promisePolyfill from "./promise-polyfill.txt";
 
 /**
@@ -40,8 +41,20 @@ export function initializeScope(interpreter, scope, runner) {
 
   // add support for casting fireball
   const nativeFireball = interpreter.createNativeFunction(
-    () => {
-      runner.callingEntity.castFireball(runner.engine);
+    (rawRelativePosition, rawRelativeVelocity) => {
+      let relativePosition = null;
+      let relativeVelocity = null;
+      if (rawRelativePosition) {
+        relativePosition = castToVec2(
+          interpreter.pseudoToNative(rawRelativePosition)
+        );
+      }
+      if (rawRelativeVelocity) {
+        relativeVelocity = castToVec2(
+          interpreter.pseudoToNative(rawRelativeVelocity)
+        );
+      }
+      runner.callingEntity.castFireball(relativePosition, relativeVelocity);
       return interpreter.nativeToPseudo(undefined);
     }
   );
@@ -49,11 +62,14 @@ export function initializeScope(interpreter, scope, runner) {
 
   const nativeSensorPrototype = interpreter.createObject();
 
-
+  /**
+   * Native sensor creation fucntion
+   */
   const nativeSensor = interpreter.createNativeFunction(
     function() {
-      console.log('NEW', this);
-      runner.cleanupEffects.push(() => console.log('S done'));
+      console.log("mounting sensor");
+      this.cleanupEffect = () => console.log("cleaning up sensor");
+      runner.cleanupEffects.push(this.cleanupEffect);
       this.vv = "v";
       interpreter.setProperty(this, "v", interpreter.nativeToPseudo("val"));
       return this;
@@ -61,11 +77,14 @@ export function initializeScope(interpreter, scope, runner) {
     true
   );
   const nativeSensorGet = function() {
-    console.log('THIS.G', this);
+    console.log("THIS.G", this);
     return interpreter.pseudoToNative(1000);
   }
   interpreter.setNativeFunctionPrototype(nativeSensor, "G", nativeSensorGet);
 
+  /**
+   * Native require function to get other functions
+   */
   const nativeRequire = interpreter.createNativeFunction(
     rawModuleName => {
       const moduleName = interpreter.pseudoToNative(rawModuleName);

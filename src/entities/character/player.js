@@ -46,17 +46,12 @@ export class Player extends Character {
   constructor(props) {
     super(props);
 
-    const detector = new Circle({
-      radius: 64,
-      sensor: true
-    });
-    this.body.addShape(detector);
-
     this.direction = "right";
     this.activeSpriteName = null;
     this.sprites = {};
     this.spriteOffsets = {};
-    this.engine = null;
+
+    this.detectors = [];
 
     this.spritesLoaded = false;
     this.loadSprites();
@@ -149,21 +144,6 @@ export class Player extends Character {
       this.plannedAccelleration[1] = this.accelleration[1];
     }
   }
-  castFireball() {
-    const fireball = new Fireball(this, this.body.position);
-    vec2.copy(fireball.body.velocity, this.body.velocity);
-    if (this.facingRight) {
-      fireball.body.position[0] += 30;
-      fireball.body.velocity[0] += 200;
-      fireball.body.velocity[1] -= 100;
-    }
-    else {
-      fireball.body.position[0] -= 30;
-      fireball.body.velocity[0] -= 200;
-      fireball.body.velocity[1] -= 100;
-    }
-    this.engine.addEntity(fireball);
-  }
   handleViewportFocus(isFocused) {
     if (isFocused) {
       this._swapToSprite("walk");
@@ -171,5 +151,37 @@ export class Player extends Character {
     else {
       this._swapToSprite("cast");
     }
+  }
+  // spell implementations
+  castFireball(relativePosition = null, relativeVelocity = null) {
+    const fireballPosition = vec2.clone(this.body.position);
+    if (relativePosition) {
+      vec2.add(fireballPosition, fireballPosition, relativePosition);
+    }
+    else {
+      fireballPosition[0] += this.facingRight ? 30 : -30;
+    }
+    const fireball = new Fireball(this, fireballPosition);
+    vec2.copy(fireball.body.velocity, this.body.velocity);
+    if (relativeVelocity) {
+      vec2.add(
+        fireball.body.velocity,
+        fireball.body.velocity,
+        relativeVelocity
+      );
+    }
+    else {
+      fireball.body.velocity[0] += this.facingRight ? 200 : -100;
+      fireball.body.velocity[1] -= 100;
+    }
+    this.engine.addEntity(fireball);
+  }
+  addDetector() {
+    const detector = new Circle({
+      radius: 64,
+      sensor: true
+    });
+    this.body.addShape(detector);
+    this.detectors.push(detector);
   }
 }

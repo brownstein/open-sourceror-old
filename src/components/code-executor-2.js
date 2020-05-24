@@ -31,6 +31,8 @@ console.log(s.G);
 console.log(s.G());
 for (let i=0; i<10; i++) {
   fire();
+  fire({ x: 20, y: -50 }, { x: 300, y: -100 });
+  fire([-20, 0], [-300, 0]);
 }
 `;
 
