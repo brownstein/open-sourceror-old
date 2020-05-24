@@ -15,16 +15,8 @@ window.ace = Ace;
 // pull in Ace editor afterwards
 import AceEditor from "react-ace";
 
+// pull in engine context
 import { EngineContext } from "./engine";
-import {
-  executionStarted,
-  executionFinished,
-  continuingExecution,
-  compileTimeError,
-  runTimeError,
-  activeScriptChanged,
-  activeScriptRun
-} from "src/redux/actions/scripts";
 
 import "./code-executor.less";
 
@@ -43,12 +35,9 @@ class CodeExecutor extends Component {
   constructor() {
     super();
     this.state = {
-      runningScriptInstance: null,
       scriptContents: srcScript,
       editorSize: { width: 400, height : 400 },
     };
-    this.exSpeed = 0.15;
-
     // editor instance
     this.editor = null;
 
@@ -60,6 +49,7 @@ class CodeExecutor extends Component {
     // DOM element
     this.editorContainerEl = null;
 
+    // bound methods
     this._loadEditor = this._loadEditor.bind(this);
     this._onChange = this._onChange.bind(this);
     this._run = this._run.bind(this);
@@ -69,7 +59,6 @@ class CodeExecutor extends Component {
   componentDidMount() {
     window.addEventListener("resize", this._onResize);
     this._onResize();
-    const { dispatch } = this.props;
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this._onResize);
@@ -86,7 +75,6 @@ class CodeExecutor extends Component {
       running
     } = this.props;
     const {
-      runningScriptInstance,
       scriptContents,
       editorSize
     } = this.state;
@@ -202,39 +190,32 @@ class CodeExecutor extends Component {
     const markerId = session.addMarker(markerRange, "terminated-line-marker", "screenLine", false);
     this.markerIds.push(markerId);
   }
-  async _run() {
-    const { dispatch } = this.props;
+  _run() {
     const { scriptContents } = this.state;
     const engine = this.context;
     const player = engine.activeEntities[0];
-    dispatch(activeScriptChanged(scriptContents));
-    dispatch(activeScriptRun());
-    try {
-      const runningScript = await engine.scriptExecutionContext.runScript(scriptContents, player);
-      dispatch(executionStarted());
-    }
-    catch (err) {
-      return;
-    }
+    engine.scriptExecutionContext.runScript(scriptContents, player);
   }
   _stop() {
-    const { dispatch, activeScriptName } = this.props;
+    const { activeScriptName } = this.props;
     const engine = this.context;
     engine.scriptExecutionContext.stopScript(activeScriptName);
-    dispatch(executionFinished());
   }
 }
 
+/**
+ * Mapping from Redux store to passed props - does the heavy lifting
+ */
 function mapStateToProps(state) {
   const { scripts } = state;
-  const { focusedScriptId, activeScripts, compileTimeError } = scripts;
+  const { focusedScriptId, activeScripts } = scripts;
 
   let activeScriptName = null;
   let activeScriptContents = null;
   let running = false;
   let currentLine = null;
   let runTimeError = null;
-  // let compileTimeError = null;
+  let { compileTimeError } = scripts;
   let terminatedSuccessfully = false;
 
   if (focusedScriptId) {
@@ -245,7 +226,7 @@ function mapStateToProps(state) {
       running = activeScript.running;
       currentLine = activeScript.currentLine;
       runTimeError = activeScript.runTimeError;
-      // compileTimeError = activeScript.compileTimeError;
+      compileTimeError = activeScript.compileTimeError;
       terminatedSuccessfully = activeScript.finished;
     }
   }

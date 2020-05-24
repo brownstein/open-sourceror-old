@@ -64,6 +64,7 @@ export function updateScriptStates(executionContext, focusedScriptId = null) {
   executionContext.runningScripts.forEach(r => {
     const {
       scriptName,
+      scriptContents,
       scriptRunner,
       running,
       finished,
@@ -73,7 +74,7 @@ export function updateScriptStates(executionContext, focusedScriptId = null) {
     } = r;
     states[r.id] = {
       scriptName,
-      scriptContents: scriptRunner.sourceScript,
+      scriptContents,
       running,
       finished,
       currentLine,

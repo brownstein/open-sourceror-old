@@ -27,6 +27,7 @@ export class RunningScript {
     this.engine = engine;
     this.id = shortid(),
     this.scriptName = scriptName;
+    this.scriptContents = scriptRunner.sourceScript;
     this.scriptRunner = scriptRunner;
     this.targetEntity = targetEntity;
     this.executionSpeed = 0.01,
@@ -37,6 +38,19 @@ export class RunningScript {
     this.transpileError = null,
     this.runtimeError = null,
     this.runEmitter = new EventEmitter();
+  }
+  static withTranspileError({
+    scriptName,
+    scriptRunner,
+    transpileError
+  }) {
+    const rs = new RunningScript({
+      scriptName,
+      scriptRunner
+    });
+    rs.running = false;
+    rs.transpileError = transpileError;
+    return rs;
   }
   /**
    * If currently running, perform operations at timeDelta * executionSpeed
@@ -147,6 +161,17 @@ export class ScriptExecutionContext {
       console.error(err);
       engine.dispatch &&
       engine.dispatch(compileTimeError(err));
+
+      // experimental - push broken script onto execution state
+      const exState = RunningScript.withTranspileError({
+        scriptName,
+        scriptRunner,
+        transpileError: err
+      });
+      this.runningScripts.push(exState);
+      engine.dispatch &&
+      engine.dispatch(updateScriptStates(this, exState.id));
+
       throw err;
     }
 
@@ -166,9 +191,12 @@ export class ScriptExecutionContext {
     return exState;
   }
   stopScript(scriptName) {
+    const engine = this.engine;
     const stopped = this.runningScripts.find(s => s.scriptName === scriptName);
     stopped.running = false;
     this.runningScripts = this.runningScripts.filter(s => s => stopped);
+    engine.dispatch &&
+    engine.dispatch(updateScriptStates(this));
     return stopped;
   }
   getRunningScripts() {
@@ -182,7 +210,7 @@ export class ScriptExecutionContext {
       if (s.runTimeError) {
         return false;
       }
-      if (s.compileTimeError) {
+      if (s.transpileError) {
         return false;
       }
       return true;
