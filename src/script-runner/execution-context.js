@@ -2,6 +2,16 @@ import { useState } from "react";
 import EventEmitter from "events";
 import shortid from "shortid";
 
+import {
+  executionStarted,
+  executionFinished,
+  continuingExecution,
+  compileTimeError,
+  runTimeError,
+  activeScriptChanged,
+  activeScriptRun
+} from "src/redux/actions/scripts";
+
 import ScriptRunner from "./index";
 
 export class RunningScript {
@@ -14,7 +24,7 @@ export class RunningScript {
     this.scriptName = scriptName;
     this.scriptRunner = scriptRunner;
     this.targetEntity = targetEntity;
-    this.executionSpeed = 0.05,
+    this.executionSpeed = 0.01,
     this.executionTimeDelta = 0,
     this.running = true,
     this.currentLine = null,
@@ -57,9 +67,21 @@ export class RunningScript {
       });
       return;
     }
+
+    if (this.scriptRunner.hasCompletedExecution()) {
+      this.running = false;
+      this.runEmitter.emit('terminated');
+      this.scriptRunner.engine.dispatch &&
+      this.scriptRunner.engine.dispatch(executionFinished(this.currentLine));
+      return;
+    }
+
     this.runEmitter.emit("running", {
       currentLine: this.currentLine
     });
+    if (this.scriptRunner.engine.dispatch) {
+      this.scriptRunner.engine.dispatch(continuingExecution(this.currentLine));
+    }
   }
 }
 

@@ -62,6 +62,10 @@ export default class Engine extends EventEmitter {
     this.running = false;
     this.attachedScriptsByBodyId = {};
 
+    // connection to the controller and the Redux world (for script execution)
+    this.controller = null;
+    this.dispatch = null;
+
     // set up P2 contact handlers
     this._initializeContactHandlers();
   }

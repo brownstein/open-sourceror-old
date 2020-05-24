@@ -32,8 +32,8 @@ import "./code-executor.less";
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
 const srcScript =
 `"use strict";
-// const fire = require("fire");
-while (true) {
+const fire = require("fire");
+for (let i=0; i<10; i++) {
   fire();
 }
 `;
@@ -127,7 +127,17 @@ class CodeExecutor extends Component {
   componentDidUpdate(prevProps) {
     const props = this.props;
     const editor = this.editor;
-    console.log('U', props);
+    if (props.running && props.currentLine) {
+      this._markLine(props.currentLine, true);
+    }
+    if (prevProps.running && !props.running) {
+      if (props.terminatedSuccessfully) {
+        this._clearMarkings();
+      }
+      else {
+        this._markLine(props.currentLine, false);
+      }
+    }
   }
   _onChange(scriptContents) {
     this._clearMarkings();
@@ -148,6 +158,25 @@ class CodeExecutor extends Component {
       this.markerIds = [];
     }
     this.markerIds = [];
+  }
+  _markLine(line, isExecuting) {
+    this._clearMarkings();
+
+    const session = this.editor.getSession();
+    let markerClass, gutterClass;
+    if (isExecuting) {
+      markerClass = "active-line-marker";
+      gutterClass = "active-line-gutter";
+    }
+    else {
+      markerClass = "terminated-line-marker";
+      gutterClass = "terminated-line-gutter";
+    }
+    const markerRange = new Range(line, 0, line, Infinity);
+    const markerId = session.addMarker(markerRange, markerClass, "screenLine", false);
+    this.markerIds.push(markerId);
+    session.addGutterDecoration(line, gutterClass);
+    this.decorations.push([line, gutterClass]);
   }
   _markError(text, row, column = null) {
     this._clearMarkings();
@@ -174,7 +203,6 @@ class CodeExecutor extends Component {
     dispatch(activeScriptChanged(scriptContents));
     dispatch(activeScriptRun());
     const runningScript = await engine.scriptExecutionContext.runScript(scriptContents, player);
-    console.log(runningScript);
     dispatch(executionStarted());
   }
   _stop() {
@@ -194,6 +222,7 @@ function mapStateToProps(state) {
     currentLine,
     runTimeException,
     compileTimeException,
+    terminatedSuccessfully,
   } = scripts;
   return {
     activeScriptName,
@@ -202,6 +231,7 @@ function mapStateToProps(state) {
     currentLine,
     runTimeException,
     compileTimeException,
+    terminatedSuccessfully,
   };
 }
 

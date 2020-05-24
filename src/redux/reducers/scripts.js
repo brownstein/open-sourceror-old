@@ -11,12 +11,13 @@ import {
 } from "../constants/scripts";
 
 const DEFAULT_STATE = {
-  activeScriptName: null,
+  activeScriptName: "",
   activeScriptContents: null,
   running: false,
   currentLine: null,
   runTimeException: null,
   compileTimeException: null,
+  terminatedSuccessfully: false
 };
 
 export default function scriptsReducer(state = DEFAULT_STATE, action) {
@@ -33,7 +34,8 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
       return {
         ...state,
         running: false,
-        currentLine: action.currentLine || state.currentLine
+        currentLine: null,
+        terminatedSuccessfully: true
       };
     case CONTINUING_EXECUTION:
       return {

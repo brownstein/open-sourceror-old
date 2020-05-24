@@ -9,7 +9,7 @@ export default function createGameStore() {
 
   // add dev middleware conditionally
   let composeEnhancers = compose;
-  middleware.push(unhandledActions);
+  // middleware.push(unhandledActions);
   if (window.__DEV__) {
     if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
       composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;

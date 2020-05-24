@@ -2,7 +2,7 @@ import {
   EXECUTION_STARTED,
   EXECUTION_FINISHED,
 
-  CONTINUE_EXECUTION,
+  CONTINUING_EXECUTION,
   COMPILETIME_ERROR,
   RUNTIME_ERROR,
 
@@ -15,9 +15,8 @@ export const executionStarted = (currentLine = null) => ({
   currentLine
 });
 
-export const executionFinished = (currentLine = null) => ({
-  type: EXECUTION_FINISHED,
-  currentLine
+export const executionFinished = () => ({
+  type: EXECUTION_FINISHED
 });
 
 export const continuingExecution = (currentLine) => ({

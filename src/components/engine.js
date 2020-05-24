@@ -1,5 +1,6 @@
 import EventEmitter from "events";
 import { createContext, Component } from "react";
+import { connect } from "react-redux";
 import {
   Box3,
   Color,
@@ -18,11 +19,12 @@ import Engine from "../engine";
 
 export const EngineContext = createContext();
 
-export class EngineProvider extends Component {
-  constructor() {
+class _EngineProvider extends Component {
+  constructor(props) {
     super();
     this.engine = new Engine();
     this.engine.controller = this;
+    this.engine.dispatch = props.dispatch;
 
     // running properties
     this.running = false;
@@ -96,3 +98,5 @@ export class EngineProvider extends Component {
     this.lastFrameTime = new Date().getTime();
   }
 };
+
+export const EngineProvider = connect()(_EngineProvider);
