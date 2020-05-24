@@ -191,7 +191,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-0": {
+   "head hand-0": {
     "frame": { "x": 0, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -199,7 +199,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-1": {
+   "head hand-1": {
     "frame": { "x": 27, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -207,7 +207,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-2": {
+   "head hand-2": {
     "frame": { "x": 54, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -215,7 +215,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-3": {
+   "head hand-3": {
     "frame": { "x": 81, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -223,7 +223,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-4": {
+   "head hand-4": {
     "frame": { "x": 108, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -231,7 +231,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-5": {
+   "head hand-5": {
     "frame": { "x": 135, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -239,7 +239,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-6": {
+   "head hand-6": {
     "frame": { "x": 162, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -247,7 +247,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "body-7": {
+   "head hand-7": {
     "frame": { "x": 189, "y": 96, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -319,7 +319,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-0": {
+   "hood-0": {
     "frame": { "x": 0, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -327,7 +327,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-1": {
+   "hood-1": {
     "frame": { "x": 27, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -335,7 +335,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-2": {
+   "hood-2": {
     "frame": { "x": 54, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -343,7 +343,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-3": {
+   "hood-3": {
     "frame": { "x": 81, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -351,7 +351,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-4": {
+   "hood-4": {
     "frame": { "x": 108, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -359,7 +359,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-5": {
+   "hood-5": {
     "frame": { "x": 135, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -367,7 +367,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-6": {
+   "hood-6": {
     "frame": { "x": 162, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -375,7 +375,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Hood-7": {
+   "hood-7": {
     "frame": { "x": 189, "y": 160, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -447,7 +447,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-0": {
+   "hair - close-0": {
     "frame": { "x": 0, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -455,7 +455,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-1": {
+   "hair - close-1": {
     "frame": { "x": 27, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -463,7 +463,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-2": {
+   "hair - close-2": {
     "frame": { "x": 54, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -471,7 +471,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-3": {
+   "hair - close-3": {
     "frame": { "x": 81, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -479,7 +479,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-4": {
+   "hair - close-4": {
     "frame": { "x": 108, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -487,7 +487,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-5": {
+   "hair - close-5": {
     "frame": { "x": 135, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -495,7 +495,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-6": {
+   "hair - close-6": {
     "frame": { "x": 162, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -503,7 +503,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "Cast-7": {
+   "hair - close-7": {
     "frame": { "x": 189, "y": 224, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -511,7 +511,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-0": {
+   "cast-0": {
     "frame": { "x": 0, "y": 256, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -519,7 +519,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-1": {
+   "cast-1": {
     "frame": { "x": 27, "y": 256, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -527,7 +527,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-2": {
+   "cast-2": {
     "frame": { "x": 54, "y": 256, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -535,7 +535,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-3": {
+   "cast-3": {
     "frame": { "x": 81, "y": 256, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -543,7 +543,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-4": {
+   "cast-4": {
     "frame": { "x": 108, "y": 256, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -551,7 +551,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-5": {
+   "cast-5": {
     "frame": { "x": 135, "y": 256, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -559,7 +559,7 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-6": {
+   "cast-6": {
     "frame": { "x": 162, "y": 256, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -567,8 +567,72 @@
     "sourceSize": { "w": 27, "h": 32 },
     "duration": 100
    },
-   "code-7": {
+   "cast-7": {
     "frame": { "x": 189, "y": 256, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-0": {
+    "frame": { "x": 0, "y": 288, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-1": {
+    "frame": { "x": 27, "y": 288, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-2": {
+    "frame": { "x": 54, "y": 288, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-3": {
+    "frame": { "x": 81, "y": 288, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-4": {
+    "frame": { "x": 108, "y": 288, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-5": {
+    "frame": { "x": 135, "y": 288, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-6": {
+    "frame": { "x": 162, "y": 288, "w": 27, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
+    "sourceSize": { "w": 27, "h": 32 },
+    "duration": 100
+   },
+   "code-7": {
+    "frame": { "x": 189, "y": 288, "w": 27, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 32 },
@@ -578,10 +642,10 @@
  },
  "meta": {
   "app": "http://www.aseprite.org/",
-  "version": "1.2.18",
-  "image": "Cast_prototype.png",
+  "version": "1.2.18-x64",
+  "image": "cast.png",
   "format": "RGBA8888",
-  "size": { "w": 216, "h": 288 },
+  "size": { "w": 216, "h": 320 },
   "scale": "1",
   "frameTags": [
   ],
@@ -589,11 +653,12 @@
    { "name": "cloak", "opacity": 255, "blendMode": "normal" },
    { "name": "pants", "opacity": 255, "blendMode": "normal" },
    { "name": "shoes", "opacity": 255, "blendMode": "normal" },
-   { "name": "body", "opacity": 255, "blendMode": "normal" },
+   { "name": "head hand", "opacity": 255, "blendMode": "normal" },
    { "name": "torso", "opacity": 255, "blendMode": "normal" },
-   { "name": "Hood", "opacity": 255, "blendMode": "normal" },
+   { "name": "hood", "opacity": 255, "blendMode": "normal" },
    { "name": "hair - big", "opacity": 255, "blendMode": "normal" },
-   { "name": "Cast", "opacity": 255, "blendMode": "normal" },
+   { "name": "hair - close", "opacity": 255, "blendMode": "normal" },
+   { "name": "cast", "opacity": 255, "blendMode": "normal" },
    { "name": "code", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [

@@ -28,6 +28,7 @@ import { Fireball } from "../fireball";
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#555555",
   body: "#ecbcb4",
+  "head hand": "#ecbcb4",
   torso: "#444444",
   cloak: "#4488ff",
   pants: "#224488",

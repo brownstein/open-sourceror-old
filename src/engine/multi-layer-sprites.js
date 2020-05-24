@@ -148,6 +148,8 @@ export class MultiLayerAnimatedSprite {
        const { x, y, w, h } = layerFrame;
        const iw = 1 / this.textureWidth;
        const ih = 1 / this.textureHeight;
+
+       // update positions for the current frame
        this.geometry.vertices[vtxOffset + 0].x = w * -0.5;
        this.geometry.vertices[vtxOffset + 0].y = h * -0.5;
        this.geometry.vertices[vtxOffset + 1].x = w * 0.5;
@@ -156,6 +158,8 @@ export class MultiLayerAnimatedSprite {
        this.geometry.vertices[vtxOffset + 2].y = h * 0.5;
        this.geometry.vertices[vtxOffset + 3].x = w * -0.5;
        this.geometry.vertices[vtxOffset + 3].y = h * 0.5;
+
+       // update UV maps to hit the current frame
        this.geometry.faceVertexUvs[0][faceOffset + 0][0].x = x * iw;
        this.geometry.faceVertexUvs[0][faceOffset + 0][0].y = 1 - y * ih;
        this.geometry.faceVertexUvs[0][faceOffset + 0][1].x = (x + w) * iw;

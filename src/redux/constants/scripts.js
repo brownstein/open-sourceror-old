@@ -1,3 +1,4 @@
+// initial revision actions
 export const EXECUTION_STARTED = "EXECUTION_STARTED";
 export const EXECUTION_FINISHED = "EXECUTION_FINISHED";
 
@@ -7,3 +8,7 @@ export const RUNTIME_ERROR = "RUNTIME_ERROR";
 
 export const ACTIVE_SCRIPT_CHANGED = "ACTIVE_SCRIPT_CHANGED";
 export const ACTIVE_SCRIPT_RUN = "ACTIVE_SCRIPT_RUN";
+
+// second revision actions
+export const SET_FOCUSED_SCRIPT = "SET_FOCUSED_SCRIPT";
+export const UPDATE_SCRIPT_STATES = "UPDATE_SCRIPT_STATES";

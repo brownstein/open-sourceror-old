@@ -16,10 +16,12 @@ import ScriptRunner from "./index";
 
 export class RunningScript {
   constructor({
+    engine,
     scriptName,
     scriptRunner,
     targetEntity
   }) {
+    this.engine = engine;
     this.id = shortid(),
     this.scriptName = scriptName;
     this.scriptRunner = scriptRunner;
@@ -27,6 +29,7 @@ export class RunningScript {
     this.executionSpeed = 0.01,
     this.executionTimeDelta = 0,
     this.running = true,
+    this.finished = false;
     this.currentLine = null,
     this.transpileError = null,
     this.runtimeError = null,
@@ -40,6 +43,7 @@ export class RunningScript {
       return;
     }
     this.executionTimeDelta += timeDelta * this.executionSpeed;
+    const engine = this.engine;
     try {
       while (this.executionTimeDelta > 1) {
         this.executionTimeDelta += -1;
@@ -65,24 +69,25 @@ export class RunningScript {
         runtimeError: ex,
         currentLine: this.currentLine
       });
-      this.scriptRunner.engine.dispatch &&
-      this.scriptRunner.engine.dispatch(runtimeError(ex));
+      engine.dispatch &&
+      engine.dispatch(runtimeError(ex));
       return;
     }
 
     if (this.scriptRunner.hasCompletedExecution()) {
       this.running = false;
+      this.finished = true;
       this.runEmitter.emit('terminated');
-      this.scriptRunner.engine.dispatch &&
-      this.scriptRunner.engine.dispatch(executionFinished(this.currentLine));
+      engine.dispatch &&
+      engine.dispatch(executionFinished(this.currentLine));
       return;
     }
 
     this.runEmitter.emit("running", {
       currentLine: this.currentLine
     });
-    this.scriptRunner.engine.dispatch &&
-    this.scriptRunner.engine.dispatch(continuingExecution(this.currentLine));
+    engine.dispatch &&
+    engine.dispatch(continuingExecution(this.currentLine));
   }
 }
 
@@ -127,6 +132,7 @@ export class ScriptExecutionContext {
     }
 
     const exState = new RunningScript({
+      engine: this.engine,
       scriptName,
       scriptRunner,
       targetEntity: runningEntity

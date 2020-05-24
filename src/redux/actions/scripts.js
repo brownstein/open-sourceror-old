@@ -1,4 +1,5 @@
 import {
+  // old action types
   EXECUTION_STARTED,
   EXECUTION_FINISHED,
 
@@ -7,9 +8,16 @@ import {
   RUNTIME_ERROR,
 
   ACTIVE_SCRIPT_CHANGED,
-  ACTIVE_SCRIPT_RUN
+  ACTIVE_SCRIPT_RUN,
+
+  // new action types
+  SET_FOCUSED_SCRIPT,
+  UPDATE_SCRIPT_STATES,
 } from "../constants/scripts";
 
+//////////////////////////////
+// Initial revision actions //
+//////////////////////////////
 export const executionStarted = (currentLine = null) => ({
   type: EXECUTION_STARTED,
   currentLine
@@ -42,3 +50,37 @@ export const activeScriptChanged = (activeScript) => ({
 export const activeScriptRun = () => ({
   type: ACTIVE_SCRIPT_RUN
 });
+
+/////////////////////////////
+// Second revision actions //
+/////////////////////////////
+export const setFocusedScript = (focusedScriptId) => ({
+  type: SET_FOCUSED_SCRIPT,
+  focusedScriptId
+});
+
+export function updateScriptStates(executionContext) {
+  const states = {};
+  executionContext.runningScripts.forEach(r => {
+    const {
+      scriptName,
+      running,
+      finished,
+      currentLine,
+      transpileError,
+      runtimeError
+    } = r;
+    states[r.id] = {
+      scriptName,
+      running,
+      finished,
+      currentLine,
+      compileTimeError: transpileError,
+      runTimeError
+    };
+  });
+  return {
+    type: UPDATE_SCRIPT_STATES,
+    states
+  };
+}

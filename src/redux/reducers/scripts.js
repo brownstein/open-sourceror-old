@@ -1,4 +1,5 @@
 import {
+  // old action types
   EXECUTION_STARTED,
   EXECUTION_FINISHED,
 
@@ -7,12 +8,30 @@ import {
   RUNTIME_ERROR,
 
   ACTIVE_SCRIPT_CHANGED,
-  ACTIVE_SCRIPT_RUN
+  ACTIVE_SCRIPT_RUN,
+
+  // new action types
+  SET_FOCUSED_SCRIPT,
+  UPDATE_SCRIPT_STATES,
 } from "../constants/scripts";
 
+// default global state
 const DEFAULT_STATE = {
+  focusedScriptId: null,
+  activeScripts: [],
+
+  // TODO: refactor all of this out
   activeScriptName: "",
   activeScriptContents: null,
+  running: false,
+  currentLine: null,
+  runTimeError: null,
+  compileTimeError: null,
+  terminatedSuccessfully: false
+};
+
+// default state for an active script
+const DEFAULT_SCRIPT_STATE = {
   running: false,
   currentLine: null,
   runTimeError: null,
@@ -27,8 +46,8 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
         ...state,
         running: true,
         currentLine: action.currentLine || 0,
-        runTimeException: null,
-        compileTimeException: null
+        runTimeError: null,
+        compileTimeError: null
       };
     case EXECUTION_FINISHED:
       return {
@@ -64,6 +83,13 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
         ...state,
         running: true
       };
+
+    case SET_FOCUSED_SCRIPT:
+      break;
+
+    case UPDATE_SCRIPT_STATES:
+      break;
+
     default:
       break;
   }
