@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 // engine-level constructs
 import { EngineProvider } from "./engine";
 import { EngineViewport } from "./viewport";
-import CodeExecutor from "./code-executor";
+import CodeExecutor from "./code-executor-2";
 
 // level entities
 import { Player } from "../entities/character/player";

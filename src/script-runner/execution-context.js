@@ -1,4 +1,8 @@
+import { useState } from "react";
+import EventEmitter from "events";
 import shortid from "shortid";
+
+import ScriptRunner from "./index";
 
 export class RunningScript {
   constructor({
@@ -10,12 +14,13 @@ export class RunningScript {
     this.scriptName = scriptName;
     this.scriptRunner = scriptRunner;
     this.targetEntity = targetEntity;
-    this.executionSpeed = 0.5,
+    this.executionSpeed = 0.05,
     this.executionTimeDelta = 0,
     this.running = true,
     this.currentLine = null,
     this.transpileError = null,
-    this.runtimeError = null
+    this.runtimeError = null,
+    this.runEmitter = new EventEmitter();
   }
   /**
    * If currently running, perform operations at timeDelta * executionSpeed
@@ -24,10 +29,10 @@ export class RunningScript {
     if (!this.running) {
       return;
     }
-    this.executionTimeDelta += timeDelta * executionSpeed;
+    this.executionTimeDelta += timeDelta * this.executionSpeed;
     try {
       while (this.executionTimeDelta > 1) {
-        this.executionTimeDelta--;
+        this.executionTimeDelta += -1;
         let start = null;
         let exCap = 0;
         while (
@@ -46,8 +51,15 @@ export class RunningScript {
       console.error(ex);
       this.runtimeError = ex;
       this.running = false;
+      this.runEmitter.emit("error", {
+        runtimeError: ex,
+        currentLine: this.currentLine
+      });
       return;
     }
+    this.runEmitter.emit("running", {
+      currentLine: this.currentLine
+    });
   }
 }
 
@@ -73,15 +85,15 @@ export class ScriptExecutionContext {
   /**
    * Runs a script with a given name
    */
-  async runScript(scripSrc, runningEntity) {
+  async runScript(scriptSrc, runningEntity) {
     const scriptName = `scr-${shortid()}`;
     const scriptRunner = new ScriptRunner(
-      srciptSrc,
+      scriptSrc,
       this.engine,
       runningEntity
     );
     try {
-      await this.scriptRunner.readyPromise;
+      await scriptRunner.readyPromise;
     }
     catch (err) {
       // todo handle gracefully
@@ -95,9 +107,14 @@ export class ScriptExecutionContext {
       targetEntity: runningEntity
     });
 
-    exState.executionSpeed = 0.1;
-
     this.runningScripts.push(exState);
+    return exState;
+  }
+  stopScript(scriptName) {
+    const stopped = this.runningScripts.find(s => s.scriptName === scriptName);
+    stopped.running = false;
+    this.runningScripts = this.runningScripts.filter(s => s => stopped);
+    return stopped;
   }
   getRunningScripts() {
     return this.runningScripts;

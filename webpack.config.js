@@ -46,7 +46,7 @@ module.exports = (env, argv) => {
         engine: path.resolve(__dirname, "src/engine"),
         "p2-utils": path.resolve(__dirname, "src/p2-utils"),
         "script-runner": path.resolve(__dirname, "src/script-runner"),
-        src: path.resolve(__dirname, "src")
+        src: path.resolve(__dirname, "src"),
       }
     },
     devtool: isDev ? "cheap-module-source-map" : "cheap-module-source-map",
