@@ -134,6 +134,13 @@ class CodeExecutor extends Component {
       if (props.terminatedSuccessfully) {
         this._clearMarkings();
       }
+      else if (props.runTimeError) {
+        this._markError(props.runTimeError.toString(), props.currentLine);
+      }
+      else if (props.compileTimeError) {
+        const err = props.compileTimeError;
+        this._markError(err, err.loc.line - 1);
+      }
       else {
         this._markLine(props.currentLine, false);
       }

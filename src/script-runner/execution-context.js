@@ -7,7 +7,7 @@ import {
   executionFinished,
   continuingExecution,
   compileTimeError,
-  runTimeError,
+  runtimeError,
   activeScriptChanged,
   activeScriptRun
 } from "src/redux/actions/scripts";
@@ -58,13 +58,15 @@ export class RunningScript {
       }
     }
     catch (ex) {
-      console.error(ex);
+      console.error("script exception", ex);
       this.runtimeError = ex;
       this.running = false;
-      this.runEmitter.emit("error", {
+      this.runEmitter.emit("scriptRuntimeError", {
         runtimeError: ex,
         currentLine: this.currentLine
       });
+      this.scriptRunner.engine.dispatch &&
+      this.scriptRunner.engine.dispatch(runtimeError(ex));
       return;
     }
 
@@ -79,9 +81,8 @@ export class RunningScript {
     this.runEmitter.emit("running", {
       currentLine: this.currentLine
     });
-    if (this.scriptRunner.engine.dispatch) {
-      this.scriptRunner.engine.dispatch(continuingExecution(this.currentLine));
-    }
+    this.scriptRunner.engine.dispatch &&
+    this.scriptRunner.engine.dispatch(continuingExecution(this.currentLine));
   }
 }
 
@@ -120,7 +121,9 @@ export class ScriptExecutionContext {
     catch (err) {
       // todo handle gracefully
       console.error(err);
-      throw err;
+      this.engine.dispatch &&
+      this.engine.dispatch(compileTimeError(err));
+      // throw err;
     }
 
     const exState = new RunningScript({
