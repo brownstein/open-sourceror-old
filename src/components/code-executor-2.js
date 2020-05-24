@@ -137,13 +137,13 @@ class CodeExecutor extends Component {
       else if (props.runTimeError) {
         this._markError(props.runTimeError.toString(), props.currentLine);
       }
-      else if (props.compileTimeError) {
-        const err = props.compileTimeError;
-        this._markError(err, err.loc.line - 1);
-      }
       else {
         this._markLine(props.currentLine, false);
       }
+    }
+    if (props.compileTimeError) {
+      const err = props.compileTimeError;
+      this._markError(err, err.loc.line - 1);
     }
   }
   _onChange(scriptContents) {
@@ -227,15 +227,29 @@ class CodeExecutor extends Component {
 
 function mapStateToProps(state) {
   const { scripts } = state;
-  const {
-    activeScriptName,
-    activeScriptContents,
-    running,
-    currentLine,
-    runTimeError,
-    compileTimeError,
-    terminatedSuccessfully,
-  } = scripts;
+  const { focusedScriptId, activeScripts, compileTimeError } = scripts;
+
+  let activeScriptName = null;
+  let activeScriptContents = null;
+  let running = false;
+  let currentLine = null;
+  let runTimeError = null;
+  // let compileTimeError = null;
+  let terminatedSuccessfully = false;
+
+  if (focusedScriptId) {
+    const activeScript = activeScripts[focusedScriptId];
+    if (activeScript) {
+      activeScriptName = activeScript.scriptName;
+      activeScriptContents = activeScript.scriptContents;
+      running = activeScript.running;
+      currentLine = activeScript.currentLine;
+      runTimeError = activeScript.runTimeError;
+      // compileTimeError = activeScript.compileTimeError;
+      terminatedSuccessfully = activeScript.finished;
+    }
+  }
+
   return {
     activeScriptName,
     activeScriptContents,

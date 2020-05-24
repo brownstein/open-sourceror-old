@@ -9,7 +9,10 @@ import {
   compileTimeError,
   runtimeError,
   activeScriptChanged,
-  activeScriptRun
+  activeScriptRun,
+
+  setFocusedScript,
+  updateScriptStates,
 } from "src/redux/actions/scripts";
 
 import ScriptRunner from "./index";
@@ -40,10 +43,11 @@ export class RunningScript {
    */
   _continueRunning(timeDelta) {
     if (!this.running) {
-      return;
+      return false;
     }
     this.executionTimeDelta += timeDelta * this.executionSpeed;
     const engine = this.engine;
+    let anythingHappened = false;
     try {
       while (this.executionTimeDelta > 1) {
         this.executionTimeDelta += -1;
@@ -54,6 +58,7 @@ export class RunningScript {
           this.scriptRunner.hasNextStep() &&
           exCap++ < 1000
         ) {
+          anythingHappened = true;
           this.scriptRunner.doCurrentLine();
           const exSection = this.scriptRunner.getExecutingSection();
           [start] = exSection;
@@ -69,25 +74,26 @@ export class RunningScript {
         runtimeError: ex,
         currentLine: this.currentLine
       });
-      engine.dispatch &&
-      engine.dispatch(runtimeError(ex));
-      return;
+      // engine.dispatch &&
+      // engine.dispatch(runtimeError(ex));
+      return true;
     }
 
     if (this.scriptRunner.hasCompletedExecution()) {
       this.running = false;
       this.finished = true;
       this.runEmitter.emit('terminated');
-      engine.dispatch &&
-      engine.dispatch(executionFinished(this.currentLine));
-      return;
+      // engine.dispatch &&
+      // engine.dispatch(executionFinished(this.currentLine));
+      return true;
     }
 
     this.runEmitter.emit("running", {
       currentLine: this.currentLine
     });
-    engine.dispatch &&
-    engine.dispatch(continuingExecution(this.currentLine));
+    // engine.dispatch &&
+    // engine.dispatch(continuingExecution(this.currentLine));
+    return anythingHappened;
   }
 }
 
@@ -108,16 +114,29 @@ export class ScriptExecutionContext {
     if (!this.engine.running) {
       return;
     }
-    this.runningScripts.forEach(s => s._continueRunning(timeDelta));
+    let anythingHappened = false;
+    this.runningScripts.forEach(s => {
+      const didAnything = s._continueRunning(timeDelta);
+      if (didAnything) {
+        anythingHappened = true;
+      }
+    });
+    if (anythingHappened) {
+      this.engine.dispatch &&
+      this.engine.dispatch(updateScriptStates(this));
+    }
   }
   /**
    * Runs a script with a given name
    */
   async runScript(scriptSrc, runningEntity) {
+    this._flushInactiveScripts();
+
+    const engine = this.engine;
     const scriptName = `scr-${shortid()}`;
     const scriptRunner = new ScriptRunner(
       scriptSrc,
-      this.engine,
+      engine,
       runningEntity
     );
     try {
@@ -126,19 +145,24 @@ export class ScriptExecutionContext {
     catch (err) {
       // todo handle gracefully
       console.error(err);
-      this.engine.dispatch &&
-      this.engine.dispatch(compileTimeError(err));
+      engine.dispatch &&
+      engine.dispatch(compileTimeError(err));
       throw err;
     }
 
     const exState = new RunningScript({
-      engine: this.engine,
+      engine,
       scriptName,
       scriptRunner,
       targetEntity: runningEntity
     });
 
     this.runningScripts.push(exState);
+
+    // update script states in the engine
+    engine.dispatch &&
+    engine.dispatch(updateScriptStates(this, exState.id));
+
     return exState;
   }
   stopScript(scriptName) {
@@ -149,5 +173,19 @@ export class ScriptExecutionContext {
   }
   getRunningScripts() {
     return this.runningScripts;
+  }
+  _flushInactiveScripts() {
+    this.runningScripts = this.runningScripts.filter(s => {
+      if (s.finished) {
+        return false;
+      }
+      if (s.runTimeError) {
+        return false;
+      }
+      if (s.compileTimeError) {
+        return false;
+      }
+      return true;
+    });
   }
 }

@@ -59,11 +59,12 @@ export const setFocusedScript = (focusedScriptId) => ({
   focusedScriptId
 });
 
-export function updateScriptStates(executionContext) {
+export function updateScriptStates(executionContext, focusedScriptId = null) {
   const states = {};
   executionContext.runningScripts.forEach(r => {
     const {
       scriptName,
+      scriptRunner,
       running,
       finished,
       currentLine,
@@ -72,15 +73,17 @@ export function updateScriptStates(executionContext) {
     } = r;
     states[r.id] = {
       scriptName,
+      scriptContents: scriptRunner.sourceScript,
       running,
       finished,
       currentLine,
       compileTimeError: transpileError,
-      runTimeError
+      runTimeError: runtimeError
     };
   });
   return {
     type: UPDATE_SCRIPT_STATES,
-    states
+    states,
+    focusedScriptId
   };
 }

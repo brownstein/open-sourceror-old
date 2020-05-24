@@ -18,7 +18,7 @@ import {
 // default global state
 const DEFAULT_STATE = {
   focusedScriptId: null,
-  activeScripts: [],
+  activeScripts: {},
 
   // TODO: refactor all of this out
   activeScriptName: "",
@@ -85,11 +85,29 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
       };
 
     case SET_FOCUSED_SCRIPT:
-      break;
-
-    case UPDATE_SCRIPT_STATES:
-      break;
-
+      return {
+        ...state,
+        focusedScriptId: action.focusedScriptId,
+        compileTimeError: null
+      };
+    case UPDATE_SCRIPT_STATES: {
+      const activeScripts = {};
+      const focusedScriptId = action.focusedScriptId !== null ?
+        action.focusedScriptId :
+        state.focusedScriptId;
+      if (state.activeScripts[focusedScriptId]) {
+        activeScripts[focusedScriptId] = state.activeScripts[focusedScriptId];
+      }
+      Object.assign(activeScripts, action.states);
+      return {
+        ...state,
+        focusedScriptId,
+        compileTimeError: action.focusedScriptId ?
+          false :
+          state.compileTimeError,
+        activeScripts
+      };
+    }
     default:
       break;
   }

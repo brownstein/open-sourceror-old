@@ -20,6 +20,7 @@ export default class ScriptRunner {
   static _transpileCache = {};
   constructor(scriptSrc, engine, callingEntity) {
     // code
+    this.sourceScript = scriptSrc;
     this.transpiledScript = null;
     this.transpilationMap = null;
 
