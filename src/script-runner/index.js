@@ -35,6 +35,9 @@ export default class ScriptRunner {
     this.outstandingCallbackCount = 0;
     this.transpilationError = null;
 
+    // world bookkeeping
+    this.cleanupEffects = [];
+
     // map source indices to lines
     this.scriptPositionToLine = [];
     let line = 0;
@@ -173,5 +176,9 @@ export default class ScriptRunner {
   }
   getExecutingLine() {
     return this.currentLine;
+  }
+  cleanup() {
+    this.cleanupEffects.forEach(e => e());
+    this.cleanupEffects = [];
   }
 }

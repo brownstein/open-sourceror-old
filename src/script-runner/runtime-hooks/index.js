@@ -60,6 +60,16 @@ export function initializeScope(interpreter, scope, runner) {
     }
   );
   interpreter.setProperty(scope, "require", nativeRequire);
+
+  const nativeCreateSensor = interpreter.createNativeFunction(
+    (radius) => {
+      runner.cleanupEffects.push(() => console.log('S done'));
+      const nativeSensor = interpreter.createObject();
+      interpreter.setProperty(nativeSensor, "foo", interpreter.nativeToPseudo("baz"));
+      return nativeSensor;
+    }
+  );
+  interpreter.setProperty(scope, "sensor", nativeCreateSensor);
 }
 
 /**

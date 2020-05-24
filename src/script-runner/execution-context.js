@@ -1,5 +1,4 @@
 import { useState } from "react";
-import EventEmitter from "events";
 import shortid from "shortid";
 
 import {
@@ -36,8 +35,7 @@ export class RunningScript {
     this.finished = false;
     this.currentLine = null,
     this.transpileError = null,
-    this.runtimeError = null,
-    this.runEmitter = new EventEmitter();
+    this.runtimeError = null
   }
   static withTranspileError({
     scriptName,
@@ -84,29 +82,16 @@ export class RunningScript {
       console.error("script exception", ex);
       this.runtimeError = ex;
       this.running = false;
-      this.runEmitter.emit("scriptRuntimeError", {
-        runtimeError: ex,
-        currentLine: this.currentLine
-      });
-      // engine.dispatch &&
-      // engine.dispatch(runtimeError(ex));
       return true;
     }
 
     if (this.scriptRunner.hasCompletedExecution()) {
       this.running = false;
       this.finished = true;
-      this.runEmitter.emit('terminated');
-      // engine.dispatch &&
-      // engine.dispatch(executionFinished(this.currentLine));
+      this.scriptRunner.cleanup();
       return true;
     }
 
-    this.runEmitter.emit("running", {
-      currentLine: this.currentLine
-    });
-    // engine.dispatch &&
-    // engine.dispatch(continuingExecution(this.currentLine));
     return anythingHappened;
   }
 }
@@ -159,6 +144,12 @@ export class ScriptExecutionContext {
     catch (err) {
       // todo handle gracefully
       console.error(err);
+
+      // not a compile time error
+      if (!err.loc) {
+        return;
+      }
+
       engine.dispatch &&
       engine.dispatch(compileTimeError(err));
 
