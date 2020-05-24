@@ -97,7 +97,7 @@ export class EngineViewport extends Component {
   }
   _onFrame() {
     const engine = this.context;
-    const player = engine.followingEntity;
+    const player = engine.controllingEntity;
 
     if (player && engine.running && this.hasCursor) {
       player.runKeyboardMotion(engine, this.ks);

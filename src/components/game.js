@@ -29,6 +29,7 @@ async function addThings(engine) {
   });
   engine.addEntity(player);
   engine.followEntity(player);
+  engine.setControllingEntity(player);
 
   // add friction between the player and the ground
   engine.world.addContactMaterial(new ContactMaterial(

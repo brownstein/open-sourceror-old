@@ -57,6 +57,7 @@ export default class Engine extends EventEmitter {
     this.activeEntities = [];
     this.activeEntitiesByBodyId = {};
     this.followingEntity = null;
+    this.controllingEntity = null;
 
     // running scripts
     this.running = false;
@@ -118,6 +119,9 @@ export default class Engine extends EventEmitter {
   followEntity(entity) {
     this.followingEntity = entity;
   }
+  setControllingEntity(entity) {
+    this.controllingEntity = entity;
+  }
   removeEntity(entity) {
     this.activeEntities = this.activeEntities.filter(e => e !== entity);
     delete this.activeEntitiesByBodyId[entity.body.id];
@@ -137,7 +141,6 @@ export default class Engine extends EventEmitter {
     // sync three with P2, do keyboard events
     this.activeEntities.forEach(e => {
       e.syncMeshWithBody && e.syncMeshWithBody(deltaTimeMs);
-      // e.runKeyboardMotion && e.runKeyboardMotion(this, this.ks);
       e.onFrame && e.onFrame(deltaTimeMs);
     });
 

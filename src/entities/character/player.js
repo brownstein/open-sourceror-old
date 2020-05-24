@@ -105,6 +105,9 @@ export class Player extends Character {
       this.sprite.animate(distDelta * 5);
     }
   }
+  /**
+   * Keyboard motion for player
+   */
   runKeyboardMotion(engine, ks) {
     if (ks.isKeyDown("d")) {
       this.plannedAccelleration[0] = this.accelleration[0];
@@ -119,11 +122,6 @@ export class Player extends Character {
     }
     if (ks.isKeyDown("s")) {
       this.plannedAccelleration[1] = this.accelleration[1];
-    }
-
-    // fireball
-    if (ks.isKeyDown("e")) {
-      this.castFireball();
     }
   }
   castFireball() {
