@@ -138,7 +138,10 @@ class CodeExecutor extends Component {
         this._markError(props.runTimeError.toString(), props.currentLine);
       }
       else if (props.compileTimeError) {
+        console.log(props.compileTimeError);
         const err = props.compileTimeError;
+        console.log(err.loc);
+        console.log(err.loc.line);
         this._markError(err, err.loc.line - 1);
       }
       else {
@@ -209,8 +212,13 @@ class CodeExecutor extends Component {
     const player = engine.activeEntities[0];
     dispatch(activeScriptChanged(scriptContents));
     dispatch(activeScriptRun());
-    const runningScript = await engine.scriptExecutionContext.runScript(scriptContents, player);
-    dispatch(executionStarted());
+    try {
+      const runningScript = await engine.scriptExecutionContext.runScript(scriptContents, player);
+      dispatch(executionStarted());
+    }
+    catch (err) {
+      return;
+    }
   }
   _stop() {
     const { dispatch, activeScriptName } = this.props;
@@ -227,8 +235,8 @@ function mapStateToProps(state) {
     activeScriptContents,
     running,
     currentLine,
-    runTimeException,
-    compileTimeException,
+    runTimeError,
+    compileTimeError,
     terminatedSuccessfully,
   } = scripts;
   return {
@@ -236,8 +244,8 @@ function mapStateToProps(state) {
     activeScriptContents,
     running,
     currentLine,
-    runTimeException,
-    compileTimeException,
+    runTimeError,
+    compileTimeError,
     terminatedSuccessfully,
   };
 }

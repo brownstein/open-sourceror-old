@@ -123,7 +123,7 @@ export class ScriptExecutionContext {
       console.error(err);
       this.engine.dispatch &&
       this.engine.dispatch(compileTimeError(err));
-      // throw err;
+      throw err;
     }
 
     const exState = new RunningScript({

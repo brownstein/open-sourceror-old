@@ -15,8 +15,8 @@ const DEFAULT_STATE = {
   activeScriptContents: null,
   running: false,
   currentLine: null,
-  runTimeException: null,
-  compileTimeException: null,
+  runTimeError: null,
+  compileTimeError: null,
   terminatedSuccessfully: false
 };
 
@@ -45,7 +45,8 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
     case COMPILETIME_ERROR:
       return {
         ...state,
-        compileTimeException: action.error
+        running: false,
+        compileTimeError: action.error
       };
     case RUNTIME_ERROR:
       return {
