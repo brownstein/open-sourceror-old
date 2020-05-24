@@ -130,10 +130,26 @@ export class TilesetTerrainEntity extends TerrainEntity {
           z = tile.depthBias;
         }
         const ov = 0.01;
-        tileGeom.vertices.push(new Vector3(tileInstance.x - ov, tileInstance.y - ov, z));
-        tileGeom.vertices.push(new Vector3(tileInstance.x - ov + tile.srcWidth + ov, tileInstance.y - ov, z));
-        tileGeom.vertices.push(new Vector3(tileInstance.x - ov + tile.srcWidth + ov, tileInstance.y + tile.srcHeight  + ov, z));
-        tileGeom.vertices.push(new Vector3(tileInstance.x - ov, tileInstance.y + tile.srcHeight + ov, z));
+        tileGeom.vertices.push(new Vector3(
+          tileInstance.x - ov,
+          tileInstance.y - ov,
+          z
+        ));
+        tileGeom.vertices.push(new Vector3(
+          tileInstance.x - ov + tile.srcWidth + ov,
+          tileInstance.y - ov,
+          z
+        ));
+        tileGeom.vertices.push(new Vector3(
+          tileInstance.x - ov + tile.srcWidth + ov,
+          tileInstance.y + tile.srcHeight  + ov,
+          z
+        ));
+        tileGeom.vertices.push(new Vector3(
+          tileInstance.x - ov,
+          tileInstance.y + tile.srcHeight + ov,
+          z
+        ));
         const vtxIndex = tileGeom.vertices.length - 4;
         tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
         tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));
