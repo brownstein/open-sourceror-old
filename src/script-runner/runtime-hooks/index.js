@@ -47,15 +47,24 @@ export function initializeScope(interpreter, scope, runner) {
   );
   interpreter.setProperty(scope, "fire", nativeFireball);
 
-  const nativeCreateSensor = interpreter.createNativeFunction(
-    (radius) => {
+  const nativeSensorPrototype = interpreter.createObject();
+
+
+  const nativeSensor = interpreter.createNativeFunction(
+    function() {
+      console.log('NEW', this);
       runner.cleanupEffects.push(() => console.log('S done'));
-      const nativeSensor = interpreter.createObject();
-      interpreter.setProperty(nativeSensor, "foo", interpreter.nativeToPseudo("baz"));
-      return nativeSensor;
-    }
+      this.vv = "v";
+      interpreter.setProperty(this, "v", interpreter.nativeToPseudo("val"));
+      return this;
+    },
+    true
   );
-  interpreter.setProperty(scope, "sensor", nativeCreateSensor);
+  const nativeSensorGet = function() {
+    console.log('THIS.G', this);
+    return interpreter.pseudoToNative(1000);
+  }
+  interpreter.setNativeFunctionPrototype(nativeSensor, "G", nativeSensorGet);
 
   const nativeRequire = interpreter.createNativeFunction(
     rawModuleName => {
@@ -65,7 +74,7 @@ export function initializeScope(interpreter, scope, runner) {
         case "fire":
           return nativeFireball;
         case "sensor":
-          return nativeCreateSensor;
+          return nativeSensor;
         default:
           throw new Error("Unknown module - have you tried getting gud?");
       }

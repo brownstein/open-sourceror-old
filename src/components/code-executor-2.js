@@ -27,7 +27,8 @@ const srcScript =
 const fire = require("fire");
 const Sensor = require("sensor");
 const s = new Sensor(40);
-console.log(s);
+console.log(s.G);
+console.log(s.G());
 for (let i=0; i<10; i++) {
   fire();
 }
