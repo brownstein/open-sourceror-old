@@ -48,7 +48,7 @@ export class DeadEnemy extends BaseEntity {
       position: srcBody.interpolatedPosition,
       velocity: srcBody.velocity,
       angle: srcBody.angle,
-      angularVelocity: (Math.random() - 0.5) * Math.PI * 5
+      angularVelocity: srcBody.angularVelocity + (Math.random() - 0.5) * Math.PI
     });
 
     const srcConvex = srcBody.shapes[0];
@@ -60,12 +60,26 @@ export class DeadEnemy extends BaseEntity {
     });
 
     // convex.collisionMask = 0b100;
+    this.convex = convex;
 
     this.body.addShape(convex, srcConvex.position, srcConvex.angle);
+    this.body.allowSleep = true;
+    this.body.sleepSpeedLimit = 1;
+    this.body.sleepTimeLimit = 1;
 
     this.mesh = srcEnemy.mesh;
     this.mesh.children[0].material.opacity = 0.25;
 
     this.dead = true;
+
+    this._possiblySleep = this._possiblySleep.bind(this);
+    setTimeout(this._possiblySleep, 1000);
+  }
+  _possiblySleep() {
+    if (this.body.sleepState === Body.SLEEPING) {
+      this.convex.collisionMask = 0b100;
+      return;
+    }
+    setTimeout(this._possiblySleep, 1000);
   }
 }

@@ -195,7 +195,11 @@ export class TilesetTerrainEntity extends TerrainEntity {
     if (!this.isOneWayPlatform || !otherEntity.body || !eq) {
       return;
     }
-    const isUpwardContact = eq.normalA[1] < 0;
+    let normalA = eq.normalA;
+    if (eq.bodyA.id === otherId) {
+      normalA = [-normalA[0], -normalA[1]];
+    }
+    const isUpwardContact = normalA[1] < 0;
     if (!isUpwardContact) {
       eq.enabled = false;
       this.oneWayPlatformTracking.push(otherId);

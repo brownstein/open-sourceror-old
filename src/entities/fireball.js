@@ -75,12 +75,20 @@ export class FireballExplosion extends EphemeralEntity {
     }
   }
   collisionHandler(engine, otherId, otherEntity) {
+    // only hit things once
     if (this.hitEntities.includes(otherEntity)) {
       return;
     }
+    this.hitEntities.push(otherEntity);
+
+    // do damage to the entity
     if (otherEntity && otherEntity.onHit) {
-      this.hitEntities.push(otherEntity);
       otherEntity.onHit(this);
     }
+    // push the other entity away slightly
+    const diff = vec2.create();
+    vec2.sub(diff, otherEntity.body.position, this.body.position);
+    vec2.scale(diff, diff, 5);
+    otherEntity.body.applyImpulse(diff);
   }
 }

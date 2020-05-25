@@ -30,6 +30,7 @@ export default class Engine extends EventEmitter {
     this.world = new World({
       gravity:[0, 900]
     });
+    this.world.sleepMode = World.BODY_SLEEPING;
 
     // script execution context
     this.scriptExecutionContext = new ScriptExecutionContext(this);
@@ -79,11 +80,11 @@ export default class Engine extends EventEmitter {
         return;
       }
       if (entityA && entityA.collisionHandler) {
-        const eq = contactEquations.find(c => c.bodyA === bodyA);
+        const eq = contactEquations[0]; // .find(c => c.bodyA === bodyA);
         entityA.collisionHandler(this, bodyB.id, entityB, eq);
       }
       if (entityB && entityB.collisionHandler) {
-        const eq = contactEquations.find(c => c.bodyA === bodyB);
+        const eq = contactEquations[0]; //.find(c => c.bodyA === bodyB);
         entityB.collisionHandler(this, bodyA.id, entityA, eq);
       }
     });
