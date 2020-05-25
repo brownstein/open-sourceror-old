@@ -37,7 +37,7 @@ export class Character extends BaseEntity {
     this.onSurface = false;
 
     this.accelleration = [50, 50]; // rate of character speed increase
-    this.jumpAccelleration = 300; // velocity delta of jump
+    this.jumpAccelleration = 400; // velocity delta of jump
     this.maxControlledVelocity = [200, 400]; // max controlled speed
     this.plannedAccelleration = [0, 0]; // accelleration to apply on next frame
   }
@@ -105,7 +105,7 @@ export class Character extends BaseEntity {
     this.plannedAccelleration[0] = 0;
     this.plannedAccelleration[1] = 0;
   }
-  handleContactEquation (eq, otherEntity) {
+  handleContactEquation (engine, otherEntity, eq) {
     // figure out whether or not the character is on a jump-ready surface
     let surfaceNormal;
     if (eq.bodyA === this.body) {

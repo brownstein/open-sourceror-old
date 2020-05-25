@@ -1001,12 +1001,54 @@
  <tile id="800" type="ground"/>
  <tile id="801" type="ground"/>
  <tile id="802" type="decal"/>
- <tile id="805" type="ground"/>
- <tile id="806" type="ground"/>
- <tile id="808" type="ground"/>
- <tile id="809" type="ground"/>
- <tile id="811" type="ground"/>
- <tile id="812" type="ground"/>
+ <tile id="805" type="oneWayPlatform">
+  <properties>
+   <property name="oneWay" value="top"/>
+  </properties>
+ </tile>
+ <tile id="806" type="oneWayPlatform">
+  <properties>
+   <property name="oneWay" value="top"/>
+  </properties>
+ </tile>
+ <tile id="808" type="oneWayPlatform">
+  <properties>
+   <property name="oneWay" value="top"/>
+  </properties>
+ </tile>
+ <tile id="809" type="oneWayPlatform">
+  <properties>
+   <property name="oneWay" value="top"/>
+  </properties>
+ </tile>
+ <tile id="811" type="oneWayPlatform">
+  <properties>
+   <property name="oneWay" value="top"/>
+  </properties>
+ </tile>
+ <tile id="812" type="oneWayPlatform">
+  <properties>
+   <property name="oneWay" value="top"/>
+  </properties>
+ </tile>
+ <tile id="815" type="ground"/>
+ <tile id="816" type="ground"/>
+ <tile id="817" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="16.5463" y="7.33303">
+    <polygon points="0,0 -6.3929,9.9654 -17.6745,9.40132 -17.8625,-8.64922 1.12816,-8.08514"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="818" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-1.31619" y="9.2133">
+    <polygon points="0,0 4.32461,8.08514 18.0505,7.70909 17.6745,-10.9055 0.376053,-10.3415"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="819" type="ground"/>
+ <tile id="820" type="ground"/>
  <tile id="834" type="decal">
   <properties>
    <property name="depthBias" type="int" value="1"/>
@@ -1035,6 +1077,24 @@
  <tile id="875" type="decal"/>
  <tile id="876" type="decal"/>
  <tile id="877" type="decal"/>
+ <tile id="879" type="ground"/>
+ <tile id="880" type="ground"/>
+ <tile id="881" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.752106" y="16.3583">
+    <polygon points="0,0 14.8541,-17.1104 -0.376053,-16.7344"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="882" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="2.25632" y="-0.564079">
+    <polygon points="0,0 14.478,17.2984 14.478,0"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="883" type="ground"/>
+ <tile id="884" type="ground"/>
  <tile id="898" type="decal">
   <properties>
    <property name="depthBias" type="int" value="1"/>
@@ -1056,6 +1116,10 @@
  <tile id="928" type="ground"/>
  <tile id="929" type="ground"/>
  <tile id="930" type="decal"/>
+ <tile id="943" type="ground"/>
+ <tile id="944" type="ground"/>
+ <tile id="947" type="ground"/>
+ <tile id="948" type="ground"/>
  <tile id="962" type="decal">
   <properties>
    <property name="depthBias" type="int" value="1"/>
@@ -1112,6 +1176,10 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="1007" type="ground"/>
+ <tile id="1008" type="ground"/>
+ <tile id="1011" type="ground"/>
+ <tile id="1012" type="ground"/>
  <tile id="1026" type="decal">
   <properties>
    <property name="depthBias" type="int" value="1"/>
@@ -1158,6 +1226,36 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="1071" type="ground"/>
+ <tile id="1072" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="11.2816" y="-0.752106">
+    <polygon points="0,0 5.82882,10.3415 5.26474,17.1104 -13.5379,16.5463 -12.2217,-0.564079"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="1073">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.564079" y="8.83724">
+    <polygon points="0,0 4.32461,7.70909 0,7.70909"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="1074">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="16.3583" y="6.76895">
+    <polygon points="0,0 -6.3929,10.1534 0.564079,9.9654"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="1075" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="3.19645" y="-0.752106">
+    <polygon points="0,0 -4.13658,7.89711 -4.13658,17.1104 14.102,16.9224 13.1619,-0.188026"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="1076" type="ground"/>
  <tile id="1090" type="decal">
   <properties>
    <property name="depthBias" type="int" value="1"/>
@@ -1191,6 +1289,30 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="1135" type="ground"/>
+ <tile id="1136" type="ground"/>
+ <tile id="1137" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="3.38448" y="-0.940132">
+    <polygon points="0,0 7.89711,8.27316 13.3499,9.02527 12.7858,17.4865 -4.88869,17.4865 -4.88869,0.188026"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="1138" type="ground">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="10.7175" y="-0.376053">
+    <polygon points="0,0 -11.6576,9.77738 -11.8457,17.6745 6.76895,17.8625 6.3929,-0.376053"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="1139" type="ground"/>
+ <tile id="1140" type="ground"/>
  <tile id="1164" type="ground"/>
  <tile id="1165" type="ground"/>
+ <tile id="1199" type="ground"/>
+ <tile id="1200" type="ground"/>
+ <tile id="1201" type="ground"/>
+ <tile id="1202" type="ground"/>
+ <tile id="1203" type="ground"/>
+ <tile id="1204" type="ground"/>
 </tileset>

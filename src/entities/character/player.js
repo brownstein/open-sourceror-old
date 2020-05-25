@@ -46,6 +46,7 @@ export class Player extends Character {
   constructor(props) {
     super(props);
 
+    this.upHeld = false;
     this.direction = "right";
     this.activeSpriteName = null;
     this.sprites = {};
@@ -127,6 +128,7 @@ export class Player extends Character {
    * Keyboard motion for player
    */
   runKeyboardMotion(engine, ks) {
+    this.plannedAccelleration[1] = 0;
     if (ks.isKeyDown("d")) {
       this.plannedAccelleration[0] = this.accelleration[0];
       this.direction = "right";
@@ -138,7 +140,13 @@ export class Player extends Character {
       this.sprite.mesh.scale.x = -1;
     }
     if (ks.isKeyDown("w")) {
-      this.plannedAccelleration[1] = -this.jumpAccelleration;
+      if (!this.upHeld) {
+        this.upHeld = true;
+        this.plannedAccelleration[1] = -this.jumpAccelleration;
+      }
+    }
+    else {
+      this.upHeld = false;
     }
     if (ks.isKeyDown("s")) {
       this.plannedAccelleration[1] = this.accelleration[1];

@@ -35,11 +35,14 @@ async function addThings(engine) {
   getContactMaterials().forEach(m => engine.world.addContactMaterial(m));
 
   // add an enemy
-  const enemy = new Enemy({
-    position: [300, 150]
-  });
-  engine.addEntity(enemy);
+  for (let i =0; i < 4; i++) {
+    const enemy = new Enemy({
+      position: [300 + i + 100, 150]
+    });
+    engine.addEntity(enemy);
+  }
 
+  // add the map
   const terrain = new TilesetTerrain(level1, tilesetJson, tilesetPng);
   await terrain.readyPromise;
 

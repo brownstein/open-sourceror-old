@@ -22,7 +22,7 @@ import getThreeJsObjectForP2Body from "../p2-utils/get-threejs-mesh";
 import { traverseTileGrid } from "../utils/grid-to-polygon";
 import { loadTileset } from "../utils/tileset-loader";
 
-const DEBUG_TERRAIN = false;
+const DEBUG_TERRAIN = true;
 
 export const terrainMaterial = new Material();
 
@@ -58,7 +58,8 @@ export class TilesetTerrain extends Terrain {
       levelJson.layers[0].data,
       levelJson.layers[0].width,
       levelJson.tilewidth,
-      this.tileset
+      this.tileset,
+      ['ground', 'oneWayPlatform']
     );
 
     const textureLoader = new TextureLoader();
@@ -67,7 +68,8 @@ export class TilesetTerrain extends Terrain {
       return new TilesetTerrainEntity(
         t.polygons,
         t.tiles,
-        textureLoader
+        textureLoader,
+        t.blockType
       );
     });
 
@@ -81,11 +83,14 @@ export class TilesetTerrain extends Terrain {
 }
 
 export class TilesetTerrainEntity extends TerrainEntity {
-  constructor(polygons, tiles, textureLoader) {
+  constructor(polygons, tiles, textureLoader, blockType = "ground") {
     super();
 
     this.sourcePolygons = polygons;
     this.sourceTiles = tiles;
+
+    this.isOneWayPlatform = blockType === "oneWayPlatform";
+    this.oneWayPlatformTracking = [];
 
     this.body = new Body({
       mass: 0,
@@ -121,6 +126,7 @@ export class TilesetTerrainEntity extends TerrainEntity {
         side: DoubleSide,
         map: texture,
         transparent: true,
+        opacity: DEBUG_TERRAIN ? 0.5 : 1,
         // to swap this off, we have to use separate meshes for each Z index
         // to deal with the fact that three.js's face sorting is geometry-
         // internal
@@ -177,7 +183,33 @@ export class TilesetTerrainEntity extends TerrainEntity {
     this._readyPromise = this._init();
   }
   async _init() {
-    // TODO: wait for textures to load here
     this.ready = true;
+  }
+  // support one-way platforms
+  collisionHandler(engine, otherEntity, eq) {
+    if (!this.isOneWayPlatform || !otherEntity.body || !eq) {
+      return;
+    }
+    const isUpwardContact = eq.normalA[1] < 0;
+    if (!isUpwardContact) {
+      eq.enabled = false;
+      this.oneWayPlatformTracking.push(otherEntity.body.id);
+    }
+  }
+  handleContactEquation(engine, otherEntity, eq) {
+    if (!this.isOneWayPlatform || !otherEntity.body) {
+      return;
+    }
+    if (this.oneWayPlatformTracking.includes(otherEntity.body.id)) {
+      eq.enabled = false;
+    }
+  }
+  endCollisionHandler(engine, otherEntity, eq) {
+    if (!this.isOneWayPlatform || !otherEntity || !otherEntity.body) {
+      return;
+    }
+    this.oneWayPlatformTracking = this.oneWayPlatformTracking.filter(id => {
+      return id !== otherEntity.body.id;
+    });
   }
 }

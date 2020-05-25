@@ -72,14 +72,16 @@ export default class Engine extends EventEmitter {
   }
   _initializeContactHandlers () {
     this.world.on("beginContact", event => {
-      const { bodyA, bodyB, shapeA, shapeB } = event;
+      const { bodyA, bodyB, shapeA, shapeB, contactEquations } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
       const entityB = this.activeEntitiesByBodyId[bodyB.id];
       if (entityA && entityA.collisionHandler) {
-        entityA.collisionHandler(this, entityB);
+        const eq = contactEquations.find(c => c.bodyA === bodyA);
+        entityA.collisionHandler(this, entityB, eq);
       }
       if (entityB && entityB.collisionHandler) {
-        entityB.collisionHandler(this, entityA);
+        const eq = contactEquations.find(c => c.bodyA === bodyB);
+        entityB.collisionHandler(this, entityA, eq);
       }
     });
     this.world.on("endContact", event => {
@@ -100,10 +102,10 @@ export default class Engine extends EventEmitter {
         const entityA = this.activeEntitiesByBodyId[eq.bodyA.id];
         const entityB = this.activeEntitiesByBodyId[eq.bodyB.id];
         if (entityA && entityA.handleContactEquation) {
-          entityA.handleContactEquation(eq, entityB);
+          entityA.handleContactEquation(this, entityB, eq);
         }
         if (entityB && entityB.handleContactEquation) {
-          entityB.handleContactEquation(eq, entityA);
+          entityB.handleContactEquation(this, entityA, eq);
         }
       }
     });

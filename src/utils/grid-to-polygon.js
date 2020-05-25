@@ -4,6 +4,7 @@ import {
   quickDecomp,
   removeCollinearPoints
 } from "poly-decomp";
+import pointInPolygon from "point-in-polygon";
 
 const MAX_EDGE_ITERATION_DEPTH = 10000; // 10000
 const MAX_BLOCK_ITERATION_DEPTH = 10000; // 10000
@@ -424,7 +425,7 @@ function _mapDecalsToBlocksets(blockSets, decals, gridWidth, gridHeight) {
 /**
  * Internal function to traverse polygons for a given block set
  */
-function _getPolygonsForBlockset(blockSet) {
+function _getPolygonsForBlockset(blocks, blockSet) {
   const edgeSets = [];
   // traverse all blocks and run edge set tracing where necessary
   // we can assume that the first traced edge represents the outer loop
@@ -442,13 +443,41 @@ function _getPolygonsForBlockset(blockSet) {
     }
   }
 
-  const outerEdgeSet = edgeSets[0];
+  // find outer edge sets
+  const outerEdgeSets = [];
+  const outerEdgeSetPolygons = [];
+  for (let esi = 0; esi < edgeSets.length; esi++) {
+    const edgeSet = edgeSets[esi];
+    let isOuterEdgeSet = true;
+    for (let oesi = 0; oesi < outerEdgeSets.length; oesi++) {
+      const outerEdgeSet = outerEdgeSets[oesi];
+      const outerEdgeSetPolygon = outerEdgeSetPolygons[oesi];
+      for (let ei = 0; ei < edgeSet.edges.length; ei++) {
+        const edge = edgeSet.edges[ei];
+        if (pointInPolygon([edge.x, edge.y], outerEdgeSetPolygon)) {
+          isOuterEdgeSet = false;
+          break;
+        }
+      }
+      if (isOuterEdgeSet) {
+        break;
+      }
+    }
+    if (isOuterEdgeSet) {
+      outerEdgeSets.push(edgeSet);
+      outerEdgeSetPolygons.push(edgeSet.edges.map(e => [e.x, e.y]));
+    }
+  }
+
   for (let esi = 1; esi < edgeSets.length; esi++) {
     // this next bit can still sometimes be buggy for angle blocks, so just
     // swollow errors and keep processing the level geometry - it probably
     // wasn't that important
     try {
       const edgeSet = edgeSets[esi];
+      if (outerEdgeSets.find(s => s === edgeSet)) {
+        continue;
+      }
       let leftmostEdge = edgeSet.getLeftmostEdge(); // right edge of block
       let block = leftmostEdge.block;
       let x = block.x;
@@ -495,24 +524,34 @@ function _getPolygonsForBlockset(blockSet) {
   }
 
   // this should never happen
-  if (!outerEdgeSet) {
+  if (!outerEdgeSets.length) {
     return null;
   }
 
-  outerEdgeSet.traverseForward(outerEdgeSet.edges[0]);
-  const edgeSetAsPolygon = outerEdgeSet.edges.map(({ x, y }) => [x, y]);
+  // construct polygons
+  const polygons = [];
+  for (let esi = 0; esi < outerEdgeSets.length; esi++) {
+    const outerEdgeSet = outerEdgeSets[esi];
+    outerEdgeSet.traverseForward(outerEdgeSet.edges[0]);
+    const edgeSetAsPolygon = outerEdgeSet.edges.map(({ x, y }) => [x, y]);
 
-  makeCCW(edgeSetAsPolygon);
+    makeCCW(edgeSetAsPolygon);
 
-  // we can optionaslly remove collinear points here for performance
-  // removeCollinearPoints(edgeSetAsPolygon, 0.01);
-  const convexPolygons = quickDecomp(edgeSetAsPolygon);
-  convexPolygons.forEach(p => removeCollinearPoints(p, 0.01));
-  const polygons = convexPolygons.map(
-    verts => verts.map(
-      ([x, y]) => ({ x, y })
-    )
-  );
+    // we can optionaslly remove collinear points here for performance
+    // removeCollinearPoints(edgeSetAsPolygon, 0.01);
+    const convexPolygons = quickDecomp(edgeSetAsPolygon);
+    convexPolygons.forEach(p => removeCollinearPoints(p, 0.01));
+    for (let pi = 0; pi < convexPolygons.length; pi++) {
+      const verts = convexPolygons[pi];
+      const polygon = [];
+      for (let vi = 0; vi < verts.length; vi++) {
+        const vert = verts[vi];
+        const [x, y] = vert;
+        polygon.push({ x, y });
+      }
+      polygons.push(polygon);
+    }
+  }
 
   return polygons;
 }
@@ -582,7 +621,7 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
   const polygonAndTileSets = [];
   for (let bsi = 0; bsi < blockSets.length; bsi++) {
     const blockSet = blockSets[bsi];
-    const polygons = _getPolygonsForBlockset(blockSet);
+    const polygons = _getPolygonsForBlockset(blocks, blockSet);
     const tiles = _getTilesForBlockset(blockSet, tileSize);
 
     polygonAndTileSets.push({
@@ -655,12 +694,14 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset,
   const polygonAndTileSets = [];
   for (let bsi = 0; bsi < blockSets.length; bsi++) {
     const blockSet = blockSets[bsi];
-    let polygons = _getPolygonsForBlockset(blockSet);
+    let polygons = blockSet && _getPolygonsForBlockset(blocks, blockSet);
     polygons = polygons && _scalePolygons(polygons, tileSize);
     const tiles = _getTilesForDecals(decalsByBlockset[bsi], tileSize);
+    const blockType = blockSet[0].blockType;
     polygonAndTileSets.push({
       polygons,
-      tiles
+      tiles,
+      blockType
     });
   }
 
@@ -668,7 +709,8 @@ export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset,
   if (decalsWithoutBlockset.length) {
     polygonAndTileSets.push({
       polygons: null,
-      tiles: _getTilesForDecals(decalsWithoutBlockset, tileSize)
+      tiles: _getTilesForDecals(decalsWithoutBlockset, tileSize),
+      blockType: "decal"
     });
   }
 

@@ -48,7 +48,7 @@ module.exports = (env, argv) => {
         src: path.resolve(__dirname, "src"),
       }
     },
-    devtool: isDev ? "cheap-module-source-map" : "cheap-module-source-map",
+    devtool: isDev ? "cheap-source-map" : "cheap-module-source-map",
     module: {
       rules: [
         {
