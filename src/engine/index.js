@@ -82,9 +82,17 @@ export default class Engine extends EventEmitter {
         entityB.collisionHandler(this, entityA);
       }
     });
-    // this.world.on("endContact", event => {
-    //   const { bodyA, bodyB, shapeA, shapeB } = event;
-    // });
+    this.world.on("endContact", event => {
+      const { bodyA, bodyB, shapeA, shapeB } = event;
+      const entityA = this.activeEntitiesByBodyId[bodyA.id];
+      const entityB = this.activeEntitiesByBodyId[bodyB.id];
+      if (entityA && entityA.endCollisionHandler) {
+        entityA.endCollisionHandler(this, entityB);
+      }
+      if (entityB && entityB.endCollisionHandler) {
+        entityB.endCollisionHandler(this, entityA);
+      }
+    });
     this.world.on("preSolve", event => {
       const { contactEquations } = event;
       for (let eqi = 0; eqi < contactEquations.length; eqi++) {

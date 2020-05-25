@@ -79,7 +79,15 @@ export class RunningScript {
       }
     }
     catch (ex) {
-      console.error("script exception", ex);
+      // ignore illegal return statements - they come from a broken queueCall
+      // implementation that has issues with multiple queueCalls, which totally
+      // breaks the timeout implementation
+      if (
+        ex.name === "SyntaxError" &&
+        ex.message === "Illegal return statement"
+      ) {
+        return false;
+      }
       this.runtimeError = ex;
       this.running = false;
       this.scriptRunner.cleanup();
@@ -186,6 +194,7 @@ export class ScriptExecutionContext {
     const engine = this.engine;
     const stopped = this.runningScripts.find(s => s.scriptName === scriptName);
     stopped.running = false;
+    stopped.scriptRunner.cleanup();
     this.runningScripts = this.runningScripts.filter(s => s => stopped);
     engine.dispatch &&
     engine.dispatch(updateScriptStates(this));

@@ -26,13 +26,22 @@ const srcScript =
 `"use strict";
 const fire = require("fire");
 const Sensor = require("sensor");
-const s = new Sensor(40);
-console.log(s.G);
-console.log(s.G());
-for (let i=0; i<10; i++) {
-  fire({ x: (i - 5) * 10, y: -10 }, { x: ( i - 5) * 100, y: -150 });
-  fire([-i + 5, 0], [-100 * (i - 5), 0]);
+const s = new Sensor(100);
+var active = true;
+setTimeout(() => {
+  active = false;
+}, 10000);
+function keepGoing() {
+  if (!active) {
+    return -1;
+  }
+  s.near.forEach(n => {
+    const relativeVelocity = { x: n.relativePosition[0] * 5, y: n.relativePosition[1] * 5 };
+    fire(null, relativeVelocity);
+  });
+  setTimeout(keepGoing, 100);
 }
+keepGoing();
 `;
 
 class CodeExecutor extends Component {
@@ -134,7 +143,10 @@ class CodeExecutor extends Component {
         this._markLine(props.currentLine, false);
       }
     }
-    if (props.compileTimeError) {
+    if (props.activeScriptContents !== this.state.scriptContents) {
+      this._clearMarkings();
+    }
+    else if (props.compileTimeError) {
       const err = props.compileTimeError;
       this._markError(err, err.loc.line - 1);
     }
@@ -157,7 +169,6 @@ class CodeExecutor extends Component {
       this.markerIds.forEach(m => session.removeMarker(m));
       this.markerIds = [];
     }
-    this.markerIds = [];
   }
   _markLine(line, isExecuting) {
     this._clearMarkings();

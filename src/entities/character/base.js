@@ -12,7 +12,7 @@ export class Character extends BaseEntity {
       damping: 0.1,
       friction: 0.9,
       fixedRotation: true,
-      position: props.position || [10, 10]
+      position: props.position || [50, 50]
     });
     const convex = new Convex({
       vertices: characterPolygon.vertices

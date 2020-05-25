@@ -39,6 +39,7 @@ export class TerrainEntity {
   constructor() {
     this.body = null;
     this.mesh = null;
+    this.isTerrain = true;
   }
   syncMeshWithBody () {
     this.mesh.position.x = this.body.interpolatedPosition[0];

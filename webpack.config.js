@@ -33,7 +33,6 @@ module.exports = (env, argv) => {
       react: "react",
       "react-redux": "react-redux",
       three: "three",
-      ajv: "ajv",
       "@babel/core": "@babel/core",
       "@babel/plugin-transform-arrow-functions": "@babel/plugin-transform-arrow-functions",
       "@babel/plugin-transform-block-scoping": "@babel/plugin-transform-block-scoping",

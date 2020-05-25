@@ -39,7 +39,9 @@ async function addThings(engine) {
   ));
 
   // add an enemy
-  const enemy = new Enemy();
+  const enemy = new Enemy({
+    position: [300, 150]
+  });
   engine.addEntity(enemy);
 
   const terrain = new TilesetTerrain(level1, tilesetJson, tilesetPng);

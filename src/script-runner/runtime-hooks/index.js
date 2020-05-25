@@ -1,6 +1,10 @@
 import * as acorn from "acorn";
+import { vec2 } from "p2";
+
 import { castToVec2 } from "p2-utils/vec2-utils";
 import promisePolyfill from "./promise-polyfill.txt";
+
+import { Sensor } from "src/entities/sensor";
 
 /**
  * Initialize the interpreter scope with global functions
@@ -64,21 +68,51 @@ export function initializeScope(interpreter, scope, runner) {
    * Native sensor creation fucntion
    */
   const nativeSensor = interpreter.createNativeFunction(
-    function() {
+    function(radius) {
       console.log("mounting sensor");
-      this.cleanupEffect = () => console.log("cleaning up sensor");
+      this.cleanupEffect = () => {
+        console.log("cleaning up sensor");
+        runner.engine.removeEntity(this.sensor);
+      }
       runner.cleanupEffects.push(this.cleanupEffect);
-      this.vv = "v";
-      interpreter.setProperty(this, "v", interpreter.nativeToPseudo("val"));
+      this.sensor = new Sensor(runner.callingEntity, radius || 50);
+      this.sensor.attachUpdateHandler(
+        () => {
+          const nearby = this.sensor.collidingWith.map(c => {
+            const relativePosition = [0, 0];
+            vec2.sub(
+              relativePosition,
+              c.body.position,
+              runner.callingEntity.body.position
+            );
+            return {
+              type: c.constructor.name,
+              relativePosition
+            };
+          });
+          this.near = interpreter.nativeToPseudo(nearby);
+          // sometimes the sensor fires this after the interpreter has finished
+          // in that case, ignore the problem
+          try {
+            interpreter.setProperty(this, "near", this.near);
+          }
+          catch (err) {
+            return;
+          }
+        }
+      );
+      this.near = interpreter.nativeToPseudo([]);
+      interpreter.setProperty(this, "near", this.near);
+      runner.engine.addEntity(this.sensor);
       return this;
     },
     true
   );
   const nativeSensorGet = function() {
-    console.log("THIS.G", this);
+    console.log("THIS.GET", this);
     return interpreter.pseudoToNative(1000);
   }
-  interpreter.setNativeFunctionPrototype(nativeSensor, "G", nativeSensorGet);
+  interpreter.setNativeFunctionPrototype(nativeSensor, "get", nativeSensorGet);
 
   /**
    * Native require function to get other functions
