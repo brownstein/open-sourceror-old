@@ -1,4 +1,3 @@
-import { ContactMaterial } from "p2";
 import { Provider } from "react-redux";
 
 // engine-level constructs
@@ -10,6 +9,7 @@ import CodeExecutor from "./code-executor";
 import { Player } from "../entities/character/player";
 import { Enemy } from "../entities/character/enemy";
 import { TilesetTerrain, terrainMaterial } from "../entities/terrain";
+import getContactMaterials from "../entities/contact-materials";
 
 // level-specific constructs
 import level1 from "../tilesets/magic-cliffs/level2.json";
@@ -31,12 +31,8 @@ async function addThings(engine) {
   engine.followEntity(player);
   engine.setControllingEntity(player);
 
-  // add friction between the player and the ground
-  engine.world.addContactMaterial(new ContactMaterial(
-    player.body.shapes[0].material,
-    terrainMaterial,
-    { friction: 1 }
-  ));
+  // add friction
+  getContactMaterials().forEach(m => engine.world.addContactMaterial(m));
 
   // add an enemy
   const enemy = new Enemy({

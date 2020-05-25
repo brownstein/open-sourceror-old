@@ -4,6 +4,8 @@ import BaseEntity from "entities/base";
 
 import characterPolygon from "./base.json";
 
+export const characterMaterial = new Material();
+
 export class Character extends BaseEntity {
   constructor (props = {}) {
     super();
@@ -17,7 +19,7 @@ export class Character extends BaseEntity {
     const convex = new Convex({
       vertices: characterPolygon.vertices
     });
-    convex.material = new Material();
+    convex.material = characterMaterial;
 
     // find center of mass for convex vertices
     const cm = vec2.create();
