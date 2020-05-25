@@ -23,7 +23,7 @@ import { loadTilesetForPolygonTraversal } from "../utils/tileset-loader";
 import { traverseTileGrid } from "../utils/grid-to-polygons";
 import { getTilesForDecals } from "../utils/grid-to-tiles";
 
-const DEBUG_TERRAIN = true;
+const DEBUG_TERRAIN = false;
 
 export const terrainMaterial = new Material();
 
@@ -167,8 +167,12 @@ export class TilesetTerrainEntity extends TerrainEntity {
       this.mesh.add(debugMesh);
     }
 
+    this.ready = false;
+    this.readyPromise = this._init(tiles, textureLoader);
+  }
+  async _init(tiles, textureLoader) {
     if (tiles && tiles.length) {
-      const texture = textureLoader.load(tiles[0].tile.srcImage);
+      const texture = await textureLoader.loadAsync(tiles[0].tile.srcImage);
       texture.magFilter = NearestFilter;
       const tileMat = new MeshBasicMaterial({
         side: DoubleSide,
@@ -227,10 +231,6 @@ export class TilesetTerrainEntity extends TerrainEntity {
       this.mesh.add(tileMesh);
     }
 
-    this.ready = false;
-    this._readyPromise = this._init();
-  }
-  async _init() {
     this.ready = true;
   }
   // support one-way platforms

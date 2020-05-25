@@ -4,24 +4,29 @@ import { Provider } from "react-redux";
 import { EngineProvider } from "./engine";
 import { EngineViewport } from "./viewport";
 import CodeExecutor from "./code-executor";
+import LoadingScreen from "./loading-screen";
 
 // level entities
-import { Player } from "../entities/character/player";
-import { Enemy } from "../entities/character/enemy";
-import { TilesetTerrain, terrainMaterial } from "../entities/terrain";
-import getContactMaterials from "../entities/contact-materials";
+import { Player } from "src/entities/character/player";
+import { Enemy } from "src/entities/character/enemy";
+import { TilesetTerrain, terrainMaterial } from "src/entities/terrain";
+import { RepeatingBackgroundImage } from "src/entities/background";
+import getContactMaterials from "src/entities/contact-materials";
 
 // level-specific constructs
-import level from "../tilesets/magic-cliffs/level2.json";
-import tilesetJson from "../tilesets/magic-cliffs/tileset.json";
-import tilesetPng from "../tilesets/magic-cliffs/PNG/tileset.png";
+import level from "src/tilesets/magic-cliffs/level2.json";
+import tilesetJson from "src/tilesets/magic-cliffs/tileset.json";
+import tilesetPng from "src/tilesets/magic-cliffs/PNG/tileset.png";
+
+// level background images
+import bgSky from "src/tilesets/magic-cliffs/PNG/sky.png";
 
 // global styles
 import "./game.less";
 
 // current room loading construct
 // TODO: replace this with a room system
-async function addThings(engine) {
+function addThings(engine) {
 
   // apply contact materials
   getContactMaterials().forEach(m => engine.world.addContactMaterial(m));
@@ -56,9 +61,14 @@ async function addThings(engine) {
 
   // add the map
   const terrain = new TilesetTerrain(level, tilesetJson, tilesetPng);
-  await terrain.readyPromise;
+  terrain.getEntities().forEach(e => {
+    engine.addEntity(e);
+    engine.expandSceneToFitEntity(e);
+  });
 
-  terrain.getEntities().forEach(e => engine.addLevelEntity(e));
+  // add the background
+  const sky = new RepeatingBackgroundImage(bgSky);
+  engine.addEntity(sky);
 }
 
 // default component for the game
@@ -67,12 +77,14 @@ export default function Game({ store }) {
     <Provider store={store}>
       <EngineProvider addThings={addThings}>
         <div className="game">
-          <div className="game-viewport">
-            <EngineViewport/>
-          </div>
-          <div className="game-code-editor">
-            <CodeExecutor/>
-          </div>
+          <LoadingScreen>
+            <div className="game-viewport">
+              <EngineViewport/>
+            </div>
+            <div className="game-code-editor">
+              <CodeExecutor/>
+            </div>
+          </LoadingScreen>
         </div>
       </EngineProvider>
     </Provider>

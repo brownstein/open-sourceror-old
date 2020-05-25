@@ -55,15 +55,15 @@ export class Player extends Character {
     this.detectors = [];
 
     this.spritesLoaded = false;
-    this.loadSprites();
+    this.readyPromise = this.loadSprites();
   }
   async loadSprites() {
     this.sprites = {};
     await Promise.all(
       [
-        ["walk", walkLayersImage, walkLayersSheet, new Vector3(0, 8, 1)],
-        ["cast", castImage, castSheet, new Vector3(7, 8, 1)],
-        ["midJump", midJumpImage, midJumpSheet, new Vector3(0, 8, 1)]
+        ["walk", walkLayersImage, walkLayersSheet, new Vector3(0, 0, 1)],
+        ["cast", castImage, castSheet, new Vector3(7, 0, 1)],
+        ["midJump", midJumpImage, midJumpSheet, new Vector3(0, 0, 1)]
       ]
       .map(async ([name, image, sheet, relativeCenter]) => {
         const sprite = new MultiLayerAnimatedSprite(image, sheet, CHARACTER_LAYERS);

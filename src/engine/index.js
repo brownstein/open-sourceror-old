@@ -57,16 +57,17 @@ export default class Engine extends EventEmitter {
     // engine-level entities
     this.activeEntities = [];
     this.activeEntitiesByBodyId = {};
+
+    // special entity references that typically target the player
     this.followingEntity = null;
     this.controllingEntity = null;
-
-    // running scripts
-    this.running = false;
-    this.attachedScriptsByBodyId = {};
 
     // connection to the controller and the Redux world (for script execution)
     this.controller = null;
     this.dispatch = null;
+
+    // loading
+    this.initEntityCount = 0;
 
     // set up P2 contact handlers
     this._initializeContactHandlers();
@@ -127,18 +128,42 @@ export default class Engine extends EventEmitter {
     if (entity.mesh) {
       this.scene.add(entity.mesh);
     }
+    this._trackInit(entity);
   }
-  addLevelEntity(entity) {
-    entity.engine = this;
-    this.activeEntities.push(entity);
-    if (entity.body) {
-      this.activeEntitiesByBodyId[entity.body.id] = entity;
-      this.world.addBody(entity.body);
-    }
+  expandSceneToFitEntity(entity) {
     if (entity.mesh) {
-      this.scene.add(entity.mesh);
       this.levelBBox.expandByObject(entity.mesh);
     }
+    this._trackInit(entity, () => this.levelBBox.expandByObject(entity.mesh));
+  }
+  _trackInit(entity, onLoaded) {
+    if (!entity.readyPromise) {
+      return;
+    }
+    this.initEntityCount++;
+    this.emit("loadingAssets", {});
+    entity.readyPromise.then(() => {
+      onLoaded && onLoaded();
+      this.initEntityCount--;
+      if (this.initEntityCount === 0) {
+        this.emit("everythingReady", {});
+      }
+    });
+  }
+  /**
+   * Helper for loading
+   */
+  getLoadingPromise() {
+    return new Promise((resolve) => {
+      if (this.initEntityCount === 0) {
+        resolve();
+      }
+      function onReady() {
+        resolve();
+        this.off("everythingReady", onReady);
+      }
+      this.on("everythingReady", onReady);
+    });
   }
   followEntity(entity) {
     this.followingEntity = entity;

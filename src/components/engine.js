@@ -28,6 +28,7 @@ class _EngineProvider extends Component {
 
     // running properties
     this.running = false;
+    this.loading = true;
     this.lastFrameTime = null;
 
     // bind event handlers
@@ -52,7 +53,13 @@ class _EngineProvider extends Component {
     // bootstrap the scene
     const { addThings } = this.props;
     if (addThings) {
+      this.running = false;
+      this.loading = true;
       addThings(this.engine);
+      this.engine.getLoadingPromise().then(() => {
+        this.running = true;
+        this.loading = false;
+      });
     }
   }
   componentWillUnmount() {
