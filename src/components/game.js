@@ -54,22 +54,6 @@ async function addThings(engine) {
     }
   });
 
-  // // add the player
-  // const player = new Player({
-  //   position: [200, 100]
-  // });
-  // engine.addEntity(player);
-  // engine.followEntity(player);
-  // engine.setControllingEntity(player);
-  //
-  // // add some enemies
-  // for (let i =0; i < 4; i++) {
-  //   const enemy = new Enemy({
-  //     position: [300 + i + 100, 150]
-  //   });
-  //   engine.addEntity(enemy);
-  // }
-
   // add the map
   const terrain = new TilesetTerrain(level, tilesetJson, tilesetPng);
   await terrain.readyPromise;
