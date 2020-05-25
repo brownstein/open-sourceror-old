@@ -28,7 +28,7 @@ module.exports = (env, argv) => {
       libraryTarget: "commonjs2"
     },
     target: "electron-renderer",
-    externals: {
+    externals: isDev ? {
       // we don't need to re-bundle everything, electron's renderer can require
       react: "react",
       "react-redux": "react-redux",
@@ -37,7 +37,7 @@ module.exports = (env, argv) => {
       "@babel/plugin-transform-arrow-functions": "@babel/plugin-transform-arrow-functions",
       "@babel/plugin-transform-block-scoping": "@babel/plugin-transform-block-scoping",
       "babel-plugin-transform-async-to-promises": "babel-plugin-transform-async-to-promises",
-    },
+    } : {},
     resolve: {
       alias: {
         entities: path.resolve(__dirname, "src/entities"),

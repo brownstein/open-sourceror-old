@@ -2,3 +2,4 @@ node_modules
 electron/dist
 .DS_Store
 stats.json
+open-sourceror-*

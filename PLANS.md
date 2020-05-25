@@ -9,4 +9,18 @@ create rendering UI
 - [DONE] renderer for game engine scene
   - make camera scale dynamic
 - [DONE] renderer for code execution state
-  - need to make control come from engine, not component
+  - [DONE] need to make control come from engine, not component
+  - need a way to open and execute multiple scripts
+  - need a way to save scripts
+- create health / mana display
+- create context menu
+- make the script console appear / disappear
+
+create save state
+
+create room system
+
+create map system
+
+create some NPCs
+- create dialogue engine
