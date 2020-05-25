@@ -43,12 +43,16 @@ function createWindow () {
     slashes: true
   }));
 
+  // show window once reacy
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
+    if (cmdArgs.dev) {
+      mainWindow.webContents.openDevTools();
+    }
   });
 
+  // install developer tools
   if (cmdArgs.dev) {
-    // install developer tools
     const electronDevtoolsInstaller = require("electron-devtools-installer");
     const installExtension = electronDevtoolsInstaller.default;
     const {
@@ -59,7 +63,6 @@ function createWindow () {
       await installExtension(REACT_DEVELOPER_TOOLS);
       await installExtension(REDUX_DEVTOOLS);
     });
-    mainWindow.webContents.openDevTools();
   }
 
   mainWindow.on("closed", function () {

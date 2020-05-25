@@ -73,7 +73,8 @@
     "start": "electron electron/main.js",
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --config webpack.config.js --watch --mode development",
-    "package": "electron-packager . --platform win32 --ignore src"
+    "package-windows": "electron-packager . --platform win32 --ignore src; zip -r open-sourceror-win32.zip open-sourceror-win32-x64",
+    "package-osx": "electron-packager . --platform mas --ignore src; zip -r open-sourceror-osx.zip pen-sourceror-mas-x64"
   },
   "author": "",
   "license": "ISC",

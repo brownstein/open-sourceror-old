@@ -33,7 +33,7 @@ export class Fireball extends EphemeralEntity {
 
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
   }
-  collisionHandler(engine, otherEntity) {
+  collisionHandler(engine, otherId, otherEntity) {
     if (
       otherEntity === this.spawnedByEntiy ||
       otherEntity instanceof EphemeralEntity
@@ -74,7 +74,7 @@ export class FireballExplosion extends EphemeralEntity {
       this.engine.removeEntity(this);
     }
   }
-  collisionHandler(engine, otherEntity) {
+  collisionHandler(engine, otherId, otherEntity) {
     if (this.hitEntities.includes(otherEntity)) {
       return;
     }

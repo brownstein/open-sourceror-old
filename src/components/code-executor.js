@@ -63,7 +63,7 @@ class CodeExecutor extends Component {
     this.state = {
       scriptContents: srcScript,
       editorSize: { width: 400, height : 400 },
-      executionSpeed: 0.02
+      executionSpeed: 1
     };
     // editor instance
     this.editor = null;

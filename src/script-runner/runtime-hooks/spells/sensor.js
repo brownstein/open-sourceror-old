@@ -17,7 +17,7 @@ export default function getNativeSensor(interpreter, scope, runner) {
       this.sensor = new Sensor(runner.callingEntity, radius || 50);
       this.sensor.attachUpdateHandler(
         () => {
-          const nearby = this.sensor.collidingWith.map(c => {
+          const nearby = this.sensor.collidingWith.map(([id, c]) => {
             const relativePosition = [0, 0];
             vec2.sub(
               relativePosition,

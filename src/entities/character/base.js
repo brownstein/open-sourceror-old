@@ -105,7 +105,7 @@ export class Character extends BaseEntity {
     this.plannedAccelleration[0] = 0;
     this.plannedAccelleration[1] = 0;
   }
-  handleContactEquation (engine, otherEntity, eq) {
+  handleContactEquation (engine, otherId, otherEntity, eq) {
     // figure out whether or not the character is on a jump-ready surface
     let surfaceNormal;
     if (eq.bodyA === this.body) {

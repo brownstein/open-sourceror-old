@@ -186,30 +186,30 @@ export class TilesetTerrainEntity extends TerrainEntity {
     this.ready = true;
   }
   // support one-way platforms
-  collisionHandler(engine, otherEntity, eq) {
+  collisionHandler(engine, otherId, otherEntity, eq) {
     if (!this.isOneWayPlatform || !otherEntity.body || !eq) {
       return;
     }
     const isUpwardContact = eq.normalA[1] < 0;
     if (!isUpwardContact) {
       eq.enabled = false;
-      this.oneWayPlatformTracking.push(otherEntity.body.id);
+      this.oneWayPlatformTracking.push(otherId);
     }
   }
-  handleContactEquation(engine, otherEntity, eq) {
+  handleContactEquation(engine, otherId, otherEntity, eq) {
     if (!this.isOneWayPlatform || !otherEntity.body) {
       return;
     }
-    if (this.oneWayPlatformTracking.includes(otherEntity.body.id)) {
+    if (this.oneWayPlatformTracking.includes(otherId)) {
       eq.enabled = false;
     }
   }
-  endCollisionHandler(engine, otherEntity, eq) {
-    if (!this.isOneWayPlatform || !otherEntity.body) {
+  endCollisionHandler(engine, otherId, otherEntity, eq) {
+    if (!this.isOneWayPlatform) {
       return;
     }
     this.oneWayPlatformTracking = this.oneWayPlatformTracking.filter(id => {
-      return id !== otherEntity.body.id;
+      return id !== otherId;
     });
   }
 }

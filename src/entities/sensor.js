@@ -28,6 +28,8 @@ export class Sensor extends EphemeralEntity {
     this.followingEntity = followingEntity;
     this.collidingWith = [];
     this.updateHandler = null;
+
+    this._removeCallback = this._removeCallback.bind(this);
   }
   attachUpdateHandler(handler) {
     this.updateHandler = handler;
@@ -42,7 +44,7 @@ export class Sensor extends EphemeralEntity {
       this.followingEntity.body.velocity
     );
   }
-  collisionHandler(engine, otherEntity) {
+  collisionHandler(engine, otherId, otherEntity) {
     if (otherEntity === this.followingEntity) {
       return;
     }
@@ -52,19 +54,30 @@ export class Sensor extends EphemeralEntity {
     if (otherEntity instanceof EphemeralEntity) {
       return;
     }
-    this.collidingWith.push(otherEntity);
+    this.collidingWith.push([otherId, otherEntity]);
     this.updateHandler && this.updateHandler();
+    if (otherEntity.on) {
+      otherEntity.on("remove", this._removeCallback);
+    }
   }
-  endCollisionHandler(engine, otherEntity) {
+  endCollisionHandler(engine, otherId, otherEntity) {
     if (otherEntity === this.followingEntity) {
       return;
     }
-    this.collidingWith = this.collidingWith.filter(c => c !== otherEntity);
+    this.collidingWith = this.collidingWith.filter(c => c[0] !== otherId);
     this.updateHandler && this.updateHandler();
+    if (otherEntity && otherEntity.off) {
+      otherEntity.off("remove", this._removeCallback);
+    }
   }
   setRadius(radius) {
     this.shape.radius = radius;
     this.mesh.scale.x = radius / this.initialRadius;
     this.mesh.scale.y = radius / this.initialRadius;
+  }
+  _removeCallback({ entity }) {
+    const entityId = entity.body.id;
+    this.collidingWith = this.collidingWith.filter(c => c[0] !== entityId);
+    this.updateHandler && this.updateHandler();
   }
 }
