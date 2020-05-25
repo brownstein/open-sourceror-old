@@ -115,6 +115,16 @@ export class Player extends Character {
     }
     const distDelta = Math.abs(this.previousPosition[0] - this.body.position[0]);
     vec2.copy(this.previousPosition, this.body.position);
+    if (this.onSurface) {
+      if (this.activeSpriteName === "midJump") {
+        this._swapToSprite("walk");
+      }
+    }
+    else {
+      if (this.activeSpriteName === "walk") {
+        this._swapToSprite("midJump");
+      }
+    }
     if (this.activeSpriteName === "walk") {
       if (this.onSurface) {
         this.sprite.animate(distDelta * 5);
@@ -154,7 +164,12 @@ export class Player extends Character {
   }
   handleViewportFocus(isFocused) {
     if (isFocused) {
-      this._swapToSprite("walk");
+      if (this.onSurface) {
+        this._swapToSprite("walk");
+      }
+      else {
+        this._swapToSprite("midJump");
+      }
     }
     else {
       this._swapToSprite("cast");
