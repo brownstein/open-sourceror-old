@@ -68,6 +68,7 @@ export function updateScriptStates(executionContext, focusedScriptId = null) {
       scriptRunner,
       running,
       finished,
+      paused,
       currentLine,
       transpileError,
       runtimeError
@@ -76,6 +77,7 @@ export function updateScriptStates(executionContext, focusedScriptId = null) {
       scriptName,
       scriptContents,
       running,
+      paused,
       finished,
       currentLine,
       compileTimeError: transpileError,

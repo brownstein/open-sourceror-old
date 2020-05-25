@@ -21,7 +21,8 @@ export class RunningScript {
     engine,
     scriptName,
     scriptRunner,
-    targetEntity
+    targetEntity,
+    executionSpeed
   }) {
     this.engine = engine;
     this.id = shortid(),
@@ -29,9 +30,10 @@ export class RunningScript {
     this.scriptContents = scriptRunner.sourceScript;
     this.scriptRunner = scriptRunner;
     this.targetEntity = targetEntity;
-    this.executionSpeed = 0.02,
+    this.executionSpeed = executionSpeed || 0.02,
     this.executionTimeDelta = 0,
     this.running = true,
+    this.paused = false; // TODO: implement
     this.finished = false;
     this.currentLine = null,
     this.transpileError = null,
@@ -53,15 +55,27 @@ export class RunningScript {
   /**
    * If currently running, perform operations at timeDelta * executionSpeed
    */
-  _continueRunning(timeDelta) {
+  _continueRunning(timeDelta, singleLine) {
     if (!this.running) {
       return false;
     }
+    if (this.paused && !singleLine) {
+      if (this.scriptRunner.hasCompletedExecution()) {
+        this.running = false;
+        this.finished = true;
+        this.scriptRunner.cleanup();
+        return true;
+      }
+      return false;
+    }
     this.executionTimeDelta += timeDelta * this.executionSpeed;
+    if (singleLine) {
+      this.executionTimeDelta = 1;
+    }
     const engine = this.engine;
     let anythingHappened = false;
     try {
-      while (this.executionTimeDelta > 1) {
+      while (this.executionTimeDelta >= 1) {
         this.executionTimeDelta += -1;
         let start = null;
         let exCap = 0;
@@ -137,7 +151,7 @@ export class ScriptExecutionContext {
   /**
    * Runs a script with a given name
    */
-  async runScript(scriptSrc, runningEntity) {
+  async runScript(scriptSrc, runningEntity, executionSpeed) {
     this._flushInactiveScripts();
 
     const engine = this.engine;
@@ -179,7 +193,8 @@ export class ScriptExecutionContext {
       engine,
       scriptName,
       scriptRunner,
-      targetEntity: runningEntity
+      targetEntity: runningEntity,
+      executionSpeed
     });
 
     this.runningScripts.push(exState);
@@ -189,6 +204,36 @@ export class ScriptExecutionContext {
     engine.dispatch(updateScriptStates(this, exState.id));
 
     return exState;
+  }
+  pauseScript(scriptName) {
+    const engine = this.engine;
+    const paused = this.runningScripts.find(s => s.scriptName === scriptName);
+    if (!paused) {
+      return;
+    }
+    paused.paused = true;
+    engine.dispatch &&
+    engine.dispatch(updateScriptStates(this));
+  }
+  resumeScript(scriptName) {
+    const engine = this.engine;
+    const paused = this.runningScripts.find(s => s.scriptName === scriptName);
+    if (!paused) {
+      return;
+    }
+    paused.paused = false;
+    engine.dispatch &&
+    engine.dispatch(updateScriptStates(this));
+  }
+  stepScript(scriptName) {
+    const engine = this.engine;
+    const paused = this.runningScripts.find(s => s.scriptName === scriptName);
+    if (!paused || !paused.paused) {
+      return;
+    }
+    paused._continueRunning(0, true);
+    engine.dispatch &&
+    engine.dispatch(updateScriptStates(this));
   }
   stopScript(scriptName) {
     const engine = this.engine;

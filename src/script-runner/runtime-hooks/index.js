@@ -47,9 +47,8 @@ export function initializeScope(interpreter, scope, runner) {
   );
   interpreter.setProperty(scope, "on", nativeOn);
 
-  /**
-   * Native require function to get other functions
-   */
+  // add support for native requirement of spells
+  // TODO: figure out a system for custom spells to require each other
   const nativeRequireCache = {};
   const nativeRequire = interpreter.createNativeFunction(
     rawModuleName => {

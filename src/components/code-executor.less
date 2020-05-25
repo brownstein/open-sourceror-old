@@ -14,12 +14,12 @@
   }
 
   .active-line-marker {
-    background-color: #0ef;
+    background-color: #91e1f5;
     position: relative;
   }
 
   .active-line-gutter {
-    background-color: #0ef;
+    background-color: #91e1f5;
     position: relative;
     &::after {
       content: ">";
@@ -31,21 +31,13 @@
     }
   }
 
-  .terminated-line-marker {
-    background-color: #fba;
+  .terminated-line-marker, .terminated-line-gutter {
+    background-color: #f3d192;
     position: relative;
   }
 
-  .terminated-line-gutter {
-    background-color: #fba;
+  .error-line-marker, .error-line-gutter {
     position: relative;
-    &::after {
-      content: "X";
-      font-weight: bold;
-      color: #000;
-      position: absolute;
-      top: 0;
-      left: 4px;
-    }
+    background-color: #ff9090;
   }
 }

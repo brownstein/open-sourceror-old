@@ -1,4 +1,5 @@
 import { Component, useState, useEffect, useRef } from "react";
+import { connect } from "react-redux";
 
 // pull in Ace and configure it
 import Ace, { Range } from "ace-builds/src-noconflict/ace";
@@ -14,8 +15,8 @@ window.ace = Ace;
 // pull in Ace editor afterwards
 import AceEditor from "react-ace";
 
+// pull in engine context
 import { EngineContext } from "./engine";
-import ScriptRunner from "script-runner";
 
 import "./code-executor.less";
 
@@ -23,31 +24,51 @@ import "./code-executor.less";
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
 const srcScript =
 `"use strict";
-// const fire = require("fire");
-while (true) {
-  fire();
+const fire = require("fire");
+const Sensor = require("sensor");
+
+var s = new Sensor(100);
+var active = true;
+
+// our main attack loop is going to start running immediately and execute every
+// 50 milliseconds
+function keepGoing() {
+  if (!active) {
+    return;
+  }
+  s.getNearbyThings().forEach(n => {
+    const relativeVelocity = {
+      x: n.relativePosition.x * 5,
+      y: n.relativePosition.y * 5
+    };
+    fire(null, relativeVelocity);
+  });
+  setTimeout(keepGoing, 50);
+
+  // un-comment to enable variable sensor radius
+  // s.setRadius(30 + (new Date().getTime() % 1000) * 0.1);
 }
+keepGoing();
+
+// set a timeout to end execution
+setTimeout(() => {
+  active = false;
+}, 10000);
 `;
 
-export default class CodeExecutor extends Component {
+class CodeExecutor extends Component {
   static contextType = EngineContext;
   constructor() {
     super();
     this.state = {
-      running: false,
       scriptContents: srcScript,
-      runtimeException: null,
-      compileTimeException: null,
-      editorSize: null
+      editorSize: { width: 400, height : 400 },
+      executionSpeed: 0.02
     };
-    this.exSpeed = 0.15;
-
-    // runner, editor instance
-    this.scriptRunner = null;
+    // editor instance
     this.editor = null;
 
     // execution and markup state
-    this.currentLine = null;
     this.annotated = false;
     this.decorations = [];
     this.markerIds = [];
@@ -55,11 +76,15 @@ export default class CodeExecutor extends Component {
     // DOM element
     this.editorContainerEl = null;
 
+    // bound methods
     this._loadEditor = this._loadEditor.bind(this);
     this._onChange = this._onChange.bind(this);
+    this._setExecutionSpeed = this._setExecutionSpeed.bind(this);
     this._run = this._run.bind(this);
+    this._pause = this._pause.bind(this);
+    this._step = this._step.bind(this);
+    this._resume = this._resume.bind(this);
     this._stop = this._stop.bind(this);
-    this._continueRunning = this._continueRunning.bind(this);
     this._onResize = this._onResize.bind(this);
   }
   componentDidMount() {
@@ -78,29 +103,30 @@ export default class CodeExecutor extends Component {
   }
   render() {
     const {
-      scriptContents,
       running,
-      runtimeException,
-      compileTimeException,
-      editorSize
+      paused
+    } = this.props;
+    const {
+      scriptContents,
+      editorSize,
+      executionSpeed
     } = this.state;
     const errors = [];
-    if (runtimeException) {
-      errors.push(runtimeException);
-    }
-    if (compileTimeException) {
-      errors.push(JSON.stringify([compileTimeException.toString(), compileTimeException.loc]));
-    }
-    let width = 400, height = 400;
-    if (editorSize) {
-      width = editorSize.width;
-      height = editorSize.height;
-    }
+    const { width, height } = editorSize;
     return (
       <div className="code-executor">
         <div className="toolbar">
           <button onClick={this._run} disabled={running}>run</button>
           <button onClick={this._stop} disabled={!running}>stop</button>
+          Speed: <select value={executionSpeed} onChange={this._setExecutionSpeed} disabled={running}>
+            <option value={0.0025}>0.0025</option>
+            <option value={0.02}>0.02</option>
+            <option value={0.1}>0.1</option>
+            <option value={1}>1</option>
+          </select>
+          <button onClick={this._pause} disabled={!running || paused}>pause</button>
+          <button onClick={this._step} disabled={!running || !paused}>step</button>
+          <button onClick={this._resume} disabled={!running || !paused}>resume</button>
         </div>
         <div className="editor-container" ref={r => this.editorContainerEl = r}>
           { errors }
@@ -128,40 +154,37 @@ export default class CodeExecutor extends Component {
   _loadEditor(editor) {
     this.editor = editor;
   }
+  componentDidUpdate(prevProps) {
+    const props = this.props;
+    const editor = this.editor;
+    if (props.running && props.currentLine) {
+      this._markLine(props.currentLine, true);
+    }
+    if (prevProps.running && !props.running) {
+      if (props.terminatedSuccessfully) {
+        this._clearMarkings();
+      }
+      else if (props.runTimeError) {
+        this._markError(props.runTimeError.toString(), props.currentLine);
+      }
+      else {
+        this._markLine(props.currentLine, false);
+      }
+    }
+    if (props.activeScriptContents !== this.state.scriptContents) {
+      this._clearMarkings();
+    }
+    else if (props.compileTimeError) {
+      const err = props.compileTimeError;
+      this._markError(err, err.loc.line - 1);
+    }
+  }
   _onChange(scriptContents) {
     this._clearMarkings();
     this.setState({ scriptContents });
   }
-  async _run() {
-    const engine = this.context;
-    const player = engine.activeEntities[0];
-    const {
-      running,
-      scriptContents
-    } = this.state;
-    if (running) {
-      return;
-    }
-
-    this.setState({ running: true }); // mark as running to prevent double exec
-    this._clearMarkings();
-
-    this.scriptRunner = new ScriptRunner(scriptContents, engine, player);
-    try {
-      await this.scriptRunner.readyPromise;
-    }
-    catch (err) {
-      this.setState({ running: false, compileTimeException: err });
-      this.scriptRunner = null;
-      const { line, column } = err.loc;
-      this._markError(err.toString(), line - 1);
-      return;
-    }
-
-    this.t = 0;
-    this.currentLine = 0;
-    this.markerId = null;
-    this._continueRunning();
+  _setExecutionSpeed(event) {
+    this.setState({ executionSpeed: event.target.value });
   }
   _clearMarkings() {
     const session = this.editor.getSession();
@@ -177,11 +200,29 @@ export default class CodeExecutor extends Component {
       this.markerIds.forEach(m => session.removeMarker(m));
       this.markerIds = [];
     }
-    this.markerIds = [];
+  }
+  _markLine(line, isExecuting, finishedSuccessfully) {
+    this._clearMarkings();
+
+    const session = this.editor.getSession();
+    let markerClass, gutterClass;
+    if (isExecuting) {
+      markerClass = "active-line-marker";
+      gutterClass = "active-line-gutter";
+    }
+    else {
+      markerClass = "terminated-line-marker";
+      gutterClass = "terminated-line-gutter";
+    }
+    const markerRange = new Range(line, 0, line, Infinity);
+    const markerId = session.addMarker(markerRange, markerClass, "screenLine", false);
+    this.markerIds.push(markerId);
+    session.addGutterDecoration(line, gutterClass);
+    this.decorations.push([line, gutterClass]);
   }
   _markError(text, row, column = null) {
     this._clearMarkings();
-    // mark error in gutter
+
     const session = this.editor.getSession();
     session.setAnnotations([{
       type: "error",
@@ -193,99 +234,83 @@ export default class CodeExecutor extends Component {
 
     // mark error in text
     const markerRange = new Range(row, column ? column : 0, row, 100);
-    const markerId = session.addMarker(markerRange, "terminated-line-marker", "screenLine", false);
+    const markerId = session.addMarker(markerRange, "error-line-marker", "screenLine", false);
     this.markerIds.push(markerId);
+    session.addGutterDecoration(row, "error-line-gutter");
+    this.decorations.push([row, "error-line-gutter"]);
+  }
+  _run() {
+    const { scriptContents } = this.state;
+    const engine = this.context;
+    const player = engine.activeEntities[0];
+    const exSpeed = this.state.executionSpeed;
+    engine.scriptExecutionContext.runScript(scriptContents, player, exSpeed);
+  }
+  _pause() {
+    const { activeScriptName } = this.props;
+    const engine = this.context;
+    engine.scriptExecutionContext.pauseScript(activeScriptName);
+  }
+  _step() {
+    const { activeScriptName } = this.props;
+    const engine = this.context;
+    engine.scriptExecutionContext.stepScript(activeScriptName);
+  }
+  _resume() {
+    const { activeScriptName } = this.props;
+    const engine = this.context;
+    engine.scriptExecutionContext.resumeScript(activeScriptName);
   }
   _stop() {
-    const { running } = this.state;
-    if (!running) {
-      return;
-    }
-
-    this._clearMarkings();
-
-    // add terminating line indicator
-    const session = this.editor.getSession();
-    const currentLine = this.currentLine;
-    if (currentLine !== null) {
-      const markerRange = new Range(currentLine, 0, currentLine + 1, 100);
-      const markerId = session.addMarker(markerRange, "terminated-line-marker", "screenLine", false);
-      this.markerIds.push(markerId);
-      session.addGutterDecoration(currentLine, "terminated-line-gutter");
-      this.decorations.push([currentLine, "terminated-line-gutter"]);
-    }
-
-    this.setState({ running: false });
-  }
-  _continueRunning() {
+    const { activeScriptName } = this.props;
     const engine = this.context;
-    const { running } = this.state;
-
-    // don't execute while script is paused
-    if (!running) {
-      return;
-    }
-
-    // don't execute while game is paused
-    if (!engine.running) {
-      requestAnimationFrame(this._continueRunning);
-      return;
-    }
-
-    // limit execution speed
-    this.t += this.exSpeed;
-    if (this.t < 1) {
-      requestAnimationFrame(this._continueRunning);
-      return;
-    }
-
-    this._clearMarkings();
-
-    // stop execution if we're finished
-    if (this.scriptRunner.hasCompletedExecution()) {
-      // update running state
-      this.currentLine = null;
-      this.setState({ running: false });
-      return;
-    }
-
-    // execute some code
-    const scriptRunner = this.scriptRunner;
-    let highlightedTextSegment = [null, null];
-    let start = null;
-    let currentLine = null;
-    let i = 0;
-    while (!start && scriptRunner.hasNextStep() && this.t > 0 && i++ < 1000) {
-      this.t -= 1
-      try {
-        scriptRunner.doCurrentLine();
-      }
-      catch (ex) {
-        // when exceptions are thrown, stop on the current line and log the error
-        console.error(ex);
-        this.setState({ runtimeException: ex.toString() });
-        this._stop();
-        this._markError(ex.toString(), this.currentLine);
-        this.scriptRunner = null;
-        return;
-      }
-      highlightedTextSegment = scriptRunner.getExecutingSection();
-      [start] = highlightedTextSegment;
-    }
-    currentLine = scriptRunner.getExecutingLine();
-    this.currentLine = currentLine;
-
-    // add current line indicator
-    const session = this.editor.getSession();
-    if (currentLine !== null) {
-      const markerRange = new Range(currentLine, 0, currentLine + 1, 100);
-      const markerId = session.addMarker(markerRange, "active-line-marker", "screenLine", false);
-      this.markerIds.push(markerId);
-      session.addGutterDecoration(currentLine, "active-line-gutter");
-      this.decorations.push([currentLine, "active-line-gutter"]);
-    }
-
-    // keep executing
-    requestAnimationFrame(this._continueRunning);
+    engine.scriptExecutionContext.stopScript(activeScriptName);
   }
 }
+
+/**
+ * Mapping from Redux store to passed props - does the heavy lifting
+ */
+function mapStateToProps(state) {
+  const { scripts } = state;
+  const { focusedScriptId, activeScripts } = scripts;
+
+  let activeScriptName = null;
+  let activeScriptContents = null;
+  let running = false;
+  let paused = false;
+  let finished = false;
+  let currentLine = null;
+  let runTimeError = null;
+  let { compileTimeError } = scripts;
+  let terminatedSuccessfully = false;
+
+  if (focusedScriptId) {
+    const activeScript = activeScripts[focusedScriptId];
+    if (activeScript) {
+      activeScriptName = activeScript.scriptName;
+      activeScriptContents = activeScript.scriptContents;
+      running = activeScript.running;
+      paused = activeScript.paused;
+      finished = activeScript.finished;
+      currentLine = activeScript.currentLine;
+      runTimeError = activeScript.runTimeError;
+      compileTimeError = activeScript.compileTimeError;
+      terminatedSuccessfully = activeScript.finished;
+    }
+  }
+
+  return {
+    activeScriptName,
+    activeScriptContents,
+    running,
+    paused,
+    finished,
+    currentLine,
+    runTimeError,
+    compileTimeError,
+    terminatedSuccessfully,
+  };
+}
+
+export default connect(mapStateToProps)(CodeExecutor);

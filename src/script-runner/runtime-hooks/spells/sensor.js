@@ -26,13 +26,16 @@ export default function getNativeSensor(interpreter, scope, runner) {
             );
             return {
               type: c.constructor.name,
-              relativePosition
+              relativePosition: {
+                x: relativePosition[0],
+                y: relativePosition[1]
+              }
             };
           });
-          this.near = interpreter.nativeToPseudo(nearby);
           // sometimes the sensor fires this after the interpreter has finished
           // in that case, ignore the problem
           try {
+            this.near = interpreter.nativeToPseudo(nearby);
             interpreter.setProperty(this, "near", this.near);
           }
           catch (err) {
@@ -47,11 +50,21 @@ export default function getNativeSensor(interpreter, scope, runner) {
     },
     true
   );
-  const nativeSensorGet = function() {
-    console.log("THIS.GET", this);
-    return interpreter.pseudoToNative(1000);
-  }
-  interpreter.setNativeFunctionPrototype(nativeSensor, "get", nativeSensorGet);
+  interpreter.setNativeFunctionPrototype(
+    nativeSensor,
+    "getNearbyThings",
+    function() {
+      return this.near;
+    }
+  );
+    interpreter.setNativeFunctionPrototype(
+      nativeSensor,
+      "setRadius",
+      function(nativeRadius) {
+        const radius = interpreter.pseudoToNative(nativeRadius);
+        this.sensor.setRadius(radius);
+      }
+    );
 
   return nativeSensor;
 }

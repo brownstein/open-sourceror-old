@@ -24,6 +24,7 @@ export class Sensor extends EphemeralEntity {
     this.body.addShape(this.shape);
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
 
+    this.initialRadius = radius;
     this.followingEntity = followingEntity;
     this.collidingWith = [];
     this.updateHandler = null;
@@ -60,5 +61,10 @@ export class Sensor extends EphemeralEntity {
     }
     this.collidingWith = this.collidingWith.filter(c => c !== otherEntity);
     this.updateHandler && this.updateHandler();
+  }
+  setRadius(radius) {
+    this.shape.radius = radius;
+    this.mesh.scale.x = radius / this.initialRadius;
+    this.mesh.scale.y = radius / this.initialRadius;
   }
 }
