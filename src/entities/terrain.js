@@ -19,8 +19,9 @@ import {
   vec2
 } from "p2";
 import getThreeJsObjectForP2Body from "../p2-utils/get-threejs-mesh";
-import { traverseTileGrid } from "../utils/grid-to-polygon";
-import { loadTileset } from "../utils/tileset-loader";
+import { loadTilesetForPolygonTraversal } from "../utils/tileset-loader";
+import { traverseTileGrid } from "../utils/grid-to-polygons";
+import { getTilesForDecals } from "../utils/grid-to-tiles";
 
 const DEBUG_TERRAIN = true;
 
@@ -52,11 +53,27 @@ export class TilesetTerrain extends Terrain {
   constructor(levelJson, tilesetJson, tilesetPng) {
     super();
 
-    this.tileset = loadTileset(tilesetJson, tilesetPng);
+    this.tileset = loadTilesetForPolygonTraversal(tilesetJson, tilesetPng);
     this.level = levelJson;
+
+    // identify the primary layer
+    let primaryLayerIndex = 0;
+    for (let li = 0; li < levelJson.layers.length; li++) {
+      const layer = levelJson.layers[li];
+      if (layer.type !== "tilelayer") {
+        continue;
+      }
+      if (layer.name === "primary") {
+        primaryLayerIndex = li;
+        break;
+      }
+    }
+    const primaryLayer = levelJson.layers[primaryLayerIndex];
+
+    // get polygons and their attached tiles
     this.levelPolygonsAndTiles = traverseTileGrid(
-      levelJson.layers[0].data,
-      levelJson.layers[0].width,
+      primaryLayer.data,
+      primaryLayer.width,
       levelJson.tilewidth,
       this.tileset,
       ['ground', 'oneWayPlatform']
@@ -64,6 +81,7 @@ export class TilesetTerrain extends Terrain {
 
     const textureLoader = new TextureLoader();
 
+    // create terrain entities
     this.terrainEntities = this.levelPolygonsAndTiles.map(t => {
       return new TilesetTerrainEntity(
         t.polygons,
@@ -72,6 +90,31 @@ export class TilesetTerrain extends Terrain {
         t.blockType
       );
     });
+
+    // create decal layers
+    for (let li = 0; li < levelJson.layers.length; li++) {
+      if (li === primaryLayerIndex) {
+        continue;
+      }
+      const layer = levelJson.layers[li];
+      if (layer.type !== "tilelayer") {
+        continue;
+      }
+      const decals = getTilesForDecals(
+        layer.data,
+        layer.width,
+        levelJson.tilewidth,
+        this.tileset
+      );
+      if (decals.length) {
+        const decalsEntity = new TilesetDecalLayer(
+          decals,
+          textureLoader
+        );
+        decalsEntity.mesh.z = 4 * (li - primaryLayerIndex);
+        this.terrainEntities.push(decalsEntity);
+      }
+    }
 
     this.ready = false;
     this._readyPromise = this._init();
@@ -131,7 +174,7 @@ export class TilesetTerrainEntity extends TerrainEntity {
         side: DoubleSide,
         map: texture,
         transparent: true,
-        opacity: DEBUG_TERRAIN ? 0.5 : 1,
+        opacity: DEBUG_TERRAIN ? 0.75 : 1,
         // to swap this off, we have to use separate meshes for each Z index
         // to deal with the fact that three.js's face sorting is geometry-
         // internal
@@ -220,5 +263,65 @@ export class TilesetTerrainEntity extends TerrainEntity {
     this.oneWayPlatformTracking = this.oneWayPlatformTracking.filter(id => {
       return id !== otherId;
     });
+  }
+}
+
+export class TilesetDecalLayer {
+  constructor (decals, textureLoader) {
+    const texture = textureLoader.load(decals[0].tile.srcImage);
+    texture.magFilter = NearestFilter;
+    const tileMat = new MeshBasicMaterial({
+      side: DoubleSide,
+      map: texture,
+      transparent: true,
+      opacity: DEBUG_TERRAIN ? 0.25 : 1,
+      // to swap this off, we have to use separate meshes for each Z index
+      // to deal with the fact that three.js's face sorting is geometry-
+      // internal
+      alphaTest: 0.1
+    });
+    const tileGeom = new Geometry();
+    decals.forEach(tileInstance => {
+      const tile = tileInstance.tile;
+      let z = 0.6;
+      if (tile.depthBias) {
+        z = tile.depthBias;
+      }
+      const ov = 0.01;
+      tileGeom.vertices.push(new Vector3(
+        tileInstance.x - ov,
+        tileInstance.y - ov,
+        z
+      ));
+      tileGeom.vertices.push(new Vector3(
+        tileInstance.x - ov + tile.srcWidth + ov,
+        tileInstance.y - ov,
+        z
+      ));
+      tileGeom.vertices.push(new Vector3(
+        tileInstance.x - ov + tile.srcWidth + ov,
+        tileInstance.y + tile.srcHeight  + ov,
+        z
+      ));
+      tileGeom.vertices.push(new Vector3(
+        tileInstance.x - ov,
+        tileInstance.y + tile.srcHeight + ov,
+        z
+      ));
+      const vtxIndex = tileGeom.vertices.length - 4;
+      tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
+      tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));
+      [
+        [[0, 0], [1, 0], [1, 1]],
+        [[0, 0], [1, 1], [0, 1]]
+      ].forEach(faceUVs => {
+        tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
+        new Vector2(
+          (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
+          1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
+        )));
+      });
+    });
+    this.mesh = new Mesh(tileGeom, tileMat);
   }
 }

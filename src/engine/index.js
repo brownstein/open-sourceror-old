@@ -131,10 +131,14 @@ export default class Engine extends EventEmitter {
   addLevelEntity(entity) {
     entity.engine = this;
     this.activeEntities.push(entity);
-    this.activeEntitiesByBodyId[entity.body.id] = entity;
-    this.world.addBody(entity.body);
-    this.scene.add(entity.mesh);
-    this.levelBBox.expandByObject(entity.mesh);
+    if (entity.body) {
+      this.activeEntitiesByBodyId[entity.body.id] = entity;
+      this.world.addBody(entity.body);
+    }
+    if (entity.mesh) {
+      this.scene.add(entity.mesh);
+      this.levelBBox.expandByObject(entity.mesh);
+    }
   }
   followEntity(entity) {
     this.followingEntity = entity;

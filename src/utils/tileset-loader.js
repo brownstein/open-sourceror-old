@@ -3,7 +3,7 @@ import clipping from "polygon-clipping";
 const ANGLE_TOLERANCE = 0.05;
 const DISTANCE_TOLERANCE = 0.05;
 
-export function loadTileset (tilesetSrc, tilesetImage) {
+export function loadTilesetForPolygonTraversal (tilesetSrc, tilesetImage) {
   const {
     tilewidth,
     tileheight,

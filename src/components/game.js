@@ -12,7 +12,7 @@ import { TilesetTerrain, terrainMaterial } from "../entities/terrain";
 import getContactMaterials from "../entities/contact-materials";
 
 // level-specific constructs
-import level1 from "../tilesets/magic-cliffs/level2.json";
+import level from "../tilesets/magic-cliffs/level2.json";
 import tilesetJson from "../tilesets/magic-cliffs/tileset.json";
 import tilesetPng from "../tilesets/magic-cliffs/PNG/tileset.png";
 
@@ -23,27 +23,55 @@ import "./game.less";
 // TODO: replace this with a room system
 async function addThings(engine) {
 
-  // add the player
-  const player = new Player({
-    position: [200, 100]
-  });
-  engine.addEntity(player);
-  engine.followEntity(player);
-  engine.setControllingEntity(player);
-
-  // add friction
+  // apply contact materials
   getContactMaterials().forEach(m => engine.world.addContactMaterial(m));
 
-  // add an enemy
-  for (let i =0; i < 4; i++) {
-    const enemy = new Enemy({
-      position: [300 + i + 100, 150]
-    });
-    engine.addEntity(enemy);
-  }
+  // load entities in the level
+  level.layers.forEach(l => {
+    if (l.type === "objectgroup") {
+      l.objects.forEach(o => {
+        switch (o.type) {
+          case "playerStart": {
+            const player = new Player({
+              position: [o.x, o.y]
+            });
+            engine.addEntity(player);
+            engine.followEntity(player);
+            engine.setControllingEntity(player);
+            break;
+          }
+          case "enemyStart": {
+            const enemy = new Enemy({
+              position: [o.x, o.y]
+            });
+            engine.addEntity(enemy);
+            break;
+          }
+          default:
+            break;
+        }
+      })
+    }
+  });
+
+  // // add the player
+  // const player = new Player({
+  //   position: [200, 100]
+  // });
+  // engine.addEntity(player);
+  // engine.followEntity(player);
+  // engine.setControllingEntity(player);
+  //
+  // // add some enemies
+  // for (let i =0; i < 4; i++) {
+  //   const enemy = new Enemy({
+  //     position: [300 + i + 100, 150]
+  //   });
+  //   engine.addEntity(enemy);
+  // }
 
   // add the map
-  const terrain = new TilesetTerrain(level1, tilesetJson, tilesetPng);
+  const terrain = new TilesetTerrain(level, tilesetJson, tilesetPng);
   await terrain.readyPromise;
 
   terrain.getEntities().forEach(e => engine.addLevelEntity(e));

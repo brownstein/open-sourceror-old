@@ -633,8 +633,13 @@ export function traverseSimpleGrid(sourceGridArr, gridWidth, tileSize) {
   return polygonAndTileSets;
 }
 
-export function traverseTileGrid(sourceGridArr, gridWidth, tileSize, tileset,
-  useTileTypes=['ground']) {
+export function traverseTileGrid(
+  sourceGridArr,
+  gridWidth,
+  tileSize,
+  tileset,
+  useTileTypes=['ground']
+) {
 
   // map tile definitions by ID for faster reference
   const tileDefsById = {};
