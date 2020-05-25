@@ -1,10 +1,14 @@
 import * as acorn from "acorn";
-import { vec2 } from "p2";
 
 import { castToVec2 } from "p2-utils/vec2-utils";
 import promisePolyfill from "./promise-polyfill.txt";
 
 import { Sensor } from "src/entities/sensor";
+
+import {
+  getNativeFire,
+  getNativeSensor
+} from "./spells";
 
 /**
  * Initialize the interpreter scope with global functions
@@ -43,96 +47,32 @@ export function initializeScope(interpreter, scope, runner) {
   );
   interpreter.setProperty(scope, "on", nativeOn);
 
-  // add support for casting fireball
-  const nativeFireball = interpreter.createNativeFunction(
-    (rawRelativePosition, rawRelativeVelocity) => {
-      let relativePosition = null;
-      let relativeVelocity = null;
-      if (rawRelativePosition) {
-        relativePosition = castToVec2(
-          interpreter.pseudoToNative(rawRelativePosition)
-        );
-      }
-      if (rawRelativeVelocity) {
-        relativeVelocity = castToVec2(
-          interpreter.pseudoToNative(rawRelativeVelocity)
-        );
-      }
-      runner.callingEntity.castFireball(relativePosition, relativeVelocity);
-      return interpreter.nativeToPseudo(undefined);
-    }
-  );
-  interpreter.setProperty(scope, "fire", nativeFireball);
-
-  /**
-   * Native sensor creation fucntion
-   */
-  const nativeSensor = interpreter.createNativeFunction(
-    function(radius) {
-      console.log("mounting sensor");
-      this.cleanupEffect = () => {
-        console.log("cleaning up sensor");
-        runner.engine.removeEntity(this.sensor);
-      }
-      runner.cleanupEffects.push(this.cleanupEffect);
-      this.sensor = new Sensor(runner.callingEntity, radius || 50);
-      this.sensor.attachUpdateHandler(
-        () => {
-          const nearby = this.sensor.collidingWith.map(c => {
-            const relativePosition = [0, 0];
-            vec2.sub(
-              relativePosition,
-              c.body.position,
-              runner.callingEntity.body.position
-            );
-            return {
-              type: c.constructor.name,
-              relativePosition
-            };
-          });
-          this.near = interpreter.nativeToPseudo(nearby);
-          // sometimes the sensor fires this after the interpreter has finished
-          // in that case, ignore the problem
-          try {
-            interpreter.setProperty(this, "near", this.near);
-          }
-          catch (err) {
-            return;
-          }
-        }
-      );
-      this.near = interpreter.nativeToPseudo([]);
-      interpreter.setProperty(this, "near", this.near);
-      runner.engine.addEntity(this.sensor);
-      return this;
-    },
-    true
-  );
-  const nativeSensorGet = function() {
-    console.log("THIS.GET", this);
-    return interpreter.pseudoToNative(1000);
-  }
-  interpreter.setNativeFunctionPrototype(nativeSensor, "get", nativeSensorGet);
-
   /**
    * Native require function to get other functions
    */
+  const nativeRequireCache = {};
   const nativeRequire = interpreter.createNativeFunction(
     rawModuleName => {
       const moduleName = interpreter.pseudoToNative(rawModuleName);
+      if (nativeRequireCache[moduleName]) {
+        return nativeRequireCache[moduleName];
+      }
       let requirement = null;
       switch (moduleName) {
         case "fire":
-          return nativeFireball;
+          requirement = getNativeFire(interpreter, scope, runner);
+          break;
         case "sensor":
-          return nativeSensor;
+          requirement = getNativeSensor(interpreter, scope, runner);
+          break;
         default:
           throw new Error("Unknown module - have you tried getting gud?");
       }
+      nativeRequireCache[moduleName] = requirement;
+      return requirement;
     }
   );
   interpreter.setProperty(scope, "require", nativeRequire);
-
 }
 
 /**
