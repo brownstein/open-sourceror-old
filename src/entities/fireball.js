@@ -63,26 +63,7 @@ export class FireballExplosion extends EphemeralEntity {
     this.mesh.scale.x = this.r;
     this.mesh.scale.y = this.r;
 
-    this.fireballCount = 20;
-    this.fireballRes = 16;
-    this.littleFireballs = [];
-    // const geom = new Geometry();
-    // for (let fi = 0; fi < fireballCount; fi++) {
-    //   const z = fi * 0.1;
-    //   const fb = {
-    //     vStartIndex: fi * (fireballRes + 1),
-    //     radius: 1,
-    //     center: new Vector3(Math.random() - 0.5, Math.random() - 0.5, z),
-    //     velocity: new Vector3(Math.random() - 0.5, Math.random() - 0.5, 0),
-    //     vD: Math.random() * Math.PI,
-    //     vR: Math.random() + 1
-    //   };
-    //   littleFireballs.push(fb);
-    //   geom.push(new Vector3(0, 0, z));
-    //   for (let vi = 0; vi < fireballRes; vi++) {
-    //
-    //   }
-    // }
+    this.hitEntities = [];
   }
   onFrame(deltaTimeMs) {
     this.r += deltaTimeMs * 0.02;
@@ -91,6 +72,15 @@ export class FireballExplosion extends EphemeralEntity {
     this.mesh.scale.y = this.r;
     if (this.r > 10) {
       this.engine.removeEntity(this);
+    }
+  }
+  collisionHandler(engine, otherEntity) {
+    if (this.hitEntities.includes(otherEntity)) {
+      return;
+    }
+    if (otherEntity && otherEntity.onHit) {
+      this.hitEntities.push(otherEntity);
+      otherEntity.onHit(this);
     }
   }
 }

@@ -205,7 +205,7 @@ export class TilesetTerrainEntity extends TerrainEntity {
     }
   }
   endCollisionHandler(engine, otherEntity, eq) {
-    if (!this.isOneWayPlatform || !otherEntity || !otherEntity.body) {
+    if (!this.isOneWayPlatform || !otherEntity.body) {
       return;
     }
     this.oneWayPlatformTracking = this.oneWayPlatformTracking.filter(id => {

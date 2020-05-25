@@ -33,7 +33,8 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true
-    }
+    },
+    show: false
   });
 
   mainWindow.loadURL(url.format({
@@ -41,6 +42,10 @@ function createWindow () {
     protocol: "file:",
     slashes: true
   }));
+
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.show();
+  });
 
   if (cmdArgs.dev) {
     // install developer tools

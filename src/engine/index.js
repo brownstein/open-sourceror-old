@@ -75,6 +75,9 @@ export default class Engine extends EventEmitter {
       const { bodyA, bodyB, shapeA, shapeB, contactEquations } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
       const entityB = this.activeEntitiesByBodyId[bodyB.id];
+      if (!entityA || !entityB) {
+        return;
+      }
       if (entityA && entityA.collisionHandler) {
         const eq = contactEquations.find(c => c.bodyA === bodyA);
         entityA.collisionHandler(this, entityB, eq);
@@ -88,6 +91,9 @@ export default class Engine extends EventEmitter {
       const { bodyA, bodyB, shapeA, shapeB } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
       const entityB = this.activeEntitiesByBodyId[bodyB.id];
+      if (!entityA || !entityB) {
+        return;
+      }
       if (entityA && entityA.endCollisionHandler) {
         entityA.endCollisionHandler(this, entityB);
       }
@@ -101,6 +107,9 @@ export default class Engine extends EventEmitter {
         const eq = contactEquations[eqi];
         const entityA = this.activeEntitiesByBodyId[eq.bodyA.id];
         const entityB = this.activeEntitiesByBodyId[eq.bodyB.id];
+        if (!entityA || !entityB) {
+          return;
+        }
         if (entityA && entityA.handleContactEquation) {
           entityA.handleContactEquation(this, entityB, eq);
         }
@@ -113,12 +122,15 @@ export default class Engine extends EventEmitter {
   addEntity(entity) {
     entity.engine = this;
     this.activeEntities.push(entity);
-    this.activeEntitiesByBodyId[entity.body.id] = entity;
-    this.world.addBody(entity.body);
-    this.scene.add(entity.mesh);
+    if (entity.body) {
+      this.activeEntitiesByBodyId[entity.body.id] = entity;
+      this.world.addBody(entity.body);
+    }
+    if (entity.mesh) {
+      this.scene.add(entity.mesh);
+    }
   }
   addLevelEntity(entity) {
-    // TODO revise room geometry
     entity.engine = this;
     this.activeEntities.push(entity);
     this.activeEntitiesByBodyId[entity.body.id] = entity;
@@ -134,9 +146,13 @@ export default class Engine extends EventEmitter {
   }
   removeEntity(entity) {
     this.activeEntities = this.activeEntities.filter(e => e !== entity);
-    delete this.activeEntitiesByBodyId[entity.body.id];
-    this.world.removeBody(entity.body);
-    this.scene.remove(entity.mesh);
+    if (entity.body) {
+      delete this.activeEntitiesByBodyId[entity.body.id];
+      this.world.removeBody(entity.body);
+    }
+    if (entity.mesh) {
+      this.scene.remove(entity.mesh);
+    }
   }
   /**
    * Primary run method
