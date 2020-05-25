@@ -5,6 +5,28 @@
 
   .toolbar {
     flex-basis: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: #eee;
+    border-bottom: 1px solid #444;
+
+    & > * {
+      margin-left: 8px;
+    }
+
+    button {
+      font-size: 11px;
+      padding: 4px 8px;
+      background: #fff;
+      border: 1px solid #444;
+      display: block;
+      border-radius: 4px;
+
+      &:disabled {
+        background: #ccc;
+      }
+    }
   }
 
   .editor-container {

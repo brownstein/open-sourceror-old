@@ -71,8 +71,8 @@
   "scripts": {
     "start": "electron electron/main.js",
     "build": "webpack --config webpack.config.js",
-    "dev": "webpack -w --config webpack.config.js",
-    "test": "mocha test"
+    "watch": "webpack --config webpack.config.js --watch --mode development",
+    "package": "electron-packager . --platform win32 --ignore src"
   },
   "author": "",
   "license": "ISC",

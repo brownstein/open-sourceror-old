@@ -118,7 +118,8 @@ class CodeExecutor extends Component {
         <div className="toolbar">
           <button onClick={this._run} disabled={running}>run</button>
           <button onClick={this._stop} disabled={!running}>stop</button>
-          Speed: <select value={executionSpeed} onChange={this._setExecutionSpeed} disabled={running}>
+          <span>Speed:</span>
+          <select value={executionSpeed} onChange={this._setExecutionSpeed} disabled={running}>
             <option value={0.0025}>0.0025</option>
             <option value={0.02}>0.02</option>
             <option value={0.1}>0.1</option>

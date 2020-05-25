@@ -41,4 +41,4 @@ export default function patchInterpreter(Interpreter) {
     });
   };
   Interpreter.prototype['queueCall'] = Interpreter.prototype.queueCall;
-}
+};
