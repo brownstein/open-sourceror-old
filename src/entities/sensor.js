@@ -54,6 +54,9 @@ export class Sensor extends EphemeralEntity {
     if (otherEntity instanceof EphemeralEntity) {
       return;
     }
+    if (otherEntity.dead) {
+      return;
+    }
     this.collidingWith.push([otherId, otherEntity]);
     this.updateHandler && this.updateHandler();
     if (otherEntity.on) {

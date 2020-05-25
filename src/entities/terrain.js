@@ -109,6 +109,11 @@ export class TilesetTerrainEntity extends TerrainEntity {
         vec2.scale(cm, convex.centerOfMass, 1);
 
         convex.material = terrainMaterial;
+
+        // collide with everything
+        convex.collisionGroup = -1;
+        convex.collisionMask = -1;
+
         this.body.addShape(convex, cm);
       });
     }

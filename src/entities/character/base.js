@@ -21,6 +21,10 @@ export class Character extends BaseEntity {
     });
     convex.material = characterMaterial;
 
+    // assign collision group for the convex
+    convex.collisionGroup = 0b11;
+    convex.collisionMask = 0b01;
+
     // find center of mass for convex vertices
     const cm = vec2.create();
     for(let j = 0; j !== convex.vertices.length; j++){

@@ -69,6 +69,9 @@ export class EngineViewport extends Component {
 
     // start listening for rendering queues
     engine.on("frame", this._onFrame);
+
+    // queue second resize to be sure (windows)
+    requestAnimationFrame(this._onResize);
   }
   componentWillUnmount() {
     const engine = this.context;
