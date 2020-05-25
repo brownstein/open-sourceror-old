@@ -115,6 +115,7 @@ export class Player extends Character {
     }
     const distDelta = Math.abs(this.previousPosition[0] - this.body.position[0]);
     vec2.copy(this.previousPosition, this.body.position);
+    // TODO: revise this to be less horrible, centralize
     if (this.onSurface) {
       if (this.activeSpriteName === "midJump") {
         this._swapToSprite("walk");
