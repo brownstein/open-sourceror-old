@@ -111,7 +111,7 @@ export class TilesetTerrain extends Terrain {
           decals,
           textureLoader
         );
-        decalsEntity.mesh.z = 4 * (li - primaryLayerIndex);
+        decalsEntity.mesh.position.z = 4 * (li - primaryLayerIndex);
         this.terrainEntities.push(decalsEntity);
       }
     }

@@ -62,6 +62,9 @@ export default class Engine extends EventEmitter {
     this.followingEntity = null;
     this.controllingEntity = null;
 
+    // special entities that track with the camera
+    this.cameraTrackedEntities = [];
+
     // connection to the controller and the Redux world (for script execution)
     this.controller = null;
     this.dispatch = null;
@@ -136,6 +139,9 @@ export default class Engine extends EventEmitter {
     }
     this._trackInit(entity, () => this.levelBBox.expandByObject(entity.mesh));
   }
+  cameraTrackEntity(entity) {
+    this.cameraTrackedEntities.push(entity);
+  }
   _trackInit(entity, onLoaded) {
     if (!entity.readyPromise) {
       return;
@@ -182,6 +188,10 @@ export default class Engine extends EventEmitter {
     }
     if (entity.emit) {
       entity.emit("remove", { entity });
+    }
+    if (entity.cameraTracked) {
+      entity.cameraTracked = false;
+      this.cameraTrackedEntities = this.cameraTrackedEntities.filter(e => e !== entity);
     }
   }
   /**

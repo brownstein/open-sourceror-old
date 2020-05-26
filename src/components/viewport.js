@@ -147,6 +147,9 @@ export class EngineViewport extends Component {
       }
     }
 
+    // update entities that have to be moved with the camera
+    engine.cameraTrackedEntities.forEach(e => e.trackWithCamera(this.camera));
+
     // render the frame
     this.renderer.render(scene, this.camera);
   }

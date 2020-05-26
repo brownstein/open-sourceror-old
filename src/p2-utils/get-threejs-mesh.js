@@ -27,7 +27,7 @@ export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
   const mat = new MeshBasicMaterial({
     side: DoubleSide,
     transparent: true,
-    opacity: 0.25,
+    opacity: 0.75,
     color: new Color(
       0.3 + 0.7 * Math.random(),
       0.3 + 0.7 * Math.random(),
@@ -48,7 +48,7 @@ export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
         geom.faces.push(new Face3(0, i - 1, i));
       }
       const mesh = new Mesh(geom, mat);
-      mesh.position.z = -1;
+      mesh.position.z = -0.1;
       mesh.position.x = shape.centerOfMass[0];
       mesh.position.y = shape.centerOfMass[1];
       obj3.add(mesh);
@@ -63,7 +63,7 @@ export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
     else if (shape instanceof Circle) {
       const geom = new CircleGeometry(shape.radius, 32);
       const mesh = new Mesh(geom, mat);
-      mesh.position.z = -1;
+      mesh.position.z = -0.1;
       mesh.position.x = shape.position[0];
       mesh.position.y = shape.position[1];
       obj3.add(mesh);

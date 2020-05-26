@@ -1,4 +1,5 @@
 import { Provider } from "react-redux";
+import { Vector2 } from "three";
 
 // engine-level constructs
 import { EngineProvider } from "./engine";
@@ -20,6 +21,9 @@ import tilesetPng from "src/tilesets/magic-cliffs/PNG/tileset.png";
 
 // level background images
 import bgSky from "src/tilesets/magic-cliffs/PNG/sky.png";
+import bgClouds from "src/tilesets/magic-cliffs/PNG/clouds.png";
+import bgSea from "src/tilesets/magic-cliffs/PNG/sea.png";
+import bgFarGrounds from "src/tilesets/magic-cliffs/PNG/far-grounds.png";
 
 // global styles
 import "./game.less";
@@ -66,9 +70,47 @@ function addThings(engine) {
     engine.expandSceneToFitEntity(e);
   });
 
-  // add the background
-  const sky = new RepeatingBackgroundImage(bgSky);
+  // add the background images
+  const sky = new RepeatingBackgroundImage(bgSky, {
+    wrapX: true,
+    extendX: true,
+    extendY: true
+  });
   engine.addEntity(sky);
+  engine.cameraTrackEntity(sky);
+
+  const clouds = new RepeatingBackgroundImage(bgClouds, {
+    wrapX: true,
+    extendX: true,
+    moveParallax: true,
+    parallaxCenter: new Vector2(0, -60),
+    layer: 1
+  });
+  engine.addEntity(clouds);
+  engine.cameraTrackEntity(clouds);
+
+  const sea = new RepeatingBackgroundImage(bgSea, {
+    wrapX: true,
+    extendX: true,
+    extendY: true,
+    moveParallax: true,
+    parallaxCenter: new Vector2(0, 64),
+    layer: 2,
+    parallaxCoefficient: 0.2
+  });
+  engine.addEntity(sea);
+  engine.cameraTrackEntity(sea);
+
+  const farGrounds = new RepeatingBackgroundImage(bgFarGrounds, {
+    moveParallax: true,
+    parallaxCenter: new Vector2(0, 100),
+    layer: 3,
+    extendY: true,
+    pixelScale: 2,
+    parallaxCoefficient: 0.4
+  });
+  engine.addEntity(farGrounds);
+  engine.cameraTrackEntity(farGrounds);
 }
 
 // default component for the game
