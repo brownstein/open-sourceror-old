@@ -7,9 +7,11 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
+  PlaneGeometry,
   Vector3,
 } from "three";
 import {
+  Box,
   Circle,
   Convex
 } from "p2";
@@ -66,6 +68,21 @@ export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
       mesh.position.z = -0.1;
       mesh.position.x = shape.position[0];
       mesh.position.y = shape.position[1];
+      obj3.add(mesh);
+      if (addWireframe) {
+        const wireframeMesh = new Mesh(geom, simpleEdgeMaterial);
+        wireframeMesh.position.z = 1;
+        wireframeMesh.position.x = shape.position[0];
+        wireframeMesh.position.y = shape.position[1];
+        obj3.add(wireframeMesh);
+      }
+    }
+    else if (shape instanceof Box) {
+      const geom = new PlaneGeometry(shape.width, shape.height);
+      const mesh = new Mesh(geom, mat);
+      mesh.position.x = shape.position[0];
+      mesh.position.y = shape.position[1];
+      mesh.position.z = -1;
       obj3.add(mesh);
       if (addWireframe) {
         const wireframeMesh = new Mesh(geom, simpleEdgeMaterial);

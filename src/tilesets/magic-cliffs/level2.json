@@ -122,6 +122,17 @@
                  "width":0,
                  "x":1501.39834014986,
                  "y":517.647820654296
+                }, 
+                {
+                 "height":88.4173297966402,
+                 "id":8,
+                 "name":"",
+                 "rotation":0,
+                 "type":"water",
+                 "visible":true,
+                 "width":366.931918656057,
+                 "x":398.983200707339,
+                 "y":529.398762157383
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -130,7 +141,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":8,
+ "nextobjectid":9,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.3",

@@ -102,7 +102,6 @@ async function init () {
       await delay(1000);
     }
   }
-  console.log("DONE");
 }
 
 init();

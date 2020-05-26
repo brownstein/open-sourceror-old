@@ -12,6 +12,7 @@ import { Player } from "src/entities/character/player";
 import { Enemy } from "src/entities/character/enemy";
 import { TilesetTerrain, terrainMaterial } from "src/entities/terrain";
 import { RepeatingBackgroundImage } from "src/entities/background";
+import { SmallBodyOfWater } from "src/entities/environment/water";
 import getContactMaterials from "src/entities/contact-materials";
 
 // level-specific constructs
@@ -61,6 +62,18 @@ function addThings(engine) {
               position: [o.x, o.y]
             });
             engine.addEntity(enemy);
+            break;
+          }
+          case "water": {
+            const water = new SmallBodyOfWater({
+              position: {
+                x: o.x + o.width / 2,
+                y: o.y + o.height / 2
+              },
+              width: o.width,
+              height: o.height
+            });
+            engine.addEntity(water);
             break;
           }
           default:

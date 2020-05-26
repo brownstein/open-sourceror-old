@@ -97,7 +97,7 @@ export class MultiLayerAnimatedSprite {
        this.framesByLayer[layerName] = layerFrames;
 
        // seed geometry
-       const z = layerIndex * 0.1;
+       const z = layerIndex * 0.01;
        const vi = layerIndex * 4;
        const n = null;
        this.geometry.vertices.push(new Vector3(-1, -1, z));

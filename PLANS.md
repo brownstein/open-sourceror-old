@@ -12,7 +12,7 @@ create rendering UI
   - [DONE] need to make control come from engine, not component
   - need a way to open and execute multiple scripts
   - need a way to save scripts
-- create health / mana display
+- [DONE] create health / mana display
 - create context menu
 - make the script console appear / disappear
 
@@ -23,4 +23,5 @@ create room system
 create map system
 
 create some NPCs
-- create dialogue engine
+- [PARTIALLY DONE] create dialogue engine
+- create NPCs
