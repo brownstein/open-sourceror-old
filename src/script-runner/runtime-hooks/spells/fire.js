@@ -18,6 +18,11 @@ export default function getNativeFireSpell (interpreter, scope, runner) {
         );
       }
       runner.callingEntity.castFireball(relativePosition, relativeVelocity);
+
+      // apply mana cost to player
+      runner.callingEntity.incrementMana &&
+      runner.callingEntity.incrementMana(-1);
+
       return interpreter.nativeToPseudo(undefined);
     }
   );

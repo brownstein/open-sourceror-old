@@ -32,19 +32,19 @@ function StatusOverlay({
 
 // redux state connector
 function mapStateToProps(state) {
+  const { status } = state;
+  const {
+    health,
+    maxHealth,
+    mana,
+    maxMana
+  } = status;
   return {
-    health: 80,
-    maxHealth: 100,
-    mana: 40,
-    maxMana: 100
+    health,
+    maxHealth,
+    mana,
+    maxMana
   };
 }
 
-// redux dispatch connector
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(StatusOverlay);
+export default connect(mapStateToProps)(StatusOverlay);

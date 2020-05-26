@@ -34,8 +34,8 @@ export class EngineViewport extends Component {
     this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
-    this._onMouseover = this._onMouseover.bind(this);
-    this._onMouseout = this._onMouseout.bind(this);
+    this._onMouseenter = this._onMouseenter.bind(this);
+    this._onMouseleave = this._onMouseleave.bind(this);
   }
   componentDidMount() {
     const engine = this.context;
@@ -61,8 +61,8 @@ export class EngineViewport extends Component {
 
     // attach event listeners
     window.addEventListener("resize", this._onResize);
-    this.viewportEl.addEventListener("mouseenter", this._onMouseover);;
-    this.viewportEl.addEventListener("mouseout", this._onMouseout);
+    this.viewportEl.addEventListener("mouseenter", this._onMouseenter);;
+    this.viewportEl.addEventListener("mouseleave", this._onMouseleave);
 
     // size canvas to the current size of it's container
     this._onResize();
@@ -78,8 +78,8 @@ export class EngineViewport extends Component {
     const engine = this.context;
     this.ks.unmount(document);
     window.removeEventListener("resize", this._onResize);
-    this.viewportEl.removeEventListener("mouseenter", this._onMouseover);
-    this.viewportEl.removeEventListener("mouseout", this._onMouseout);
+    this.viewportEl.removeEventListener("mouseenter", this._onMouseenter);
+    this.viewportEl.removeEventListener("mouseleave", this._onMouseleave);
     engine.off("frame", this._onFrame);
   }
   render() {
@@ -172,12 +172,12 @@ export class EngineViewport extends Component {
 
     this._queueRender();
   }
-  _onMouseover() {
+  _onMouseenter() {
     const engine = this.context;
     this.hasCursor = true;
     engine.handleViewportFocus(true);
   }
-  _onMouseout() {
+  _onMouseleave() {
     const engine = this.context;
     this.hasCursor = false;
     engine.handleViewportFocus(false);

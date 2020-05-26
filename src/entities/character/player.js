@@ -22,6 +22,7 @@ import {
   midJumpSheet,
   midJumpImage
 } from "./sprites/wizard";
+import { incrementPlayerMana } from "src/redux/actions/status";
 
 import { Fireball } from "../fireball";
 
@@ -208,5 +209,8 @@ export class Player extends Character {
     });
     this.body.addShape(detector);
     this.detectors.push(detector);
+  }
+  incrementMana(diff) {
+    this.engine.dispatch(incrementPlayerMana(diff));
   }
 }
