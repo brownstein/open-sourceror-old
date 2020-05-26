@@ -11,6 +11,7 @@ import {
 
 import KeyState from "engine/key-state";
 import { EngineContext } from "./engine";
+import StatusOverlay from "./status-overlay";
 
 import "./viewport.less";
 
@@ -60,8 +61,8 @@ export class EngineViewport extends Component {
 
     // attach event listeners
     window.addEventListener("resize", this._onResize);
-    this.canvasEl.addEventListener("mouseenter", this._onMouseover);;
-    this.canvasEl.addEventListener("mouseout", this._onMouseout);
+    this.viewportEl.addEventListener("mouseenter", this._onMouseover);;
+    this.viewportEl.addEventListener("mouseout", this._onMouseout);
 
     // size canvas to the current size of it's container
     this._onResize();
@@ -77,13 +78,14 @@ export class EngineViewport extends Component {
     const engine = this.context;
     this.ks.unmount(document);
     window.removeEventListener("resize", this._onResize);
-    this.canvasEl.removeEventListener("mouseenter", this._onMouseover);
-    this.canvasEl.removeEventListener("mouseout", this._onMouseout);
+    this.viewportEl.removeEventListener("mouseenter", this._onMouseover);
+    this.viewportEl.removeEventListener("mouseout", this._onMouseout);
     engine.off("frame", this._onFrame);
   }
   render() {
     return <div ref={r => this.viewportEl = r} className="viewport">
       <canvas ref={r => this.canvasEl = r}/>
+      <StatusOverlay/>
       <div style={{
         display: "block",
         position: "absolute",

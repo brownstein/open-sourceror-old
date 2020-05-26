@@ -34,6 +34,7 @@ const CHARACTER_COLOR_SCHEME = {
   pants: "#224488",
   "hair - close": "#ff0000",
   Cast: "#00f", // TODO: lowercase
+  case: "#00f",
   code: "#0ff"
 };
 const CHARACTER_LAYERS = {

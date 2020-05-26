@@ -15,6 +15,7 @@ import {
   Box
 } from "p2";
 
+import RoomConstraint from "src/entities/room-constraint";
 import KeyState from "./key-state";
 import { ScriptExecutionContext } from "../script-runner/execution-context";
 
@@ -68,7 +69,7 @@ export default class Engine extends EventEmitter {
     this.cameraTrackedEntities = [];
 
     // special P2 constraint entities to enclose the current room
-    this.roomConstraintBodies = [];
+    this.roomConstraints = [];
 
     // connection to the controller and the Redux world (for script execution)
     this.controller = null;
@@ -149,8 +150,8 @@ export default class Engine extends EventEmitter {
    * inconvieniently escaping
    */
   constrainRoom() {
-    this.roomConstraintBodies.forEach(b => this.world.removeBody(b));
-    this.roomConstraintBodies = [];
+    this.roomConstraints.forEach(c => this.removeEntity(c));
+    this.roomConstraints = [];
     const bboxSize = new Vector3();
     const bboxCenter = new Vector3();
     this.levelBBox.getSize(bboxSize);
@@ -162,15 +163,12 @@ export default class Engine extends EventEmitter {
       [0, bboxSize.y / 2 + 20, bboxSize.x, 40]
     ]
     .forEach(([x, y, width, height]) => {
-      const box = new Box({ width, height });
-      const body = new Body({
+      const constraint = new RoomConstraint({
         position: [bboxCenter.x + x, bboxCenter.y + y],
-        isStatic: true,
-        mass: 0
+        size: [width, height]
       });
-      body.addShape(box);
-      this.roomConstraintBodies.push(body);
-      this.world.addBody(body);
+      this.roomConstraints.push(constraint);
+      this.addEntity(constraint);
     });
   }
   cameraTrackEntity(entity) {
