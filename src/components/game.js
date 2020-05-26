@@ -111,6 +111,10 @@ function addThings(engine) {
   });
   engine.addEntity(farGrounds);
   engine.cameraTrackEntity(farGrounds);
+
+  // when everything is loaded, constrain the room to ensure that things (such
+  // as the player ) can't leave
+  engine.on("everythingReady", () => engine.constrainRoom());
 }
 
 // default component for the game

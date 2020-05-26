@@ -10,7 +10,9 @@ import {
 } from "three";
 import {
   ContactMaterial,
-  World
+  World,
+  Body,
+  Box
 } from "p2";
 
 import KeyState from "./key-state";
@@ -21,7 +23,7 @@ export default class Engine extends EventEmitter {
     super();
 
     // keyboard events
-    this.ks = new KeyState();
+    // this.ks = new KeyState();
 
     // rendering
     this.scene = new Scene();
@@ -64,6 +66,9 @@ export default class Engine extends EventEmitter {
 
     // special entities that track with the camera
     this.cameraTrackedEntities = [];
+
+    // special P2 constraint entities to enclose the current room
+    this.roomConstraintBodies = [];
 
     // connection to the controller and the Redux world (for script execution)
     this.controller = null;
@@ -138,6 +143,35 @@ export default class Engine extends EventEmitter {
       this.levelBBox.expandByObject(entity.mesh);
     }
     this._trackInit(entity, () => this.levelBBox.expandByObject(entity.mesh));
+  }
+  /**
+   * Constraints the current room in invisible walls to prevent anything from
+   * inconvieniently escaping
+   */
+  constrainRoom() {
+    this.roomConstraintBodies.forEach(b => this.world.removeBody(b));
+    this.roomConstraintBodies = [];
+    const bboxSize = new Vector3();
+    const bboxCenter = new Vector3();
+    this.levelBBox.getSize(bboxSize);
+    this.levelBBox.getCenter(bboxCenter);
+    [
+      [-bboxSize.x / 2 - 20, 0, 40, bboxSize.y],
+      [bboxSize.x / 2 + 20, 0, 40, bboxSize.y],
+      [0, -bboxSize.y / 2 - 20, bboxSize.x, 40],
+      [0, bboxSize.y / 2 + 20, bboxSize.x, 40]
+    ]
+    .forEach(([x, y, width, height]) => {
+      const box = new Box({ width, height });
+      const body = new Body({
+        position: [bboxCenter.x + x, bboxCenter.y + y],
+        isStatic: true,
+        mass: 0
+      });
+      body.addShape(box);
+      this.roomConstraintBodies.push(body);
+      this.world.addBody(body);
+    });
   }
   cameraTrackEntity(entity) {
     this.cameraTrackedEntities.push(entity);
