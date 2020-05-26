@@ -27,7 +27,7 @@ export default function getThreeJsObjectForP2Body (body, addWireframe = true) {
   const mat = new MeshBasicMaterial({
     side: DoubleSide,
     transparent: true,
-    opacity: 0.75,
+    opacity: 0.25,
     color: new Color(
       0.3 + 0.7 * Math.random(),
       0.3 + 0.7 * Math.random(),

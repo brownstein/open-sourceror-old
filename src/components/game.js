@@ -106,7 +106,7 @@ function addThings(engine) {
     parallaxCenter: new Vector2(0, 100),
     layer: 3,
     extendY: true,
-    pixelScale: 2,
+    pixelScale: 3,
     parallaxCoefficient: 0.4
   });
   engine.addEntity(farGrounds);

@@ -163,6 +163,11 @@ export class EngineViewport extends Component {
     this.camera.bottom = height / 2;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+
+    // update entities that have to be resized with the camera
+    const engine = this.context;
+    engine.cameraTrackedEntities.forEach(e => e.updateForCameraBBox(this.camera));
+
     this._queueRender();
   }
   _onMouseover() {

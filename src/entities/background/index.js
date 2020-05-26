@@ -30,6 +30,7 @@ export class RepeatingBackgroundImage {
     this.parallaxCoefficient = params.parallaxCoefficient || 0.1;
     this.layer = params.layer || 0;
 
+    this.cameraSize = new Vector2();
     this.roomSize = new Vector3();
     this.roomCenter = new Vector3();
 
@@ -61,7 +62,7 @@ export class RepeatingBackgroundImage {
       transparent: true
     });
 
-    this.magFilter = NearestFilter;
+    this.texture.magFilter = NearestFilter;
     this.texture.wrapS = this.wrapX ? RepeatWrapping : ClampToEdgeWrapping;
     this.texture.wrapT = this.wrapY ? RepeatWrapping : ClampToEdgeWrapping;
 
@@ -82,8 +83,6 @@ export class RepeatingBackgroundImage {
     });
   }
   updateForScreenBBox() {
-    // TODO: make this match the camera instead of the room
-
     const engine = this.engine;
     const levelBBox = engine.levelBBox;
 
@@ -99,6 +98,52 @@ export class RepeatingBackgroundImage {
     }
     if (this.extendY) {
       wrappedSize.y = this.roomSize.y * wrapNumber * this.pixelScale;
+    }
+    const uvSize = new Vector2(
+      wrappedSize.x / scaledSize.x,
+      wrappedSize.y / scaledSize.y
+    );
+
+    // update vertex locations
+    this.geometry.vertices[0].x = -wrappedSize.x * 0.5;
+    this.geometry.vertices[0].y = -wrappedSize.y * 0.5;
+    this.geometry.vertices[1].x = -wrappedSize.x * 0.5;
+    this.geometry.vertices[1].y = wrappedSize.y * 0.5;
+    this.geometry.vertices[2].x = wrappedSize.x * 0.5;
+    this.geometry.vertices[2].y = wrappedSize.y * 0.5;
+    this.geometry.vertices[3].x = wrappedSize.x * 0.5;
+    this.geometry.vertices[3].y = -wrappedSize.y * 0.5;
+
+    // update UV locatiobs
+    this.geometry.faceVertexUvs[0][0][0].x = 0.5 - uvSize.x * 0.5;
+    this.geometry.faceVertexUvs[0][0][0].y = 0.5 + uvSize.y * 0.5;
+    this.geometry.faceVertexUvs[0][0][1].x = 0.5 - uvSize.x * 0.5;
+    this.geometry.faceVertexUvs[0][0][1].y = 0.5 - uvSize.y * 0.5;
+    this.geometry.faceVertexUvs[0][0][2].x = 0.5 + uvSize.x * 0.5;
+    this.geometry.faceVertexUvs[0][0][2].y = 0.5 - uvSize.y * 0.5;
+    this.geometry.faceVertexUvs[0][1][0].x = 0.5 - uvSize.x * 0.5;
+    this.geometry.faceVertexUvs[0][1][0].y = 0.5 + uvSize.y * 0.5;
+    this.geometry.faceVertexUvs[0][1][1].x = 0.5 + uvSize.x * 0.5;
+    this.geometry.faceVertexUvs[0][1][1].y = 0.5 - uvSize.y * 0.5;
+    this.geometry.faceVertexUvs[0][1][2].x = 0.5 + uvSize.x * 0.5;
+    this.geometry.faceVertexUvs[0][1][2].y = 0.5 + uvSize.y * 0.5;
+  }
+  updateForCameraBBox(camera) {
+    const engine = this.engine;
+    const levelBBox = engine.levelBBox;
+
+    this.cameraSize.x = camera.right - camera.left;
+    this.cameraSize.y = camera.bottom - camera.top;
+
+    const scaledSize = this.imageSize.clone();
+    scaledSize.multiplyScalar(this.pixelScale);
+    const wrappedSize = scaledSize.clone();
+    const wrapNumber = 4;
+    if (this.extendX) {
+      wrappedSize.x = this.cameraSize.x * wrapNumber * this.pixelScale;
+    }
+    if (this.extendY) {
+      wrappedSize.y = this.cameraSize.y * wrapNumber * this.pixelScale;
     }
     const uvSize = new Vector2(
       wrappedSize.x / scaledSize.x,
