@@ -43,7 +43,7 @@ export class SmallBodyOfWater {
 
     this.entitiesInWater = [];
   }
-  // TODO: ripples here
+  // TODO: ripples here or splash or something
   collisionHandler(engine, otherBodyId, otherEntity) {
     this.entitiesInWater.push(otherEntity);
   }
@@ -51,13 +51,14 @@ export class SmallBodyOfWater {
     this.entitiesInWater = this.entitiesInWater.filter(e => e !== otherEntity);
   }
   onFrame() {
+    // exert drag on all entities in the water
     this.entitiesInWater.forEach(otherEntity => {
-      vec2.scale(otherEntity.body.velocity, otherEntity.body.velocity, 0.95);
+      vec2.scale(otherEntity.body.velocity, otherEntity.body.velocity, 0.92);
     });
   }
 }
 
-// TODO
+// TODO: this
 export class SplashParticle {
   constructor(position) {
     this.engine = null;
