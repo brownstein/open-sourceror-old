@@ -4,35 +4,34 @@
   left: 10px;
   z-index: 10;
 
-  .health-bar {
+  .health-bar, .mana-bar {
     position: relative;
     display: block;
-    border: #f00 1px solid;
-    background: #400;
+    margin-top: 4px;
     height: 8px;
     width: 200px;
+
     .bar {
       position: absolute;
       left: 0;
       top: 0;
       height: 100%;
+    }
+  }
+
+  .health-bar {
+    border: #400 1px solid;
+    background: rgba(0.5, 0, 0, 0.5);
+    .bar {
       background: #f00;
     }
   }
 
   .mana-bar {
-    position: relative;
-    display: block;
-    border: #0ff 1px solid;
-    background: #044;
+    border: #044 1px solid;
+    background: rgba(0, 0.5, 0.5, 0.5);
     margin-top: 4px;
-    height: 8px;
-    width: 200px;
     .bar {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
       background: #0ff;
     }
   }

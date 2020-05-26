@@ -86,6 +86,8 @@ class CodeExecutor extends Component {
     this._resume = this._resume.bind(this);
     this._stop = this._stop.bind(this);
     this._onResize = this._onResize.bind(this);
+
+    this._resetPlayerMana = this._resetPlayerMana.bind(this);
   }
   componentDidMount() {
     window.addEventListener("resize", this._onResize);
@@ -128,6 +130,7 @@ class CodeExecutor extends Component {
           <button onClick={this._pause} disabled={!running || paused}>pause</button>
           <button onClick={this._step} disabled={!running || !paused}>step</button>
           <button onClick={this._resume} disabled={!running || !paused}>resume</button>
+          <button className="hax" onClick={this._resetPlayerMana}>reset mana</button>
         </div>
         <div className="editor-container" ref={r => this.editorContainerEl = r}>
           { errors }
@@ -266,6 +269,13 @@ class CodeExecutor extends Component {
     const { activeScriptName } = this.props;
     const engine = this.context;
     engine.scriptExecutionContext.stopScript(activeScriptName);
+  }
+
+  // hax
+  _resetPlayerMana() {
+    const engine = this.context;
+    const player = engine.controllingEntity;
+    player.incrementMana(999);
   }
 }
 
