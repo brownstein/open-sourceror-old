@@ -11,6 +11,10 @@ export default function getNativeSensor(interpreter, scope, runner) {
       console.log("mounting sensor");
 
       // apply mana cost to player
+      const availableMana = runner.callingEntity.getMana();
+      if (availableMana < 1) {
+        throw new Error("OUT OF MANA");
+      }
       runner.callingEntity.incrementMana &&
       runner.callingEntity.incrementMana(-1);
 

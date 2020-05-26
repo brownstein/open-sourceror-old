@@ -13,8 +13,18 @@ import {
   setFocusedScript,
   updateScriptStates,
 } from "src/redux/actions/scripts";
+import {
+  setPlayerMana
+} from "src/redux/actions/status";
 
 import ScriptRunner from "./index";
+
+// constants for RunningScript to return
+const SCRIPT_NOT_RUNNING = false;
+const SCRIPT_WAITING_TO_EXECUTE = false;
+const SCRIPT_RUNNING = "SCRIPT_RUNNING";
+const SCRIPT_FINISHED = "SCRIPT_FINISHED";
+const SCRIPT_ERRORED_OUT = "SCRIPT_ERRORED_OUT";
 
 export class RunningScript {
   constructor({
@@ -57,23 +67,23 @@ export class RunningScript {
    */
   _continueRunning(timeDelta, singleLine) {
     if (!this.running) {
-      return false;
+      return SCRIPT_NOT_RUNNING;
     }
     if (this.paused && !singleLine) {
       if (this.scriptRunner.hasCompletedExecution()) {
         this.running = false;
         this.finished = true;
         this.scriptRunner.cleanup();
-        return true;
+        return SCRIPT_FINISHED;
       }
-      return false;
+      return SCRIPT_WAITING_TO_EXECUTE;
     }
     this.executionTimeDelta += timeDelta * this.executionSpeed;
     if (singleLine) {
       this.executionTimeDelta = 1;
     }
     const engine = this.engine;
-    let anythingHappened = false;
+    let anythingHappened = SCRIPT_WAITING_TO_EXECUTE;
     try {
       while (this.executionTimeDelta >= 1) {
         this.executionTimeDelta += -1;
@@ -84,7 +94,7 @@ export class RunningScript {
           this.scriptRunner.hasNextStep() &&
           exCap++ < 1000
         ) {
-          anythingHappened = true;
+          anythingHappened = SCRIPT_RUNNING;
           this.scriptRunner.doCurrentLine();
           const exSection = this.scriptRunner.getExecutingSection();
           [start] = exSection;
@@ -105,14 +115,14 @@ export class RunningScript {
       this.runtimeError = ex;
       this.running = false;
       this.scriptRunner.cleanup();
-      return true;
+      return SCRIPT_ERRORED_OUT;
     }
 
     if (this.scriptRunner.hasCompletedExecution()) {
       this.running = false;
       this.finished = true;
       this.scriptRunner.cleanup();
-      return true;
+      return SCRIPT_FINISHED;
     }
 
     return anythingHappened;
@@ -140,6 +150,13 @@ export class ScriptExecutionContext {
     this.runningScripts.forEach(s => {
       const didAnything = s._continueRunning(timeDelta);
       if (didAnything) {
+
+        // restock mana on successful script run for now
+        if (didAnything === SCRIPT_FINISHED) {
+          this.engine.dispatch &&
+          this.engine.dispatch(setPlayerMana(1000));
+        }
+
         anythingHappened = true;
       }
     });

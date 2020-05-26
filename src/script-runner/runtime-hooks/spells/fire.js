@@ -5,6 +5,12 @@ export default function getNativeFireSpell (interpreter, scope, runner) {
   // add support for casting fireball
   const nativeFireball = interpreter.createNativeFunction(
     (rawRelativePosition, rawRelativeVelocity) => {
+
+      const availableMana = runner.callingEntity.getMana();
+      if (availableMana < 1) {
+        throw new Error("OUT OF MANA");
+      }
+
       let relativePosition = null;
       let relativeVelocity = null;
       if (rawRelativePosition) {

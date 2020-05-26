@@ -28,7 +28,10 @@ export default function reduceStatus(state = INITIAL_STATE, action) {
       case SET_PLAYER_HEALTH:
         return {
           ...state,
-          health: action.health
+          health: Math.max(0, Math.min(
+            state.maxHealth,
+            action.health
+          ))
         };
       case SET_PLAYER_MAX_HEALTH:
         return {
@@ -38,7 +41,10 @@ export default function reduceStatus(state = INITIAL_STATE, action) {
       case SET_PLAYER_MANA:
         return {
           ...state,
-          mana: action.mana
+          mana: Math.max(0, Math.min(
+            state.maxMana,
+            action.mana
+          ))
         };
       case SET_PLAYER_MAX_MANA:
         return {

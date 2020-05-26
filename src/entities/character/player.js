@@ -211,6 +211,7 @@ export class Player extends Character {
     this.detectors.push(detector);
   }
   incrementMana(diff) {
+    super.incrementMana(diff);
     this.engine.dispatch(incrementPlayerMana(diff));
   }
 }

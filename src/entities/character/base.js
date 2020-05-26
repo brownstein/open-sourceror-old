@@ -44,6 +44,11 @@ export class Character extends BaseEntity {
     this.jumpAccelleration = 400; // velocity delta of jump
     this.maxControlledVelocity = [200, 400]; // max controlled speed
     this.plannedAccelleration = [0, 0]; // accelleration to apply on next frame
+
+    this.health = 100;
+    this.maxHealth = 100;
+    this.mana = 100;
+    this.maxMana = 100;
   }
   syncMeshWithBody() {
     this.mesh.position.x = this.body.interpolatedPosition[0];
@@ -119,5 +124,11 @@ export class Character extends BaseEntity {
       surfaceNormal = [-eq.normalA[0], -eq.normalA[1]];
     }
     this.onSurface = surfaceNormal[1] > 0.3;
+  }
+  getMana() {
+    return this.mana;
+  }
+  incrementMana(diff) {
+    this.mana = Math.max(0, Math.min(this.maxMana, this.mana + diff));
   }
 }
