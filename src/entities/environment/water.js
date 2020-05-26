@@ -1,6 +1,7 @@
 import {
   Body,
-  Box
+  Box,
+  vec2
 } from "p2";
 import {
   Color,
@@ -32,21 +33,32 @@ export class SmallBodyOfWater {
       height: this.height
     }));
 
+    // TODO: implement some nice ripples
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
     this.mesh.position.x = this.body.position[0];
     this.mesh.position.y = this.body.position[1];
     this.mesh.position.z = 1.2;
     this.mesh.children[0].material.color = new Color(0, 0.5, 1);
     this.mesh.children[0].material.opacity = 0.6;
+
+    this.entitiesInWater = [];
   }
+  // TODO: ripples here
   collisionHandler(engine, otherBodyId, otherEntity) {
+    this.entitiesInWater.push(otherEntity);
   }
   endCollisionHandler(engine, otherBodyId, otherEntity) {
+    this.entitiesInWater = this.entitiesInWater.filter(e => e !== otherEntity);
+  }
+  onFrame() {
+    this.entitiesInWater.forEach(otherEntity => {
+      vec2.scale(otherEntity.body.velocity, otherEntity.body.velocity, 0.95);
+    });
   }
 }
 
 // TODO
-export class Splach {
+export class SplashParticle {
   constructor(position) {
     this.engine = null;
 

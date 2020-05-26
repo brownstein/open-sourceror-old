@@ -965,14 +965,46 @@
  <tile id="736" type="decal"/>
  <tile id="737" type="decal"/>
  <tile id="738" type="decal"/>
- <tile id="740" type="decal"/>
- <tile id="741" type="decal"/>
- <tile id="742" type="decal"/>
- <tile id="744" type="decal"/>
- <tile id="745" type="decal"/>
- <tile id="747" type="decal"/>
- <tile id="748" type="decal"/>
- <tile id="749" type="decal"/>
+ <tile id="740" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="741" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="742" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="744" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="745" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="747" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="748" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="749" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
  <tile id="770" type="decal">
   <properties>
    <property name="depthBias" type="int" value="1"/>
@@ -1001,34 +1033,50 @@
  <tile id="800" type="ground"/>
  <tile id="801" type="ground"/>
  <tile id="802" type="decal"/>
+ <tile id="804">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
  <tile id="805" type="oneWayPlatform">
   <properties>
+   <property name="depthBias" type="int" value="-1"/>
    <property name="oneWay" value="top"/>
   </properties>
  </tile>
  <tile id="806" type="oneWayPlatform">
   <properties>
+   <property name="depthBias" type="int" value="-1"/>
    <property name="oneWay" value="top"/>
   </properties>
  </tile>
  <tile id="808" type="oneWayPlatform">
   <properties>
+   <property name="depthBias" type="int" value="-1"/>
    <property name="oneWay" value="top"/>
   </properties>
  </tile>
  <tile id="809" type="oneWayPlatform">
   <properties>
+   <property name="depthBias" type="int" value="-1"/>
    <property name="oneWay" value="top"/>
   </properties>
  </tile>
  <tile id="811" type="oneWayPlatform">
   <properties>
+   <property name="depthBias" type="int" value="-1"/>
    <property name="oneWay" value="top"/>
   </properties>
  </tile>
  <tile id="812" type="oneWayPlatform">
   <properties>
+   <property name="depthBias" type="int" value="-1"/>
    <property name="oneWay" value="top"/>
+  </properties>
+ </tile>
+ <tile id="813">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
   </properties>
  </tile>
  <tile id="815" type="ground"/>
@@ -1069,14 +1117,46 @@
  <tile id="864" type="ground"/>
  <tile id="865" type="ground"/>
  <tile id="866" type="decal"/>
- <tile id="868" type="decal"/>
- <tile id="869" type="decal"/>
- <tile id="870" type="decal"/>
- <tile id="872" type="decal"/>
- <tile id="873" type="decal"/>
- <tile id="875" type="decal"/>
- <tile id="876" type="decal"/>
- <tile id="877" type="decal"/>
+ <tile id="868" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="869" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="870" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="872" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="873" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="875" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="876" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
+ <tile id="877" type="decal">
+  <properties>
+   <property name="depthBias" type="int" value="-1"/>
+  </properties>
+ </tile>
  <tile id="879" type="ground"/>
  <tile id="880" type="ground"/>
  <tile id="881" type="ground">

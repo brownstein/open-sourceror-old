@@ -38,7 +38,7 @@ export class Character extends BaseEntity {
     this.mesh = getThreeJsObjectForP2Body(this.body);
 
     this.facingRight = true;
-    this.onSurface = false;
+    this.onSurface = true;
 
     this.accelleration = [50, 50]; // rate of character speed increase
     this.jumpAccelleration = 400; // velocity delta of jump
@@ -123,7 +123,7 @@ export class Character extends BaseEntity {
     else {
       surfaceNormal = [-eq.normalA[0], -eq.normalA[1]];
     }
-    this.onSurface = surfaceNormal[1] > 0.3;
+    this.onSurface = this.onSurface || surfaceNormal[1] > 0.3;
   }
   getMana() {
     return this.mana;

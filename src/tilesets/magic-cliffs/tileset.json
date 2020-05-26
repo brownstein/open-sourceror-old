@@ -3637,34 +3637,82 @@
         }, 
         {
          "id":740,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":741,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":742,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":744,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":745,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":747,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":748,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":749,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
@@ -3770,8 +3818,22 @@
          "type":"decal"
         }, 
         {
+         "id":804,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }]
+        }, 
+        {
          "id":805,
          "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }, 
                 {
                  "name":"oneWay",
                  "type":"string",
@@ -3783,6 +3845,11 @@
          "id":806,
          "properties":[
                 {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }, 
+                {
                  "name":"oneWay",
                  "type":"string",
                  "value":"top"
@@ -3792,6 +3859,11 @@
         {
          "id":808,
          "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }, 
                 {
                  "name":"oneWay",
                  "type":"string",
@@ -3803,6 +3875,11 @@
          "id":809,
          "properties":[
                 {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }, 
+                {
                  "name":"oneWay",
                  "type":"string",
                  "value":"top"
@@ -3812,6 +3889,11 @@
         {
          "id":811,
          "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }, 
                 {
                  "name":"oneWay",
                  "type":"string",
@@ -3823,11 +3905,25 @@
          "id":812,
          "properties":[
                 {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }, 
+                {
                  "name":"oneWay",
                  "type":"string",
                  "value":"top"
                 }],
          "type":"oneWayPlatform"
+        }, 
+        {
+         "id":813,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }]
         }, 
         {
          "id":815,
@@ -4013,34 +4109,82 @@
         }, 
         {
          "id":868,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":869,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":870,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":872,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":873,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":875,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":876,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
          "id":877,
+         "properties":[
+                {
+                 "name":"depthBias",
+                 "type":"int",
+                 "value":-1
+                }],
          "type":"decal"
         }, 
         {
