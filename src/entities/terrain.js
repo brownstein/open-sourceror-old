@@ -172,8 +172,10 @@ export class TilesetTerrainEntity extends TerrainEntity {
   }
   async _init(tiles, textureLoader) {
     if (tiles && tiles.length) {
+
       const texture = await textureLoader.loadAsync(tiles[0].tile.srcImage);
       texture.magFilter = NearestFilter;
+
       const tileMat = new MeshBasicMaterial({
         side: DoubleSide,
         map: texture,
@@ -184,51 +186,64 @@ export class TilesetTerrainEntity extends TerrainEntity {
         // internal
         alphaTest: 0.1
       });
-      const tileGeom = new Geometry();
+
+      // split tile geometries and meshes by Z index
+      const tilesByZ = {};
       tiles.forEach(tileInstance => {
         const tile = tileInstance.tile;
-        let z = 0.6;
-        if (tile.depthBias) {
-          z = tile.depthBias;
+        let z = tile.depthBias || 0.6;
+        if (!tilesByZ[z]) {
+          tilesByZ[z] = [];
         }
-        const ov = 0.01;
-        tileGeom.vertices.push(new Vector3(
-          tileInstance.x - ov,
-          tileInstance.y - ov,
-          z
-        ));
-        tileGeom.vertices.push(new Vector3(
-          tileInstance.x - ov + tile.srcWidth + ov,
-          tileInstance.y - ov,
-          z
-        ));
-        tileGeom.vertices.push(new Vector3(
-          tileInstance.x - ov + tile.srcWidth + ov,
-          tileInstance.y + tile.srcHeight  + ov,
-          z
-        ));
-        tileGeom.vertices.push(new Vector3(
-          tileInstance.x - ov,
-          tileInstance.y + tile.srcHeight + ov,
-          z
-        ));
-        const vtxIndex = tileGeom.vertices.length - 4;
-        tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
-        tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));
-        [
-          [[0, 0], [1, 0], [1, 1]],
-          [[0, 0], [1, 1], [0, 1]]
-        ].forEach(faceUVs => {
-          tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
-          new Vector2(
-            (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
-            1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
-          )));
-        });
+        tilesByZ[z].push(tileInstance);
       });
-      const tileMesh = new Mesh(tileGeom, tileMat);
-      tileMesh.position.z = 0.5;
-      this.mesh.add(tileMesh);
+
+      // create tile geometries and meshes
+      const ov = 0.01;
+      Object.keys(tilesByZ).forEach(rawZ => {
+        const z = Number(rawZ);
+        const tileGeom = new Geometry();
+        tilesByZ[rawZ].forEach(tileInstance => {
+          const tile = tileInstance.tile;
+          tileGeom.vertices.push(new Vector3(
+            tileInstance.x - ov,
+            tileInstance.y - ov,
+            z
+          ));
+          tileGeom.vertices.push(new Vector3(
+            tileInstance.x - ov + tile.srcWidth + ov,
+            tileInstance.y - ov,
+            z
+          ));
+          tileGeom.vertices.push(new Vector3(
+            tileInstance.x - ov + tile.srcWidth + ov,
+            tileInstance.y + tile.srcHeight  + ov,
+            z
+          ));
+          tileGeom.vertices.push(new Vector3(
+            tileInstance.x - ov,
+            tileInstance.y + tile.srcHeight + ov,
+            z
+          ));
+          const vtxIndex = tileGeom.vertices.length - 4;
+          tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
+          tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));
+          [
+            [[0, 0], [1, 0], [1, 1]],
+            [[0, 0], [1, 1], [0, 1]]
+          ].forEach(faceUVs => {
+            tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
+            new Vector2(
+              (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
+              1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
+            )));
+          });
+        });
+
+        const tileMesh = new Mesh(tileGeom, tileMat);
+        tileMesh.position.z = z;
+        this.mesh.add(tileMesh);
+      });
     }
 
     this.ready = true;
@@ -268,6 +283,8 @@ export class TilesetTerrainEntity extends TerrainEntity {
 
 export class TilesetDecalLayer {
   constructor (decals, textureLoader) {
+    this.isTerrain = true;
+
     const texture = textureLoader.load(decals[0].tile.srcImage);
     texture.magFilter = NearestFilter;
     const tileMat = new MeshBasicMaterial({

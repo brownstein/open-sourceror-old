@@ -53,6 +53,9 @@ export default class Engine extends EventEmitter {
       camera
     }];
 
+    // we will keep track of any entities with hovering DOM elements
+    this.hoveringDomEntities = [];
+
     // we will keep track of the level's bounding box
     this.levelBBox = new Box3();
     this.levelBBox.expandByPoint(new Vector3(0, 0, 0));
@@ -137,6 +140,9 @@ export default class Engine extends EventEmitter {
     }
     if (entity.mesh) {
       this.scene.add(entity.mesh);
+    }
+    if (entity.hoverElement) {
+      this.hoveringDomEntities.push(entity);
     }
     this._trackInit(entity);
   }
@@ -225,6 +231,9 @@ export default class Engine extends EventEmitter {
     if (entity.cameraTracked) {
       entity.cameraTracked = false;
       this.cameraTrackedEntities = this.cameraTrackedEntities.filter(e => e !== entity);
+    }
+    if (entity.hoverElement) {
+      this.hoveringDomEntities = this.hoveringDomEntities.filter(e => e !== entity);
     }
   }
   /**

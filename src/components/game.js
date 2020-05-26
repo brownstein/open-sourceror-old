@@ -25,6 +25,9 @@ import bgClouds from "src/tilesets/magic-cliffs/PNG/clouds.png";
 import bgSea from "src/tilesets/magic-cliffs/PNG/sea.png";
 import bgFarGrounds from "src/tilesets/magic-cliffs/PNG/far-grounds.png";
 
+// dialogue tester
+import { DialogueEntity } from "src/entities/presentational/dialogue";
+
 // global styles
 import "./game.less";
 
@@ -47,6 +50,10 @@ function addThings(engine) {
             engine.addEntity(player);
             engine.followEntity(player);
             engine.setControllingEntity(player);
+
+            const dialogue = new DialogueEntity(new Vector2(o.x, o.y));
+            engine.addEntity(dialogue);
+
             break;
           }
           case "enemyStart": {
@@ -103,7 +110,7 @@ function addThings(engine) {
 
   const farGrounds = new RepeatingBackgroundImage(bgFarGrounds, {
     moveParallax: true,
-    parallaxCenter: new Vector2(0, 100),
+    parallaxCenter: new Vector2(100, 100),
     layer: 3,
     extendY: true,
     pixelScale: 3,

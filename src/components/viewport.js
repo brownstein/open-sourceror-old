@@ -31,6 +31,11 @@ export class EngineViewport extends Component {
     this.hasCursor = false;
     this.ks = new KeyState();
 
+    // we need to keep hovering dialogue in the react state to force updates
+    this.state = {
+      hoveringDomEntities: []
+    };
+
     this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
@@ -83,21 +88,26 @@ export class EngineViewport extends Component {
     engine.off("frame", this._onFrame);
   }
   render() {
+    const { hoveringDomEntities } = this.state;
+    const entityOverlays = hoveringDomEntities.map(
+      ({ entity, position }, i) => (
+        <div
+          className="hovering-entity"
+          key={i}
+          style={{
+            position: "absolute",
+            left: position.x,
+            top: position.y
+          }}
+        >
+          { entity.hoverElement }
+        </div>
+      )
+    );
     return <div ref={r => this.viewportEl = r} className="viewport">
       <canvas ref={r => this.canvasEl = r}/>
       <StatusOverlay/>
-      <div style={{
-        display: "block",
-        position: "absolute",
-        background: "rgba(255, 255, 255, 0.5)",
-        right: 20,
-        bottom: 20,
-        width: 40,
-        height: 30,
-        zIndex: 2
-      }}>
-        Overlay
-      </div>
+      { entityOverlays }
     </div>;
   }
   _onFrame() {
@@ -110,6 +120,39 @@ export class EngineViewport extends Component {
 
     this.needsRender = true;
     this._renderFrame();
+
+    // update state with anything that needs to be positioned over the canvas
+    if (
+      engine.hoveringDomEntities.length ||
+      this.state.hoveringDomEntities.length
+    ) {
+      const rect = this.viewportEl.getBoundingClientRect();
+      const { width, height } = rect;
+
+      const maxEntityBBoxSize = 100;
+      const hoveringDomEntities = [];
+      engine.hoveringDomEntities.forEach(entity => {
+        const position = entity.hoverPosition.clone();
+        position.project(this.camera);
+        position.x = (0.5 + position.x * 0.5) * width;
+        position.y = (0.5 - position.y * 0.5) * height;
+        if (
+          position.x >= -maxEntityBBoxSize &&
+          position.x <= maxEntityBBoxSize + width &&
+          position.y >= -maxEntityBBoxSize &&
+          position.y <= maxEntityBBoxSize + height
+        ) {
+          hoveringDomEntities.push({
+            entity,
+            position
+          });
+        }
+      });
+
+      this.setState({
+        hoveringDomEntities
+      });
+    }
   }
   _queueRender() {
     this.needsRender = true;
@@ -158,6 +201,7 @@ export class EngineViewport extends Component {
   _onResize() {
     const rect = this.viewportEl.getBoundingClientRect();
     const { width, height } = rect;
+
     this.cameraSize = { width, height };
     this.camera.left = -width / 2;
     this.camera.right = width / 2;

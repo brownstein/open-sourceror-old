@@ -1,0 +1,39 @@
+.dialogue {
+  position: absolute;
+  bottom: 20px;
+  left: -40px;
+  width: 80px;
+  display: block;
+  background-color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 10px;
+  z-index: 2;
+
+  & > * {
+    margin: 10px;
+    text-align: center;
+  }
+
+  &::before {
+    content: "";
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid #444;
+    position: absolute;
+    left: 33px;
+    bottom: -7px;
+    z-index: 1;
+  }
+
+  &::after {
+    content: "";
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #fff;
+    position: absolute;
+    left: 34px;
+    bottom: -6px;
+    z-index: 3;
+  }
+}
