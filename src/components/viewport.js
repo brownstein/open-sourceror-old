@@ -36,6 +36,8 @@ export class EngineViewport extends Component {
       hoveringDomEntities: []
     };
 
+    this.targetSceneFrameSize = new Vector2(300, 200);
+
     this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
@@ -202,11 +204,21 @@ export class EngineViewport extends Component {
     const rect = this.viewportEl.getBoundingClientRect();
     const { width, height } = rect;
 
-    this.cameraSize = { width, height };
-    this.camera.left = -width / 2;
-    this.camera.right = width / 2;
-    this.camera.top = -height / 2;
-    this.camera.bottom = height / 2;
+    const targetSize = this.targetSceneFrameSize;
+    const scale = Math.max(
+      targetSize.x / width,
+      targetSize.y / height
+    );
+
+    this.cameraSize = {
+      width: width * scale,
+      height: height * scale
+    };
+    this.camera.left = -this.cameraSize.width / 2;
+    this.camera.right = this.cameraSize.width / 2;
+    this.camera.top = -this.cameraSize.height / 2;
+    this.camera.bottom = this.cameraSize.height / 2;
+
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
 
