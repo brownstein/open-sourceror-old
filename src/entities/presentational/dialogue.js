@@ -27,7 +27,6 @@ export class DialogueEntity {
     </div>;
   }
   _spin() {
-    console.log("SPIN");
     this.classNames = ["dialogue", "spinning"];
     this.hoverElement = this.render();
     setTimeout(() => {
