@@ -87,7 +87,7 @@ export default class Room {
             engine.followEntity(player);
             engine.setControllingEntity(player);
 
-            const dialogue = new DialogueEntity(new Vector2(o.x, o.y));
+            const dialogue = new DialogueEntity(new Vector2(o.x, o.y - 16));
             engine.addEntity(dialogue);
 
             break;
