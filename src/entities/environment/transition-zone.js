@@ -18,23 +18,22 @@ export default class TransitionZone extends BaseEntity {
       isStatic: true
     });
 
-    this.sensor = new Box({
+    const sensor = new Box({
       width,
       height,
       sensor: true
     });
 
-    this.body.addShape(this.sensor);
-
-    this.mesh = getThreeJsObjectForP2Body(this.body);
-    this.syncMeshWithBody();
-
+    this.body.addShape(sensor);
     this.transitionToLevel = level;
   }
   async collisionHandler(engine, otherBodyId, otherEntity) {
     if (otherEntity !== engine.controllingEntity) {
       return;
     }
+
+    // this could be cleaner, also we need to dispatch some stuff to re-sync
+    // redux with the next room
     const nextLevel = await requireRoom(this.transitionToLevel);
     engine.currentRoom.cleanup(engine);
     nextLevel.init(engine);
