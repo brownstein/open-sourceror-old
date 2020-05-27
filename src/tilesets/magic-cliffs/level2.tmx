@@ -121,7 +121,11 @@
    <point/>
   </object>
   <object id="8" type="water" x="398.983" y="543.4" width="366.932" height="68.42"/>
-  <object id="10" type="transitZone" x="1585.19" y="496.445" width="24.1239" height="43.1691"/>
+  <object id="10" type="transitZone" x="1585.19" y="496.445" width="24.1239" height="43.1691">
+   <properties>
+    <property name="level" value="level2"/>
+   </properties>
+  </object>
   <object id="11" type="dialogue" x="1096.28" y="113.057">
    <properties>
     <property name="message" value="Nice, you made it up here!"/>

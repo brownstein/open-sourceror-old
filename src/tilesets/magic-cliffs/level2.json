@@ -150,6 +150,12 @@
                  "height":43.1691,
                  "id":10,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"level",
+                         "type":"string",
+                         "value":"level2"
+                        }],
                  "rotation":0,
                  "type":"transitZone",
                  "visible":true,
