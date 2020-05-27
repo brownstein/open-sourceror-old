@@ -80,6 +80,12 @@
                  "id":4,
                  "name":"",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"isSmart",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"enemyStart",
                  "visible":true,
@@ -150,6 +156,24 @@
                  "width":24.1239,
                  "x":1585.19,
                  "y":496.445
+                }, 
+                {
+                 "height":0,
+                 "id":11,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"message",
+                         "type":"string",
+                         "value":"Nice, you made it up here!"
+                        }],
+                 "rotation":0,
+                 "type":"dialogue",
+                 "visible":true,
+                 "width":0,
+                 "x":1096.28,
+                 "y":113.057
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -158,7 +182,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":11,
+ "nextobjectid":12,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

@@ -87,6 +87,14 @@ function addThings(engine) {
             engine.addEntity(water);
             break;
           }
+          case "dialogue": {
+            const dialogue = new DialogueEntity({
+              x: o.x,
+              y: o.y
+            }, o.properties.find(p => p.name === "message").value);
+            engine.addEntity(dialogue);
+            break;
+          }
           default:
             break;
         }

@@ -2,6 +2,7 @@ import { Body, Box } from "p2";
 
 export default class RoomConstraint {
   constructor({ position, size }) {
+    this.isEnvironmental = true;
     this.engine = null;
     this.body = new Body({
       position,

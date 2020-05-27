@@ -42,6 +42,8 @@ export class SmallBodyOfWater {
     this.mesh.children[0].material.opacity = 0.6;
 
     this.entitiesInWater = [];
+
+    this.isEnvironmental = true;
   }
   // TODO: ripples here or splash or something
   collisionHandler(engine, otherBodyId, otherEntity) {

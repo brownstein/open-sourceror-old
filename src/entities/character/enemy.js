@@ -160,6 +160,8 @@ export class SmartEnemy extends Enemy {
 
     Character.prototype.onFrame.apply(this);
 
+    this.invTimer = Math.max(0, this.invTimer - 1);
+
     if (this.lastLocation) {
       const dx = this.body.position[0] - this.lastLocation[0];
       const dy = this.body.position[1] - this.lastLocation[1];

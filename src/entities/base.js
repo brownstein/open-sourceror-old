@@ -7,6 +7,8 @@ export default class BaseEntity{
     this.engine = null;
     this.mesh = null;
     this.body = null;
+    this.hoverPosition = null;
+    this.hoverElement = null;
     this.events = null;
   }
   syncMeshWithBody(timeDelta) {

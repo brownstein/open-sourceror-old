@@ -32,6 +32,8 @@ export class Fireball extends EphemeralEntity {
     this.body.addShape(circleShape);
 
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
+
+    this.syncMeshWithBody();
   }
   collisionHandler(engine, otherId, otherEntity) {
     if (
@@ -64,6 +66,8 @@ export class FireballExplosion extends EphemeralEntity {
     this.mesh.scale.y = this.r;
 
     this.hitEntities = [];
+
+    this.syncMeshWithBody();
   }
   onFrame(deltaTimeMs) {
     this.r += deltaTimeMs * 0.02;
