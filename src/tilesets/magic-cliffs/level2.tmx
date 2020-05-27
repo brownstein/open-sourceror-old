@@ -106,6 +106,9 @@
    <point/>
   </object>
   <object id="5" type="enemyStart" x="1029.34" y="533.808">
+   <properties>
+    <property name="isSmart" type="bool" value="true"/>
+   </properties>
    <point/>
   </object>
   <object id="6" type="enemyStart" x="594.843" y="599.743">

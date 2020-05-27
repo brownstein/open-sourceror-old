@@ -75,6 +75,9 @@ export default class Engine extends EventEmitter {
     // special P2 constraint entities to enclose the current room
     this.roomConstraints = [];
 
+    // pathfinding nav grid
+    this.navGrid = null;
+
     // connection to the controller and the Redux world (for script execution)
     this.controller = null;
     this.dispatch = null;
@@ -235,6 +238,9 @@ export default class Engine extends EventEmitter {
     if (entity.hoverElement) {
       this.hoveringDomEntities = this.hoveringDomEntities.filter(e => e !== entity);
     }
+  }
+  addNavGrid(navGrid) {
+    this.navGrid = navGrid;
   }
   /**
    * Primary run method

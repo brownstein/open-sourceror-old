@@ -92,6 +92,12 @@
                  "id":5,
                  "name":"",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"isSmart",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"enemyStart",
                  "visible":true,
@@ -142,8 +148,8 @@
                  "type":"transitZone",
                  "visible":true,
                  "width":24.1239,
-                 "x":1585.19228034535,
-                 "y":496.44531995937
+                 "x":1585.19,
+                 "y":496.445
                 }],
          "opacity":1,
          "type":"objectgroup",

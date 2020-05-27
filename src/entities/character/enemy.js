@@ -83,3 +83,87 @@ export class DeadEnemy extends BaseEntity {
     setTimeout(this._possiblySleep, 1000);
   }
 }
+
+export class SmartEnemy extends Enemy {
+  constructor(props) {
+    super(props);
+
+    this.i = 0;
+    this.movingDirectly = false;
+    this.plannedPath = [];
+
+    this.unstuckMode = false;
+    this.lastLocation = null;
+    this.recentMotion = 0;
+
+    this.maxControlledVelocity = [100, 400];
+  }
+  onFrame() {
+    // find path
+    const engine = this.engine;
+    const navGrid = engine.navGrid;
+
+    const myPosition = this.body.position;
+    const playerPosition = engine.controllingEntity.body.position;
+
+    if (!(this.i++ % 30)) {
+      // unstuck yourself
+      if (this.plannedPath && this.recentMotion < 2) {
+        this.unstuckMode = !this.onSurface;
+      }
+      else {
+        this.unstuckMode = false;
+      }
+
+      this.plannedPath = navGrid.plotPath(
+        myPosition[0],
+        myPosition[1],
+        playerPosition[0],
+        playerPosition[1]
+      );
+
+      this.recentMotion = 0;
+    }
+
+    if (this.plannedPath) {
+      let nextPathNode = null;
+      if (this.plannedPath && this.plannedPath.length) {
+        nextPathNode = this.plannedPath[0];
+        if (nextPathNode.contains(myPosition[0], myPosition[1])) {
+          this.plannedPath.shift();
+          nextPathNode = this.plannedPath[0];
+        }
+      }
+      if (!nextPathNode) {
+        this.movingDirectly = true;
+      }
+      else {
+        const nodeCenter = nextPathNode.getCenter();
+        this.plannedAccelleration[0] = nodeCenter[0] - myPosition[0];
+        this.plannedAccelleration[1] = nodeCenter[1] < myPosition[1] ?
+          -400 :
+          0;
+        this.movingDirectly = false;
+      }
+    }
+
+    if (this.movingDirectly) {
+      this.plannedAccelleration[0] = playerPosition[0] - myPosition[0];
+      this.plannedAccelleration[1] = playerPosition[1] < myPosition[1] ?
+        -400 :
+        0;
+    }
+
+    if (this.unstuckMode) {
+      this.plannedAccelleration[1] = 50;
+    }
+
+    Character.prototype.onFrame.apply(this);
+
+    if (this.lastLocation) {
+      const dx = this.body.position[0] - this.lastLocation[0];
+      const dy = this.body.position[1] - this.lastLocation[1];
+      this.recentMotion += Math.sqrt(dx * dx + dy * dy);
+    }
+  }
+}

@@ -9,7 +9,7 @@ import LoadingScreen from "./loading-screen";
 
 // level entities
 import { Player } from "src/entities/character/player";
-import { Enemy } from "src/entities/character/enemy";
+import { Enemy, SmartEnemy } from "src/entities/character/enemy";
 import { TilesetTerrain, terrainMaterial } from "src/entities/terrain";
 import { RepeatingBackgroundImage } from "src/entities/background";
 import { SmallBodyOfWater } from "src/entities/environment/water";
@@ -62,7 +62,14 @@ function addThings(engine) {
             break;
           }
           case "enemyStart": {
-            const enemy = new Enemy({
+            let isSmart = false;
+            o.properties && o.properties.forEach(p => {
+              if (p.name === "isSmart" && p.value) {
+                isSmart = true;
+              }
+            });
+            const EnemyClazz = isSmart ? SmartEnemy : Enemy;
+            const enemy = new EnemyClazz({
               position: [o.x, o.y]
             });
             engine.addEntity(enemy);
@@ -137,6 +144,8 @@ function addThings(engine) {
   engine.cameraTrackEntity(farGrounds);
 
   // experiment with nav meshes
+  // TODO: put this into something that takes the tileset more directly
+  // and does not require the PNG
   const primaryLayer = level.layers.find(l => l.name === "primary");
   const tileSet = loadTilesetForPolygonTraversal(tilesetJson, tilesetPng);
   const navGrid = getNavGridForTileGrid(
@@ -145,13 +154,7 @@ function addThings(engine) {
     16,
     tileSet
   );
-
-  // test nav grid
-  console.log(navGrid);
-  console.log(navGrid.getNodeByCoordinates(0, 0));
-  console.log(navGrid.plotPath(1, 1, 10, 1, 40));
-  console.log(navGrid.plotPath(1, 1, 500, 1, 40));
-  console.log(navGrid.plotPath(1, 1, 1000, 1, 40));
+  engine.addNavGrid(navGrid);
 
   // when everything is loaded, constrain the room to ensure that things (such
   // as the player ) can't leave

@@ -49,6 +49,12 @@ class NavArea {
       this.yMax >= y
     );
   }
+  getCenter() {
+    return [
+      (this.xMax + this.xMin) * 0.5,
+      (this.yMax + this.yMin) * 0.5
+    ];
+  }
   distanceFrom(x, y) {
     if (this.contains(x, y)) {
       return 0;
@@ -92,7 +98,10 @@ class NavArea {
     // this works for now because we want to favor open areas, but in a later
     // version we might want to look at the crosswise traversal distance through
     // a given node from A -> node -> B
-    return 1;
+    return Math.min(
+      Math.abs(this.xMax - this.xMin),
+      Math.abs(this.yMax - this.yMin)
+    );
   }
 }
 
