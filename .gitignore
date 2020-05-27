@@ -3,3 +3,5 @@ electron/dist
 .DS_Store
 stats.json
 open-sourceror-*
+build
+.cache

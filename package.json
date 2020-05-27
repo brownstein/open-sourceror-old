@@ -59,6 +59,7 @@
     "regenerator-runtime": "^0.13.5",
     "serialize-error": "^7.0.1",
     "shortid": "^2.2.15",
+    "terser-webpack-plugin": "^3.0.2",
     "three": "^0.116.1",
     "three-bmfont-text": "^2.3.0",
     "three-line-2d": "^1.1.6",
@@ -75,8 +76,8 @@
     "start": "electron electron/main.js",
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --config webpack.config.js --watch --mode development",
-    "package-windows": "electron-packager . --platform win32 --ignore src --overwrite; zip -r open-sourceror-win32.zip open-sourceror-win32-x64",
-    "package-osx": "electron-packager . --platform mas --ignore src --overwrite; zip -r open-sourceror-osx.zip open-sourceror-mas-x64"
+    "package-windows": "electron-packager . --platform win32 --ignore src --ignore build --ignore .cache --overwrite; mkdir -p build; mv open-sourceror-win32-x64 build/; zip -r build/open-sourceror-win32.zip build/open-sourceror-win32-x64",
+    "package-osx": "electron-packager . --platform mas --ignore src --ignore build --ignore .cache --overwrite; mkdir -p build; mv open-sourceror-mas-x64 build/; zip -r build/open-sourceror-osx.zip build/open-sourceror-mas-x64"
   },
   "author": "",
   "license": "ISC",

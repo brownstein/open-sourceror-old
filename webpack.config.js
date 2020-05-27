@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -138,7 +139,13 @@ module.exports = (env, argv) => {
     ]
     .filter(p => p),
     optimization: {
-      splitChunks: {}
+      splitChunks: {},
+      minimize: !isDev,
+      minimizer: [
+      new TerserPlugin({
+        cache: '.cache',
+      }),
+    ],
     }
   }
 };
