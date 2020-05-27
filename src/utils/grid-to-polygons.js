@@ -638,7 +638,7 @@ export function traverseTileGrid(
   gridWidth,
   tileSize,
   tileset,
-  useTileTypes=['ground']
+  useTileTypes=["ground"]
 ) {
 
   // map tile definitions by ID for faster reference

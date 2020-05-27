@@ -62,6 +62,7 @@
     "three": "^0.116.1",
     "three-bmfont-text": "^2.3.0",
     "three-line-2d": "^1.1.6",
+    "tinyqueue": "^2.0.3",
     "uglifyjs-webpack-plugin": "^2.1.1",
     "url-loader": "^4.1.0",
     "vlq": "^1.0.0",

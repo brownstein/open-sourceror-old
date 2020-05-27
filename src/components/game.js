@@ -29,6 +29,10 @@ import bgFarGrounds from "src/tilesets/magic-cliffs/PNG/far-grounds.png";
 // dialogue tester
 import { DialogueEntity } from "src/entities/presentational/dialogue";
 
+// navigation meshes
+import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
+import { loadTilesetForPolygonTraversal } from "src/utils/tileset-loader";
+
 // global styles
 import "./game.less";
 
@@ -131,6 +135,23 @@ function addThings(engine) {
   });
   engine.addEntity(farGrounds);
   engine.cameraTrackEntity(farGrounds);
+
+  // experiment with nav meshes
+  const primaryLayer = level.layers.find(l => l.name === "primary");
+  const tileSet = loadTilesetForPolygonTraversal(tilesetJson, tilesetPng);
+  const navGrid = getNavGridForTileGrid(
+    primaryLayer.data,
+    primaryLayer.width,
+    16,
+    tileSet
+  );
+
+  // test nav grid
+  console.log(navGrid);
+  console.log(navGrid.getNodeByCoordinates(0, 0));
+  console.log(navGrid.plotPath(1, 1, 10, 1, 40));
+  console.log(navGrid.plotPath(1, 1, 500, 1, 40));
+  console.log(navGrid.plotPath(1, 1, 1000, 1, 40));
 
   // when everything is loaded, constrain the room to ensure that things (such
   // as the player ) can't leave

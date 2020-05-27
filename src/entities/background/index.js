@@ -138,12 +138,12 @@ export class RepeatingBackgroundImage {
     const scaledSize = this.imageSize.clone();
     scaledSize.multiplyScalar(this.pixelScale);
     const wrappedSize = scaledSize.clone();
-    const wrapNumber = 4;
+    const wrapNumber = 1.25;
     if (this.extendX) {
-      wrappedSize.x = this.cameraSize.x * wrapNumber * this.pixelScale;
+      wrappedSize.x = this.roomSize.x * wrapNumber * this.pixelScale + this.cameraSize.x;
     }
     if (this.extendY) {
-      wrappedSize.y = this.cameraSize.y * wrapNumber * this.pixelScale;
+      wrappedSize.y = this.roomSize.y * wrapNumber * this.pixelScale + this.cameraSize.y;
     }
     const uvSize = new Vector2(
       wrappedSize.x / scaledSize.x,
