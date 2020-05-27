@@ -1,0 +1,1 @@
+export const TRANSITION_TO_ROOM = "TRANSITION_TO_ROOM";
