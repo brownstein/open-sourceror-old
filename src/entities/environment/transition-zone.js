@@ -1,6 +1,7 @@
 import { Body, Box } from "p2";
 import { castToVec2 } from "src/p2-utils/vec2-utils";
 import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
+import requireRoom from "src/rooms/require-room";
 import BaseEntity from "src/entities/base";
 
 export default class TransitionZone extends BaseEntity {
@@ -30,9 +31,12 @@ export default class TransitionZone extends BaseEntity {
 
     this.transitionToLevel = level;
   }
-  collisionHandler(engine, otherBodyId, otherEntity) {
-    if (otherEntity === engine.controllingEntity) {
-      console.log("room transition go!", this.transitionToLevel);
+  async collisionHandler(engine, otherBodyId, otherEntity) {
+    if (otherEntity !== engine.controllingEntity) {
+      return;
     }
+    const nextLevel = await requireRoom(this.transitionToLevel);
+    engine.currentRoom.cleanup(engine);
+    nextLevel.init(engine);
   }
 }

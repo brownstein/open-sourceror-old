@@ -85,6 +85,9 @@ export default class Engine extends EventEmitter {
     // loading
     this.initEntityCount = 0;
 
+    // current room
+    this.currentRoom = null;
+
     // set up P2 contact handlers
     this._initializeContactHandlers();
   }

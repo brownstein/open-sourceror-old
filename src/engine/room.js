@@ -40,10 +40,19 @@ export default class Room {
     // apply contact materials (TODO: make this not room-specific)
     getContactMaterials().forEach(m => engine.world.addContactMaterial(m));
 
-    console.log(engine);
+    engine.currentRoom = this;
   }
   cleanup(engine) {
-    return;
+    engine.activeEntities.forEach(e => {
+      engine.removeEntity(e);
+    });
+    engine.setControllingEntity(null);
+    engine.followEntity(null);
+
+    getContactMaterials().forEach(m => engine.world.removeContactMaterial(m));
+
+    engine.loading = true;
+    engine.currentRoom = null;
   }
   initTileLevel(engine) {
 
