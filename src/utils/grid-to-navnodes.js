@@ -144,6 +144,9 @@ class NavGrid {
     return null;
   }
   plotPath(startX, startY, endX, endY, jumpHeight) {
+    // TODO: implement jump
+    // TODO: test heuristic
+
     // if we can't get a clean start, we're done
     const startNode = this.getNodeByCoordinates(startX, startY);
     if (!startNode) {
@@ -216,7 +219,7 @@ class NavGrid {
       return path;
     }
 
-    // end case - no path found
+    // no path found
     return null;
   }
 }
