@@ -18,7 +18,8 @@ export default class Room {
     this.tileLevel = null;
     this.tileSheet = null;
     this.tileSheetPNG = null;
-    this.backgroundEntities = null;
+    this.backgroundEntities = [];
+    this.helloMessage = false;
   }
   init(engine) {
     if (this.tileLevel && this.tileSheet && this.tileSheetPNG) {
@@ -87,8 +88,10 @@ export default class Room {
             engine.followEntity(player);
             engine.setControllingEntity(player);
 
-            const dialogue = new DialogueEntity(new Vector2(o.x, o.y - 16));
-            engine.addEntity(dialogue);
+            if (this.helloMessage) {
+              const dialogue = new DialogueEntity(new Vector2(o.x, o.y - 16));
+              engine.addEntity(dialogue);
+            }
 
             break;
           }

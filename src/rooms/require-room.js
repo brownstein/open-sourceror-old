@@ -5,7 +5,7 @@ export default async function requireRoom(roomName) {
       roomModule = await import("./intro/1");
       break;
     case "level2":
-      roomModule = await import("./intro/1");
+      roomModule = await import("./intro/2");
       break;
     default:
       break;

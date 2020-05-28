@@ -51,5 +51,6 @@ export default class Level1 extends Room {
         parallaxCoefficient: 0.4
       })
     ];
+    this.helloMessage = true;
   }
 }

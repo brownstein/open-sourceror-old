@@ -239,14 +239,14 @@ export function getNavGridForTileGrid(
       // if we've got an open space with an occupied space below, we've got a
       // good candidate for a grid value
       if (!gridValue && gridValueBelow) {
-        if (currentNode) {
-          currentNode.xMax++;
-          nodes[x][y] = currentNode;
-        }
-        else {
-          currentNode = new NavArea(x, x, y, y);
-          nodes[x][y] = currentNode;
-        }
+        // if (currentNode) {
+        //   currentNode.xMax++;
+        //   nodes[x][y] = currentNode;
+        // }
+        // else {
+        currentNode = new NavArea(x, x, y, y);
+        nodes[x][y] = currentNode;
+        // }
       }
       else {
         currentNode = null;
@@ -254,14 +254,16 @@ export function getNavGridForTileGrid(
     }
   }
 
+  console.log('NODES GRID', nodes);
+
   // connect blocks on surfaces
   for (let x = 0; x < blocks.length; x++) {
     const column = blocks[x];
     let currentNavArea = null;
     for (let y = 0; y < column.length; y++) {
       const value = column[y];
-      // expand from [x,y]
       
+
     }
   }
 
