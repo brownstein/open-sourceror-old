@@ -1,6 +1,8 @@
 import Queue from "queue-fifo";
 import PriorityQueue from "tinyqueue";
 
+////// TODO: finish this when I'm not dealing with the world's worst BS
+
 /**
  * Directional link class - represents a link between two NavAreas that may be
  * uni-directional or bi-directional
@@ -262,7 +264,7 @@ export function getNavGridForTileGrid(
     let currentNavArea = null;
     for (let y = 0; y < column.length; y++) {
       const value = column[y];
-      
+
 
     }
   }
