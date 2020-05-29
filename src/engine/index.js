@@ -93,23 +93,22 @@ export default class Engine extends EventEmitter {
   }
   _initializeContactHandlers () {
     this.world.on("beginContact", event => {
-      const { bodyA, bodyB, shapeA, shapeB, contactEquations } = event;
+      const { bodyA, bodyB, contactEquations } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
       const entityB = this.activeEntitiesByBodyId[bodyB.id];
       if (!entityA || !entityB) {
         return;
       }
+      const eq = contactEquations[0] || null;
       if (entityA && entityA.collisionHandler) {
-        const eq = contactEquations[0]; // .find(c => c.bodyA === bodyA);
         entityA.collisionHandler(this, bodyB.id, entityB, eq);
       }
       if (entityB && entityB.collisionHandler) {
-        const eq = contactEquations[0]; //.find(c => c.bodyA === bodyB);
         entityB.collisionHandler(this, bodyA.id, entityA, eq);
       }
     });
     this.world.on("endContact", event => {
-      const { bodyA, bodyB, shapeA, shapeB } = event;
+      const { bodyA, bodyB } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
       const entityB = this.activeEntitiesByBodyId[bodyB.id];
       if (entityA && entityA.endCollisionHandler) {
@@ -120,7 +119,7 @@ export default class Engine extends EventEmitter {
       }
     });
     this.world.on("preSolve", event => {
-      const { contactEquations } = event;
+      const { contactEquations, frictionEquations } = event;
       for (let eqi = 0; eqi < contactEquations.length; eqi++) {
         const eq = contactEquations[eqi];
         const entityA = this.activeEntitiesByBodyId[eq.bodyA.id];
@@ -133,6 +132,20 @@ export default class Engine extends EventEmitter {
         }
         if (entityB && entityB.handleContactEquation) {
           entityB.handleContactEquation(this, eq.bodyA.id, entityA, eq);
+        }
+      }
+      for (let eqi = 0; eqi < frictionEquations.length; eqi++) {
+        const eq = frictionEquations[eqi];
+        const entityA = this.activeEntitiesByBodyId[eq.bodyA.id];
+        const entityB = this.activeEntitiesByBodyId[eq.bodyB.id];
+        if (!entityA || !entityB) {
+          return;
+        }
+        if (entityA && entityA.handleFrictionEquation) {
+          entityA.handleFrictionEquation(this, eq.bodyB.id, entityB, eq);
+        }
+        if (entityB && entityB.handleFrictionEquation) {
+          entityB.handleFrictionEquation(this, eq.bodyA.id, entityA, eq);
         }
       }
     });

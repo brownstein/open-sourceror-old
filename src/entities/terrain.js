@@ -37,7 +37,9 @@ export class Terrain {
 }
 
 export class TerrainEntity {
+  static _id = 1;
   constructor() {
+    this.id = TerrainEntity._id++;
     this.body = null;
     this.mesh = null;
     this.isTerrain = true;
@@ -271,7 +273,15 @@ export class TilesetTerrainEntity extends TerrainEntity {
       eq.enabled = false;
     }
   }
-  endCollisionHandler(engine, otherId, otherEntity, eq) {
+  handleFrictionEquation(engine, otherId, otherEntity, eq) {
+    if (!this.isOneWayPlatform || !otherEntity.body) {
+      return;
+    }
+    if (this.oneWayPlatformTracking.includes(otherId)) {
+      eq.enabled = false;
+    }
+  }
+  endCollisionHandler(engine, otherId, otherEntity) {
     if (!this.isOneWayPlatform) {
       return;
     }
