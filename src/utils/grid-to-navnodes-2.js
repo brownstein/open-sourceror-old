@@ -103,7 +103,7 @@ class NavBlockage extends CollisionBBox {
   }
 }
 
-class NavPlanningCache {
+class JumpPlanningCache {
   constructor(resolution = 1, vResolution = 0.1) {
     this.resolution = resolution;
     this.invResolution = 1 / resolution;
@@ -127,7 +127,7 @@ class NavPlanningCache {
   }
 }
 
-class NavPlanningNode {
+class JumpPlanningNode {
   constructor(x, y, vx, vy) {
     this.x = x;
     this.y = y;
@@ -171,7 +171,7 @@ class NavGrid {
     this.gridScale = gridScale;
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
-    global.NavPlanningCache = NavPlanningCache;
+    global.JumpPlanningCache = JumpPlanningCache;
     global.CollisionBBox = CollisionBBox;
   }
   /**
@@ -223,15 +223,11 @@ class NavGrid {
     ySize,
     xAccelleration, // stepwise accelleration on the X dimension
     maxJumpVelocity, // maximum jump velocity,
-    gravity // stepwise gravity,
+    gravity // raw gravity from engine
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
 
-    const startPos = {
-      x: xStart,
-      y: yStart
-    };
-
+    // end position as object reference
     const endPos = {
       x: xEnd,
       y: yEnd
@@ -240,11 +236,11 @@ class NavGrid {
     const resolution = 1;
     const accResolution = xAccelleration / 2;
 
-    const planCache = new NavPlanningCache(resolution, accResolution);
+    const planCache = new JumpPlanningCache(resolution, accResolution);
     const entityBBox = new CollisionBBox(xSize - 0.1, ySize - 0.1);
     const entityExpandedBBox = new CollisionBBox(xSize + 4, ySize + 4);
 
-    const initialNode = new NavPlanningNode(
+    const initialNode = new JumpPlanningNode(
       Math.round(xStart / gridScale),
       Math.round(yStart / gridScale),
       0,
@@ -255,7 +251,7 @@ class NavGrid {
 
     for (let vx = -xAccelleration; vx <= xAccelleration; vx += accResolution) {
       for (let vy = -maxJumpVelocity; vy < 0; vy += accResolution) {
-        const initialNode = new NavPlanningNode(xStart, yStart, vx, vy);
+        const initialNode = new JumpPlanningNode(xStart, yStart, vx, vy);
         initialNode.cost =
           initialNode.distanceFrom(endPos) +
           initialNode.velocityCost(endPos, gravity);
@@ -277,7 +273,7 @@ class NavGrid {
       if (planCache.get(x, y, vx, vy)) {
         return;
       }
-      const nextNode = new NavPlanningNode(x, y, vx, vy);
+      const nextNode = new JumpPlanningNode(x, y, vx, vy);
       nextNode.prevNode = prevNode;
       nextNode.distCost = prevNode.distCost + nextNode.distanceFrom(prevNode);
       nextNode.cost = nextNode.distCost +
@@ -344,10 +340,14 @@ class NavGrid {
 
     return nodePath;
   }
-}
+  plotPossibleJumps(
 
-function simulateJump(platGrid, startX, startY, maxXDist, maxYUp, maxYDown) {
+  ) {
 
+  }
+  plotPath() {
+
+  }
 }
 
 export function getNavGridForTileGrid(
