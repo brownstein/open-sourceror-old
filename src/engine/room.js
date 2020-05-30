@@ -19,7 +19,6 @@ export default class Room {
     this.tileSheet = null;
     this.tileSheetPNG = null;
     this.backgroundEntities = [];
-    this.helloMessage = false;
   }
   init(engine) {
     if (this.tileLevel && this.tileSheet && this.tileSheetPNG) {
@@ -79,6 +78,12 @@ export default class Room {
     // add level entities
     this.tileLevel.layers.filter(l => l.type === "objectgroup").forEach(l => {
       l.objects.forEach(o => {
+        const props = o.properties ?
+          o.properties.reduce((o, p) => {
+            o[p.name] = p.value;
+            return o;
+          }, {}) :
+          {};
         switch (o.type) {
           case "playerStart": {
             const player = new Player({
@@ -87,21 +92,10 @@ export default class Room {
             engine.addEntity(player);
             engine.followEntity(player);
             engine.setControllingEntity(player);
-
-            if (this.helloMessage) {
-              const dialogue = new DialogueEntity(new Vector2(o.x, o.y - 16));
-              engine.addEntity(dialogue);
-            }
-
             break;
           }
           case "enemyStart": {
-            let isSmart = false;
-            o.properties && o.properties.forEach(p => {
-              if (p.name === "isSmart" && p.value) {
-                isSmart = true;
-              }
-            });
+            const isSmart = props.isSmart || false;
             const EnemyClazz = isSmart ? SmartEnemy : Enemy;
             const enemy = new EnemyClazz({
               position: [o.x, o.y]
@@ -125,7 +119,7 @@ export default class Room {
             const dialogue = new DialogueEntity({
               x: o.x,
               y: o.y
-            }, o.properties.find(p => p.name === "message").value);
+            }, props.message, props.size);
             engine.addEntity(dialogue);
             break;
           }
@@ -137,7 +131,7 @@ export default class Room {
               },
               width: o.width,
               height: o.height,
-              level: o.properties.find(p => p.name === "level").value
+              level: props.level
             });
             engine.addEntity(zone);
             break;

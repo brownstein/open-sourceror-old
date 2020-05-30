@@ -2,14 +2,21 @@ import { Vector3 } from "three";
 
 import "./dialogue.less";
 
+/**
+ * Floating dialogue entity - the basic building block of labled things
+ */
 export class DialogueEntity {
-  constructor(position, text = null) {
+  constructor(position, text = null, size = null) {
     this.engine = null;
 
-    this.text = text || ["Hello World!", "Welcome to Open Sourceror."];
+    this.text = text || ["Hello World!"];
     this.hoverPosition = new Vector3(position.x, position.y, 0);
 
-    this.classNames = ["dialogue"];
+    this.baseClassNames = ["dialogue"];
+    if (size) {
+      this.baseClassNames.push(size);
+    }
+    this.classNames = this.baseClassNames;
     this._spin = this._spin.bind(this);
 
     this.hoverElement = this.render();
@@ -27,10 +34,10 @@ export class DialogueEntity {
     </div>;
   }
   _spin() {
-    this.classNames = ["dialogue", "spinning"];
+    this.classNames = [...this.baseClassNames, "spinning"];
     this.hoverElement = this.render();
     setTimeout(() => {
-      this.classNames = ["dialogue"];
+      this.classNames = this.baseClassNames;
       this.hoverElement = this.render();
     }, 1000);
   }

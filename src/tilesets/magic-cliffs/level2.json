@@ -180,6 +180,75 @@
                  "width":0,
                  "x":1096.28,
                  "y":113.057
+                }, 
+                {
+                 "height":0,
+                 "id":13,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"message",
+                         "type":"string",
+                         "value":"small dialogue"
+                        }, 
+                        {
+                         "name":"size",
+                         "type":"string",
+                         "value":"small"
+                        }],
+                 "rotation":0,
+                 "type":"dialogue",
+                 "visible":true,
+                 "width":0,
+                 "x":201.234850217242,
+                 "y":377.315344157329
+                }, 
+                {
+                 "height":0,
+                 "id":16,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"message",
+                         "type":"string",
+                         "value":"lorem ipsum, here's a tree! ipsum lorem, please free me"
+                        }, 
+                        {
+                         "name":"size",
+                         "type":"string",
+                         "value":"medium"
+                        }],
+                 "rotation":0,
+                 "type":"dialogue",
+                 "visible":true,
+                 "width":0,
+                 "x":355.591127372513,
+                 "y":277.841298879488
+                }, 
+                {
+                 "height":0,
+                 "id":17,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"message",
+                         "type":"string",
+                         "value":"here's a big old platform. here's a big old platform. here's a big old platform. here's a big old platform. here's a big old platform. "
+                        }, 
+                        {
+                         "name":"size",
+                         "type":"string",
+                         "value":"large"
+                        }],
+                 "rotation":0,
+                 "type":"dialogue",
+                 "visible":true,
+                 "width":0,
+                 "x":668.877201006174,
+                 "y":300.708895495083
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -188,7 +257,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":13,
+ "nextobjectid":18,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

@@ -1,13 +1,13 @@
 .dialogue {
   position: absolute;
   bottom: 0px;
-  left: -40px;
-  width: 80px;
+  left: -50px;
+  width: 100px;
   display: block;
   background-color: #fff;
   border: 1px solid #444;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 12px;
   z-index: 2;
 
   animate: opacity 0.4s;
@@ -27,7 +27,7 @@
     border-right: 7px solid transparent;
     border-top: 7px solid #444;
     position: absolute;
-    left: 33px;
+    left: 43px;
     bottom: -7px;
     z-index: 1;
   }
@@ -38,9 +38,45 @@
     border-right: 6px solid transparent;
     border-top: 6px solid #fff;
     position: absolute;
-    left: 34px;
+    left: 44px;
     bottom: -6px;
     z-index: 3;
+  }
+
+  &.small {
+    width: 80px;
+    left: -40;
+    font-size: 10px;
+    &::before {
+      left: 33px;
+    }
+    &::after {
+      left: 34px;
+    }
+  }
+
+  &.medium {
+    width: 140px;
+    left: -70px;
+    font-size: 14px;
+    &::before {
+      left: 63px;
+    }
+    &::after {
+      left: 64px;
+    }
+  }
+
+  &.large {
+    width: 200px;
+    left: -100px;
+    font-size: 14px;
+    &::before {
+      left: 93px;
+    }
+    &::after {
+      left: 94px;
+    }
   }
 
   &.spinning {

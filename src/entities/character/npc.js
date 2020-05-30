@@ -1,6 +1,6 @@
 import { Character } from "./base";
 
-class NPC extends Character {
+export class NPC extends Character {
 
   constructor(props) {
     super(props);
