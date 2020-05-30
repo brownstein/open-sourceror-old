@@ -74,7 +74,7 @@ export default class Room {
       primaryLayer.data,
       primaryLayer.width,
       16,
-      this.tileSheet
+      this.tileSheet,
     );
     engine.addNavGrid(navGrid);
 

@@ -6,7 +6,7 @@ const EMPTY_SPACE = 0;
 const BLOCKED_SPACE = 1;
 const ONE_WAY_PLATFORM = 2;
 
-const DEBUG = true;
+const DEBUG = false;
 
 // /**
 //  * Directional link class - represents a link between two NavAreas that may be
@@ -174,7 +174,7 @@ class NavGrid {
   /**
    * Checks a given bounding box for intersection with the grid
    */
-  checkBBox(bbox) {
+  checkBBox(bbox, ignoreOneWay) {
     const gxMin = Math.max(
       0,
       Math.floor((bbox.x + bbox.xMin) / this.gridScale)
@@ -198,7 +198,10 @@ class NavGrid {
         if (block === null) {
           continue;
         }
-        if (bbox.intersects(block)) {
+        if (bbox.intersects(block) && (
+          block.type === BLOCKED_SPACE ||
+          (block.type === ONE_WAY_PLATFORM && !ignoreOneWay)
+        )) {
           return true;
         }
       }
@@ -279,7 +282,7 @@ class NavGrid {
         nextNode.velocityCost(endPos, gravity);
       entityExpandedBBox.x = nextNode.x;
       entityExpandedBBox.y = nextNode.y;
-      if (checker.checkBBox(entityExpandedBBox)) {
+      if (checker.checkBBox(entityExpandedBBox, vy < 0)) {
         nextNode.cost += 1;
       }
       nextNode.chainLength = prevNode.chainLength + 1;
@@ -305,7 +308,7 @@ class NavGrid {
         finalNode = nextNode;
         break;
       }
-      if (this.checkBBox(entityBBox)) {
+      if (this.checkBBox(entityBBox, nextNode.vy < 0)) {
         continue;
       }
       const vy = nextNode.vy + gravity;
@@ -349,7 +352,7 @@ export function getNavGridForTileGrid(
   gridWidth,
   tileSize,
   tileset,
-  useTileTypes=["ground"]
+  useTileTypes=["ground", "oneWayPlatform"]
 ) {
   const gridHeight = sourceGridArr.length / gridWidth;
 
@@ -383,7 +386,7 @@ export function getNavGridForTileGrid(
       const blockType = tileDef.type === "oneWayPlatform" ?
         ONE_WAY_PLATFORM :
         BLOCKED_SPACE;
-      const block = new NavBlockage(tileSize, tileSize, tileDef.type);
+      const block = new NavBlockage(tileSize, tileSize, blockType);
       block.x = (x + 0.5) * tileSize;
       block.y = (y + 0.5) * tileSize;
       column.push(block);

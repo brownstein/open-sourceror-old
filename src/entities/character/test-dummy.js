@@ -18,7 +18,6 @@ export class TestDummy extends Character {
     if (this.jumpPlan) {
       if (this.jumpPlanStep === 0) {
         const step = this.jumpPlan[0];
-        console.log(step);
         this.plannedAccelleration[0] = step.vx * 60;
         this.plannedAccelleration[1] = step.vy * 60;
       }
@@ -26,11 +25,12 @@ export class TestDummy extends Character {
         const step = this.jumpPlan[this.jumpPlanStep];
         const nextStep = this.jumpPlan[this.jumpPlanStep + 1];
         this.plannedAccelleration[0] = step.x - this.body.position[0];
+        this.plannedAccelleration[1] = 0;
       }
       this.jumpPlanStep++;
     }
 
-    if ((this.i++ % 60) !== 0) {
+    if ((this.i++ % 60) !== 0 && this.onSurface) {
       super.onFrame();
       return;
     }
@@ -47,10 +47,10 @@ export class TestDummy extends Character {
       32, // height
       this.accelleration[0] / 60,
       this.jumpAccelleration / 60,
-      engine.world.gravity[1] / (1000 * 3)
+      engine.world.gravity[1] / (60 * 60)
     ];
 
-    console.log(jumpProps);
+    // console.log(jumpProps);
 
     this.jumpPlan = ng2.planJump(...jumpProps);
     this.jumpPlanStep = 0;
