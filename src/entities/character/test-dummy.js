@@ -9,6 +9,7 @@ export class TestDummy extends Character {
 
     this.jumpPlan = null;
     this.jumpPlanStep = 0;
+    this.jumpAccelleration = 400;
   }
   onFrame() {
     const engine = this.engine;
@@ -30,7 +31,7 @@ export class TestDummy extends Character {
       this.jumpPlanStep++;
     }
 
-    if ((this.i++ % 60) !== 0 && this.onSurface) {
+    if ((this.i++ % 60)) {
       super.onFrame();
       return;
     }

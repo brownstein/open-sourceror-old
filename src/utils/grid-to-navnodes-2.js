@@ -8,6 +8,11 @@ const ONE_WAY_PLATFORM = 2;
 
 const DEBUG = false;
 
+// PLANS:
+// - complete jump engine [doneish]
+// - complete motion planning engine
+// clean everything up
+
 // /**
 //  * Directional link class - represents a link between two NavAreas that may be
 //  * uni-directional or bi-directional
@@ -56,9 +61,7 @@ const DEBUG = false;
 //   }
 // }
 
-/**
- * Nav area class
- */
+
 class CollisionBBox {
   constructor(xSize, ySize) {
     this.x = 0;
@@ -234,7 +237,7 @@ class NavGrid {
       y: yEnd
     };
 
-    const resolution = 2;
+    const resolution = 1;
     const accResolution = xAccelleration / 2;
 
     const planCache = new NavPlanningCache(resolution, accResolution);
