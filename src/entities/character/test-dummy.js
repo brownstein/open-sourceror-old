@@ -6,19 +6,55 @@ export class TestDummy extends Character {
     super(props);
     this.id = TestDummy._id++;
     this.i = 0;
+
+    this.jumpPlan = null;
+    this.jumpPlanStep = 0;
   }
   onFrame() {
     const engine = this.engine;
     const ng2 = engine.ng2;
     const player = engine.controllingEntity;
 
-    if (this.id !== 1) {
-      return;
+    if (this.jumpPlan) {
+      if (this.jumpPlanStep === 0) {
+        const step = this.jumpPlan[0];
+        console.log(step);
+        this.plannedAccelleration[0] = step.vx * 60;
+        this.plannedAccelleration[1] = step.vy * 60;
+      }
+      else if (this.jumpPlanStep < this.jumpPlan.length - 1) {
+        const step = this.jumpPlan[this.jumpPlanStep];
+        const nextStep = this.jumpPlan[this.jumpPlanStep + 1];
+        this.plannedAccelleration[0] = step.x - this.body.position[0];
+      }
+      this.jumpPlanStep++;
     }
-    if (this.i++ % 100 !== 0) {
+
+    if ((this.i++ % 60) !== 0) {
+      super.onFrame();
       return;
     }
 
-    
+    const currentPos = this.body.position;
+    const playerPos = player.body.position;
+
+    const jumpProps = [
+      currentPos[0],
+      currentPos[1],
+      playerPos[0],
+      playerPos[1],
+      16, // width
+      32, // height
+      this.accelleration[0] / 60,
+      this.jumpAccelleration / 60,
+      engine.world.gravity[1] / (1000 * 3)
+    ];
+
+    console.log(jumpProps);
+
+    this.jumpPlan = ng2.planJump(...jumpProps);
+    this.jumpPlanStep = 0;
+
+    super.onFrame();
   }
 }

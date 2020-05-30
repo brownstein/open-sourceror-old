@@ -6,7 +6,7 @@ const EMPTY_SPACE = 0;
 const BLOCKED_SPACE = 1;
 const ONE_WAY_PLATFORM = 2;
 
-const DEBUG = false;
+const DEBUG = true;
 
 // /**
 //  * Directional link class - represents a link between two NavAreas that may be
@@ -130,6 +130,7 @@ class NavPlanningNode {
     this.y = y;
     this.vx = vx;
     this.vy = vy;
+    this.chainLength = 0;
     this.prevNode = null;
     this.distCost = 0;
     this.cost = 0;
@@ -141,10 +142,23 @@ class NavPlanningNode {
   distanceFrom(other) {
     return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
   }
-  velocityCost(other) {
-    const xDiff = other.x - this.x;
-    const yDiff = other.y - this.y;
-    return Math.abs(xDiff - this.vx) + Math.abs(yDiff - this.vy);
+  velocityCost(other, gravity) {
+    let x = this.x;
+    let y = this.y;
+    const vx = this.vx;
+    let vy = this.vy;
+    let leastDistToPoint = Infinity;
+    for (let t = 0; t < 120; t++) {
+      x += vx;
+      vy += gravity;
+      y += vy;
+      const dist = Math.abs(other.x - x) + Math.abs(other.y - y); // cheap
+      if (dist < leastDistToPoint) {
+        leastDistToPoint = dist;
+      }
+    }
+
+    return leastDistToPoint;
   }
 }
 
@@ -217,11 +231,12 @@ class NavGrid {
       y: yEnd
     };
 
-    const resolution = 1;
-    const accResolution = 0.5;
+    const resolution = 2;
+    const accResolution = xAccelleration / 2;
 
-    const planCache = new NavPlanningCache(1, 0.5);
+    const planCache = new NavPlanningCache(resolution, accResolution);
     const entityBBox = new CollisionBBox(xSize - 0.1, ySize - 0.1);
+    const entityExpandedBBox = new CollisionBBox(xSize + 4, ySize + 4);
 
     const initialNode = new NavPlanningNode(
       Math.round(xStart / gridScale),
@@ -235,10 +250,14 @@ class NavGrid {
     for (let vx = -xAccelleration; vx <= xAccelleration; vx += accResolution) {
       for (let vy = -maxJumpVelocity; vy < 0; vy += accResolution) {
         const initialNode = new NavPlanningNode(xStart, yStart, vx, vy);
-        initialNode.cost = initialNode.distanceFrom(endPos);
+        initialNode.cost =
+          initialNode.distanceFrom(endPos) +
+          initialNode.velocityCost(endPos, gravity);
         frontier.push(initialNode);
       }
     }
+
+    const checker = this;
 
     function expand(prevNode, x, y, vx, vy) {
       if (
@@ -257,7 +276,13 @@ class NavGrid {
       nextNode.distCost = prevNode.distCost + nextNode.distanceFrom(prevNode);
       nextNode.cost = nextNode.distCost +
         nextNode.distanceFrom(endPos) +
-        nextNode.velocityCost(endPos);
+        nextNode.velocityCost(endPos, gravity);
+      entityExpandedBBox.x = nextNode.x;
+      entityExpandedBBox.y = nextNode.y;
+      if (checker.checkBBox(entityExpandedBBox)) {
+        nextNode.cost += 1;
+      }
+      nextNode.chainLength = prevNode.chainLength + 1;
       planCache.add(nextNode);
       frontier.push(nextNode);
     }
@@ -266,8 +291,14 @@ class NavGrid {
 
     let cycles = 0;
     let finalNode = null;
-    while (frontier.peek() && cycles++ < 1000) {
+    let minCost = Infinity;
+    let minCostNode = null;
+    while (frontier.peek() && cycles++ < 2000) {
       const nextNode = frontier.pop();
+      if (nextNode.cost < minCost) {
+        minCost = nextNode.cost;
+        minCostNode = nextNode;
+      }
       entityBBox.x = nextNode.x;
       entityBBox.y = nextNode.y;
       if (entityBBox.containsPoint(endPos)) {
@@ -286,12 +317,13 @@ class NavGrid {
       }
     }
 
+    DEBUG && console.log('BEST', minCostNode);
+    DEBUG && console.log('CYCLES', cycles);
+    DEBUG && console.log("CACHE", planCache);
+
     if (!finalNode) {
       return null;
     }
-
-    DEBUG && console.log("CACHE", planCache);
-    DEBUG && console.log('CYCLES', cycles);
 
     const nodePath = [];
     let node = finalNode;
@@ -304,7 +336,7 @@ class NavGrid {
     DEBUG && console.log("PATH");
     DEBUG && nodePath.forEach(n => console.log(n.x, n.y, n.vx, n.vy));
 
-    return finalNode;
+    return nodePath;
   }
 }
 
