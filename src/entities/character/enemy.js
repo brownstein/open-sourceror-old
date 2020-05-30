@@ -96,8 +96,10 @@ export class SmartEnemy extends Enemy {
     this.lastLocation = null;
     this.recentMotion = 0;
 
-    this.jumpAccelleration = 250;
-    this.maxControlledVelocity = [100, 250];
+    //this.jumpAccelleration = 250;
+    //this.maxControlledVelocity = [100, 250];
+    this.jumpAccelleration = 400;
+    this.maxControlledVelocity = [200, 250];
   }
   onFrame() {
     // find path
