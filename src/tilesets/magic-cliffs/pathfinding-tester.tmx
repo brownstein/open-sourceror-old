@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="11">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="13">
  <editorsettings>
   <export target="pathfinding-tester.json" format="json"/>
  </editorsettings>
@@ -27,9 +27,9 @@
 0,1032,1096,1031,1032,0,0,0,1031,1032,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1031,1032,1096,
 0,1031,1032,1095,1096,0,0,0,1031,1032,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1096,1096,
 0,1095,1096,0,0,0,0,0,1031,1032,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1095,1096,
-0,1031,1032,0,0,0,0,1031,1032,1032,0,0,0,0,0,1031,1031,1031,1031,1031,1031,1031,1031,745,746,746,746,746,746,746,746,0,1031,1032,1031,745,745,746,1095,1096,
-0,1031,1032,0,0,0,1031,1095,1096,1031,1032,0,0,0,0,0,1095,1095,1095,1095,1095,1095,809,809,810,810,810,810,810,810,810,346,1095,1096,1095,809,809,810,1095,1096,
-0,1031,1032,0,0,0,1095,1096,1031,1031,1032,1032,0,0,0,0,0,0,0,0,0,0,873,874,874,873,874,873,874,346,346,410,1095,1096,1031,873,873,874,1095,1096,
+0,1031,1032,0,0,0,0,1031,1032,1032,0,0,0,0,0,1031,1031,1031,1031,1031,1031,1031,1031,968,968,968,968,968,968,968,968,968,1031,1032,1031,968,968,968,1095,1096,
+0,1031,1032,0,0,0,1031,1095,1096,1031,1032,0,0,0,0,0,1095,968,968,968,968,968,968,968,968,968,968,968,968,1032,1032,1032,1095,1096,1095,968,968,968,1095,1096,
+0,1031,1032,0,0,0,1095,1096,1031,1031,1032,1032,0,0,0,0,0,1032,1032,1032,1032,1032,1032,1032,1032,1032,1032,1032,1032,346,346,410,1095,1096,1031,1032,1032,1032,1095,1096,
 0,1031,1032,0,0,0,0,0,1031,1095,1096,1031,1032,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1095,1096,
 0,1031,1031,1032,0,0,0,0,1031,1032,1095,1095,1031,1032,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1032,1032,
 0,1031,1095,1096,0,0,0,0,1031,1032,1095,1096,1095,1096,1032,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1096,1096,
@@ -49,40 +49,10 @@
 </data>
  </layer>
  <objectgroup id="2" name="Object Layer 1">
-  <object id="1" type="playerStart" x="322.734" y="322.734">
+  <object id="1" type="playerStart" x="437.083" y="421.836">
    <point/>
   </object>
-  <object id="2" type="testDummyStart" x="329.3" y="419.33">
-   <properties>
-    <property name="isSmart" type="bool" value="false"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="6" type="testDummyStart" x="380.132" y="419.868">
-   <properties>
-    <property name="isSmart" type="bool" value="false"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="7" type="testDummyStart" x="578.808" y="417.219">
-   <properties>
-    <property name="isSmart" type="bool" value="false"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="8" type="testDummyStart" x="429.139" y="418.543">
-   <properties>
-    <property name="isSmart" type="bool" value="false"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="9" type="testDummyStart" x="78.1457" y="417.219">
-   <properties>
-    <property name="isSmart" type="bool" value="false"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="10" type="testDummyStart" x="113.907" y="327.152">
+  <object id="2" type="testDummyStart" x="337.77" y="326.157">
    <properties>
     <property name="isSmart" type="bool" value="false"/>
    </properties>
