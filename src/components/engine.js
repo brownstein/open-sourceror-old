@@ -37,9 +37,6 @@ class _EngineProvider extends Component {
     this._focusGained = this._focusGained.bind(this);
   }
   componentDidMount() {
-    // attach keyboard event listeners
-    // this.engine.ks.mount(document);
-
     // attach window focus events for automatic pausing
     window.onblur = this._focusLost;
     window.onfocus = this._focusGained;

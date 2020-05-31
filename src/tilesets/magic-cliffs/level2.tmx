@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="18">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="19">
  <editorsettings>
   <export target="level2.json" format="json"/>
  </editorsettings>
@@ -132,7 +132,7 @@
    </properties>
    <point/>
   </object>
-  <object id="13" type="dialogue" x="201.235" y="377.315">
+  <object id="13" type="dialogue" x="85.7535" y="339.584">
    <properties>
     <property name="message" value="small dialogue"/>
     <property name="size" value="small"/>
@@ -150,6 +150,12 @@
    <properties>
     <property name="message" value="here's a big old platform. here's a big old platform. here's a big old platform. here's a big old platform. here's a big old platform. "/>
     <property name="size" value="large"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="18" type="npc" x="539.675" y="396.753">
+   <properties>
+    <property name="npcDialogue" value="lorem ipsum | dolor dolor dolor | goto line 10"/>
    </properties>
    <point/>
   </object>

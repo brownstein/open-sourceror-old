@@ -118,6 +118,9 @@ export class EngineViewport extends Component {
 
     if (player && engine.running && this.hasCursor) {
       player.runKeyboardMotion(engine, this.ks);
+      this.ks.runEvents().forEach(e => {
+        engine.keyEventBus.emit("keyboard-event", e)
+      });
     }
 
     this.needsRender = true;

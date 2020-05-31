@@ -24,8 +24,7 @@ export default class Engine extends EventEmitter {
     super();
 
     // keyboard events
-    // might need for pausing in the future
-    // this.ks = new KeyState();
+    this.keyEventBus = new EventEmitter();
 
     // rendering
     this.scene = new Scene();

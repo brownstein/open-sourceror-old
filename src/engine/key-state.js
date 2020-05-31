@@ -6,6 +6,8 @@ export default class KeyState {
     this.el = null;
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
+
+    this.keyDownSnapshot = {};
   }
   mount (domElement) {
     if (this.el) {
@@ -33,6 +35,25 @@ export default class KeyState {
   }
   isKeyDown (key) {
     return this.keyDown[key] || false;
+  }
+  // helper for getting key events fired while the game is taking place
+  runEvents() {
+    const newEvents = [];
+
+    Object.keys(this.keyDown).forEach(key => {
+      if (this.keyDown[key] && !this.keyDownSnapshot[key]) {
+        newEvents.push({ key, down: true });
+        this.keyDownSnapshot[key] = true;
+      }
+    });
+    Object.keys(this.keyDownSnapshot).forEach(key => {
+      if (!this.keyDown[key] && this.keyDownSnapshot[key]) {
+        newEvents.push({ key, up: true });
+        this.keyDownSnapshot[key] = false;
+      }
+    });
+
+    return newEvents;
   }
 }
 

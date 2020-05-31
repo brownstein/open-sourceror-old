@@ -9,6 +9,7 @@ import { Enemy, SmartEnemy } from "src/entities/character/enemy";
 import { TilesetTerrain, terrainMaterial } from "src/entities/terrain";
 import { SmallBodyOfWater } from "src/entities/environment/water";
 import { DialogueEntity } from "src/entities/presentational/dialogue";
+import { NPC } from "src/entities/character/npc";
 import TransitionZone from "src/entities/environment/transition-zone";
 
 import getContactMaterials from "src/entities/contact-materials";
@@ -134,6 +135,18 @@ export default class Room {
               level: props.level
             });
             engine.addEntity(zone);
+            break;
+          }
+          case "npc": {
+            const npcDialogue = props.npcDialogue;
+            const npc = new NPC({
+              position: {
+                x: o.x,
+                y: o.y
+              },
+              npcDialogue
+            });
+            engine.addEntity(npc);
             break;
           }
           default:
