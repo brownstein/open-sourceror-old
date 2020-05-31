@@ -351,7 +351,8 @@ class NavGrid {
     ySize,
     xAccelleration, // stepwise accelleration on the X dimension
     maxJumpVelocity, // maximum jump velocity,
-    gravity // raw gravity from engine
+    gravity, // raw gravity from engine
+    jumpPlanningCache = null
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
 
@@ -372,7 +373,7 @@ class NavGrid {
     const resolution = 1;
     const accResolution = xAccelleration / 2;
 
-    const planCache = new JumpPlanningCache(resolution, accResolution);
+    const planCache = jumpPlanningCache || new JumpPlanningCache(resolution, accResolution);
     const entityBBox = new CollisionBBox(xSize - 0.1, ySize - 0.1);
     const entityExpandedBBox = new CollisionBBox(xSize + 4, ySize + 4);
 
@@ -465,7 +466,8 @@ class NavGrid {
     plotXSpread,
     plotYSpread,
     moveCapabilities,
-    planningCache
+    planningCache,
+    jumpPlanCache
   ) {
     const { gridScale } = this;
     const { x: xStart, y: yStart, xSize, ySize } = entityBBox;
@@ -510,7 +512,8 @@ class NavGrid {
           ySize,
           xAcceleration,
           maxJumpVelocity,
-          gravity
+          gravity,
+          jumpPlanCache
         );
 
         if (!jumpPath) {
@@ -595,6 +598,10 @@ class NavGrid {
 
     // create the cache and expansion queue
     const planCache = new NavPlanningCache(gridScale);
+
+    const jumpAllocationCache = new NavPlanningCache(gridScale);
+    const jumpPlanCache = new JumpPlanningCache(gridScale, xAcceleration / 2);
+
     const frontier = new PriorityQueue([], (a, b) => a.cost - b.cost);
 
     frontier.push(startNode);
@@ -647,11 +654,13 @@ class NavGrid {
         expand(nextNode, x + gridScale, y, WALK);
         planningBBox.x = nextNode.x;
         planningBBox.y = nextNode.y;
-        // const jumps = this.getPossibleJumps(
-        //   planningBBox, 80, 80, moveCapabilities, planCache);
-        // jumps.forEach(jump => {
-        //   expand(nextNode, jump.x, jump.y, JUMP);
-        // });
+        const jumps = this.getPossibleJumps(
+          planningBBox, 80, 80, moveCapabilities,
+          jumpAllocationCache, jumpPlanCache
+        );
+        jumps.forEach(jump => {
+          expand(nextNode, jump.x, jump.y, JUMP);
+        });
       }
       else {
         expand(nextNode, x, y + gridScale, FALL);
