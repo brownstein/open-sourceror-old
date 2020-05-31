@@ -238,11 +238,11 @@ class NavPlanningNode {
 export class MovementCapabilities {
   constructor(
     xAcceleration,
-    jumpAccelleration,
+    maxJumpVelocity,
     gravity
   ) {
-    this.xAccelleration = xAcceleration;
-    this.jumpAccelleration = jumpAccelleration;
+    this.xAcceleration = xAcceleration;
+    this.maxJumpVelocity = maxJumpVelocity;
     this.gravity = gravity;
   }
 }
@@ -464,7 +464,8 @@ class NavGrid {
     entityBBox,
     plotXSpread,
     plotYSpread,
-    moveCapabilities
+    moveCapabilities,
+    planningCache
   ) {
     const { gridScale } = this;
     const { x: xStart, y: yStart, xSize, ySize } = entityBBox;
@@ -473,25 +474,32 @@ class NavGrid {
       maxJumpVelocity,
       gravity
     } = moveCapabilities;
-    const xMin = entityBBox.x - plotXSpread;
-    const xMax = entityBBox.x + plotXSpread;
-    const yMin = entityBBox.y - plotYSpread;
-    const yMax = entityBBox.y + plotYSpread;
+    const xMin = Math.max(0, entityBBox.x - plotXSpread);
+    const xMax = Math.min(
+      this.gridWidth * this.gridScale,
+      entityBBox.x + plotXSpread
+    );
+    const yMin = Math.max(0, entityBBox.y - plotYSpread);
+    const yMax = Math.min(
+      (this.gridHeight - 1) * this.gridScale,
+      entityBBox.y + plotYSpread
+    );
+
+    const jumpLocations = [];
 
     for (let x = xMin; x <= xMax; x += gridScale) {
+      const gridX = Math.floor(x / this.gridWidth);
+      const column = this.grid[gridX];
       for (let y = yMin; y <= yMax; y += gridScale) {
-
-        // console.log(
-        //   xStart,
-        //   yStart,
-        //   x,
-        //   y,
-        //   xSize,
-        //   ySize,
-        //   xAcceleration,
-        //   maxJumpVelocity,
-        //   gravity
-        // );
+        if (planningCache.get(x, y)) {
+          continue;
+        }
+        const gridY = Math.floor(y / this.gridHeight);
+        const gridBlock = column[gridY];
+        const gridBlockBelow = column[gridY + 1];
+        if (gridBlock !== null || gridBlockBelow === null) {
+          continue;
+        }
 
         const jumpPath = this.planJump(
           xStart,
@@ -504,9 +512,17 @@ class NavGrid {
           maxJumpVelocity,
           gravity
         );
-        // console.log(x, y, jumpPath);
+
+        if (!jumpPath) {
+          continue;
+        }
+
+        planningCache.add({ x, y, isJump: true });
+        jumpLocations.push({ x, y });
       }
     }
+
+    return jumpLocations;
   }
   // plotPossibleFalls(
   //   entityBBox,
@@ -592,7 +608,7 @@ class NavGrid {
       ) {
         return;
       }
-      if (planCache.get(x, y)) {
+      if (planCache.get(x, y) !== null) {
         return;
       }
       const nextNode = new NavPlanningNode(x, y, action);
@@ -608,7 +624,7 @@ class NavGrid {
     let finalNode = null;
     let bestNode = null;
     let bestNodeCost = Infinity;
-    while (frontier.peek() && cycles++ < 1000) {
+    while (frontier.peek() && cycles++ < 2000) {
       const nextNode = frontier.pop();
       const { x, y } = nextNode;
       if (nextNode.cost < bestNodeCost) {
@@ -631,7 +647,11 @@ class NavGrid {
         expand(nextNode, x + gridScale, y, WALK);
         planningBBox.x = nextNode.x;
         planningBBox.y = nextNode.y;
-        // this.getPossibleJumps(planningBBox, 40, 40, moveCapabilities);
+        // const jumps = this.getPossibleJumps(
+        //   planningBBox, 80, 80, moveCapabilities, planCache);
+        // jumps.forEach(jump => {
+        //   expand(nextNode, jump.x, jump.y, JUMP);
+        // });
       }
       else {
         expand(nextNode, x, y + gridScale, FALL);
