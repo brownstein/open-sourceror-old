@@ -14,7 +14,8 @@ export class Character extends BaseEntity {
       damping: 0.1,
       friction: 0.9,
       fixedRotation: true,
-      position: props.position || [50, 50]
+      position: props.position || [50, 50],
+      allowSleep: false
     });
     const convex = new Convex({
       vertices: characterPolygon.vertices
@@ -41,7 +42,7 @@ export class Character extends BaseEntity {
     this.onSurface = true;
 
     this.accelleration = [50, 50]; // rate of character speed increase
-    this.jumpAccelleration = 400; // velocity delta of jump
+    this.jumpAcceleration = 400; // velocity delta of jump
     this.maxControlledVelocity = [200, 400]; // max controlled speed
     this.plannedAccelleration = [0, 0]; // accelleration to apply on next frame
 

@@ -112,6 +112,7 @@ export class CollisionBBox {
   centerOnPoint(pos) {
     this.x = pos.x;
     this.y = pos.y;
+    return this;
   }
 }
 
@@ -186,13 +187,16 @@ class JumpPlanningNode {
     const vx = this.vx;
     let vy = this.vy;
     let leastDistToPoint = Infinity;
-    for (let t = 0; t < 120; t++) {
+    for (let t = 0; t < 200; t++) {
       x += vx;
+      y += vy + gravity / 2;
       vy += gravity;
-      y += vy;
       const dist = Math.abs(other.x - x) + Math.abs(other.y - y); // cheap
       if (dist < leastDistToPoint) {
         leastDistToPoint = dist;
+      }
+      else {
+        break;
       }
     }
 
@@ -235,6 +239,9 @@ class NavPlanningNode {
   }
 }
 
+/**
+ * Representation of movement capabilities for jump planning
+ */
 export class MovementCapabilities {
   constructor(
     xAcceleration,
@@ -461,6 +468,164 @@ class NavGrid {
     nodePath.reverse();
     return nodePath;
   }
+  planJump2(
+    start,
+    end,
+    size,
+    xAcceleration,
+    maxJumpVelocity,
+    gravity
+  ) {
+    const { grid, gridScale, gridWidth, gridHeight } = this;
+    const xSizeInBlocks = Math.ceil(size.x / gridScale);
+    const ySizeInBlocks = Math.ceil(size.y / gridScale);
+
+    // figure out what scale of calculations we want to run on
+    // half of grid size sounds reasonable
+    const microScale = gridScale / 2;
+
+    // set the time scale - this may be variable later
+    const timeScale = 1 / 60;
+
+    // calculated appropreately scaled motion parameters
+    const scaledXAccelleration = xAcceleration * timeScale;
+    const scaledMaxJumpVelocity = maxJumpVelocity * timeScale;
+    const scaledGravity = gravity * (timeScale * timeScale);
+
+    // find the start point and end point in terms of grid location
+    const startBBox = new CollisionBBox(size.x - 1, size.y - 1);
+    const endBBox = new CollisionBBox(size.x - 1, size.y - 1);
+    startBBox.x = start.x;
+    startBBox.y = start.y;
+    endBBox.x = end.x;
+    endBBox.y = end.y;
+    if (!this.fitBBoxIntoGrid(startBBox)) {
+      console.log("Unable to fit start location into grid");
+      return null;
+    }
+    if (!this.fitBBoxIntoGrid(endBBox)) {
+      console.log("Unable to fit end location into grid");
+      return null;
+    }
+
+    // create a bounding box for use in ongoing collision checking
+    const checkBBox = startBBox.clone();
+    const expandedBBox = new CollisionBBox(size.x + 2, size.y + 2);
+    expandedBBox.centerOnPoint(checkBBox);
+
+    // find range of apexes
+    const lowestApexPossible = (end.y < start.y) ? start.y - end.y : 0;
+    const highestApexPossible = 0.5 *
+      (scaledMaxJumpVelocity ** 2) /
+      scaledGravity;
+
+    // set up expansion queue
+    const cache = new JumpPlanningCache(microScale, scaledXAccelleration);
+    const frontier = new PriorityQueue([], (a, b) => a.cost - b.cost);
+
+    function addInitialJump(vy) {
+      const node = new JumpPlanningNode(startBBox.x, startBBox.y, 0, vy);
+      node.cost = node.distanceFrom(endBBox);
+      node.cost += node.velocityCost(endBBox, scaledGravity);
+      frontier.push(node);
+    }
+
+    // seed initial frontier with usable initial jumps
+    addInitialJump(scaledMaxJumpVelocity);
+    for (let apex = lowestApexPossible; apex < highestApexPossible; apex += microScale) {
+      const apexVelocity = -Math.sqrt(scaledGravity * apex * 2);
+      addInitialJump(apexVelocity);
+    }
+
+    // define expansion function
+    const scaledGridWidth = gridWidth * gridScale;
+    const scaledGridHeight = gridHeight * gridScale;
+    const expand = (prevNode, x, y, vx, vy) => {
+
+      // bounds check
+      if (
+        x < 0 ||
+        x >= scaledGridWidth ||
+        y < 0 ||
+        y >= scaledGridHeight
+      ) {
+        return;
+      }
+
+      // check cache
+      if (Math.abs(vx) + Math.abs(vy) >= scaledXAccelleration) {
+        if (cache.get(x, y, vx, vy)) {
+          return;
+        }
+      }
+
+      // collision check
+      checkBBox.x = x;
+      checkBBox.y = y;
+      if (this.checkBBox(checkBBox, vy < 0)) {
+        return;
+      }
+
+      // cost calculation
+      const nextNode = new JumpPlanningNode(x, y, vx, vy);
+      nextNode.prevNode = prevNode;
+      nextNode.distCost = prevNode.distCost + nextNode.distanceFrom(prevNode);
+      nextNode.cost = nextNode.distCost + nextNode.distanceFrom(endBBox) +
+        nextNode.velocityCost(endBBox, scaledGravity);
+      expandedBBox.x = x;
+      expandedBBox.y = y;
+      nextNode.cost += this.checkBBox(expandedBBox, vy < 0) ? 2 : 0;
+
+      // misc
+      nextNode.chainLength = prevNode.chainLength + 1;
+
+      // add to frontier
+      cache.add(nextNode);
+      frontier.push(nextNode);
+    };
+
+    //console.log('INITIAL FRONTIER LENGTH', frontier.length);
+
+    let cycles = 0;
+    let finalNode = null;
+    let bestNode = frontier.peek();
+    while (frontier.peek() && cycles++ < 2000) {
+      const nextNode = frontier.pop();
+      //console.log(nextNode);
+      if (nextNode.cost < bestNode.cost) {
+        bestNode = nextNode;
+      }
+      checkBBox.x = nextNode.x;
+      checkBBox.y = nextNode.y;
+      if (checkBBox.containsPoint(endBBox)) {
+        finalNode = nextNode;
+        break;
+      }
+      const y = nextNode.y + nextNode.vy + scaledGravity * 0.5;
+      const vy = nextNode.vy + scaledGravity;
+      for (let dvx = -1; dvx <= 1; dvx++) {
+        const x = nextNode.x + nextNode.vx + dvx * scaledXAccelleration * 0.5;
+        const vx = nextNode.vx + dvx * scaledXAccelleration;
+        expand(nextNode, x, y, vx, vy);
+      }
+    }
+
+    if (!finalNode) {
+      return null;
+    }
+
+    const nodePath = [];
+    let node = finalNode;
+    while (node !== null) {
+      node.vx = node.vx / timeScale;
+      node.vy = node.vy / timeScale;
+      nodePath.push(node);
+      node = node.prevNode;
+    }
+
+    nodePath.reverse();
+    return nodePath;
+  }
   getPossibleJumps(
     entityBBox,
     plotXSpread,
@@ -487,45 +652,7 @@ class NavGrid {
       entityBBox.y + plotYSpread
     );
 
-    const jumpLocations = [];
-
-    for (let x = xMin; x <= xMax; x += gridScale) {
-      const gridX = Math.floor(x / this.gridWidth);
-      const column = this.grid[gridX];
-      for (let y = yMin; y <= yMax; y += gridScale) {
-        if (planningCache.get(x, y)) {
-          continue;
-        }
-        const gridY = Math.floor(y / this.gridHeight);
-        const gridBlock = column[gridY];
-        const gridBlockBelow = column[gridY + 1];
-        if (gridBlock !== null || gridBlockBelow === null) {
-          continue;
-        }
-
-        const jumpPath = this.planJump(
-          xStart,
-          yStart,
-          x,
-          y,
-          xSize,
-          ySize,
-          xAcceleration,
-          maxJumpVelocity,
-          gravity,
-          jumpPlanCache
-        );
-
-        if (!jumpPath) {
-          continue;
-        }
-
-        planningCache.add({ x, y, isJump: true });
-        jumpLocations.push({ x, y });
-      }
-    }
-
-    return jumpLocations;
+    return [];
   }
   // plotPossibleFalls(
   //   entityBBox,

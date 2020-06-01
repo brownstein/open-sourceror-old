@@ -49,10 +49,10 @@
 </data>
  </layer>
  <objectgroup id="2" name="Object Layer 1">
-  <object id="1" type="playerStart" x="137.026" y="295.272">
+  <object id="1" type="playerStart" x="385.131" y="156.058">
    <point/>
   </object>
-  <object id="2" type="testDummyStart" x="127.304" y="152.664">
+  <object id="2" type="testDummyStart" x="498.083" y="229.853">
    <properties>
     <property name="isSmart" type="bool" value="false"/>
    </properties>
