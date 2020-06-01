@@ -81,7 +81,7 @@ export class TestDummy extends Character {
     const ng2 = engine.ng2;
     const player = engine.controllingEntity;
 
-    if ((this.i++ % 60)) {
+    if ((this.i++ % 30)) {
       this._executePathPlan();
       // this._executeJumpPlan();
       super.onFrame();
@@ -97,10 +97,10 @@ export class TestDummy extends Character {
       { x: 16, y: 32 },
       this.accelleration[0],
       this.jumpAcceleration,
-      engine.world.gravity[1]
+      engine.world.gravity[1] * 1.1
     );
 
-    console.log(this.pathPlan);
+    // console.log(this.pathPlan);
 
     this.pathPlanStep = 0;
     this._executePathPlan();

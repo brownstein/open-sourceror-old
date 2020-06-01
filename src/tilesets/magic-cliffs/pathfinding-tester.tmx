@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="13">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="40" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="15">
  <editorsettings>
   <export target="pathfinding-tester.json" format="json"/>
  </editorsettings>
@@ -53,6 +53,18 @@
    <point/>
   </object>
   <object id="2" type="testDummyStart" x="288.491" y="322.215">
+   <properties>
+    <property name="isSmart" type="bool" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" type="testDummyStart" x="72.8242" y="515.098">
+   <properties>
+    <property name="isSmart" type="bool" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="14" type="testDummyStart" x="577.265" y="602.131">
    <properties>
     <property name="isSmart" type="bool" value="false"/>
    </properties>
