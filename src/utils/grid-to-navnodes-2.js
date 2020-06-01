@@ -308,7 +308,7 @@ class NavGrid {
 
     // create a bounding box for use in ongoing collision checking
     const checkBBox = startBBox.clone();
-    const expandedBBox = new CollisionBBox(size.x + 2, size.y + 2);
+    const expandedBBox = new CollisionBBox(size.x + 4, size.y + 4);
     expandedBBox.centerOnPoint(checkBBox);
 
     // find range of apexes
@@ -372,7 +372,7 @@ class NavGrid {
         nextNode.velocityCost(endBBox, scaledGravity);
       expandedBBox.x = x;
       expandedBBox.y = y;
-      nextNode.cost += this.checkBBox(expandedBBox, vy < 0) ? 2 : 0;
+      nextNode.cost += this.checkBBox(expandedBBox, vy < 0) ? 10 : 0;
 
       // misc
       nextNode.chainLength = prevNode.chainLength + 1;

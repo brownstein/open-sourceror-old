@@ -1,3 +1,4 @@
+import { Ray, vec2 } from "p2";
 import { CollisionBBox, MovementCapabilities } from "src/utils/grid-to-navnodes-2";
 import { Character } from "./base";
 
@@ -40,6 +41,9 @@ export class TestDummy extends Character {
     return true;
   }
   _executePathPlan() {
+    const { engine } = this;
+    const { world } = engine;
+
     if (this._executeJumpPlan()) {
       return;
     }
@@ -52,6 +56,13 @@ export class TestDummy extends Character {
       return false;
     }
     let planStep = this.pathPlan[this.pathPlanStep];
+
+    // const ray = new Ray({
+    //   mode: Ray.CLOSEST,
+    //   from: vec2.clone(this.body.position),
+    //   to: [10, 0],
+    // });
+
     for (let psi = 3; psi >= 0; psi--) {
       const nextPlanStep = this.pathPlan[this.pathPlanStep + psi];
       if (!nextPlanStep) {
@@ -64,6 +75,7 @@ export class TestDummy extends Character {
       }
     }
 
+    // handle special cases for some actions (link jumping)
     switch (planStep.action) {
       case "jump":
         this.jumpPlan = planStep.actionPlan;
@@ -74,7 +86,11 @@ export class TestDummy extends Character {
     }
 
     const xDiff = planStep.x - this.body.position[0];
-    this.plannedAccelleration[0] = xDiff * 60;
+    const yDiff = planStep.y - this.body.position[1];
+    this.plannedAccelleration[0] = xDiff * 60 - this.body.velocity[0];
+    if (yDiff > 0) {
+      this.plannedAccelleration[1] = yDiff * 60 - this.body.velocity[1];
+    }
   }
   onFrame() {
     const engine = this.engine;
@@ -83,7 +99,6 @@ export class TestDummy extends Character {
 
     if ((this.i++ % 30)) {
       this._executePathPlan();
-      // this._executeJumpPlan();
       super.onFrame();
       return;
     }
@@ -91,6 +106,7 @@ export class TestDummy extends Character {
     const currentPos = this.body.position;
     const playerPos = player.body.position;
 
+    this.pathPlanStep = 0;
     this.pathPlan = ng2.planPath(
       { x: currentPos[0], y: currentPos[1] },
       { x: playerPos[0], y: playerPos[1] },
@@ -100,11 +116,8 @@ export class TestDummy extends Character {
       engine.world.gravity[1] * 1.1
     );
 
-    // console.log(this.pathPlan);
-
     this.pathPlanStep = 0;
     this._executePathPlan();
-
     super.onFrame();
   }
 }
