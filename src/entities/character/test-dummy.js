@@ -1,4 +1,4 @@
-import { Ray, vec2 } from "p2";
+import { Ray, RaycastResult, vec2 } from "p2";
 import { CollisionBBox, MovementCapabilities } from "src/utils/grid-to-navnodes-2";
 import { Character } from "./base";
 
@@ -57,12 +57,6 @@ export class TestDummy extends Character {
     }
     let planStep = this.pathPlan[this.pathPlanStep];
 
-    // const ray = new Ray({
-    //   mode: Ray.CLOSEST,
-    //   from: vec2.clone(this.body.position),
-    //   to: [10, 0],
-    // });
-
     for (let psi = 3; psi >= 0; psi--) {
       const nextPlanStep = this.pathPlan[this.pathPlanStep + psi];
       if (!nextPlanStep) {
@@ -73,6 +67,30 @@ export class TestDummy extends Character {
         planStep = nextPlanStep;
         break;
       }
+      if (nextPlanStep.action === "jump") {
+        continue;
+      }
+
+      // let hitAnything = false;
+      // const ray = new Ray({
+      //   mode: Ray.ALL,
+      //   from: vec2.clone(this.body.position),
+      //   to: [nextPlanStep.x, nextPlanStep.y],
+      //   callback: (result) => {
+      //     if (result.body === null || result.body === this.body) {
+      //       return;
+      //     }
+      //     console.log('B', result.body);
+      //     hitAnything = true;
+      //   }
+      // });
+      // const result = new RaycastResult();
+      // world.raycast(result, ray);
+      // if (!hitAnything) {
+      //   this.pathPlanStep += psi + 1;
+      //   planStep = nextPlanStep;
+      //   break;
+      // }
     }
 
     // handle special cases for some actions (link jumping)
