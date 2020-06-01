@@ -9,7 +9,7 @@ export class TestDummy extends Character {
     this.id = TestDummy._id++;
     this.i = 0;
 
-    this.jumpAcceleration = 400;
+    this.jumpAcceleration = 500;
     this.onSurface = true;
 
     this.jumpPlan = null;

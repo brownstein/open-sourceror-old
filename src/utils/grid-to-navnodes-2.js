@@ -502,7 +502,7 @@ class NavGrid {
     xAcceleration,
     maxJumpVelocity,
     gravity,
-    maxSteps = 16
+    maxSteps = 20
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
 
@@ -596,7 +596,7 @@ class NavGrid {
         const jumps = this.getPossibleJumps(
           planningBBox,
           80,
-          80,
+          128,
           xAcceleration,
           maxJumpVelocity,
           gravity,
