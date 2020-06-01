@@ -96,8 +96,10 @@ export class SmartEnemy extends Enemy {
     this.lastLocation = null;
     this.recentMotion = 0;
 
-    this.jumpAccelleration = 250;
-    this.maxControlledVelocity = [100, 250];
+    //this.jumpAcceleration = 250;
+    //this.maxControlledVelocity = [100, 250];
+    this.jumpAcceleration = 400;
+    this.maxControlledVelocity = [200, 250];
   }
   onFrame() {
     // find path
@@ -142,7 +144,7 @@ export class SmartEnemy extends Enemy {
         const nodeCenter = nextPathNode.getCenter();
         this.plannedAccelleration[0] = nodeCenter[0] - myPosition[0];
         this.plannedAccelleration[1] = nodeCenter[1] < myPosition[1] ?
-          -this.jumpAccelleration :
+          -this.jumpAcceleration :
           0;
         this.movingDirectly = false;
       }
@@ -151,7 +153,7 @@ export class SmartEnemy extends Enemy {
     if (this.movingDirectly) {
       this.plannedAccelleration[0] = playerPosition[0] - myPosition[0];
       this.plannedAccelleration[1] = playerPosition[1] < myPosition[1] ?
-        -this.jumpAccelleration :
+        -this.jumpAcceleration :
         0;
     }
 

@@ -2,10 +2,12 @@ import { Vector2 } from "three";
 
 // navigation meshes
 import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
+import { getNavGridForTileGrid as gng } from "src/utils/grid-to-navnodes-2";
 
 // game entities
 import { Player } from "src/entities/character/player";
 import { Enemy, SmartEnemy } from "src/entities/character/enemy";
+import { TestDummy } from "src/entities/character/test-dummy";
 import { TilesetTerrain, terrainMaterial } from "src/entities/terrain";
 import { SmallBodyOfWater } from "src/entities/environment/water";
 import { DialogueEntity } from "src/entities/presentational/dialogue";
@@ -72,7 +74,7 @@ export default class Room {
       primaryLayer.data,
       primaryLayer.width,
       16,
-      this.tileSheet
+      this.tileSheet,
     );
     engine.addNavGrid(navGrid);
 
@@ -102,6 +104,20 @@ export default class Room {
               position: [o.x, o.y]
             });
             engine.addEntity(enemy);
+            break;
+          }
+          case "testDummyStart": {
+            let isSmart = false;
+            // o.properties && o.properties.forEach(p => {
+            //   if (p.name === "isSmart" && p.value) {
+            //     isSmart = true;
+            //   }
+            // });
+            const DummyClazz = TestDummy;
+            const dummy = new DummyClazz({
+              position: [o.x, o.y]
+            });
+            engine.addEntity(dummy);
             break;
           }
           case "water": {
@@ -154,5 +170,15 @@ export default class Room {
         }
       });
     });
+
+    const ng2 = gng(primaryLayer.data, primaryLayer.width, 16, this.tileSheet);
+    engine.ng2 = ng2;
+    console.log(ng2);
+
+    console.log('P', engine.followingEntity);
+
+    global.ng2 = ng2;
+    global.player = engine.followingEntity;
+    global.getPlayerPosition = () => global.player.body.position;
   }
 }

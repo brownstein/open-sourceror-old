@@ -155,7 +155,7 @@ export class Player extends Character {
     if (ks.isKeyDown("w")) {
       if (!this.upHeld) {
         this.upHeld = true;
-        this.plannedAccelleration[1] = -this.jumpAccelleration;
+        this.plannedAccelleration[1] = -this.jumpAcceleration;
       }
     }
     else {
