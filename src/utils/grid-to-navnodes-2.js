@@ -17,57 +17,8 @@ const DEBUG = false;
 
 // PLANS:
 // - complete jump engine [doneish]
-// - complete motion planning engine
+// - complete motion planning engine [doneish]
 // clean everything up
-
-// /**
-//  * Directional link class - represents a link between two NavAreas that may be
-//  * uni-directional or bi-directional
-//  */
-// class NavLink {
-//   static _id = 1;
-//   static DISCONNECTED = 0;
-//   static WALK_TO = 1;
-//   static FALL_TO = 2;
-//   static JUMP_TO = 3;
-//   constructor(a, b) {
-//     this.id = NavLink._id++;
-//     this.a = a;
-//     this.b = b;
-//     this.aToBMethod = NavLink.DISCONNECTED;
-//     this.bToAMethod = NAVLink.DISCONNECTED;
-//     this.aToBCost = Infinity;
-//     this.bToACost = Infinity;
-//   }
-//   setABConnectionMethodAndCost(method, cost) {
-//     this.aToBMethod = method;
-//     this.aToBCost = cost;
-//   }
-//   setBAConnectionMethodAndCost(method, cost) {
-//     this.bToAMethod = method;
-//     this.bToACost = cost;
-//   }
-//   setConnectionMethodAndCost(start, method, cost) {
-//     if (start === this.a) {
-//       this.setABConnectionMethodAndCost(method, cost);
-//     }
-//     else {
-//       this.setBAConnectionMethodAndCost(method, cost);
-//     }
-//   }
-//   getConnectionMethodAndCost(start) {
-//     if (start === this.a) {
-//       return [this.aToBMethod, this.aToBCost];
-//     }
-//     else {
-//       return [this.bToAMethod, this.bToACost];
-//     }
-//   }
-//   getOtherNode(start) {
-//     return start === this.a ? this.b : this.a;
-//   }
-// }
-
 
 export class CollisionBBox {
   constructor(xSize, ySize) {
@@ -122,22 +73,6 @@ class NavBlockage extends CollisionBBox {
     this.type = type;
   }
 }
-
-// const LINK_WALK = 1;
-// const LINK_JUMP = 2;
-//
-// class NavNode {
-//   constructor() {
-//     this.type = NAV_NODE;
-//     this.linksById = {};
-//   }
-//   linkBidirectionally(other) {
-//
-//   }
-//   linkUnidirectionally(other) {
-//
-//   }
-// }
 
 class JumpPlanningCache {
   constructor(resolution = 1, vResolution = 0.1) {
@@ -237,21 +172,6 @@ class NavPlanningNode {
   }
   distanceFrom(other) {
     return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
-  }
-}
-
-/**
- * Representation of movement capabilities for jump planning
- */
-export class MovementCapabilities {
-  constructor(
-    xAcceleration,
-    maxJumpVelocity,
-    gravity
-  ) {
-    this.xAcceleration = xAcceleration;
-    this.maxJumpVelocity = maxJumpVelocity;
-    this.gravity = gravity;
   }
 }
 
@@ -751,36 +671,6 @@ export function getNavGridForTileGrid(
       column.push(null);
     }
   }
-
-  // swap relevant nulls for navigation nodes
-  // for (let x = 0; x < gridWidth; x++) {
-  //   const column = grid[x];
-  //   for (let y = 0; y < gridHeight - 1; y++) {
-  //     const block = column[y];
-  //     const nextBlock = column[y + 1];
-  //     if (nextBlock && !block) {
-  //       column[y] = new NavNode(x * gridScale, y * gridScale);
-  //     }
-  //   }
-  // }
-
-  // stitch grid adjacencies
-  // for (let x = 0; x < gridWidth - 1; x++) {
-  //   const column = grid[x];
-  //   const nextColumn = grid[x + 1];
-  //   for (let y = 0; y < gridHeight - 1; y++) {
-  //     const block = column[y];
-  //     const rightBlock = nextColumn[y];
-  //     if (
-  //       !block ||
-  //       !rightBlock ||
-  //       !block.type !== NAV_NODE ||
-  //       !rightBlock.type !== NAV_NODE
-  //     ) {
-  //       continue;
-  //     }
-  //   }
-  // }
 
   // return a shiny new nagivation grid
   return new NavGrid(grid, tileSize, gridWidth, gridHeight);

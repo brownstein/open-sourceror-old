@@ -108,7 +108,7 @@
    </properties>
    <point/>
   </object>
-  <object id="5" type="enemyStart" x="1029.34" y="533.808">
+  <object id="5" type="testDummyStart" x="1029.34" y="533.808">
    <properties>
     <property name="isSmart" type="bool" value="true"/>
    </properties>

@@ -8,8 +8,8 @@ import CodeExecutor from "./code-executor";
 import LoadingScreen from "./loading-screen";
 
 // import the first level
-// import Level1 from "src/rooms/intro/1";
-import Level1 from "src/rooms/test/pathfinding-tester";
+import Level1 from "src/rooms/intro/1";
+// import Level1 from "src/rooms/test/pathfinding-tester";
 
 // global styles
 import "./game.less";

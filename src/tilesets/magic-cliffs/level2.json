@@ -105,7 +105,7 @@
                          "value":true
                         }],
                  "rotation":0,
-                 "type":"enemyStart",
+                 "type":"testDummyStart",
                  "visible":true,
                  "width":0,
                  "x":1029.34,
@@ -201,8 +201,8 @@
                  "type":"dialogue",
                  "visible":true,
                  "width":0,
-                 "x":85.7534873084839,
-                 "y":339.583809741596
+                 "x":85.7535,
+                 "y":339.584
                 }, 
                 {
                  "height":0,
@@ -224,8 +224,8 @@
                  "type":"dialogue",
                  "visible":true,
                  "width":0,
-                 "x":355.591127372513,
-                 "y":277.841298879488
+                 "x":355.591,
+                 "y":277.841
                 }, 
                 {
                  "height":0,
@@ -247,8 +247,8 @@
                  "type":"dialogue",
                  "visible":true,
                  "width":0,
-                 "x":668.877201006174,
-                 "y":300.708895495083
+                 "x":668.877,
+                 "y":300.709
                 }, 
                 {
                  "height":0,
@@ -265,8 +265,8 @@
                  "type":"npc",
                  "visible":true,
                  "width":0,
-                 "x":539.675280128058,
-                 "y":396.752801280585
+                 "x":539.675,
+                 "y":396.753
                 }],
          "opacity":1,
          "type":"objectgroup",
