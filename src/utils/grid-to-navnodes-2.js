@@ -274,6 +274,7 @@ class NavGrid {
     start,
     end,
     size,
+    xVelocity,
     xAcceleration,
     maxJumpVelocity,
     gravity
@@ -288,6 +289,7 @@ class NavGrid {
     const timeScale = 1 / 60;
 
     // calculated appropreately scaled motion parameters
+    const scaledXVelocity = xVelocity * timeScale;
     const scaledXAccelleration = xAcceleration * timeScale;
     const scaledMaxJumpVelocity = maxJumpVelocity * timeScale;
     const scaledGravity = gravity * (timeScale * timeScale);
@@ -322,7 +324,8 @@ class NavGrid {
     const frontier = new PriorityQueue([], (a, b) => a.cost - b.cost);
 
     function addInitialJump(vy) {
-      const node = new JumpPlanningNode(startBBox.x, startBBox.y, 0, vy);
+      const vx = scaledXVelocity;
+      const node = new JumpPlanningNode(startBBox.x, startBBox.y, vx, vy);
       node.cost = node.distanceFrom(endBBox);
       node.cost += node.velocityCost(endBBox, scaledGravity);
       frontier.push(node);
@@ -425,6 +428,7 @@ class NavGrid {
     entityBBox,
     plotXSpread,
     plotYSpread,
+    xVelocity,
     xAcceleration,
     maxJumpVelocity,
     gravity,
@@ -482,6 +486,7 @@ class NavGrid {
           entityBBox,
           { x, y },
           { x: entityBBox.xSize, y: entityBBox.ySize },
+          xVelocity,
           xAcceleration,
           maxJumpVelocity,
           gravity
@@ -499,6 +504,7 @@ class NavGrid {
     start,
     end,
     size,
+    xWalkVelocity,
     xAcceleration,
     maxJumpVelocity,
     gravity,
@@ -593,10 +599,22 @@ class NavGrid {
         expand(nextNode, x + gridScale, y, WALK);
         planningBBox.x = nextNode.x;
         planningBBox.y = nextNode.y;
+
+        let vx = 0;
+        if (nextNode.prevNode) {
+          if (nextNode.x > nextNode.prevNode.x) {
+            vx = xWalkVelocity;
+          }
+          if (nextNode.x < nextNode.prevNode.x) {
+            vx = -xWalkVelocity;
+          }
+        }
+
         const jumps = this.getPossibleJumps(
           planningBBox,
           80,
           128,
+          vx,
           xAcceleration,
           maxJumpVelocity,
           gravity,
