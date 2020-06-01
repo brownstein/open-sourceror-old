@@ -233,6 +233,7 @@ class NavPlanningNode {
     this.prevNode = null;
     this.distCost = 0;
     this.cost = 0;
+    this.actionPlan = null;
   }
   distanceFrom(other) {
     return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
@@ -306,8 +307,8 @@ class NavGrid {
     const width = xMax - xMin;
     const height = yMax - yMin;
 
-    bbox.x = Math.floor(rawX / gridScale + 0.5) * gridScale;
-    bbox.y = Math.floor(rawY / gridScale + 0.5) * gridScale;
+    bbox.x = (Math.floor(rawX / gridScale) + 0.5) * gridScale;
+    bbox.y = (Math.floor(rawY / gridScale) + 0.5) * gridScale;
     if (!this.checkBBox(bbox)) {
       return true;
     }
@@ -350,125 +351,6 @@ class NavGrid {
    * Attempts to plan a jump through the grid
    */
   planJump(
-    xStart,
-    yStart,
-    xEnd,
-    yEnd,
-    xSize,
-    ySize,
-    xAccelleration, // stepwise accelleration on the X dimension
-    maxJumpVelocity, // maximum jump velocity,
-    gravity, // raw gravity from engine
-    jumpPlanningCache = null
-  ) {
-    const { grid, gridScale, gridWidth, gridHeight } = this;
-
-    // TODO: clean this up if used
-    // const startBBox = new CollisionBBox(xSize, ySize);
-    // startBBox.x = xStart;
-    // startBBox.y = yStart;
-    // this.fitBBoxIntoGrid(startBBox);
-    // xStart = startBBox.x;
-    // yStart = startBBox.y;
-
-    // end position as object reference
-    const endPos = {
-      x: xEnd,
-      y: yEnd
-    };
-
-    const resolution = 1;
-    const accResolution = xAccelleration / 2;
-
-    const planCache = jumpPlanningCache || new JumpPlanningCache(resolution, accResolution);
-    const entityBBox = new CollisionBBox(xSize - 0.1, ySize - 0.1);
-    const entityExpandedBBox = new CollisionBBox(xSize + 4, ySize + 4);
-
-    const initialNode = new JumpPlanningNode(
-      Math.round(xStart / gridScale),
-      Math.round(yStart / gridScale),
-      0,
-      0
-    );
-
-    const frontier = new PriorityQueue([], (a, b) => a.cost - b.cost);
-
-    for (let vx = -xAccelleration; vx <= xAccelleration; vx += accResolution) {
-      for (let vy = -maxJumpVelocity; vy < 0; vy += accResolution) {
-        const initialNode = new JumpPlanningNode(xStart, yStart, vx, vy);
-        initialNode.cost =
-          initialNode.distanceFrom(endPos) +
-          initialNode.velocityCost(endPos, gravity);
-        frontier.push(initialNode);
-      }
-    }
-
-    const checker = this;
-    function expand(prevNode, x, y, vx, vy) {
-      if (
-        x < 0 ||
-        x >= gridWidth * gridScale ||
-        y < 0 ||
-        y >= gridHeight * gridScale
-      ) {
-        return;
-      }
-      if (planCache.get(x, y, vx, vy)) {
-        return;
-      }
-      const nextNode = new JumpPlanningNode(x, y, vx, vy);
-      nextNode.prevNode = prevNode;
-      nextNode.distCost = prevNode.distCost + nextNode.distanceFrom(prevNode);
-      nextNode.cost = nextNode.distCost +
-        nextNode.distanceFrom(endPos) +
-        nextNode.velocityCost(endPos, gravity);
-      entityExpandedBBox.x = nextNode.x;
-      entityExpandedBBox.y = nextNode.y;
-      if (checker.checkBBox(entityExpandedBBox, vy < 0)) {
-        nextNode.cost += 1;
-      }
-      nextNode.chainLength = prevNode.chainLength + 1;
-      planCache.add(nextNode);
-      frontier.push(nextNode);
-    }
-
-    let cycles = 0;
-    let finalNode = null;
-    while (frontier.peek() && cycles++ < 2000) {
-      const nextNode = frontier.pop();
-      entityBBox.x = nextNode.x;
-      entityBBox.y = nextNode.y;
-      if (entityBBox.containsPoint(endPos)) {
-        finalNode = nextNode;
-        break;
-      }
-      if (this.checkBBox(entityBBox, nextNode.vy < 0)) {
-        continue;
-      }
-      const vy = nextNode.vy + gravity;
-      const y = nextNode.y + vy;
-      for (let dvx = -xAccelleration; dvx <= xAccelleration; dvx += accResolution) {
-        const vx = nextNode.vx + dvx;
-        const x = nextNode.x + vx;
-        expand(nextNode, x, y, vx, vy);
-      }
-    }
-
-    if (!finalNode) {
-      return null;
-    }
-
-    const nodePath = [];
-    let node = finalNode;
-    while (node !== null) {
-      nodePath.push(node);
-      node = node.prevNode;
-    }
-
-    nodePath.reverse();
-    return nodePath;
-  }
-  planJump2(
     start,
     end,
     size,
@@ -477,8 +359,6 @@ class NavGrid {
     gravity
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
-    const xSizeInBlocks = Math.ceil(size.x / gridScale);
-    const ySizeInBlocks = Math.ceil(size.y / gridScale);
 
     // figure out what scale of calculations we want to run on
     // half of grid size sounds reasonable
@@ -500,11 +380,9 @@ class NavGrid {
     endBBox.x = end.x;
     endBBox.y = end.y;
     if (!this.fitBBoxIntoGrid(startBBox)) {
-      console.log("Unable to fit start location into grid");
       return null;
     }
     if (!this.fitBBoxIntoGrid(endBBox)) {
-      console.log("Unable to fit end location into grid");
       return null;
     }
 
@@ -584,14 +462,11 @@ class NavGrid {
       frontier.push(nextNode);
     };
 
-    //console.log('INITIAL FRONTIER LENGTH', frontier.length);
-
     let cycles = 0;
     let finalNode = null;
     let bestNode = frontier.peek();
     while (frontier.peek() && cycles++ < 2000) {
       const nextNode = frontier.pop();
-      //console.log(nextNode);
       if (nextNode.cost < bestNode.cost) {
         bestNode = nextNode;
       }
@@ -601,10 +476,10 @@ class NavGrid {
         finalNode = nextNode;
         break;
       }
-      const y = nextNode.y + nextNode.vy + scaledGravity * 0.5;
+      const y = nextNode.y + nextNode.vy + scaledGravity;// * 0.5;
       const vy = nextNode.vy + scaledGravity;
       for (let dvx = -1; dvx <= 1; dvx++) {
-        const x = nextNode.x + nextNode.vx + dvx * scaledXAccelleration * 0.5;
+        const x = nextNode.x + nextNode.vx + dvx * scaledXAccelleration;// * 0.5;
         const vx = nextNode.vx + dvx * scaledXAccelleration;
         expand(nextNode, x, y, vx, vy);
       }
@@ -630,89 +505,97 @@ class NavGrid {
     entityBBox,
     plotXSpread,
     plotYSpread,
-    moveCapabilities,
-    planningCache,
-    jumpPlanCache
+    xAcceleration,
+    maxJumpVelocity,
+    gravity,
+    jumpCache
   ) {
-    const { gridScale } = this;
+    const { grid, gridScale, gridWidth, gridHeight } = this;
     const { x: xStart, y: yStart, xSize, ySize } = entityBBox;
-    const {
-      xAcceleration,
-      maxJumpVelocity,
-      gravity
-    } = moveCapabilities;
-    const xMin = Math.max(0, entityBBox.x - plotXSpread);
-    const xMax = Math.min(
-      this.gridWidth * this.gridScale,
+
+    // TODO: snap to grid centers
+    let xMin = Math.max(
+      0.5 * gridScale,
+      entityBBox.x - plotXSpread
+    );
+    let xMax = Math.min(
+      (this.gridWidth - 0.5) * this.gridScale,
       entityBBox.x + plotXSpread
     );
-    const yMin = Math.max(0, entityBBox.y - plotYSpread);
-    const yMax = Math.min(
-      (this.gridHeight - 1) * this.gridScale,
-      entityBBox.y + plotYSpread
+    let yMin = Math.max(
+      0.5 * gridScale,
+      entityBBox.y - plotYSpread
+    );
+    let yMax = Math.min(
+      (this.gridHeight - 1.5) * this.gridScale,
+      entityBBox.y // + plotYSpread
     );
 
-    return [];
+    const jumps = [];
+
+    const invGridScale = 1/ gridScale;
+    for (let x = xMin; x <= xMax; x += gridScale) {
+      for (let y = yMin; y < yMax; y += gridScale) {
+        const gridX = Math.floor(x * invGridScale);
+        const gridY = Math.floor(y * invGridScale);
+        const topBlock = grid[gridX][gridY];
+        const bottomBlock = grid[gridX][gridY + 1];
+        let bottomLeftBlock = null;
+        let bottomRightBlock = null;
+        if (gridX >= 1) {
+          bottomLeftBlock = grid[gridX - 1][gridY + 1];
+        }
+        if (gridX < gridWidth - 1) {
+          bottomRightBlock = grid[gridX + 1][gridY + 1];
+        }
+        if (
+          topBlock ||
+          !bottomBlock ||
+          (bottomLeftBlock && bottomRightBlock)
+        ) {
+          continue;
+        }
+        if (jumpCache.get(x, y)) {
+          continue;
+        }
+        const jumpPlan = this.planJump(
+          entityBBox,
+          { x, y },
+          { x: entityBBox.xSize, y: entityBBox.ySize },
+          xAcceleration,
+          maxJumpVelocity,
+          gravity
+        );
+        if (jumpPlan) {
+          jumps.push({ x, y, jumpPlan });
+          jumpCache.add({ x, y });
+        }
+      }
+    }
+
+    return jumps;
   }
-  // plotPossibleFalls(
-  //   entityBBox,
-  //   plotXSpread,
-  //   plotYSpread,
-  //   xAccelleration = 2,
-  //   gravity
-  // ) {
-  //   const planCache = new NavPlanningCache()
-  //   const { gridScale } = this;
-  //   const collBBox = entityBBox.clone();
-  //   let openSpotsInRow = [{
-  //     x: collBBox.x,
-  //     y: collBBox.y,
-  //     minDX: 0,
-  //     maxDX: 0,
-  //     dy: 0,
-  //     t: 0
-  //   }];
-  //   let y = entityBBox.y;
-  //   let openPositions = [];
-  // }
   planPath(
-    xStart,
-    yStart,
-    xEnd,
-    yEnd,
-    xSize,
-    ySize,
+    start,
+    end,
+    size,
     xAcceleration,
     maxJumpVelocity,
     gravity
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
-    const xSizeInBlocks = Math.ceil(xSize / gridScale);
-    const ySizeInBlocks = Math.ceil(ySize / gridScale);
 
-    const moveCapabilities = new MovementCapabilities(
-      xAcceleration,
-      maxJumpVelocity,
-      gravity
-    );
-
-    // round start and end coordinates to the grid and make sure they fit
-    // cleanly
-    const startBBox = new CollisionBBox(xSize - 2, ySize - 2);
-    startBBox.x = xStart;
-    startBBox.y = yStart;
-    const fitStart = this.fitBBoxIntoGrid(startBBox);
-    if (!fitStart) {
-      console.log("Unable to fit start location into grid");
+    // find the start point and end point in terms of grid location
+    const startBBox = new CollisionBBox(size.x - 1, size.y - 1);
+    const endBBox = new CollisionBBox(size.x - 1, size.y - 1);
+    startBBox.x = start.x;
+    startBBox.y = start.y;
+    endBBox.x = end.x;
+    endBBox.y = end.y;
+    if (!this.fitBBoxIntoGrid(startBBox)) {
       return null;
     }
-
-    const endBBox = startBBox.clone();
-    endBBox.x = xEnd;
-    endBBox.y = yEnd;
-    const fitEnd = this.fitBBoxIntoGrid(endBBox);
-    if (!fitEnd) {
-      console.log("Unable to fit end location into grid");
+    if (!this.fitBBoxIntoGrid(endBBox)) {
       return null;
     }
 
@@ -721,38 +604,43 @@ class NavGrid {
 
     // create start node
     const startNode = new NavPlanningNode(startBBox.x, startBBox.y, null);
-    startNode.cost = startNode.distanceFrom(endBBox) * 1.5;
+    startNode.cost = startNode.distanceFrom(endBBox);
 
     // create the cache and expansion queue
     const planCache = new NavPlanningCache(gridScale);
-
-    const jumpAllocationCache = new NavPlanningCache(gridScale);
-    const jumpPlanCache = new JumpPlanningCache(gridScale, xAcceleration / 2);
-
+    const jumpCache = new NavPlanningCache(gridScale);
     const frontier = new PriorityQueue([], (a, b) => a.cost - b.cost);
 
     frontier.push(startNode);
 
-    function expand(prevNode, x, y, action) {
+    const scaledGridWidth = gridWidth * gridScale;
+    const scaledGridHeight = gridHeight * gridScale;
+    const expand = (prevNode, x, y, action, actionPlan) => {
+
+      // bounds check
       if (
         x < 0 ||
-        x >= gridWidth * gridScale ||
+        x >= scaledGridWidth ||
         y < 0 ||
-        y >= gridHeight * gridScale
+        y >= scaledGridHeight
       ) {
         return;
       }
-      if (planCache.get(x, y) !== null) {
+
+      // check cache
+      if (planCache.get(x, y)) {
         return;
       }
+
       const nextNode = new NavPlanningNode(x, y, action);
       nextNode.prevNode = prevNode;
       nextNode.distCost = prevNode.distCost + nextNode.distanceFrom(prevNode);
-      nextNode.cost = nextNode.distCost + nextNode.distanceFrom(endBBox) * 1.5;
+      nextNode.cost = nextNode.distCost + nextNode.distanceFrom(endBBox) * 0.1;
       nextNode.chainLength = prevNode.chainLength + 1;
+      nextNode.actionPlan = actionPlan;
       planCache.add(nextNode);
       frontier.push(nextNode);
-    }
+    };
 
     let cycles = 0;
     let finalNode = null;
@@ -761,18 +649,18 @@ class NavGrid {
     while (frontier.peek() && cycles++ < 2000) {
       const nextNode = frontier.pop();
       const { x, y } = nextNode;
-      if (nextNode.cost < bestNodeCost) {
-        bestNode = nextNode;
-        bestNodeCost = nextNode.cost;
-      }
-      planningBBox.x = nextNode.x;
-      planningBBox.y = nextNode.y;
+      planningBBox.x = x;
+      planningBBox.y = y;
       if (planningBBox.containsPoint(endBBox)) {
         finalNode = nextNode;
         break;
       }
       if (this.checkBBox(planningBBox, false)) {
         continue;
+      }
+      if (nextNode.cost < bestNodeCost) {
+        bestNode = nextNode;
+        bestNodeCost = nextNode.cost;
       }
       planningBBox.y = nextNode.y + gridScale;
       const onGround = this.checkBBox(planningBBox, false);
@@ -782,23 +670,22 @@ class NavGrid {
         planningBBox.x = nextNode.x;
         planningBBox.y = nextNode.y;
         const jumps = this.getPossibleJumps(
-          planningBBox, 80, 80, moveCapabilities,
-          jumpAllocationCache, jumpPlanCache
+          planningBBox,
+          80,
+          80,
+          xAcceleration,
+          maxJumpVelocity,
+          gravity,
+          jumpCache
         );
         jumps.forEach(jump => {
-          expand(nextNode, jump.x, jump.y, JUMP);
+          expand(nextNode, jump.x, jump.y, JUMP, jump.jumpPlan);
         });
       }
       else {
         expand(nextNode, x, y + gridScale, FALL);
       }
     }
-
-    console.log(finalNode, bestNode);
-    finalNode = finalNode || bestNode;
-
-    console.log("CYCLES", cycles);
-    console.log("CACHE", planCache);
 
     if (!finalNode) {
       return null;
