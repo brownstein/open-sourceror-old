@@ -221,7 +221,7 @@ class NavGrid {
     }
     return false;
   }
-  fitBBoxIntoGrid(bbox, leeway = 8, ignoreOneWay = true) {
+  fitBBoxIntoGrid(bbox, leeway = 8, ignoreOneWay = false) {
     const { gridScale } = this;
     const { x: rawX, y: rawY, xMin, xMax, yMin, yMax } = bbox;
     const width = xMax - xMin;
@@ -229,37 +229,37 @@ class NavGrid {
 
     bbox.x = (Math.floor(rawX / gridScale) + 0.5) * gridScale;
     bbox.y = (Math.floor(rawY / gridScale) + 0.5) * gridScale;
-    if (!this.checkBBox(bbox)) {
+    if (!this.checkBBox(bbox, ignoreOneWay)) {
       return true;
     }
 
     bbox.y = Math.floor((rawY - leeway) / gridScale + 0.5) * gridScale;
-    if (!this.checkBBox(bbox)) {
+    if (!this.checkBBox(bbox, ignoreOneWay)) {
       return true;
     }
 
     bbox.x = Math.floor((rawX - leeway) / gridScale + 0.5) * gridScale;
-    if (!this.checkBBox(bbox)) {
+    if (!this.checkBBox(bbox, ignoreOneWay)) {
       return true;
     }
 
     bbox.x = Math.floor((rawX + leeway) / gridScale + 0.5) * gridScale;
-    if (!this.checkBBox(bbox)) {
+    if (!this.checkBBox(bbox, ignoreOneWay)) {
       return true;
     }
 
     bbox.y = Math.floor((rawY + leeway) / gridScale + 0.5) * gridScale;
-    if (!this.checkBBox(bbox)) {
+    if (!this.checkBBox(bbox, ignoreOneWay)) {
       return true;
     }
 
     bbox.x = Math.floor((rawX - leeway) / gridScale + 0.5) * gridScale;
-    if (!this.checkBBox(bbox)) {
+    if (!this.checkBBox(bbox, ignoreOneWay)) {
       return true;
     }
 
     bbox.x = Math.floor((rawX + leeway) / gridScale + 0.5) * gridScale;
-    if (!this.checkBBox(bbox)) {
+    if (!this.checkBBox(bbox, ignoreOneWay)) {
       return true;
     }
 
