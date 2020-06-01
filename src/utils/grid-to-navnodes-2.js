@@ -501,7 +501,8 @@ class NavGrid {
     size,
     xAcceleration,
     maxJumpVelocity,
-    gravity
+    gravity,
+    maxSteps = 16
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
 
@@ -581,6 +582,9 @@ class NavGrid {
       if (nextNode.cost < bestNodeCost) {
         bestNode = nextNode;
         bestNodeCost = nextNode.cost;
+      }
+      if (nextNode.chainLength > maxSteps) {
+        continue;
       }
       planningBBox.y = nextNode.y + gridScale;
       const onGround = this.checkBBox(planningBBox, false);
