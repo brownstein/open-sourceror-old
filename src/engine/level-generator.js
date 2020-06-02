@@ -1,10 +1,10 @@
 
 class TileSetEntity {
-  static TOP = 1;
-  static BOTTOM = 2;
-  static LEFT = 3;
-  static RIGHT = 4;
-  static INFILL = 5;
+  // static TOP = 1;
+  // static BOTTOM = 2;
+  // static LEFT = 3;
+  // static RIGHT = 4;
+  // static INFILL = 5;
   constructor(x, y, type) {
     this.x = x;
     this.y = y;
@@ -22,6 +22,7 @@ class LinearGenerator {
     this.infill = infill;
   }
   fillGridAtStep(grid) {
+    const { vx, vy } = this;
     const steps = Math.max(vx, vy);
     const dx = vx / steps;
     const dy = vy / steps;
@@ -34,7 +35,7 @@ class LinearGenerator {
       const y = Math.floor(this.y + dy * t);
       for (let xx = sizeWindowLeft; xx < sizeWindowRight; xx++) {
         for (let yy = sizeWindowLeft; yy < sizeWindowRight; yy++) {
-          if (x >= 0 && x < grid.length && y >= 0 && y < grid[0].length) {
+          if (x + xx >= 0 && x + xx < grid.length && y + yy >= 0 && y + yy < grid[0].length) {
             grid[x + xx][y + yy] = this.infill;
           }
         }
@@ -56,7 +57,7 @@ function recursivelyGenerateTerrainBlob(
   xStart,
   yStart,
   size,
-  dx = 0;
+  dx = 0,
   dy = 0
 ) {
   if (size <= 0) {
@@ -92,7 +93,7 @@ function generateTerrain(xSize, ySize, tileSet) {
   }
 
   // create uneven ground
-  let baselineHeight = 10;
+  let baseLineHeight = 10;
   let baseLineNextWidth = 5;
   for (let x = 0; x < xSize; x++) {
     if (baseLineNextWidth-- <= 0) {
@@ -124,7 +125,7 @@ function generateTerrain(xSize, ySize, tileSet) {
 
   // create some terrain blobs
   const terrainBlobCount = Math.sqrt(xSize * ySize) * 0.2;
-  for (let b = 0; b < terrainBlobCount) {
+  for (let b = 0; b < terrainBlobCount; b++) {
     recursivelyGenerateTerrainBlob(
       grid,
       Math.floor(Math.random() * xSize),
@@ -160,7 +161,7 @@ function generateTerrain(xSize, ySize, tileSet) {
         line += "X";
       }
       else {
-        line += "Y";
+        line += " ";
       }
     }
     lines.push(line);
@@ -168,3 +169,5 @@ function generateTerrain(xSize, ySize, tileSet) {
   const outputString = lines.join("\n");
   console.log(outputString);
 }
+
+generateTerrain(80, 20);
