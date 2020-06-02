@@ -503,12 +503,16 @@ class NavGrid {
         if (
           topBlock ||
           !bottomBlock ||
-          (!openLeft && !openRight) // ||
-          // (!openLeft && x <= xStart) ||
-          // (!openRight && x >= xStart)
+          (!openLeft && !openRight)
         ) {
           continue;
         }
+        // if (
+        //   (openLeft && !openRight && xStart <= x) ||
+        //   (openRight && !openLeft && xStart >= x)
+        // ) {
+        //   continue;
+        // }
         if (jumpCache.get(x, y)) {
           continue;
         }
