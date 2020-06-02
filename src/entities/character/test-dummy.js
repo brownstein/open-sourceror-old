@@ -8,7 +8,7 @@ export class TestDummy extends Character {
   constructor(props) {
     super(props);
     this.id = TestDummy._id++;
-    this.i = 0;
+    this.i = Math.floor(Math.random() * 30);
 
     this.jumpAcceleration = 500;
     this.onSurface = true;
@@ -28,8 +28,12 @@ export class TestDummy extends Character {
     }
     if (this.jumpPlanStep === 0) {
       const step = this.jumpPlan[0];
-      this.plannedAccelleration[0] = step.vx - this.body.velocity[0];
-      this.plannedAccelleration[1] = step.vy;
+      //this.plannedAccelleration[0] = step.vx - this.body.velocity[0];
+      this.plannedAccelleration[0] = (
+        (step.vx - this.body.velocity[0]) +
+        (step.x - this.body.position.x)
+      ) * 0.5;
+      this.plannedAccelleration[1] = step.vy - this.body.velocity[1];
       this.jumpPlanStep++;
       return true;
     }
@@ -74,15 +78,20 @@ export class TestDummy extends Character {
     const prevPlanStep = this.pathPlan[this.pathPlanStep - 1];
     const nextPlanStep = this.pathPlan[this.pathPlanStep];
     if (nextPlanStep.action !== "jump") {
+      // detect whether we've finished the current step
+      console.log('!jump');
       const prevPlanStep2 = new Vector2(prevPlanStep.x, prevPlanStep.y);
       const nextPlanStep2 = new Vector2(nextPlanStep.x, nextPlanStep.y);
       const currentPos2 = new Vector2(this.body.position[0], this.body.position[1]);
       const planStepVector = nextPlanStep2.clone().sub(prevPlanStep2).normalize();
-      if (currentPos2.clone().sub(nextPlanStep2).dot(planStepVector) >= 0) {
+      if (currentPos2.clone().sub(nextPlanStep2).dot(planStepVector) >= -0.1) {
         this.pathPlanStep++;
       }
       else if (this.cBBox.containsPoint(nextPlanStep)) {
-        this.pathPlanStep++;
+        const nextNextPlanStep = this.pathPlan[this.pathPlanStep + 1];
+        if (nextNextPlanStep && nextNextPlanStep.type !== "jump") {
+          this.pathPlanStep++;
+        }
       }
     }
 
@@ -93,15 +102,61 @@ export class TestDummy extends Character {
     }
 
     // handle special cases for some actions (link jumping)
+    console.log(this.pathPlanStep);
     switch (planStep.action) {
-      case "jump":
+      // perform jump for jumps
+      case "jump": {
+        console.log(this.onSurface);
+        if (!this.onSurface) {
+          if (this.jumpPlan) {
+            const jumpPlanStep = this.jumpPlan[this.jumpPlan.length - 1];
+            this.plannedAccelleration[0] = 0.5 * (
+              jumpPlanStep.x - this.body.position[0]
+            );
+          }
+          return false;
+        }
+        console.log('adv step');
         this.jumpPlan = planStep.actionPlan;
         this.jumpPlanStep = 0;
         this.pathPlanStep++;
-        return true;
+        return this._executeJumpPlan();
+      }
+      // perform lookahead for falls
+      case "fall":
+      case "walk":
+      {
+        break;
+        const nextPlanStep = this.pathPlan[this.pathPlanStep + 1];
+        if (!nextPlanStep || nextPlanStep.type !== "walk") {
+          break;
+        }
+        let hitAnything = false;
+        const ray = new Ray({
+          mode: Ray.ALL,
+          from: vec2.clone(this.body.position),
+          to: [nextPlanStep.x, nextPlanStep.y],
+          callback: (result) => {
+            if (result.body === null || result.body === this.body) {
+              return;
+            }
+            hitAnything = true;
+          }
+        });
+        const result = new RaycastResult();
+        world.raycast(result, ray);
+
+        if (!hitAnything) {
+          pathPlanStep++
+          planStep = nextPlanStep;
+          break;
+        }
+      }
       default:
         break;
     }
+
+    console.log('standard ref');
 
     const xDiff = planStep.x - this.body.position[0];
     const yDiff = planStep.y - this.body.position[1];
@@ -115,7 +170,7 @@ export class TestDummy extends Character {
     const ng2 = engine.ng2;
     const player = engine.controllingEntity;
 
-    if ((this.i++ % 30)) {
+    if ((this.i++ % 60)) {
       this._executePathPlan();
       super.onFrame();
       return;
@@ -132,8 +187,10 @@ export class TestDummy extends Character {
       this.maxControlledVelocity[0],
       this.accelleration[0],
       this.jumpAcceleration,
-      engine.world.gravity[1] * 1.25,
+      engine.world.gravity[1] * 1.25, // add a little buffer
     );
+
+    console.log(this.pathPlan);
 
     this.pathPlanStep = 0;
     this._executePathPlan();

@@ -412,6 +412,27 @@ class NavGrid {
       return null;
     }
 
+    // add some nodes connecting the final node to the desired position
+    // const xDiff = endBBox.x - finalNode.x;
+    // const yDiff = endBBox.y - finalNode.y;
+    // const diffTime = Math.max(
+    //   Math.abs(xDiff * 0.5),
+    //   Math.abs(yDiff * 0.5)
+    // );
+    // // now attempt to land the jump
+    // const vvx = xDiff / diffTime;
+    // const vvy = yDiff / diffTime;
+    // for (let t = 0; t < diffTime; t++) {
+    //   let { x, y, vx, vy } = finalNode;
+    //   vx = vx * 0.5 + (endBBox.x - x) * 0.5;
+    //   vy = vy * 0.5 + (endBBox.y - y) * 0.5;
+    //   x += vx;
+    //   y += vy;
+    //   const nextNode = new JumpPlanningNode(x, y, vx, vy);
+    //   nextNode.prevNode = finalNode;
+    //   finalNode = nextNode;
+    // }
+
     const nodePath = [];
     let node = finalNode;
     while (node !== null) {
@@ -457,8 +478,11 @@ class NavGrid {
 
     const jumps = [];
 
-    const invGridScale = 1/ gridScale;
+    const invGridScale = 1 / gridScale;
     for (let x = xMin; x <= xMax; x += gridScale) {
+      // if (Math.abs(x - xStart) < gridScale * 0.25) {
+      //   continue;
+      // }
       for (let y = yMin; y < yMax; y += gridScale) {
         const gridX = Math.floor(x * invGridScale);
         const gridY = Math.floor(y * invGridScale);
@@ -472,10 +496,16 @@ class NavGrid {
         if (gridX < gridWidth - 1) {
           bottomRightBlock = grid[gridX + 1][gridY + 1];
         }
+        const openLeft = !bottomLeftBlock ||
+          bottomLeftBlock.type === ONE_WAY_PLATFORM;
+        const openRight = !bottomRightBlock ||
+          bottomRightBlock.type === ONE_WAY_PLATFORM;
         if (
           topBlock ||
           !bottomBlock ||
-          (bottomLeftBlock && bottomRightBlock)
+          (!openLeft && !openRight) // ||
+          // (!openLeft && x <= xStart) ||
+          // (!openRight && x >= xStart)
         ) {
           continue;
         }
@@ -492,6 +522,9 @@ class NavGrid {
           gravity
         );
         if (jumpPlan) {
+          if (jumpPlan[jumpPlan.length - 1].vx * jumpPlan[0].vx < 0) {
+            continue;
+          }
           jumps.push({ x, y, jumpPlan });
           jumpCache.add({ x, y });
         }
@@ -499,6 +532,9 @@ class NavGrid {
     }
 
     return jumps;
+  }
+  experimentalPlanPossibleJumps() {
+
   }
   planPath(
     start,
@@ -508,7 +544,7 @@ class NavGrid {
     xAcceleration,
     maxJumpVelocity,
     gravity,
-    maxSteps = 20
+    maxSteps = 50
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
 

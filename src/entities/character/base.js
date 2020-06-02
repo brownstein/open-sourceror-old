@@ -105,7 +105,7 @@ export class Character extends BaseEntity {
       else if (this.onSurface) {
         this.accellerate(
           [0, this.plannedAccelleration[1]],
-          400
+          this.jumpAcceleration
         );
       }
     }
