@@ -388,7 +388,7 @@ class NavGrid {
     let cycles = 0;
     let finalNode = null;
     let bestNode = frontier.peek();
-    while (frontier.peek() && cycles++ < 2000) {
+    while (frontier.peek() && cycles++ < 500) {
       const nextNode = frontier.pop();
       if (nextNode.cost < bestNode.cost) {
         bestNode = nextNode;
@@ -574,6 +574,11 @@ class NavGrid {
       nextNode.distCost = prevNode.distCost + nextNode.distanceFrom(prevNode);
       nextNode.cost = nextNode.distCost + nextNode.distanceFrom(endBBox) * 0.1;
       nextNode.chainLength = prevNode.chainLength + 1;
+
+      if (actionPlan) {
+        nextNode.chainLength += actionPlan.length * 0.25;
+      }
+
       nextNode.actionPlan = actionPlan;
       planCache.add(nextNode);
       frontier.push(nextNode);

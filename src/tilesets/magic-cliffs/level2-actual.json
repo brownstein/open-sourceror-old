@@ -165,11 +165,11 @@
                          "value":true
                         }],
                  "rotation":0,
-                 "type":"testDummyStart",
+                 "type":"enemyStart",
                  "visible":true,
                  "width":0,
-                 "x":417.298937784522,
-                 "y":1148.20435002529
+                 "x":417.299,
+                 "y":1148.2
                 }],
          "opacity":1,
          "type":"objectgroup",

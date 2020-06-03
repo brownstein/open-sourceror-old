@@ -1,8 +1,8 @@
 import { Vector2 } from "three";
 
 // navigation meshes
-import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
-import { getNavGridForTileGrid as gng } from "src/utils/grid-to-navnodes-2";
+// import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
+import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes-2";
 
 // game entities
 import { Player } from "src/entities/character/player";
@@ -74,7 +74,7 @@ export default class Room {
       primaryLayer.data,
       primaryLayer.width,
       16,
-      this.tileSheet,
+      this.tileSheet
     );
     engine.addNavGrid(navGrid);
 
@@ -170,15 +170,5 @@ export default class Room {
         }
       });
     });
-
-    const ng2 = gng(primaryLayer.data, primaryLayer.width, 16, this.tileSheet);
-    engine.ng2 = ng2;
-    console.log(ng2);
-
-    console.log('P', engine.followingEntity);
-
-    global.ng2 = ng2;
-    global.player = engine.followingEntity;
-    global.getPlayerPosition = () => global.player.body.position;
   }
 }

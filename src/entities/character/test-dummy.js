@@ -1,6 +1,6 @@
 import { Ray, RaycastResult, vec2 } from "p2";
 import { Vector2 } from "three";
-import { CollisionBBox, MovementCapabilities } from "src/utils/grid-to-navnodes-2";
+import { CollisionBBox } from "src/utils/grid-to-navnodes-2";
 import { Character } from "./base";
 
 export class TestDummy extends Character {
@@ -161,7 +161,7 @@ export class TestDummy extends Character {
   }
   onFrame() {
     const engine = this.engine;
-    const ng2 = engine.ng2;
+    const nav = engine.navGrid;
     const player = engine.controllingEntity;
 
     if ((this.i++ % 60) || !this.onSurface) {
@@ -174,7 +174,7 @@ export class TestDummy extends Character {
     const playerPos = player.body.position;
 
     this.pathPlanStep = 0;
-    this.pathPlan = ng2.planPath(
+    this.pathPlan = nav.planPath(
       { x: currentPos[0], y: currentPos[1] },
       { x: playerPos[0], y: playerPos[1] },
       { x: 16, y: 32 },

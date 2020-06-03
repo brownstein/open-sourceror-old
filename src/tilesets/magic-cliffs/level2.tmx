@@ -99,25 +99,13 @@
   <object id="2" type="enemyStart" x="488.179" y="602.147">
    <point/>
   </object>
-  <object id="3" type="enemyStart" x="1460.88" y="522.509">
-   <point/>
-  </object>
-  <object id="4" type="enemyStart" x="1428.12" y="521.338">
-   <properties>
-    <property name="isSmart" type="bool" value="true"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="5" type="testDummyStart" x="1029.34" y="533.808">
+  <object id="5" type="enemyStart" x="1029.34" y="533.808">
    <properties>
     <property name="isSmart" type="bool" value="true"/>
    </properties>
    <point/>
   </object>
   <object id="6" type="enemyStart" x="594.843" y="599.743">
-   <point/>
-  </object>
-  <object id="7" type="enemyStart" x="1501.4" y="517.648">
    <point/>
   </object>
   <object id="8" type="water" x="398.983" y="543.4" width="366.932" height="68.42"/>

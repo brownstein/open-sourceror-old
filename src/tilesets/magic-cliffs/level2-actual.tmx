@@ -350,7 +350,7 @@
    </properties>
    <point/>
   </object>
-  <object id="7" type="testDummyStart" x="417.299" y="1148.2">
+  <object id="7" type="enemyStart" x="417.299" y="1148.2">
    <properties>
     <property name="isSmart" type="bool" value="true"/>
    </properties>
