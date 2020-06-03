@@ -84,10 +84,3 @@ export class NPC extends BaseEntity {
     }
   }
 }
-
-export class NPCDialogueSensor extends BaseEntity {
-  constructor(props) {
-    super(props);
-
-  }
-}
