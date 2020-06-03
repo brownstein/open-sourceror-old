@@ -72,26 +72,27 @@ export class NavBlockage extends CollisionBBox {
     this.type = type;
   }
   serialize() {
-    return {
-      x: this.x,
-      y: this.y,
-      xSize: this.xSize,
-      ySize: this.ySize,
-      xMin: this.xMin,
-      xMax: this.xMax,
-      yMin: this.yMin,
-      yMax: this.yMax,
-      type: this.type,
-    };
+    return [
+      this.x,
+      this.y,
+      this.xSize,
+      this.ySize,
+      this.xMin,
+      this.xMax,
+      this.yMin,
+      this.yMax,
+      this.type,
+    ];
   }
   static parse(src) {
-    const parsed = new NavBlockage(src.xSize, src.ySize, src.type);
-    parsed.x = src.x;
-    parsed.y = src.y;
-    parsed.xMin = src.xMin;
-    parsed.xMax = src.xMax;
-    parsed.yMin = src.yMin;
-    parsed.yMax = src.yMax;
+    const [x, y, xSize, ySize, xMin, xMax, yMin, yMax, type] = src;
+    const parsed = new NavBlockage(xSize, ySize, type);
+    parsed.x = x;
+    parsed.y = y;
+    parsed.xMin = xMin;
+    parsed.xMax = xMax;
+    parsed.yMin = yMin;
+    parsed.yMax = yMax;
     return parsed;
   }
 }
