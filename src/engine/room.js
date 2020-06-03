@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 
 // navigation meshes
 // import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
-import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes-2";
+import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes-2-async";
 
 // game entities
 import { Player } from "src/entities/character/player";
@@ -77,6 +77,7 @@ export default class Room {
       this.tileSheet
     );
     engine.addNavGrid(navGrid);
+    navGrid.initNavWorker();
 
     // add level entities
     this.tileLevel.layers.filter(l => l.type === "objectgroup").forEach(l => {

@@ -255,6 +255,9 @@ export default class Engine extends EventEmitter {
     }
   }
   addNavGrid(navGrid) {
+    if (this.navGrid) {
+      this.navGrid.cleanup();
+    }
     this.navGrid = navGrid;
   }
   /**

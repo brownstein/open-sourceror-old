@@ -15,11 +15,6 @@ const FALL_TO = "fall_to";
 
 const DEBUG = false;
 
-// PLANS:
-// - complete jump engine [doneish]
-// - complete motion planning engine [doneish]
-// clean everything up
-
 export class CollisionBBox {
   constructor(xSize, ySize) {
     this.x = 0;
@@ -67,10 +62,25 @@ export class CollisionBBox {
   }
 }
 
-class NavBlockage extends CollisionBBox {
+export class NavBlockage extends CollisionBBox {
   constructor(xSize, ySize, type) {
     super(xSize, ySize);
     this.type = type;
+  }
+  serialize() {
+    return {
+      xSize: this.xSize,
+      ySize: this.ySize,
+      type: this.type,
+      x: this.x,
+      y: this.y
+    };
+  }
+  static parse(src) {
+    const parsed = new NavBlockage(src.xSize, src.ySize, src.type);
+    parsed.x = src.x;
+    parsed.y = src.y;
+    return parsed;
   }
 }
 
@@ -175,14 +185,28 @@ class NavPlanningNode {
   }
 }
 
-class NavGrid {
+export class NavGrid {
   constructor(grid, gridScale, gridWidth, gridHeight) {
     this.grid = grid;
     this.gridScale = gridScale;
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
-    global.JumpPlanningCache = JumpPlanningCache;
-    global.CollisionBBox = CollisionBBox;
+  }
+  serialize() {
+    return {
+      grid: this.grid.map(c => c.map(b => b ? b.serialize() : b)),
+      gridScale: this.gridScale,
+      gridWidth: this.gridWidth,
+      gridHeight: this.gridHeight
+    };
+  }
+  static parse(src) {
+    return new NavGrid(
+      src.grid.map(v => v.map(b => b ? NavBlockage.parse(b) : b)),
+      src.gridScale,
+      src.gridWidth,
+      src.gridHeight
+    );
   }
   /**
    * Checks a given bounding box for intersection with the grid

@@ -119,7 +119,16 @@ export class SmartEnemy extends Enemy {
     if ((this.framesAfterLastPlan++ > 60) && this.onSurface) {
       this.framesAfterLastPlan = 0;
       this.pathPlanStep = 0;
-      this.pathPlan = navGrid.planPath(
+      // this.pathPlan = navGrid.planPath(
+      //   { x: myPosition[0], y: myPosition[1] },
+      //   { x: playerPosition[0], y: playerPosition[1] },
+      //   { x: 16, y: 32 },
+      //   10, // this.maxControlledVelocity[0],
+      //   this.accelleration[0],
+      //   this.jumpAcceleration,
+      //   engine.world.gravity[1] * 1.25, // add a little buffer
+      // );
+      navGrid.asyncPlanPath(
         { x: myPosition[0], y: myPosition[1] },
         { x: playerPosition[0], y: playerPosition[1] },
         { x: 16, y: 32 },
@@ -127,7 +136,10 @@ export class SmartEnemy extends Enemy {
         this.accelleration[0],
         this.jumpAcceleration,
         engine.world.gravity[1] * 1.25, // add a little buffer
-      );
+      )
+      .then(result => {
+        this.pathPlan = result;
+      });
     }
 
     this._executePathPlan();
