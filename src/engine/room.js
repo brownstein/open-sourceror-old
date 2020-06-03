@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 
 // navigation meshes
 // import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
-import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes-2-async";
+import { AsyncNavGrid } from "src/pathfinding/navigation-grid-async";
 
 // game entities
 import { Player } from "src/entities/character/player";
@@ -70,10 +70,10 @@ export default class Room {
     // add the navigation grid
     const primaryLayer = this.tileLevel.layers.find(l => l.name === "primary") ||
       this.tileLevel.layers.find(l => l.layertype === "tilelayer");
-    const navGrid = getNavGridForTileGrid(
+    const navGrid = AsyncNavGrid.createNavGridForTileGrid(
       primaryLayer.data,
       primaryLayer.width,
-      16,
+      this.tileLevel.tilewidth,
       this.tileSheet
     );
     engine.addNavGrid(navGrid);

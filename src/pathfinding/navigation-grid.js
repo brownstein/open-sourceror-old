@@ -683,57 +683,56 @@ export class NavGrid {
     nodePath.reverse();
     return nodePath;
   }
-}
+  static createNavGridForTileGrid(
+    sourceGridArr,
+    gridWidth,
+    tileSize,
+    tileSet,
+    useTileTypes
+  ) {
+    const gridHeight = sourceGridArr.length / gridWidth;
 
-export function getNavGridForTileGrid(
-  sourceGridArr,
-  gridWidth,
-  tileSize,
-  tileset,
-  useTileTypes=["ground", "oneWayPlatform"]
-) {
-  const gridHeight = sourceGridArr.length / gridWidth;
+    // map tile definitions by ID for faster reference
+    const tileDefsById = {};
+    for (let ti = 0; ti < tileSet.tiles.length; ti++) {
+      const tileDef = tileSet.tiles[ti];
+      tileDefsById[tileDef.id] = tileDef;
+    }
 
-  // map tile definitions by ID for faster reference
-  const tileDefsById = {};
-  for (let ti = 0; ti < tileset.tiles.length; ti++) {
-    const tileDef = tileset.tiles[ti];
-    tileDefsById[tileDef.id] = tileDef;
+    // preprocess block lookup table
+    const grid = [];
+    for (let x = 0; x < gridWidth; x++) {
+      grid[x] = [];
+    }
+    for (let bi = 0; bi < sourceGridArr.length; bi++) {
+      const sourceVal = sourceGridArr[bi];
+      const x = bi % gridWidth;
+      const y = Math.floor(bi / gridWidth);
+      const column = grid[x];
+      if (!sourceVal) {
+        column.push(null);
+        continue;
+      }
+      const tileDef = tileDefsById[sourceVal - 1];
+      if (!tileDef) {
+        column.push(null);
+        continue;
+      }
+      if (useTileTypes.includes(tileDef.type)) {
+        const blockType = tileDef.type === "oneWayPlatform" ?
+          ONE_WAY_PLATFORM :
+          BLOCKED_SPACE;
+        const block = new NavBlockage(tileSize, tileSize, blockType);
+        block.x = (x + 0.5) * tileSize;
+        block.y = (y + 0.5) * tileSize;
+        column.push(block);
+      }
+      else {
+        column.push(null);
+      }
+    }
+
+    // return a shiny new nagivation grid
+    return new NavGrid(grid, tileSize, gridWidth, gridHeight);
   }
-
-  // preprocess block lookup table
-  const grid = [];
-  for (let x = 0; x < gridWidth; x++) {
-    grid[x] = [];
-  }
-  for (let bi = 0; bi < sourceGridArr.length; bi++) {
-    const sourceVal = sourceGridArr[bi];
-    const x = bi % gridWidth;
-    const y = Math.floor(bi / gridWidth);
-    const column = grid[x];
-    if (!sourceVal) {
-      column.push(null);
-      continue;
-    }
-    const tileDef = tileDefsById[sourceVal - 1];
-    if (!tileDef) {
-      column.push(null);
-      continue;
-    }
-    if (useTileTypes.includes(tileDef.type)) {
-      const blockType = tileDef.type === "oneWayPlatform" ?
-        ONE_WAY_PLATFORM :
-        BLOCKED_SPACE;
-      const block = new NavBlockage(tileSize, tileSize, blockType);
-      block.x = (x + 0.5) * tileSize;
-      block.y = (y + 0.5) * tileSize;
-      column.push(block);
-    }
-    else {
-      column.push(null);
-    }
-  }
-
-  // return a shiny new nagivation grid
-  return new NavGrid(grid, tileSize, gridWidth, gridHeight);
 }

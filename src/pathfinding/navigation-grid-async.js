@@ -3,8 +3,7 @@ import EventEmitter from "events";
 import {
   NavGrid,
   NavBlockage,
-  getNavGridForTileGrid as _getGrid
-} from "./grid-to-navnodes-2";
+} from "./naviagation-grid";
 
 export class AsyncNavGrid extends NavGrid {
   constructor(grid, gridScale, gridWidth, gridHeight) {
@@ -63,21 +62,22 @@ export class AsyncNavGrid extends NavGrid {
       src.gridHeight
     );
   }
-}
-
-export function getNavGridForTileGrid(
-  sourceGridArr,
-  gridWidth,
-  tileSize,
-  tileset,
-  useTileTypes=["ground", "oneWayPlatform"]
-) {
-  const normalGrid = _getGrid(
+  static createNavGridForTileGrid(
     sourceGridArr,
     gridWidth,
     tileSize,
-    tileset,
+    tileSet,
     useTileTypes
-  );
-  return AsyncNavGrid.parse(normalGrid.serialize());
+  ) {
+    const {
+      grid
+    } = NavGrid.createNavGridForTileGrid(
+      sourceGridArr,
+      gridWidth,
+      tileSize,
+      tileSet,
+      useTileTypes
+    );
+    return new AsyncNavGrid(grid, gridScale, gridWidth, gridHeight);
+  }
 }

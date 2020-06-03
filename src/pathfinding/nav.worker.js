@@ -1,4 +1,4 @@
-import { NavGrid } from "./grid-to-navnodes-2";
+import { NavGrid } from "./navigation-grid";
 
 const pathPlannerStore = [];
 
