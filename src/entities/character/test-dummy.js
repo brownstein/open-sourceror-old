@@ -164,7 +164,7 @@ export class TestDummy extends Character {
     const ng2 = engine.ng2;
     const player = engine.controllingEntity;
 
-    if ((this.i++ % 30) || !this.onSurface) {
+    if ((this.i++ % 60) || !this.onSurface) {
       this._executePathPlan();
       super.onFrame();
       return;

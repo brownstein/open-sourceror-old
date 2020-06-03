@@ -36,8 +36,8 @@ export class EngineViewport extends Component {
       hoveringDomEntities: []
     };
 
-    // this.targetSceneFrameSize = new Vector2(300, 200);
-    this.targetSceneFrameSize = new Vector2(600, 500);
+    this.targetSceneFrameSize = new Vector2(300, 200);
+    // this.targetSceneFrameSize = new Vector2(600, 500);
 
     this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
