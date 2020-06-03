@@ -79,7 +79,6 @@ export class TestDummy extends Character {
     const nextPlanStep = this.pathPlan[this.pathPlanStep];
     if (nextPlanStep.action !== "jump") {
       // detect whether we've finished the current step
-      console.log('!jump');
       const prevPlanStep2 = new Vector2(prevPlanStep.x, prevPlanStep.y);
       const nextPlanStep2 = new Vector2(nextPlanStep.x, nextPlanStep.y);
       const currentPos2 = new Vector2(this.body.position[0], this.body.position[1]);
@@ -102,11 +101,9 @@ export class TestDummy extends Character {
     }
 
     // handle special cases for some actions (link jumping)
-    console.log(this.pathPlanStep);
     switch (planStep.action) {
       // perform jump for jumps
       case "jump": {
-        console.log(this.onSurface);
         if (!this.onSurface) {
           if (this.jumpPlan) {
             const jumpPlanStep = this.jumpPlan[this.jumpPlan.length - 1];
@@ -116,7 +113,6 @@ export class TestDummy extends Character {
           }
           return false;
         }
-        console.log('adv step');
         this.jumpPlan = planStep.actionPlan;
         this.jumpPlanStep = 0;
         this.pathPlanStep++;
@@ -156,8 +152,6 @@ export class TestDummy extends Character {
         break;
     }
 
-    console.log('standard ref');
-
     const xDiff = planStep.x - this.body.position[0];
     const yDiff = planStep.y - this.body.position[1];
     this.plannedAccelleration[0] = xDiff * 60 - this.body.velocity[0];
@@ -170,7 +164,7 @@ export class TestDummy extends Character {
     const ng2 = engine.ng2;
     const player = engine.controllingEntity;
 
-    if ((this.i++ % 60)) {
+    if ((this.i++ % 30) || !this.onSurface) {
       this._executePathPlan();
       super.onFrame();
       return;
@@ -184,13 +178,11 @@ export class TestDummy extends Character {
       { x: currentPos[0], y: currentPos[1] },
       { x: playerPos[0], y: playerPos[1] },
       { x: 16, y: 32 },
-      this.maxControlledVelocity[0],
+      10, // this.maxControlledVelocity[0],
       this.accelleration[0],
       this.jumpAcceleration,
       engine.world.gravity[1] * 1.25, // add a little buffer
     );
-
-    console.log(this.pathPlan);
 
     this.pathPlanStep = 0;
     this._executePathPlan();
