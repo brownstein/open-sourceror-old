@@ -152,6 +152,24 @@
                  "width":0,
                  "x":470.902,
                  "y":61.4542
+                }, 
+                {
+                 "height":0,
+                 "id":7,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"isSmart",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"testDummyStart",
+                 "visible":true,
+                 "width":0,
+                 "x":417.298937784522,
+                 "y":1148.20435002529
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -160,7 +178,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":7,
+ "nextobjectid":8,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",
