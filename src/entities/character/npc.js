@@ -76,7 +76,6 @@ export class NPC extends BaseEntity {
     if (shapeId !== this.sensor.id || otherEntity !== engine.controllingEntity) {
       return;
     }
-    console.log("ENDCOLL");
     if (this.dialogueEntity) {
       engine.removeEntity(this.dialogueEntity);
       this.dialogueEntity = null;
