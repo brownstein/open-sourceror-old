@@ -542,7 +542,7 @@ export class NavGrid {
     xAcceleration,
     maxJumpVelocity,
     gravity,
-    maxSteps = 50
+    maxSteps = 60
   ) {
     const { grid, gridScale, gridWidth, gridHeight } = this;
 
@@ -600,7 +600,7 @@ export class NavGrid {
       nextNode.chainLength = prevNode.chainLength + 1;
 
       if (actionPlan) {
-        nextNode.chainLength += actionPlan.length * 0.25;
+        nextNode.chainLength += actionPlan.length * 0.1;
       }
 
       nextNode.actionPlan = actionPlan;

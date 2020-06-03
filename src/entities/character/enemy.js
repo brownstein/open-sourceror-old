@@ -105,6 +105,7 @@ export class SmartEnemy extends Enemy {
     this.pathPlanStep = null;
 
     this.waypointTestBBox = new CollisionBBox(16, 32);
+    this.timeOffSurface = 0;
   }
   onFrame() {
     // find path
@@ -116,21 +117,33 @@ export class SmartEnemy extends Enemy {
     const myPosition = this.body.position;
     const playerPosition = engine.controllingEntity.body.position;
 
-    if ((this.framesAfterLastPlan++ > 30) && this.onSurface) {
-      this.framesAfterLastPlan = 0;
-      this.pathPlanStep = 0;
-      navGrid.asyncPlanPath(
-        { x: myPosition[0], y: myPosition[1] },
-        { x: playerPosition[0], y: playerPosition[1] },
-        { x: 16, y: 32 },
-        10, // this.maxControlledVelocity[0],
-        this.accelleration[0],
-        this.jumpAcceleration,
-        engine.world.gravity[1] * 1.25, // add a little buffer
-      )
-      .then(result => {
-        this.pathPlan = result;
-      });
+    if (this.framesAfterLastPlan++ > 30) {
+      if (this.onSurface) {
+        this.framesAfterLastPlan = 0;
+        this.pathPlanStep = 0;
+        navGrid.asyncPlanPath(
+          { x: myPosition[0], y: myPosition[1] },
+          { x: playerPosition[0], y: playerPosition[1] },
+          { x: 16, y: 32 },
+          10, // this.maxControlledVelocity[0],
+          this.accelleration[0],
+          this.jumpAcceleration,
+          engine.world.gravity[1] * 1.25, // add a little buffer
+        )
+        .then(result => {
+          this.pathPlan = result;
+        });
+      }
+      else {
+        this.timeOffSurface++;
+        if (this.timeOffSurface > 30) {
+          this.plannedAccelleration[1] = 100;
+        }
+      }
+    }
+
+    if (this.onSurface) {
+      this.timeOffSurface = 0;
     }
 
     this._executePathPlan();
