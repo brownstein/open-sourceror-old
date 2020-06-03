@@ -32,7 +32,16 @@ export class AsyncNavGrid extends NavGrid {
 
     this.worker.postMessage({ type: "setNavGrid", grid: this.serialize() });
   }
-  asyncPlanPath(...pathPlotterArgs) {
+  asyncPlanPath(
+    start,
+    end,
+    size,
+    xWalkVelocity,
+    xAcceleration,
+    maxJumpVelocity,
+    gravity,
+    maxSteps = 60
+  ) {
     const planId = this.workerCallbackId++;
     return new Promise((resolve, reject) => {
       const { worker, workerCallbacksById } = this;
@@ -51,7 +60,16 @@ export class AsyncNavGrid extends NavGrid {
       worker.postMessage({
         type: "planPath",
         id: planId,
-        pathPlotterArgs
+        pathPlotterArgs: {
+          start,
+          end,
+          size,
+          xWalkVelocity,
+          xAcceleration,
+          maxJumpVelocity,
+          gravity,
+          maxSteps
+        }
       });
     });
   }
