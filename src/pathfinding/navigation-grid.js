@@ -688,7 +688,7 @@ export class NavGrid {
     gridWidth,
     tileSize,
     tileSet,
-    useTileTypes
+    useTileTypes = ["ground", "oneWayPlatform"]
   ) {
     const gridHeight = sourceGridArr.length / gridWidth;
 

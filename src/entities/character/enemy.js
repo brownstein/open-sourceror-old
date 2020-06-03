@@ -9,7 +9,7 @@ import {
 import { Vector2 } from "three";
 
 import getThreeJsObjectForP2Body from "p2-utils/get-threejs-mesh";
-import { CollisionBBox } from "src/utils/grid-to-navnodes-2";
+import { CollisionBBox } from "src/pathfinding/navigation-grid";
 import BaseEntity from "../base";
 import { Character } from "./base";
 
@@ -116,18 +116,9 @@ export class SmartEnemy extends Enemy {
     const myPosition = this.body.position;
     const playerPosition = engine.controllingEntity.body.position;
 
-    if ((this.framesAfterLastPlan++ > 60) && this.onSurface) {
+    if ((this.framesAfterLastPlan++ > 30) && this.onSurface) {
       this.framesAfterLastPlan = 0;
       this.pathPlanStep = 0;
-      // this.pathPlan = navGrid.planPath(
-      //   { x: myPosition[0], y: myPosition[1] },
-      //   { x: playerPosition[0], y: playerPosition[1] },
-      //   { x: 16, y: 32 },
-      //   10, // this.maxControlledVelocity[0],
-      //   this.accelleration[0],
-      //   this.jumpAcceleration,
-      //   engine.world.gravity[1] * 1.25, // add a little buffer
-      // );
       navGrid.asyncPlanPath(
         { x: myPosition[0], y: myPosition[1] },
         { x: playerPosition[0], y: playerPosition[1] },

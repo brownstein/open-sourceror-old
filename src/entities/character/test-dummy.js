@@ -1,6 +1,6 @@
 import { Ray, RaycastResult, vec2 } from "p2";
 import { Vector2 } from "three";
-import { CollisionBBox } from "src/utils/grid-to-navnodes-2";
+import { CollisionBBox } from "src/pathfinding/navigation-grid";
 import { Character } from "./base";
 
 export class TestDummy extends Character {

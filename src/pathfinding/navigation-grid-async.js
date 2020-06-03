@@ -1,9 +1,7 @@
-import EventEmitter from "events";
-
 import {
   NavGrid,
   NavBlockage,
-} from "./naviagation-grid";
+} from "./navigation-grid";
 
 export class AsyncNavGrid extends NavGrid {
   constructor(grid, gridScale, gridWidth, gridHeight) {
@@ -11,20 +9,25 @@ export class AsyncNavGrid extends NavGrid {
 
     this.worker = null;
     this.workerCallbackId = 0;
-    this.workerEventListener = null;
+    this.workerCallbacksById = {};
   }
   async initNavWorker() {
     if (this.worker) {
       return this.worker;
     }
-    const workerModule = await import("./nav.worker");
+    const workerModule = await import("./navigation.worker");
     const Worker = workerModule.default;
 
     this.worker = new Worker();
-    this.workerEventListener = new EventEmitter();
+    this.workerCallbacksById = {};
 
     this.worker.onmessage = event => {
-      this.workerEventListener.emit("worker-message", event);
+      const { id } = event.data;
+      const callback = this.workerCallbacksById[id];
+      if (callback) {
+        delete this.workerCallbacksById[id];
+        callback(event);
+      }
     };
 
     this.worker.postMessage({ type: "setNavGrid", grid: this.serialize() });
@@ -32,20 +35,24 @@ export class AsyncNavGrid extends NavGrid {
   asyncPlanPath(...pathPlotterArgs) {
     const planId = this.workerCallbackId++;
     return new Promise((resolve, reject) => {
-      const { worker, workerEventListener } = this;
+      const { worker, workerCallbacksById } = this;
 
       function callback(event) {
-        workerEventListener.off("worker-message", callback);
-
-        const { id, result } = event.data;
-        if (id !== planId) {
-          return;
-        }
+        const { result } = event.data;
         resolve(result);
-      }
+      };
 
-      workerEventListener.on("worker-message", callback);
-      worker.postMessage({ type: "planPath", id: planId, pathPlotterArgs });
+      this.workerCallbacksById[planId] = callback;
+
+      setTimeout(() => {
+        delete this.workerCallbacksById[planId];
+      }, 30);
+
+      worker.postMessage({
+        type: "planPath",
+        id: planId,
+        pathPlotterArgs
+      });
     });
   }
   cleanup() {
@@ -67,10 +74,12 @@ export class AsyncNavGrid extends NavGrid {
     gridWidth,
     tileSize,
     tileSet,
-    useTileTypes
+    useTileTypes = ["ground", "oneWayPlatform"]
   ) {
     const {
-      grid
+      grid,
+      gridScale,
+      gridHeight
     } = NavGrid.createNavGridForTileGrid(
       sourceGridArr,
       gridWidth,
