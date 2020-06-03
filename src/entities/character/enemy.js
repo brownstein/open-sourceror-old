@@ -131,6 +131,9 @@ export class SmartEnemy extends Enemy {
           engine.world.gravity[1] * 1.25, // add a little buffer
         )
         .then(result => {
+          if (result && result.length > 20) {
+            console.log('INV', result);
+          }
           this.pathPlan = result;
         });
       }

@@ -21,9 +21,9 @@ export class CollisionBBox {
     this.y = 0;
     this.xSize = xSize;
     this.ySize = ySize;
-    this.xMin = -xSize * 0.5;
+    this.xMin = xSize * -0.5;
     this.xMax = xSize * 0.5;
-    this.yMin = -ySize * 0.5;
+    this.yMin = ySize * -0.5;
     this.yMax = ySize * 0.5;
   }
   containsPoint(point) {
@@ -53,6 +53,10 @@ export class CollisionBBox {
     const bbox = new CollisionBBox(this.xSize, this.ySize);
     bbox.x = this.x;
     bbox.y = this.y;
+    bbox.xMin = this.xMin;
+    bbox.xMax = this.xMax;
+    bbox.yMin = this.yMin;
+    bbox.yMax = this.yMax;
     return bbox;
   }
   centerOnPoint(pos) {
@@ -69,17 +73,25 @@ export class NavBlockage extends CollisionBBox {
   }
   serialize() {
     return {
+      x: this.x,
+      y: this.y,
       xSize: this.xSize,
       ySize: this.ySize,
+      xMin: this.xMin,
+      xMax: this.xMax,
+      yMin: this.yMin,
+      yMax: this.yMax,
       type: this.type,
-      x: this.x,
-      y: this.y
     };
   }
   static parse(src) {
     const parsed = new NavBlockage(src.xSize, src.ySize, src.type);
     parsed.x = src.x;
     parsed.y = src.y;
+    parsed.xMin = src.xMin;
+    parsed.xMax = src.xMax;
+    parsed.yMin = src.yMin;
+    parsed.yMax = src.yMax;
     return parsed;
   }
 }
@@ -695,8 +707,45 @@ export class NavGrid {
     // map tile definitions by ID for faster reference
     const tileDefsById = {};
     for (let ti = 0; ti < tileSet.tiles.length; ti++) {
-      const tileDef = tileSet.tiles[ti];
-      tileDefsById[tileDef.id] = tileDef;
+      const srcTileDef = tileSet.tiles[ti];
+      let tileDef;
+      if (srcTileDef.objectgroup) {
+        let xMin = Infinity;
+        let xMax = -Infinity;
+        let yMin = Infinity;
+        let yMax = -Infinity;
+        srcTileDef.objectgroup.objects.forEach(obj => {
+          obj.polygon.forEach(vtx => {
+            xMin = Math.min(xMin, obj.x + vtx.x);
+            xMax = Math.max(xMax, obj.x + vtx.x);
+            yMin = Math.min(yMin, obj.y + vtx.y);
+            yMax = Math.max(yMax, obj.y + vtx.y);
+          });
+        });
+        xMin -= tileSize / 2;
+        xMax -= tileSize / 2;
+        yMin -= tileSize / 2;
+        yMax -= tileSize / 2;
+        xMin = Math.max(xMin, -tileSize / 2);
+        xMax = Math.min(xMax, tileSize / 2);
+        yMin = Math.max(yMin, -tileSize / 2);
+        yMax = Math.min(yMax, tileSize / 2);
+        tileDef = {
+          full: false,
+          type: srcTileDef.type,
+          xMin,
+          xMax,
+          yMin,
+          yMax
+        };
+      }
+      else {
+        tileDef = {
+          full: true,
+          type: srcTileDef.type
+        };
+      }
+      tileDefsById[srcTileDef.id] = tileDef;
     }
 
     // preprocess block lookup table
@@ -725,6 +774,12 @@ export class NavGrid {
         const block = new NavBlockage(tileSize, tileSize, blockType);
         block.x = (x + 0.5) * tileSize;
         block.y = (y + 0.5) * tileSize;
+        if (!tileDef.full) {
+          block.xMin = tileDef.xMin;
+          block.xMax = tileDef.xMax;
+          block.yMin = tileDef.yMin;
+          block.yMax = tileDef.yMax;
+        }
         column.push(block);
       }
       else {

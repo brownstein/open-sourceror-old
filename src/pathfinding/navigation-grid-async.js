@@ -60,7 +60,7 @@ export class AsyncNavGrid extends NavGrid {
       worker.postMessage({
         type: "planPath",
         id: planId,
-        pathPlotterArgs: {
+        pathPlotterArgs: [
           start,
           end,
           size,
@@ -69,7 +69,7 @@ export class AsyncNavGrid extends NavGrid {
           maxJumpVelocity,
           gravity,
           maxSteps
-        }
+        ]
       });
     });
   }
