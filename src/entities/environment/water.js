@@ -46,10 +46,10 @@ export class SmallBodyOfWater {
     this.isEnvironmental = true;
   }
   // TODO: ripples here or splash or something
-  collisionHandler(engine, otherBodyId, otherEntity) {
+  collisionHandler(engine, shapeId, otherBodyId, otherEntity) {
     this.entitiesInWater.push(otherEntity);
   }
-  endCollisionHandler(engine, otherBodyId, otherEntity) {
+  endCollisionHandler(engine, shapeId, otherBodyId, otherEntity) {
     this.entitiesInWater = this.entitiesInWater.filter(e => e !== otherEntity);
   }
   onFrame() {

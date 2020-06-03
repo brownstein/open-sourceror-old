@@ -44,7 +44,7 @@ export class Sensor extends EphemeralEntity {
       this.followingEntity.body.velocity
     );
   }
-  collisionHandler(engine, otherId, otherEntity) {
+  collisionHandler(engine, shapeId, otherId, otherEntity) {
     if (otherEntity === this.followingEntity) {
       return;
     }
@@ -63,7 +63,7 @@ export class Sensor extends EphemeralEntity {
       otherEntity.on("remove", this._removeCallback);
     }
   }
-  endCollisionHandler(engine, otherId, otherEntity) {
+  endCollisionHandler(engine, shapeId, otherId, otherEntity) {
     if (otherEntity === this.followingEntity) {
       return;
     }

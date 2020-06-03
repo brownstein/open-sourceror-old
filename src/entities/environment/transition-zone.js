@@ -27,7 +27,7 @@ export default class TransitionZone extends BaseEntity {
     this.body.addShape(sensor);
     this.transitionToLevel = level;
   }
-  async collisionHandler(engine, otherBodyId, otherEntity) {
+  async collisionHandler(engine, shapeId, otherBodyId, otherEntity) {
     if (otherEntity !== engine.controllingEntity) {
       return;
     }

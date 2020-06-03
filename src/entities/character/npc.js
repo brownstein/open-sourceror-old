@@ -58,8 +58,8 @@ export class NPC extends BaseEntity {
       }
     }
   }
-  collisionHandler(engine, otherId, otherEntity) {
-    if (otherEntity !== engine.controllingEntity) {
+  collisionHandler(engine, shapeId, otherId, otherEntity) {
+    if (shapeId !== this.sensor.id || otherEntity !== engine.controllingEntity) {
       return;
     }
     if (this.dialogueEntity) {
@@ -72,8 +72,8 @@ export class NPC extends BaseEntity {
     engine.addEntity(this.dialogueEntity);
     engine.keyEventBus.on("keyboard-event", this._onKeyEvent);
   }
-  endCollisionHandler(engine, otherId, otherEntity) {
-    if (otherEntity !== engine.controllingEntity) {
+  endCollisionHandler(engine, shapeId, otherId, otherEntity) {
+    if (shapeId !== this.sensor.id || otherEntity !== engine.controllingEntity) {
       return;
     }
     console.log("ENDCOLL");

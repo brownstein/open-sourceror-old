@@ -92,7 +92,7 @@ export default class Engine extends EventEmitter {
   }
   _initializeContactHandlers () {
     this.world.on("beginContact", event => {
-      const { bodyA, bodyB, contactEquations } = event;
+      const { bodyA, bodyB, shapeA, shapeB, contactEquations } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
       const entityB = this.activeEntitiesByBodyId[bodyB.id];
       if (!entityA || !entityB) {
@@ -100,21 +100,21 @@ export default class Engine extends EventEmitter {
       }
       const eq = contactEquations[0] || null;
       if (entityA && entityA.collisionHandler) {
-        entityA.collisionHandler(this, bodyB.id, entityB, eq);
+        entityA.collisionHandler(this, shapeA.id, bodyB.id, entityB, eq);
       }
       if (entityB && entityB.collisionHandler) {
-        entityB.collisionHandler(this, bodyA.id, entityA, eq);
+        entityB.collisionHandler(this, shapeB.id, bodyA.id, entityA, eq);
       }
     });
     this.world.on("endContact", event => {
-      const { bodyA, bodyB } = event;
+      const { bodyA, bodyB, shapeA, shapeB } = event;
       const entityA = this.activeEntitiesByBodyId[bodyA.id];
       const entityB = this.activeEntitiesByBodyId[bodyB.id];
       if (entityA && entityA.endCollisionHandler) {
-        entityA.endCollisionHandler(this, bodyB.id, entityB);
+        entityA.endCollisionHandler(this, shapeA.id, bodyB.id, entityB);
       }
       if (entityB && entityB.endCollisionHandler) {
-        entityB.endCollisionHandler(this, bodyA.id, entityA);
+        entityB.endCollisionHandler(this, shapeB.id, bodyA.id, entityA);
       }
     });
     this.world.on("preSolve", event => {
@@ -127,10 +127,10 @@ export default class Engine extends EventEmitter {
           return;
         }
         if (entityA && entityA.handleContactEquation) {
-          entityA.handleContactEquation(this, eq.bodyB.id, entityB, eq);
+          entityA.handleContactEquation(this, eq.shapeA.id, eq.bodyB.id, entityB, eq);
         }
         if (entityB && entityB.handleContactEquation) {
-          entityB.handleContactEquation(this, eq.bodyA.id, entityA, eq);
+          entityB.handleContactEquation(this, eq.shapeB.id, eq.bodyA.id, entityA, eq);
         }
       }
       for (let eqi = 0; eqi < frictionEquations.length; eqi++) {
@@ -141,10 +141,10 @@ export default class Engine extends EventEmitter {
           return;
         }
         if (entityA && entityA.handleFrictionEquation) {
-          entityA.handleFrictionEquation(this, eq.bodyB.id, entityB, eq);
+          entityA.handleFrictionEquation(this, eq.shapeA.id, eq.bodyB.id, entityB, eq);
         }
         if (entityB && entityB.handleFrictionEquation) {
-          entityB.handleFrictionEquation(this, eq.bodyA.id, entityA, eq);
+          entityB.handleFrictionEquation(this, eq.shapeB.id, eq.bodyA.id, entityA, eq);
         }
       }
     });

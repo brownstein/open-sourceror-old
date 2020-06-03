@@ -35,7 +35,7 @@ export class Fireball extends EphemeralEntity {
 
     this.syncMeshWithBody();
   }
-  collisionHandler(engine, otherId, otherEntity) {
+  collisionHandler(engine, shapeId, otherId, otherEntity) {
     if (
       otherEntity === this.spawnedByEntiy ||
       otherEntity instanceof EphemeralEntity
@@ -78,7 +78,7 @@ export class FireballExplosion extends EphemeralEntity {
       this.engine.removeEntity(this);
     }
   }
-  collisionHandler(engine, otherId, otherEntity) {
+  collisionHandler(engine, shapeId, otherId, otherEntity) {
     // only hit things once
     if (this.hitEntities.includes(otherEntity)) {
       return;

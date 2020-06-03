@@ -251,7 +251,7 @@ export class TilesetTerrainEntity extends TerrainEntity {
     this.ready = true;
   }
   // support one-way platforms
-  collisionHandler(engine, otherId, otherEntity, eq) {
+  collisionHandler(engine, shapeId, otherId, otherEntity, eq) {
     if (!this.isOneWayPlatform || !otherEntity.body || !eq) {
       return;
     }
@@ -265,28 +265,28 @@ export class TilesetTerrainEntity extends TerrainEntity {
       this.oneWayPlatformTracking.push(otherId);
     }
   }
-  handleContactEquation(engine, otherId, otherEntity, eq) {
+  handleContactEquation(engine, shapeId, otherBodyId, otherEntity, eq) {
     if (!this.isOneWayPlatform || !otherEntity.body) {
       return;
     }
-    if (this.oneWayPlatformTracking.includes(otherId)) {
+    if (this.oneWayPlatformTracking.includes(otherBodyId)) {
       eq.enabled = false;
     }
   }
-  handleFrictionEquation(engine, otherId, otherEntity, eq) {
+  handleFrictionEquation(engine, shapeId, otherBodyId, otherEntity, eq) {
     if (!this.isOneWayPlatform || !otherEntity.body) {
       return;
     }
-    if (this.oneWayPlatformTracking.includes(otherId)) {
+    if (this.oneWayPlatformTracking.includes(otherBodyId)) {
       eq.enabled = false;
     }
   }
-  endCollisionHandler(engine, otherId, otherEntity) {
+  endCollisionHandler(engine, shapeId, otherBodyId, otherEntity) {
     if (!this.isOneWayPlatform) {
       return;
     }
     this.oneWayPlatformTracking = this.oneWayPlatformTracking.filter(id => {
-      return id !== otherId;
+      return id !== otherBodyId;
     });
   }
 }
