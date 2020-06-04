@@ -12,6 +12,7 @@ import {
 import KeyState from "engine/key-state";
 import { EngineContext } from "./engine";
 import StatusOverlay from "./status-overlay";
+import { TargetingReticle } from "src/entities/presentational/targeting";
 
 import "./viewport.less";
 
@@ -26,9 +27,9 @@ export class EngineViewport extends Component {
     this.renderer = null;
 
     this.canvasEl = null;
+    this.canvasSize = { width: 200, height: 200 };
 
     // focus context and keyboard events
-    this.hasCursor = false;
     this.ks = new KeyState();
 
     // we need to keep hovering dialogue in the react state to force updates
@@ -37,13 +38,19 @@ export class EngineViewport extends Component {
     };
 
     this.targetSceneFrameSize = new Vector2(300, 200);
-    // this.targetSceneFrameSize = new Vector2(600, 500);
+    this.targetingReticle = new TargetingReticle();
+
+    // mouse coordinates
+    this.mouseOnScreen = false;
+    this.mouseScreenCoordinates = new Vector3(0, 0, 0);
+    this.mouseSceneCoordinates = new Vector3(0, 0, 0);
 
     this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
     this._onMouseenter = this._onMouseenter.bind(this);
     this._onMouseleave = this._onMouseleave.bind(this);
+    this._onMousemove = this._onMousemove.bind(this);
   }
   componentDidMount() {
     const engine = this.context;
@@ -69,8 +76,9 @@ export class EngineViewport extends Component {
 
     // attach event listeners
     window.addEventListener("resize", this._onResize);
-    this.viewportEl.addEventListener("mouseenter", this._onMouseenter);;
+    this.viewportEl.addEventListener("mouseenter", this._onMouseenter);
     this.viewportEl.addEventListener("mouseleave", this._onMouseleave);
+    this.viewportEl.addEventListener("mousemove", this._onMousemove);
 
     // size canvas to the current size of it's container
     this._onResize();
@@ -78,6 +86,9 @@ export class EngineViewport extends Component {
 
     // start listening for rendering queues
     engine.on("frame", this._onFrame);
+
+    // add targeting reticle to the scene
+    engine.addEntity(this.targetingReticle);
 
     // queue second resize to be sure (windows)
     requestAnimationFrame(this._onResize);
@@ -88,7 +99,9 @@ export class EngineViewport extends Component {
     window.removeEventListener("resize", this._onResize);
     this.viewportEl.removeEventListener("mouseenter", this._onMouseenter);
     this.viewportEl.removeEventListener("mouseleave", this._onMouseleave);
+    this.viewportEl.removeEventListener("mousemove", this._onMousemove);
     engine.off("frame", this._onFrame);
+    engine.removeEntity(this.targetingReticle);
   }
   render() {
     const { hoveringDomEntities } = this.state;
@@ -117,7 +130,7 @@ export class EngineViewport extends Component {
     const engine = this.context;
     const player = engine.controllingEntity;
 
-    if (player && engine.running && this.hasCursor) {
+    if (player && engine.running && this.mouseOnScreen) {
       player.runKeyboardMotion(engine, this.ks);
       this.ks.runEvents().forEach(e => {
         engine.keyEventBus.emit("keyboard-event", e)
@@ -132,16 +145,12 @@ export class EngineViewport extends Component {
       engine.hoveringDomEntities.length ||
       this.state.hoveringDomEntities.length
     ) {
-      const rect = this.viewportEl.getBoundingClientRect();
-      const { width, height } = rect;
+      const { width, height } = this.canvasSize;
 
       const maxEntityBBoxSize = 100;
       const hoveringDomEntities = [];
       engine.hoveringDomEntities.forEach(entity => {
-        const position = entity.hoverPosition.clone();
-        position.project(this.camera);
-        position.x = (0.5 + position.x * 0.5) * width;
-        position.y = (0.5 - position.y * 0.5) * height;
+        const position = this.getOnscreenPosition(entity.hoverPosition);
         if (
           position.x >= -maxEntityBBoxSize &&
           position.x <= maxEntityBBoxSize + width &&
@@ -159,6 +168,22 @@ export class EngineViewport extends Component {
         hoveringDomEntities
       });
     }
+  }
+  getOnscreenPosition(position, inPlace = false) {
+    const { width, height } = this.canvasSize;
+    const pos = inPlace ? position : position.clone();
+    pos.project(this.camera);
+    pos.x = (0.5 + pos.x * 0.5) * width;
+    pos.y = (0.5 - pos.y * 0.5) * height;
+    return pos;
+  }
+  getScenePositionForScreenPosition(position, inPlace = false) {
+    const { width, height } = this.canvasSize;
+    const pos = inPlace ? position : position.clone();
+    pos.x = ((pos.x / width) - 0.5) * 2;
+    pos.y = (0.5 - (pos.y / height)) * 2;
+    pos.unproject(this.camera);
+    return pos;
   }
   _queueRender() {
     this.needsRender = true;
@@ -198,8 +223,20 @@ export class EngineViewport extends Component {
       }
     }
 
+    // update the cursor's onscreen coordinates
+    this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
+    this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
+
     // update entities that have to be moved with the camera
     engine.cameraTrackedEntities.forEach(e => e.trackWithCamera(this.camera));
+
+    // sync meshes that depend on the viewport
+    for (let ei = 0; ei < engine.activeEntities.length; ei++) {
+      const entity = engine.activeEntities[ei];
+      if (entity.syncMeshWithViewport) {
+        entity.syncMeshWithViewport(this);
+      }
+    }
 
     // render the frame
     this.renderer.render(scene, this.camera);
@@ -207,6 +244,7 @@ export class EngineViewport extends Component {
   _onResize() {
     const rect = this.viewportEl.getBoundingClientRect();
     const { width, height } = rect;
+    this.canvasSize = { width, height };
 
     const targetSize = this.targetSceneFrameSize;
     const scale = Math.max(
@@ -226,6 +264,10 @@ export class EngineViewport extends Component {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
 
+    // update mouse coordinates in the scene
+    this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
+    this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
+
     // update entities that have to be resized with the camera
     const engine = this.context;
     engine.cameraTrackedEntities.forEach(e => e.updateForCameraBBox(this.camera));
@@ -234,12 +276,21 @@ export class EngineViewport extends Component {
   }
   _onMouseenter() {
     const engine = this.context;
-    this.hasCursor = true;
+    this.mouseOnScreen = true;
+    this.targetingReticle.setVisible(true);
     engine.handleViewportFocus(true);
   }
   _onMouseleave() {
     const engine = this.context;
-    this.hasCursor = false;
+    this.mouseOnScreen = false;
+    this.targetingReticle.setVisible(false);
     engine.handleViewportFocus(false);
+  }
+  _onMousemove(event) {
+    const { width, height } = this.canvasSize;
+    this.mouseScreenCoordinates.x = event.clientX; // TODO: subtract canvas loc
+    this.mouseScreenCoordinates.y = event.clientY; // TODO: subtract canvas loc
+    this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
+    this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
   }
 }

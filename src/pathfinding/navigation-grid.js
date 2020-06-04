@@ -97,7 +97,7 @@ export class NavBlockage extends CollisionBBox {
   }
 }
 
-class JumpPlanningCache {
+export class JumpPlanningCache {
   constructor(resolution = 1, vResolution = 0.1) {
     this.resolution = resolution;
     this.invResolution = 1 / resolution;
@@ -121,7 +121,7 @@ class JumpPlanningCache {
   }
 }
 
-class JumpPlanningNode {
+export class JumpPlanningNode {
   constructor(x, y, vx, vy) {
     this.x = x;
     this.y = y;
@@ -162,7 +162,7 @@ class JumpPlanningNode {
   }
 }
 
-class NavPlanningCache {
+export class NavPlanningCache {
   constructor(resolution = 16) {
     this.resolution = resolution;
     this.invResolution = 1 / resolution;
@@ -182,7 +182,7 @@ class NavPlanningCache {
   }
 }
 
-class NavPlanningNode {
+export class NavPlanningNode {
   constructor(x, y, action) {
     this.x = x;
     this.y = y;

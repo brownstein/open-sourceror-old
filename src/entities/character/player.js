@@ -24,7 +24,7 @@ import {
 } from "./sprites/wizard";
 import { incrementPlayerMana } from "src/redux/actions/status";
 
-import { Fireball } from "../fireball";
+import { Fireball } from "src/entities/projectiles/fireball";
 
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#555555",

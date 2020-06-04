@@ -8,8 +8,8 @@ import {
   Vector3,
 } from "three";
 
-import getThreeJsObjectForP2Body from "../p2-utils/get-threejs-mesh";
-import { EphemeralEntity } from "entities/base";
+import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
+import { EphemeralEntity } from "src/entities/base";
 
 export class Fireball extends EphemeralEntity {
   constructor (spawnedByEntiy, position) {
