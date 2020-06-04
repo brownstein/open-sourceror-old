@@ -12,6 +12,7 @@ import characterPolygon from "src/entities/character/base.json";
 import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
 import BaseEntity from "src/entities/base";
 import { DialogueEntity } from "src/entities/presentational/dialogue";
+import { Sensor } from "src/entities/sensor";
 
 export class NPC extends BaseEntity {
   constructor(props) {
@@ -28,14 +29,11 @@ export class NPC extends BaseEntity {
       sensor: true
     });
     this.body.addShape(this.convex);
-
-    this.sensor = new Circle({
-      radius: 50,
-      sensor: true
-    });
-    this.body.addShape(this.sensor);
-
     this.mesh = getThreeJsObjectForP2Body(this.body, null, color);
+
+    this.sensor = new Sensor(this, 50);
+    this.sensor.attachUpdateHandler(this._onSensorUpdate.bind(this));
+    this.children = [this.sensor];
 
     this.npcDialogue = npcDialogue.split("|").map(d => d.trim());
     this.npcDialogueStep = 0;
@@ -58,25 +56,25 @@ export class NPC extends BaseEntity {
       }
     }
   }
-  collisionHandler(engine, shapeId, otherId, otherEntity) {
-    if (shapeId !== this.sensor.id || otherEntity !== engine.controllingEntity) {
-      return;
+  _onSensorUpdate() {
+    const { sensor, engine } = this;
+    const player = engine.controllingEntity;
+    if (sensor.collidingWith.find(([_, other]) => other === player)) {
+      if (this.dialogueEntity) {
+        return;
+      }
+      this.npcDialogueStep = 0;
+      this.dialogueEntity = new DialogueEntity(
+        vec2ToVector2(this.body.position).add(new Vector2(0, -16)),
+        this.npcDialogue[this.npcDialogueStep]
+      );
+      engine.addEntity(this.dialogueEntity);
+      engine.keyEventBus.on("keyboard-event", this._onKeyEvent);
     }
-    if (this.dialogueEntity) {
-      return;
-    }
-    this.dialogueEntity = new DialogueEntity(
-      vec2ToVector2(this.body.position).add(new Vector2(0, -16)),
-      this.npcDialogue[this.npcDialogueStep]
-    );
-    engine.addEntity(this.dialogueEntity);
-    engine.keyEventBus.on("keyboard-event", this._onKeyEvent);
-  }
-  endCollisionHandler(engine, shapeId, otherId, otherEntity) {
-    if (shapeId !== this.sensor.id || otherEntity !== engine.controllingEntity) {
-      return;
-    }
-    if (this.dialogueEntity) {
+    else {
+      if (!this.dialogueEntity) {
+        return;
+      }
       engine.removeEntity(this.dialogueEntity);
       this.dialogueEntity = null;
       engine.keyEventBus.off("keyboard-event", this._onKeyEvent);

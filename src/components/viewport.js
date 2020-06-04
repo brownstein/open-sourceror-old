@@ -89,15 +89,15 @@ export class EngineViewport extends Component {
     this.viewportEl.addEventListener("mouseup", this._onMouseup);
     this.viewportEl.addEventListener("click", this._onClick);
 
+    // add targeting reticle to the scene
+    engine.addEntity(this.targetingReticle);
+
     // size canvas to the current size of it's container
     this._onResize();
     this._queueRender();
 
     // start listening for rendering queues
     engine.on("frame", this._onFrame);
-
-    // add targeting reticle to the scene
-    engine.addEntity(this.targetingReticle);
 
     // queue second resize to be sure (windows)
     requestAnimationFrame(this._onResize);
@@ -253,6 +253,13 @@ export class EngineViewport extends Component {
     // render the frame
     this.renderer.render(scene, this.camera);
   }
+  _updateMouseScreenCoordinates(event) {
+    const { width, height } = this.canvasSize;
+    this.mouseScreenCoordinates.x = event.clientX; // TODO: subtract canvas loc
+    this.mouseScreenCoordinates.y = event.clientY; // TODO: subtract canvas loc
+    this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
+    this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
+  }
   _onResize() {
     const rect = this.viewportEl.getBoundingClientRect();
     const { width, height } = rect;
@@ -279,6 +286,7 @@ export class EngineViewport extends Component {
     // update mouse coordinates in the scene
     this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
     this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
+    this.targetingReticle.syncMeshWithViewport(this);
 
     // update entities that have to be resized with the camera
     const engine = this.context;
@@ -286,32 +294,39 @@ export class EngineViewport extends Component {
 
     this._queueRender();
   }
-  _onMouseenter() {
+  _onMouseenter(event) {
     const engine = this.context;
     this.mouseOnScreen = true;
     this.targetingReticle.setVisible(true);
     engine.handleViewportFocus(true);
+    this._updateMouseScreenCoordinates(event);
   }
-  _onMouseleave() {
+  _onMouseleave(event) {
     const engine = this.context;
     this.mouseOnScreen = false;
     this.targetingReticle.setVisible(false);
     engine.handleViewportFocus(false);
+    this._updateMouseScreenCoordinates(event);
   }
   _onMousemove(event) {
-    const { width, height } = this.canvasSize;
-    this.mouseScreenCoordinates.x = event.clientX; // TODO: subtract canvas loc
-    this.mouseScreenCoordinates.y = event.clientY; // TODO: subtract canvas loc
-    this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
-    this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
+    this._updateMouseScreenCoordinates(event);
   }
   _onMousedown(event) {
-    this.mouseEventEmitter.emit("mousedown");
+    const engine = this.context;
+    engine.emit("mousedown", {
+      position: this.mouseSceneCoordinates
+    });
   }
   _onMouseup(event) {
-    this.mouseEventEmitter.emit("mouseup");
+    const engine = this.context;
+    engine.emit("mouseup", {
+      position: this.mouseSceneCoordinates
+    });
   }
   _onClick(event) {
-    this.mouseEventEmitter.emit("click");
+    const engine = this.context;
+    engine.emit("click", {
+      position: this.mouseSceneCoordinates
+    });
   }
 }

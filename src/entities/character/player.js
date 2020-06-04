@@ -23,6 +23,7 @@ import {
   midJumpImage
 } from "./sprites/wizard";
 import { incrementPlayerMana } from "src/redux/actions/status";
+import { castToVec2 } from "src/p2-utils/vec2-utils";
 
 import { Fireball } from "src/entities/projectiles/fireball";
 
@@ -58,6 +59,8 @@ export class Player extends Character {
 
     this.spritesLoaded = false;
     this.readyPromise = this.loadSprites();
+
+    this._onClick = this._onClick.bind(this);
   }
   async loadSprites() {
     this.sprites = {};
@@ -213,5 +216,21 @@ export class Player extends Character {
   incrementMana(diff) {
     super.incrementMana(diff);
     this.engine.dispatch(incrementPlayerMana(diff));
+  }
+  attachToEngine(engine) {
+    this.engine = engine;
+    engine.on("click", this._onClick);
+  }
+  cleanup() {
+    const { engine } = this;
+    engine.off("click", this._onClick);
+  }
+  _onClick(event) {
+    const { position } = event;
+    const relativePosition = position.clone().sub(this.mesh.position);
+    this.castFireball(
+      [0, 0],
+      castToVec2(relativePosition.clone().multiplyScalar(5))
+    );
   }
 }

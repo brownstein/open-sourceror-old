@@ -69,6 +69,7 @@ export class TargetingReticle {
     this.mesh.add(this.blockOutlineMesh);
     this.mesh.add(this.lineConnectionMesh);
     this.mesh.position.z = 30;
+    this.mesh.visible = false;
 
     this.viewport.mouseEventEmitter.on("mousedown", () => {
       const scale = 16 + 8;
@@ -84,11 +85,20 @@ export class TargetingReticle {
   }
   syncMeshWithViewport(viewport) {
     const { engine } = this;
+    
     this.blockOutlineMesh.position.copy(viewport.mouseSceneCoordinates);
     this.blockOutlineMesh.position.x = Math
       .floor(this.blockOutlineMesh.position.x / 16) * 16 + 8;
     this.blockOutlineMesh.position.y = Math
       .floor(this.blockOutlineMesh.position.y / 16) * 16 + 8;
+
+    if (!engine.controllingEntity) {
+      this.lineConnectionMesh.visible = false;
+      return;
+    }
+    else {
+      this.lineConnectionMesh.visible = true;
+    }
 
     const playerPosition = engine.controllingEntity.mesh.position;
     const posDiff = viewport.mouseSceneCoordinates

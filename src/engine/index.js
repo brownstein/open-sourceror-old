@@ -162,7 +162,39 @@ export default class Engine extends EventEmitter {
     if (entity.hoverElement) {
       this.hoveringDomEntities.push(entity);
     }
+    if (entity.attachToEngine) {
+      entity.attachToEngine(this);
+    }
+    if (entity.children) {
+      entity.children.forEach(child => this.addEntity(child));
+    }
     this._trackInit(entity);
+  }
+  removeEntity(entity) {
+    this.activeEntities = this.activeEntities.filter(e => e !== entity);
+    if (entity.body) {
+      delete this.activeEntitiesByBodyId[entity.body.id];
+      this.world.removeBody(entity.body);
+    }
+    if (entity.mesh) {
+      this.scene.remove(entity.mesh);
+    }
+    if (entity.emit) {
+      entity.emit("remove", { entity });
+    }
+    if (entity.cameraTracked) {
+      entity.cameraTracked = false;
+      this.cameraTrackedEntities = this.cameraTrackedEntities.filter(e => e !== entity);
+    }
+    if (entity.hoverElement) {
+      this.hoveringDomEntities = this.hoveringDomEntities.filter(e => e !== entity);
+    }
+    if (entity.cleanup) {
+      entity.cleanup();
+    }
+    if (entity.children) {
+      entity.children.forEach(child => this.removeEntity(child));
+    }
   }
   expandSceneToFitEntity(entity) {
     if (entity.mesh) {
@@ -233,26 +265,6 @@ export default class Engine extends EventEmitter {
   }
   setControllingEntity(entity) {
     this.controllingEntity = entity;
-  }
-  removeEntity(entity) {
-    this.activeEntities = this.activeEntities.filter(e => e !== entity);
-    if (entity.body) {
-      delete this.activeEntitiesByBodyId[entity.body.id];
-      this.world.removeBody(entity.body);
-    }
-    if (entity.mesh) {
-      this.scene.remove(entity.mesh);
-    }
-    if (entity.emit) {
-      entity.emit("remove", { entity });
-    }
-    if (entity.cameraTracked) {
-      entity.cameraTracked = false;
-      this.cameraTrackedEntities = this.cameraTrackedEntities.filter(e => e !== entity);
-    }
-    if (entity.hoverElement) {
-      this.hoveringDomEntities = this.hoveringDomEntities.filter(e => e !== entity);
-    }
   }
   addNavGrid(navGrid) {
     if (this.navGrid) {
