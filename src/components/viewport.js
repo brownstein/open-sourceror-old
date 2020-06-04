@@ -1,3 +1,4 @@
+import EventEmitter from "events";
 import { Component } from "react";
 import {
   Box3,
@@ -37,13 +38,15 @@ export class EngineViewport extends Component {
       hoveringDomEntities: []
     };
 
-    this.targetSceneFrameSize = new Vector2(300, 200);
-    this.targetingReticle = new TargetingReticle();
-
     // mouse coordinates
     this.mouseOnScreen = false;
     this.mouseScreenCoordinates = new Vector3(0, 0, 0);
     this.mouseSceneCoordinates = new Vector3(0, 0, 0);
+    this.mouseEventEmitter = new EventEmitter();
+
+    // targeting, camera positioning
+    this.targetSceneFrameSize = new Vector2(300, 200);
+    this.targetingReticle = new TargetingReticle(this);
 
     this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
@@ -51,6 +54,9 @@ export class EngineViewport extends Component {
     this._onMouseenter = this._onMouseenter.bind(this);
     this._onMouseleave = this._onMouseleave.bind(this);
     this._onMousemove = this._onMousemove.bind(this);
+    this._onMousedown = this._onMousedown.bind(this);
+    this._onMouseup = this._onMouseup.bind(this);
+    this._onClick = this._onClick.bind(this);
   }
   componentDidMount() {
     const engine = this.context;
@@ -79,6 +85,9 @@ export class EngineViewport extends Component {
     this.viewportEl.addEventListener("mouseenter", this._onMouseenter);
     this.viewportEl.addEventListener("mouseleave", this._onMouseleave);
     this.viewportEl.addEventListener("mousemove", this._onMousemove);
+    this.viewportEl.addEventListener("mousedown", this._onMousedown);
+    this.viewportEl.addEventListener("mouseup", this._onMouseup);
+    this.viewportEl.addEventListener("click", this._onClick);
 
     // size canvas to the current size of it's container
     this._onResize();
@@ -100,6 +109,9 @@ export class EngineViewport extends Component {
     this.viewportEl.removeEventListener("mouseenter", this._onMouseenter);
     this.viewportEl.removeEventListener("mouseleave", this._onMouseleave);
     this.viewportEl.removeEventListener("mousemove", this._onMousemove);
+    this.viewportEl.removeEventListener("mousedown", this._onMousedown);
+    this.viewportEl.removeEventListener("mouseup", this._onMouseup);
+    this.viewportEl.removeEventListener("click", this._onClick);
     engine.off("frame", this._onFrame);
     engine.removeEntity(this.targetingReticle);
   }
@@ -292,5 +304,14 @@ export class EngineViewport extends Component {
     this.mouseScreenCoordinates.y = event.clientY; // TODO: subtract canvas loc
     this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
     this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
+  }
+  _onMousedown(event) {
+    this.mouseEventEmitter.emit("mousedown");
+  }
+  _onMouseup(event) {
+    this.mouseEventEmitter.emit("mouseup");
+  }
+  _onClick(event) {
+    this.mouseEventEmitter.emit("click");
   }
 }

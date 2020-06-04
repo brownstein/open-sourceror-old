@@ -11,8 +11,9 @@ import {
 } from "three";
 
 export class TargetingReticle {
-  constructor() {
+  constructor(viewport) {
     this.engine = null;
+    this.viewport = viewport;
 
     this.blockOutlineGeom = new Geometry();
     this.blockOutlineGeom.vertices.push(new Vector3(-1, -1, 0));
@@ -68,6 +69,18 @@ export class TargetingReticle {
     this.mesh.add(this.blockOutlineMesh);
     this.mesh.add(this.lineConnectionMesh);
     this.mesh.position.z = 30;
+
+    this.viewport.mouseEventEmitter.on("mousedown", () => {
+      const scale = 16 + 8;
+      this.blockOutlineMesh.scale.x = scale;
+      this.blockOutlineMesh.scale.y = scale;
+    });
+
+    this.viewport.mouseEventEmitter.on("mouseup", () => {
+      const scale = 8;
+      this.blockOutlineMesh.scale.x = scale;
+      this.blockOutlineMesh.scale.y = scale;
+    });
   }
   syncMeshWithViewport(viewport) {
     const { engine } = this;
