@@ -1,4 +1,4 @@
-import { castToVec2 } from "p2-utils/vec2-utils";
+import { castToVec2 } from "src/p2-utils/vec2-utils";
 
 export default function getNativeFireSpell (interpreter, scope, runner) {
 

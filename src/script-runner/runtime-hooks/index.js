@@ -7,7 +7,9 @@ import { Sensor } from "src/entities/sensor";
 
 import {
   getNativeFire,
-  getNativeSensor
+  getNativeSensor,
+  getNativeLaser,
+  getNativePush
 } from "./spells";
 
 /**
@@ -63,6 +65,12 @@ export function initializeScope(interpreter, scope, runner) {
           break;
         case "sensor":
           requirement = getNativeSensor(interpreter, scope, runner);
+          break;
+        case "laser":
+          requirement = getNativeLaser(interpreter, scope, runner);
+          break;
+        case "push":
+          requirement = getNativePush(interpreter, scope, runner);
           break;
         default:
           throw new Error("Unknown module - have you tried getting gud?");

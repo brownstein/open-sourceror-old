@@ -23,9 +23,10 @@ import {
   midJumpImage
 } from "./sprites/wizard";
 import { incrementPlayerMana } from "src/redux/actions/status";
-import { castToVec2 } from "src/p2-utils/vec2-utils";
+import { castToVec2, vec2ToVector3 } from "src/p2-utils/vec2-utils";
 
 import { Fireball } from "src/entities/projectiles/fireball";
+import { Laser } from "src/entities/spells/laser";
 
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#555555",
@@ -56,6 +57,8 @@ export class Player extends Character {
     this.spriteOffsets = {};
 
     this.detectors = [];
+
+    this.targetCoordinates = new Vector3(0, 0, 0);
 
     this.spritesLoaded = false;
     this.readyPromise = this.loadSprites();
@@ -204,6 +207,17 @@ export class Player extends Character {
       fireball.body.velocity[1] -= 100;
     }
     this.engine.addEntity(fireball);
+  }
+  castLaser() {
+    const { engine } = this;
+    const laserPosition = vec2.clone(this.body.position);
+    const targetPosition = castToVec2(this.targetCoordinates);
+    const laser = new Laser({
+      position: laserPosition,
+      vector: targetPosition.clone().sub(laserPosition).normalize(),
+      fromEntity: this
+    });
+    engine.addEntity(laser);
   }
   addDetector() {
     const detector = new Circle({

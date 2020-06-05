@@ -254,11 +254,18 @@ export class EngineViewport extends Component {
     this.renderer.render(scene, this.camera);
   }
   _updateMouseScreenCoordinates(event) {
+    const { engine } = this;
     const { width, height } = this.canvasSize;
     this.mouseScreenCoordinates.x = event.clientX; // TODO: subtract canvas loc
     this.mouseScreenCoordinates.y = event.clientY; // TODO: subtract canvas loc
     this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
     this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
+    if (!engine) {
+      return;
+    }
+    if (engine.controllingEntity) {
+      engine.controllingEntity.targetCoordinates = this.mouseSceneCoordinates;
+    }
   }
   _onResize() {
     const rect = this.viewportEl.getBoundingClientRect();

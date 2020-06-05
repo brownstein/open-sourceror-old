@@ -68,14 +68,14 @@ export class IceCrystal extends BaseEntity {
     return new IceCrystal(position, combinedPolygon);
   }
   constructor(params) {
-    const position = params.position || new Vector2(0, 0);
+    const position = params.position || [0, 0];
     const vertices = params.vertices;
 
     this.body = new Body({
       mass: 0,
       isStatic: true,
       friction: 0.9,
-      position: [0, 0]
+      position: position
     });
     this.convex = new Convex({
       vertices: []
