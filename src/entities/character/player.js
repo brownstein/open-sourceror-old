@@ -27,6 +27,7 @@ import { castToVec2, vec2ToVector3 } from "src/p2-utils/vec2-utils";
 
 import { Fireball } from "src/entities/projectiles/fireball";
 import { Laser } from "src/entities/spells/laser";
+import { Push } from "src/entities/spells/push";
 
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#555555",
@@ -242,9 +243,17 @@ export class Player extends Character {
   _onClick(event) {
     const { position } = event;
     const relativePosition = position.clone().sub(this.mesh.position);
-    this.castFireball(
-      [0, 0],
-      castToVec2(relativePosition.clone().multiplyScalar(5))
+
+    const push = new Push(
+      this,
+      this.mesh.position.clone().add(relativePosition),
+      50,
+      50
     );
+    this.engine.addEntity(push);
+    // this.castFireball(
+    //   [0, 0],
+    //   castToVec2(relativePosition.clone().multiplyScalar(5))
+    // );
   }
 }

@@ -143,7 +143,7 @@ module.exports = (env, argv) => {
       minimize: !isDev,
       minimizer: [
       new TerserPlugin({
-        cache: '.cache',
+        cache: ".cache",
       }),
     ],
     }

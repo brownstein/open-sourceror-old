@@ -9,7 +9,8 @@ import {
 } from "three";
 
 import { castToVec2 } from "src/p2-utils/vec2-utils";
-import BaseEntity from "src/entities/base";
+import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
+import BaseEntity, { EphemeralEntity } from "src/entities/base";
 
 export class Push extends BaseEntity {
   constructor(spawnedByEntity, position, radius, force) {
@@ -20,14 +21,14 @@ export class Push extends BaseEntity {
       mass: 0,
       position: castToVec2(position)
     });
-
-    this.sensor = new Shape({
+    this.sensor = new Circle({
       radius
     });
-
     this.body.addShape(this.sensor);
+    this.mesh = getThreeJsObjectForP2Body(this.body);
 
-    this.syncMeshWithBody();
+    this._destroy = this._destroy.bind(this);
+    setTimeout(this._destroy, 500);
   }
   collisionHandler(engine, shapeId, otherId, otherEntity) {
     if (
@@ -48,5 +49,9 @@ export class Push extends BaseEntity {
       relativePosition,
       relativeForce
     );
+  }
+  _destroy() {
+    const { engine } = this;
+    engine.removeEntity(this);
   }
 }
