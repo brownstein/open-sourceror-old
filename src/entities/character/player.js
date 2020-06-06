@@ -248,12 +248,8 @@ export class Player extends Character {
       this,
       this.mesh.position.clone().add(relativePosition),
       50,
-      50
+      1000
     );
     this.engine.addEntity(push);
-    // this.castFireball(
-    //   [0, 0],
-    //   castToVec2(relativePosition.clone().multiplyScalar(5))
-    // );
   }
 }

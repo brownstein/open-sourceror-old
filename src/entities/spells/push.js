@@ -16,19 +16,32 @@ export class Push extends BaseEntity {
   constructor(spawnedByEntity, position, radius, force) {
     super();
     this.spawnedByEntity = spawnedByEntity;
+    this.force = force;
 
     this.body = new Body({
       mass: 0,
       position: castToVec2(position)
     });
     this.sensor = new Circle({
-      radius
+      radius: 1
     });
     this.body.addShape(this.sensor);
     this.mesh = getThreeJsObjectForP2Body(this.body);
 
+    this.startRadius = radius * 0.25;
+    this.eventualRadius = radius;
+    this.timeSpan = 100;
+    this.radiusGrowthRate = (this.eventualRadius - this.startRadius) / this.timeSpan;
+
+    this.sensor.radius = this.startRadius;
+
     this._destroy = this._destroy.bind(this);
-    setTimeout(this._destroy, 500);
+    setTimeout(this._destroy, this.timeSpan);
+  }
+  onFrame() {
+    this.sensor.radius += this.radiusGrowthRate;
+    this.mesh.scale.x = this.sensor.radius;
+    this.mesh.scale.y = this.sensor.radius;
   }
   collisionHandler(engine, shapeId, otherId, otherEntity) {
     if (
@@ -43,9 +56,10 @@ export class Push extends BaseEntity {
 
     const relativeForce = vec2.create();
     vec2.copy(relativeForce, relativePosition);
-    vec2.scale(relativeForce, relativeForce, 10);
+    vec2.normalize(relativeForce, relativeForce);
+    vec2.scale(relativeForce, relativeForce, this.force);
 
-    otherBody.applyForce(
+    otherEntity.body.applyForce(
       relativePosition,
       relativeForce
     );

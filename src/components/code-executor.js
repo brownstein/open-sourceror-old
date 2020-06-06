@@ -25,6 +25,7 @@ import "./code-executor.less";
 const srcScript =
 `"use strict";
 const fire = require("fire");
+const push = require("push");
 const Sensor = require("sensor");
 
 var s = new Sensor(100);
@@ -41,7 +42,12 @@ function keepGoing() {
       x: n.relativePosition.x * 5,
       y: n.relativePosition.y * 5
     };
+    const relativePosition = {
+      x: n.relativePosition.x,
+      y: n.relativePosition.y + 10
+    };
     fire(null, relativeVelocity);
+    push(relativePosition, 20, 10);
   });
   setTimeout(keepGoing, 50);
 
