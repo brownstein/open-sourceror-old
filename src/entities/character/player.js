@@ -234,22 +234,22 @@ export class Player extends Character {
   }
   attachToEngine(engine) {
     this.engine = engine;
-    engine.on("click", this._onClick);
+    engine.on("mousedown", this._onClick);
   }
   cleanup() {
     const { engine } = this;
-    engine.off("click", this._onClick);
+    engine.off("mousedown", this._onClick);
   }
   _onClick(event) {
+    const { engine } = this;
     const { position } = event;
-    const relativePosition = position.clone().sub(this.mesh.position);
-
+    const pos2 = castToVec2(position);
     const push = new Push(
       this,
-      this.mesh.position.clone().add(relativePosition),
+      pos2,
       50,
-      1000
+      100
     );
-    this.engine.addEntity(push);
+    engine.addEntity(push);
   }
 }

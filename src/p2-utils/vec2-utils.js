@@ -5,7 +5,7 @@ import { Vector2, Vector3 } from "three";
  * produces an array - useful for sanitizing player input from scripts
  */
 export function castToVec2(src) {
-  if (src && src.length || Array.isArray(src)) {
+  if (Array.isArray(src) || src instanceof Float32Array) {
     if (src.length === 2) {
       return src;
     }

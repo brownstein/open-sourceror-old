@@ -10,9 +10,9 @@ import {
 
 import { castToVec2 } from "src/p2-utils/vec2-utils";
 import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
-import BaseEntity, { EphemeralEntity } from "src/entities/base";
+import { EphemeralEntity } from "src/entities/base";
 
-export class Push extends BaseEntity {
+export class Push extends EphemeralEntity {
   constructor(spawnedByEntity, position, radius, force) {
     super();
     this.spawnedByEntity = spawnedByEntity;
