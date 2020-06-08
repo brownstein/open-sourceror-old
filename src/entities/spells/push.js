@@ -23,7 +23,8 @@ export class Push extends EphemeralEntity {
       position: castToVec2(position)
     });
     this.sensor = new Circle({
-      radius: 1
+      radius: 1,
+      sensor: true
     });
     this.body.addShape(this.sensor);
     this.mesh = getThreeJsObjectForP2Body(this.body);
@@ -43,9 +44,9 @@ export class Push extends EphemeralEntity {
     this.mesh.scale.x = this.sensor.radius;
     this.mesh.scale.y = this.sensor.radius;
   }
-  collisionHandler(engine, shapeId, otherId, otherEntity) {
+  collisionHandler(engine, shapeId, otherBodyId, otherEntity) {
     if (
-      otherEntity === this.spawnedByEntity ||
+      // otherEntity === this.spawnedByEntity ||
       otherEntity instanceof EphemeralEntity
     ) {
       return;
@@ -57,11 +58,11 @@ export class Push extends EphemeralEntity {
     const relativeForce = vec2.create();
     vec2.copy(relativeForce, relativePosition);
     vec2.normalize(relativeForce, relativeForce);
-    vec2.scale(relativeForce, relativeForce, this.force);
+    vec2.scale(relativeForce, relativeForce, this.force * 100);
 
-    otherEntity.body.applyForce(
-      relativePosition,
-      relativeForce
+    otherEntity.body.applyImpulse(
+      relativeForce,
+      relativePosition
     );
   }
   _destroy() {

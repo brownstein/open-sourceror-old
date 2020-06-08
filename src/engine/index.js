@@ -213,11 +213,12 @@ export default class Engine extends EventEmitter {
     const bboxCenter = new Vector3();
     this.levelBBox.getSize(bboxSize);
     this.levelBBox.getCenter(bboxCenter);
+    let thickness = 200;
     [
-      [-bboxSize.x / 2 - 20, 0, 40, bboxSize.y],
-      [bboxSize.x / 2 + 20, 0, 40, bboxSize.y],
-      [0, -bboxSize.y / 2 - 20, bboxSize.x, 40],
-      [0, bboxSize.y / 2 + 20, bboxSize.x, 40]
+      [-bboxSize.x / 2 - thickness / 2, 0, thickness, bboxSize.y],
+      [bboxSize.x / 2 + thickness / 2, 0, thickness, bboxSize.y],
+      [0, -bboxSize.y / 2 - thickness / 2, bboxSize.x, thickness],
+      [0, bboxSize.y / 2 + thickness / 2, bboxSize.x, thickness]
     ]
     .forEach(([x, y, width, height]) => {
       const constraint = new RoomConstraint({

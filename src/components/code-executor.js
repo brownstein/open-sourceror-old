@@ -44,10 +44,10 @@ function keepGoing() {
     };
     const relativePosition = {
       x: n.relativePosition.x,
-      y: n.relativePosition.y + 10
+      y: n.relativePosition.y + 16
     };
-    fire(null, relativeVelocity);
-    push(relativePosition, 20, 10);
+    //fire(null, relativeVelocity);
+    push(relativePosition, 10, 100);
   });
   setTimeout(keepGoing, 50);
 
