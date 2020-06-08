@@ -43,6 +43,9 @@ export default class Room {
     // apply contact materials (TODO: make this not room-specific)
     getContactMaterials().forEach(m => engine.world.addContactMaterial(m));
 
+    // apply statefulness from the global context
+    console.log(engine);
+
     engine.currentRoom = this;
   }
   cleanup(engine) {

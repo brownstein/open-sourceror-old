@@ -1,4 +1,6 @@
-import { Body, Box } from "p2";
+import { Body, Box, Convex } from "p2";
+import BaseEntity from "./base";
+import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
 
 export default class RoomConstraint {
   constructor({ position, size }) {
@@ -11,5 +13,7 @@ export default class RoomConstraint {
     });
     this.box = new Box({ width: size[0], height: size[1] });
     this.body.addShape(this.box);
+
+    this.mesh = getThreeJsObjectForP2Body(this.body);
   }
 }

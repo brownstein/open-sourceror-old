@@ -22,7 +22,7 @@ export const EngineContext = createContext();
 class _EngineProvider extends Component {
   constructor(props) {
     super();
-    this.engine = new Engine();
+    this.engine = new Engine(props.store);
     this.engine.controller = this;
     this.engine.dispatch = props.dispatch;
 

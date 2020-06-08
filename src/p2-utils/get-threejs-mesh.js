@@ -98,7 +98,7 @@ export default function getThreeJsObjectForP2Body (
     }
   });
 
-  obj3.position.x = body.interpolatedPosition[0];
-  obj3.position.y = body.interpolatedPosition[1];
+  obj3.position.x = body.position[0];
+  obj3.position.y = body.position[1];
   return obj3;
 }

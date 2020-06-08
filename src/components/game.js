@@ -24,7 +24,7 @@ function addThings(engine) {
 export default function Game({ store }) {
   return (
     <Provider store={store}>
-      <EngineProvider addThings={addThings}>
+      <EngineProvider addThings={addThings} store={store}>
         <div className="game">
           <LoadingScreen>
             <div className="game-viewport">

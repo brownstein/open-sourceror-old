@@ -20,7 +20,7 @@ import KeyState from "./key-state";
 import { ScriptExecutionContext } from "../script-runner/execution-context";
 
 export default class Engine extends EventEmitter {
-  constructor() {
+  constructor(stateGetter) {
     super();
 
     // keyboard events
@@ -209,11 +209,73 @@ export default class Engine extends EventEmitter {
   constrainRoom() {
     this.roomConstraints.forEach(c => this.removeEntity(c));
     this.roomConstraints = [];
+
+    const thickness = 200;
     const bboxSize = new Vector3();
     const bboxCenter = new Vector3();
     this.levelBBox.getSize(bboxSize);
     this.levelBBox.getCenter(bboxCenter);
-    let thickness = 200;
+
+    // extend terrain entities past the edge of the screen into their own
+    // room constraints - this prevents us from getting stuck outside the room
+    // after clipping
+    this.activeEntities.forEach(e => {
+      if (!e.isTerrain || !e.body) {
+        return;
+      }
+      const bp = e.body.position;
+      e.body.shapes.forEach(s => {
+        if (!s.vertices) {
+          return;
+        }
+        const sp = s.position;
+        for (let vi = 0; vi < s.vertices.length; vi++) {
+          const prevVtx = s.vertices[vi];
+          const nextVtx = s.vertices[(vi + 1) % s.vertices.length];
+          // calculate X and Y positions for vertices
+          const x0 = bp[0] + sp[0] + prevVtx[0];
+          const x1 = bp[0] + sp[0] + nextVtx[0];
+          const y0 = bp[1] + sp[1] + prevVtx[1];
+          const y1 = bp[1] + sp[1] + nextVtx[1];
+          // continuation constraint for left of screen
+          let constraint = null;
+          if (x0 === x1 && x1 === 0) {
+            constraint = new RoomConstraint({
+              position: [x1 - thickness / 2, (y1 + y0) * 0.5],
+              size: [thickness, Math.abs(y1 - y0)]
+            });
+          }
+          // continuation constraint for right of screen
+          else if (x0 === x1 && x1 === this.levelBBox.max.x) {
+            constraint = new RoomConstraint({
+              position: [x1 + thickness / 2, (y1 + y0) * 0.5],
+              size: [thickness, Math.abs(y1 - y0)]
+            });
+          }
+          // continuation constraint for top of screen
+          else if (y0 === y1 && y1 === 0) {
+            constraint = new RoomConstraint({
+              position: [(x0 + x1) / 2, y0 - thickness],
+              size: [Math.abs(x1 - x0), thickness]
+            });
+          }
+          // continuation constraint for bottom of screen
+          else if (y0 === y1 && y1 === this.levelBBox.max.y) {
+            constraint = new RoomConstraint({
+              position: [(x0 + x1) / 2, y0 + thickness],
+              size: [Math.abs(x1 - x0), thickness]
+            });
+          }
+          // add constraint to room constraint list and add to the scene
+          if (constraint) {
+            this.roomConstraints.push(constraint);
+            this.addEntity(constraint);
+          }
+        }
+      });
+    });
+
+    // add room constraints for outer bounding box of room
     [
       [-bboxSize.x / 2 - thickness / 2, 0, thickness, bboxSize.y],
       [bboxSize.x / 2 + thickness / 2, 0, thickness, bboxSize.y],

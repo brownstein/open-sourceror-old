@@ -17,6 +17,8 @@ import { TargetingReticle } from "src/entities/presentational/targeting";
 
 import "./viewport.less";
 
+const DEBUG_OUTER_VIEW = 0; // debug number to expand view outside room bounds
+
 export class EngineViewport extends Component {
   static contextType = EngineContext;
   constructor(props) {
@@ -219,16 +221,16 @@ export class EngineViewport extends Component {
       this.camera.position.y = cameraPosition.y;
       if (this.constrainCameraToScene) {
         this.camera.position.x = Math.max(
-          levelBBox.min.x + this.cameraSize.width / 2,
+          levelBBox.min.x + this.cameraSize.width / 2 - DEBUG_OUTER_VIEW,
           Math.min(
-            levelBBox.max.x - this.cameraSize.width / 2,
+            levelBBox.max.x - this.cameraSize.width / 2 + DEBUG_OUTER_VIEW,
             this.camera.position.x
           )
         );
         this.camera.position.y = Math.max(
-          levelBBox.min.y + this.cameraSize.height / 2,
+          levelBBox.min.y + this.cameraSize.height / 2 - DEBUG_OUTER_VIEW,
           Math.min(
-            levelBBox.max.y - this.cameraSize.height / 2,
+            levelBBox.max.y - this.cameraSize.height / 2 + DEBUG_OUTER_VIEW,
             this.camera.position.y
           )
         );

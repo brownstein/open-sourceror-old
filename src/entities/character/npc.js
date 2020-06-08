@@ -43,7 +43,6 @@ export class NPC extends BaseEntity {
   }
   _onKeyEvent(keyEvent) {
     const { engine } = this;
-    console.log(keyEvent);
     if (keyEvent.key === "e" && keyEvent.down) {
       this.npcDialogueStep++;
       engine.removeEntity(this.dialogueEntity);
