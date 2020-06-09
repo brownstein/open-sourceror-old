@@ -132,4 +132,10 @@ export class Character extends BaseEntity {
   incrementMana(diff) {
     this.mana = Math.max(0, Math.min(this.maxMana, this.mana + diff));
   }
+  getHealth() {
+    return this.health;
+  }
+  incrementHealth(diff) {
+    this.health = Math.max(0, Math.min(this.maxHealth, this.health + diff));
+  }
 }

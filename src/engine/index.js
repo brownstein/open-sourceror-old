@@ -78,8 +78,7 @@ export default class Engine extends EventEmitter {
     this.navGrid = null;
 
     // connection to the controller and the Redux world (for script execution)
-    this.controller = null;
-    this.dispatch = null;
+    this.store = null;
 
     // loading
     this.initEntityCount = 0;
@@ -372,5 +371,8 @@ export default class Engine extends EventEmitter {
     if (this.controllingEntity && this.controllingEntity.handleViewportFocus) {
       this.controllingEntity.handleViewportFocus(isFocused);
     }
+  }
+  dispatch(event) {
+    return this.store.dispatch(event);
   }
 }

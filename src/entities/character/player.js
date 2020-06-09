@@ -22,11 +22,12 @@ import {
   midJumpSheet,
   midJumpImage
 } from "./sprites/wizard";
-import { incrementPlayerMana } from "src/redux/actions/status";
+import {
+  setPlayerMana,
+  setPlayerHealth
+} from "src/redux/actions/status";
 import { castToVec2, vec2ToVector3 } from "src/p2-utils/vec2-utils";
 
-import { Fireball } from "src/entities/projectiles/fireball";
-import { Laser } from "src/entities/spells/laser";
 import { Push } from "src/entities/spells/push";
 
 const CHARACTER_COLOR_SCHEME = {
@@ -65,6 +66,7 @@ export class Player extends Character {
     this.readyPromise = this.loadSprites();
 
     this._onClick = this._onClick.bind(this);
+    this._unsubscribeFromStore = null;
   }
   async loadSprites() {
     this.sprites = {};
@@ -185,41 +187,6 @@ export class Player extends Character {
       this._swapToSprite("cast");
     }
   }
-  // spell implementations
-  castFireball(relativePosition = null, relativeVelocity = null) {
-    const fireballPosition = vec2.clone(this.body.position);
-    if (relativePosition) {
-      vec2.add(fireballPosition, fireballPosition, relativePosition);
-    }
-    else {
-      fireballPosition[0] += this.facingRight ? 30 : -30;
-    }
-    const fireball = new Fireball(this, fireballPosition);
-    vec2.copy(fireball.body.velocity, this.body.velocity);
-    if (relativeVelocity) {
-      vec2.add(
-        fireball.body.velocity,
-        fireball.body.velocity,
-        relativeVelocity
-      );
-    }
-    else {
-      fireball.body.velocity[0] += this.facingRight ? 200 : -100;
-      fireball.body.velocity[1] -= 100;
-    }
-    this.engine.addEntity(fireball);
-  }
-  castLaser() {
-    const { engine } = this;
-    const laserPosition = vec2.clone(this.body.position);
-    const targetPosition = castToVec2(this.targetCoordinates);
-    const laser = new Laser({
-      position: laserPosition,
-      vector: targetPosition.clone().sub(laserPosition).normalize(),
-      fromEntity: this
-    });
-    engine.addEntity(laser);
-  }
   addDetector() {
     const detector = new Circle({
       radius: 64,
@@ -228,18 +195,44 @@ export class Player extends Character {
     this.body.addShape(detector);
     this.detectors.push(detector);
   }
+  incrementHealth(diff) {
+    super.incrementHealth(diff);
+
+    // push stats to the store
+    this.engine.store.dispatch(setPlayerHealth(this.health));
+  }
   incrementMana(diff) {
     super.incrementMana(diff);
-    this.engine.dispatch(incrementPlayerMana(diff));
+
+    // push stats to the store
+    this.engine.store.dispatch(setPlayerMana(this.mana));
   }
   attachToEngine(engine) {
-    this.engine = engine;
-    engine.on("mousedown", this._onClick);
+    this.engine.on("mousedown", this._onClick);
+
+    // pull current stats from the store
+    this._syncStatus();
+
+    // observe the store for additional status updates
+    const store = this.engine.store;
+    this._unsubscribeFromStore = store.subscribe(this._syncStatus.bind(this));
   }
   cleanup() {
-    const { engine } = this;
-    engine.off("mousedown", this._onClick);
+    this.engine.off("mousedown", this._onClick);
+    if (this._unsubscribeFromStore) {
+      this._unsubscribeFromStore();
+      this._unsubscribeFromStore = null;
+    }
   }
+  _syncStatus() {
+    const state = this.engine.store.getState();
+    const status = state.status;
+    this.health = status.health;
+    this.maxHealth = status.maxHealth;
+    this.mana = status.mana;
+    this.maxMana = status.maxMana;
+  }
+  // cast function
   _onClick(event) {
     const { engine } = this;
     const { position } = event;

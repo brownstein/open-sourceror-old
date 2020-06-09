@@ -28,7 +28,6 @@ export default function getNativeIce (interpreter, scope, runner) {
 
       IceCrystal.createIceCrystal(engine, pos2, 16);
 
-      runner.callingEntity.incrementMana &&
       runner.callingEntity.incrementMana(-1);
 
       return interpreter.nativeToPseudo(undefined);

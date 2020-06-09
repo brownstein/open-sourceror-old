@@ -3,6 +3,8 @@ import { vec2 } from "p2";
 import { Sensor } from "src/entities/sensor";
 
 export default function getNativeSensor(interpreter, scope, runner) {
+
+  const SPELL_COST = 5;
   /**
    * Native sensor creation fucntion
    */
@@ -12,11 +14,10 @@ export default function getNativeSensor(interpreter, scope, runner) {
 
       // apply mana cost to player
       const availableMana = runner.callingEntity.getMana();
-      if (availableMana < 1) {
+      if (availableMana < SPELL_COST) {
         throw new Error("OUT OF MANA");
       }
-      runner.callingEntity.incrementMana &&
-      runner.callingEntity.incrementMana(-1);
+      runner.callingEntity.incrementMana(-SPELL_COST);
 
       this.cleanupEffect = () => {
         console.log("cleaning up sensor");

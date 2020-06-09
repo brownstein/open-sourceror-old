@@ -112,6 +112,7 @@ export class RunningScript {
       ) {
         return false;
       }
+      console.error(ex);
       this.runtimeError = ex;
       this.running = false;
       this.scriptRunner.cleanup();
@@ -143,7 +144,8 @@ export class ScriptExecutionContext {
    * Method to run on each frame of the game
    */
   onFrame(timeDelta) {
-    if (!this.engine.running) {
+    const engine = this.engine;
+    if (!engine.running) {
       return;
     }
     let anythingHappened = false;
@@ -153,16 +155,14 @@ export class ScriptExecutionContext {
 
         // restock mana on successful script run for now
         if (didAnything === SCRIPT_FINISHED) {
-          this.engine.dispatch &&
-          this.engine.dispatch(setPlayerMana(1000));
+          engine.dispatch(setPlayerMana(1000));
         }
 
         anythingHappened = true;
       }
     });
     if (anythingHappened) {
-      this.engine.dispatch &&
-      this.engine.dispatch(updateScriptStates(this));
+      engine.dispatch(updateScriptStates(this));
     }
   }
   /**
@@ -190,7 +190,6 @@ export class ScriptExecutionContext {
         return;
       }
 
-      engine.dispatch &&
       engine.dispatch(compileTimeError(err));
 
       // experimental - push broken script onto execution state
@@ -200,7 +199,6 @@ export class ScriptExecutionContext {
         transpileError: err
       });
       this.runningScripts.push(exState);
-      engine.dispatch &&
       engine.dispatch(updateScriptStates(this, exState.id));
 
       throw err;
@@ -217,7 +215,6 @@ export class ScriptExecutionContext {
     this.runningScripts.push(exState);
 
     // update script states in the engine
-    engine.dispatch &&
     engine.dispatch(updateScriptStates(this, exState.id));
 
     return exState;
@@ -229,7 +226,6 @@ export class ScriptExecutionContext {
       return;
     }
     paused.paused = true;
-    engine.dispatch &&
     engine.dispatch(updateScriptStates(this));
   }
   resumeScript(scriptName) {
@@ -239,7 +235,6 @@ export class ScriptExecutionContext {
       return;
     }
     paused.paused = false;
-    engine.dispatch &&
     engine.dispatch(updateScriptStates(this));
   }
   stepScript(scriptName) {
@@ -249,7 +244,6 @@ export class ScriptExecutionContext {
       return;
     }
     paused._continueRunning(0, true);
-    engine.dispatch &&
     engine.dispatch(updateScriptStates(this));
   }
   stopScript(scriptName) {
@@ -258,7 +252,6 @@ export class ScriptExecutionContext {
     stopped.running = false;
     stopped.scriptRunner.cleanup();
     this.runningScripts = this.runningScripts.filter(s => s => stopped);
-    engine.dispatch &&
     engine.dispatch(updateScriptStates(this));
     return stopped;
   }
