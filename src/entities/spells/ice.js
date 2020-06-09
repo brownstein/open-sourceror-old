@@ -4,7 +4,6 @@ import {
   Material,
   vec2
 } from "p2";
-import PolyBool from "polybooljs";
 import {
   Color,
   Face3,
@@ -23,7 +22,7 @@ export class IceCrystal extends BaseEntity {
   static createIceCrystal(engine, position, size = 16) {
 
     // create regions
-    const regions = [];
+    const convexes = [];
     for (let i = 0; i < 5; i++) {
       const theta = Math.random() * Math.PI * 2;
       const u = [Math.cos(theta), Math.sin(theta)];
@@ -39,48 +38,35 @@ export class IceCrystal extends BaseEntity {
         [-6, 12]
       ];
       for (let vi = 0; vi < region.length; vi++) {
-        const [x, y] = region[vi];
-        region[0] *= size / 16;
-        region[1] *= size / 16;
-        region[0] = u[0] * x + v[0] * y + offsetX;
-        region[1] = u[1] * x * v[1] * y + offsetY;
-        region[0] += Math.random() * 2 - 1;
-        region[1] += Math.random() * 2 - 1;
+        let [x, y] = region[vi];
+        x *= size / 16;
+        y *= size / 16;
+        region[vi][0] = u[0] * x + u[1] * y + offsetX;
+        region[vi][1] = v[0] * x + v[1] * y + offsetY;
       }
+      convexes.push(region);
     }
 
-    // merge the regions into a single crystal
-    const mergedRegions = regions.slice(1, regions.length).reduce(
-      (merged, region) => PolyBool.union(
-        merged,
-        {
-          regions: [region],
-          inverted: false
-        }
-      ),
-      {
-        regions: [regions[0]],
-        inverted: false
-      }
-    );
-
-    const combinedPolygon = mergedRegions[0][0];
-    return new IceCrystal(position, combinedPolygon);
+    return new IceCrystal({
+      position,
+      convexes
+    });
   }
   constructor(params) {
+    super(params);
+
     const position = params.position || [0, 0];
-    const vertices = params.vertices;
+    const convexes = params.convexes;
 
     this.body = new Body({
-      mass: 0,
-      isStatic: true,
+      mass: 100,
       friction: 0.9,
       position: position
     });
-    this.convex = new Convex({
-      vertices: []
-    });
-    this.body.addShape(convex);
+    this.convexes = convexes.map(vertices => new Convex({
+      vertices
+    }));
+    this.convexes.forEach(c => this.body.addShape(c));
 
     this.mesh = getThreeJsObjectForP2Body(this.body);
   }

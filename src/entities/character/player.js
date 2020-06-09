@@ -29,6 +29,7 @@ import {
 import { castToVec2, vec2ToVector3 } from "src/p2-utils/vec2-utils";
 
 import { Push } from "src/entities/spells/push";
+import { IceCrystal } from "src/entities/spells/ice";
 
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#555555",
@@ -237,12 +238,20 @@ export class Player extends Character {
     const { engine } = this;
     const { position } = event;
     const pos2 = castToVec2(position);
-    const push = new Push(
-      this,
-      pos2,
-      50,
-      100
+
+    const ice = IceCrystal.createIceCrystal(
+      engine,
+      castToVec2(position)
     );
-    engine.addEntity(push);
+
+    engine.addEntity(ice);
+
+    // const push = new Push(
+    //   this,
+    //   pos2,
+    //   50,
+    //   100
+    // );
+    // engine.addEntity(push);
   }
 }
