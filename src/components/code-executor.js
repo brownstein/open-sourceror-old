@@ -22,7 +22,7 @@ import "./code-executor.less";
 
 // source script to run - this gets transpiled from ES6 to normal ES5, then
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
-const srcScript =
+const defaultSrcScript =
 `"use strict";
 const fire = require("fire");
 const push = require("push");
@@ -46,8 +46,8 @@ function keepGoing() {
       x: n.relativePosition.x,
       y: n.relativePosition.y + 16
     };
-    //fire(null, relativeVelocity);
-    push(relativePosition, 10, 100);
+    fire(null, relativeVelocity);
+    // push(relativePosition, 10, 100);
   });
   setTimeout(keepGoing, 50);
 
@@ -67,7 +67,7 @@ class CodeExecutor extends Component {
   constructor() {
     super();
     this.state = {
-      scriptContents: srcScript,
+      scriptContents: defaultSrcScript,
       editorSize: { width: 400, height : 400 },
       executionSpeed: 1
     };
@@ -299,7 +299,7 @@ function mapStateToProps(state) {
   let finished = false;
   let currentLine = null;
   let runTimeError = null;
-  let { compileTimeError } = scripts;
+  let compileTimeError = null;
   let terminatedSuccessfully = false;
 
   if (focusedScriptId) {

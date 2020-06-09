@@ -2,14 +2,6 @@ import { useState } from "react";
 import shortid from "shortid";
 
 import {
-  executionStarted,
-  executionFinished,
-  continuingExecution,
-  compileTimeError,
-  runtimeError,
-  activeScriptChanged,
-  activeScriptRun,
-
   setFocusedScript,
   updateScriptStates,
 } from "src/redux/actions/scripts";
@@ -31,7 +23,7 @@ export class RunningScript {
     engine,
     scriptName,
     scriptRunner,
-    targetEntity,
+    runningEntity,
     executionSpeed
   }) {
     this.engine = engine;
@@ -39,15 +31,16 @@ export class RunningScript {
     this.scriptName = scriptName;
     this.scriptContents = scriptRunner.sourceScript;
     this.scriptRunner = scriptRunner;
-    this.targetEntity = targetEntity;
-    this.executionSpeed = executionSpeed || 0.02,
-    this.executionTimeDelta = 0,
-    this.running = true,
-    this.paused = false; // TODO: implement
+    this.runningEntity = runningEntity; // unused?
+    this.executionSpeed = executionSpeed || 0.02;
+    this.executionTimeDelta = 0;
+    this.transpiling = false;
+    this.running = false;
+    this.paused = false;
     this.finished = false;
-    this.currentLine = null,
-    this.transpileError = null,
-    this.runtimeError = null
+    this.currentLine = null;
+    this.transpileError = null;
+    this.runtimeError = null;
   }
   static withTranspileError({
     scriptName,
@@ -173,11 +166,31 @@ export class ScriptExecutionContext {
 
     const engine = this.engine;
     const scriptName = `scr-${shortid()}`;
+
+    // create the runner
     const scriptRunner = new ScriptRunner(
       scriptSrc,
       engine,
       runningEntity
     );
+
+    // create the execution state manager
+    const exState = new RunningScript({
+      scriptName,
+      scriptRunner,
+      runningEntity,
+      executionSpeed
+    });
+
+    exState.transpiling = true;
+    exState.running = false;
+
+    // apply execution state and dispatch - this represents the fact that we're
+    // transpiling the script
+    this.runningScripts.push(exState);
+    engine.dispatch(updateScriptStates(this, exState.id));
+
+    // wait for the compilation to finish
     try {
       await scriptRunner.readyPromise;
     }
@@ -190,33 +203,19 @@ export class ScriptExecutionContext {
         return;
       }
 
-      engine.dispatch(compileTimeError(err));
-
-      // experimental - push broken script onto execution state
-      const exState = RunningScript.withTranspileError({
-        scriptName,
-        scriptRunner,
-        transpileError: err
-      });
-      this.runningScripts.push(exState);
+      // update the execution state with the error, dispatch the results
+      exState.transpiling = false;
+      exState.transpileError = err;
       engine.dispatch(updateScriptStates(this, exState.id));
-
       throw err;
     }
 
-    const exState = new RunningScript({
-      engine,
-      scriptName,
-      scriptRunner,
-      targetEntity: runningEntity,
-      executionSpeed
-    });
-
-    this.runningScripts.push(exState);
+    // we're done compiling!
+    exState.transpiling = false;
+    exState.running = true;
 
     // update script states in the engine
     engine.dispatch(updateScriptStates(this, exState.id));
-
     return exState;
   }
   pauseScript(scriptName) {
