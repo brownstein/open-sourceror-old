@@ -1,4 +1,5 @@
 import EventEmitter from "events";
+import { vec2 } from "p2";
 
 export default class BaseEntity{
   static _id = 1;
@@ -20,14 +21,18 @@ export default class BaseEntity{
     this.mesh.position.x = this.body.position[0];
     this.mesh.position.y = this.body.position[1];
     this.mesh.rotation.z = this.body.angle;
+    vec2.copy(this.body.interpolatedPosition, this.body.position);
+    this.body.interpolatedAngle = this.body.angle;
   }
   syncMeshWithBody(timeDelta) {
     if (!this.mesh || !this.body) {
       return;
     }
-    this.mesh.position.x = this.body.interpolatedPosition[0];
-    this.mesh.position.y = this.body.interpolatedPosition[1];
-    this.mesh.rotation.z = this.body.interpolatedAngle;
+    if (this.body.interpolatedPosition[0]) {
+      this.mesh.position.x = this.body.interpolatedPosition[0];
+      this.mesh.position.y = this.body.interpolatedPosition[1];
+      this.mesh.rotation.z = this.body.interpolatedAngle;
+    }
   }
   on(eventName, callback) {
     if (this.events === null) {
