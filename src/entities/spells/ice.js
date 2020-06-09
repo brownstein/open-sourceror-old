@@ -81,7 +81,7 @@ export class IceCrystal extends BaseEntity {
     this.convexes.forEach(c => this.body.addShape(c));
 
     this.mesh = getThreeJsObjectForP2Body(this.body);
-    
+
     this.syncMeshWithBody();
   }
   collisionHandler(engine, shapeId, otherBodyId, otherEntity, eq) {
@@ -99,5 +99,9 @@ export class IceCrystal extends BaseEntity {
       });
       engine.addEntity(frozenEntity);
     }
+  }
+  onHit() {
+    const { engine } = this;
+    engine.removeEntity(this);
   }
 }

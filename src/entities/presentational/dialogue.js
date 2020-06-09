@@ -29,11 +29,13 @@ export class DialogueEntity {
     else {
       textDivs = <div>{this.text}</div>;
     }
-    return <div className={this.classNames.join(" ")} onClick={this._spin}>
+    return <div className={this.classNames.join(" ")} onMouseDown={this._spin}>
       { textDivs }
     </div>;
   }
-  _spin() {
+  _spin(e) {
+    e.preventDefault();
+    e.stopPropagation();
     this.classNames = [...this.baseClassNames, "spinning"];
     this.hoverElement = this.render();
     setTimeout(() => {
