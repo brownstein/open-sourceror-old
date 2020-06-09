@@ -17,13 +17,20 @@ import {
 
 import Engine from "../engine";
 
-export const EngineContext = createContext();
+export const ControllerContext = createContext({
+  engine: null
+});
 
-class _EngineProvider extends Component {
+class _GameController extends Component {
   constructor(props) {
     super();
     this.engine = new Engine();
     this.engine.store = props.store;
+
+    // build context object
+    this.ctx = {
+      engine: this.engine
+    };
 
     // running properties
     this.running = false;
@@ -64,9 +71,9 @@ class _EngineProvider extends Component {
   render() {
     const { children } = this.props;
     return (
-      <EngineContext.Provider value={this.engine}>
+      <ControllerContext.Provider value={this.ctx}>
         { children }
-      </EngineContext.Provider>
+      </ControllerContext.Provider>
     );
   }
   _updateLoop() {
@@ -102,4 +109,4 @@ class _EngineProvider extends Component {
   }
 };
 
-export const EngineProvider = connect()(_EngineProvider);
+export const GameController = connect()(_GameController);

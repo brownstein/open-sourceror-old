@@ -1,7 +1,4 @@
-import { useContext } from "react";
 import { connect } from "react-redux";
-
-import { EngineContext } from "src/components/engine";
 
 import "./status-overlay.less";
 
@@ -11,7 +8,6 @@ function StatusOverlay({
   mana,
   maxMana
 }) {
-  const engine = useContext(EngineContext);
   const healthStyle = {
     width: `${100 * health / maxHealth}%`
   };

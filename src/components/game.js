@@ -2,7 +2,7 @@ import { Provider } from "react-redux";
 import { Vector2 } from "three";
 
 // engine-level constructs
-import { EngineProvider } from "./engine";
+import { GameController } from "./controller";
 import { EngineViewport } from "./viewport/viewport";
 import CodeExecutor from "./code-pane/code-executor";
 import LoadingScreen from "./loading-screen";
@@ -24,7 +24,7 @@ function addThings(engine) {
 export default function Game({ store }) {
   return (
     <Provider store={store}>
-      <EngineProvider addThings={addThings} store={store}>
+      <GameController addThings={addThings} store={store}>
         <div className="game">
           <LoadingScreen>
             <div className="game-viewport">
@@ -35,7 +35,7 @@ export default function Game({ store }) {
             </div>
           </LoadingScreen>
         </div>
-      </EngineProvider>
+      </GameController>
     </Provider>
   );
 }

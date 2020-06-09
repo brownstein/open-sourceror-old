@@ -11,6 +11,16 @@ export default class BaseEntity{
     this.hoverElement = null;
     this.events = null;
   }
+  attachToEngine(engine) {
+    // sync mesh and body on engine attachment - many constructors fail to do
+    // this, resulting in "jumping" objects
+    if (!this.mesh || !this.body) {
+      return;
+    }
+    this.mesh.position.x = this.body.position[0];
+    this.mesh.position.y = this.body.position[1];
+    this.mesh.rotation.z = this.body.angle;
+  }
   syncMeshWithBody(timeDelta) {
     if (!this.mesh || !this.body) {
       return;

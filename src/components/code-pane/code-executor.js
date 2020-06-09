@@ -16,7 +16,7 @@ window.ace = Ace;
 import AceEditor from "react-ace";
 
 // pull in engine context
-import { EngineContext } from "../engine";
+import { ControllerContext } from "src/components/controller";
 
 import "./code-executor.less";
 
@@ -63,7 +63,7 @@ setTimeout(() => {
 `;
 
 class CodeExecutor extends Component {
-  static contextType = EngineContext;
+  static contextType = ControllerContext;
   constructor() {
     super();
     this.state = {
@@ -251,35 +251,35 @@ class CodeExecutor extends Component {
   }
   _run() {
     const { scriptContents } = this.state;
-    const engine = this.context;
+    const { engine } = this.context;
     const player = engine.controllingEntity;
     const exSpeed = this.state.executionSpeed;
     engine.scriptExecutionContext.runScript(scriptContents, player, exSpeed);
   }
   _pause() {
     const { activeScriptName } = this.props;
-    const engine = this.context;
+    const { engine } = this.context;
     engine.scriptExecutionContext.pauseScript(activeScriptName);
   }
   _step() {
     const { activeScriptName } = this.props;
-    const engine = this.context;
+    const { engine } = this.context;
     engine.scriptExecutionContext.stepScript(activeScriptName);
   }
   _resume() {
     const { activeScriptName } = this.props;
-    const engine = this.context;
+    const { engine } = this.context;
     engine.scriptExecutionContext.resumeScript(activeScriptName);
   }
   _stop() {
     const { activeScriptName } = this.props;
-    const engine = this.context;
+    const { engine } = this.context;
     engine.scriptExecutionContext.stopScript(activeScriptName);
   }
 
   // hax
   _resetPlayerMana() {
-    const engine = this.context;
+    const { engine } = this.context;
     const player = engine.controllingEntity;
     player.incrementMana(999);
   }

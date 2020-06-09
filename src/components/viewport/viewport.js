@@ -11,7 +11,7 @@ import {
 } from "three";
 
 import KeyState from "src/engine/key-state";
-import { EngineContext } from "../engine";
+import { ControllerContext } from "src/components/controller";
 import StatusOverlay from "./status-overlay";
 import { TargetingReticle } from "src/entities/presentational/targeting";
 
@@ -20,7 +20,7 @@ import "./viewport.less";
 const DEBUG_OUTER_VIEW = 0; // debug number to expand view outside room bounds
 
 export class EngineViewport extends Component {
-  static contextType = EngineContext;
+  static contextType = ControllerContext;
   constructor(props) {
     super(props);
     this.constrainCameraToScene = true;
@@ -61,7 +61,7 @@ export class EngineViewport extends Component {
     this._onClick = this._onClick.bind(this);
   }
   componentDidMount() {
-    const engine = this.context;
+    const { engine } = this.context;
     const { minCameraSize } = engine.cameras[0];
 
     this.ks.mount(document);
@@ -99,7 +99,7 @@ export class EngineViewport extends Component {
     requestAnimationFrame(this._onResize);
   }
   componentWillUnmount() {
-    const engine = this.context;
+    const { engine } = this.context;
     this.ks.unmount(document);
     window.removeEventListener("resize", this._onResize);
     engine.off("frame", this._onFrame);
@@ -138,7 +138,7 @@ export class EngineViewport extends Component {
     </div>;
   }
   _onFrame() {
-    const engine = this.context;
+    const { engine } = this.context;
     const player = engine.controllingEntity;
 
     if (player && engine.running && this.mouseOnScreen) {
@@ -205,7 +205,7 @@ export class EngineViewport extends Component {
       return;
     }
     this.needsRender = false;
-    const engine = this.context;
+    const { engine } = this.context;
     const { scene, levelBBox, followingEntity } = engine;
     if (!scene) {
       return;
@@ -253,7 +253,7 @@ export class EngineViewport extends Component {
     this.renderer.render(scene, this.camera);
   }
   _updateMouseScreenCoordinates(event) {
-    const { engine } = this;
+    const { engine } = this.context;
     const { width, height } = this.canvasSize;
     this.mouseScreenCoordinates.x = event.clientX; // TODO: subtract canvas loc
     this.mouseScreenCoordinates.y = event.clientY; // TODO: subtract canvas loc
@@ -295,20 +295,20 @@ export class EngineViewport extends Component {
     this.targetingReticle.syncMeshWithViewport(this);
 
     // update entities that have to be resized with the camera
-    const engine = this.context;
+    const { engine } = this.context;
     engine.cameraTrackedEntities.forEach(e => e.updateForCameraBBox(this.camera));
 
     this._queueRender();
   }
   _onMouseEnter(event) {
-    const engine = this.context;
+    const { engine } = this.context;
     this.mouseOnScreen = true;
     this.targetingReticle.setVisible(true);
     engine.handleViewportFocus(true);
     this._updateMouseScreenCoordinates(event);
   }
   _onMouseLeave(event) {
-    const engine = this.context;
+    const { engine } = this.context;
     this.mouseOnScreen = false;
     this.targetingReticle.setVisible(false);
     engine.handleViewportFocus(false);
@@ -318,19 +318,19 @@ export class EngineViewport extends Component {
     this._updateMouseScreenCoordinates(event);
   }
   _onMouseDown(event) {
-    const engine = this.context;
+    const { engine } = this.context;
     engine.emit("mousedown", {
       position: this.mouseSceneCoordinates
     });
   }
   _onMouseUp(event) {
-    const engine = this.context;
+    const { engine } = this.context;
     engine.emit("mouseup", {
       position: this.mouseSceneCoordinates
     });
   }
   _onClick(event) {
-    const engine = this.context;
+    const { engine } = this.context;
     engine.emit("click", {
       position: this.mouseSceneCoordinates
     });
