@@ -27,8 +27,8 @@ export class IceCrystal extends BaseEntity {
       const theta = Math.random() * Math.PI * 2;
       const u = [Math.cos(theta), Math.sin(theta)];
       const v = [-Math.sin(theta), Math.cos(theta)];
-      const offsetX = Math.random() * 16 - 8;
-      const offsetY = Math.random() * 16 - 8;
+      const offsetX = Math.random() * 4 - 2;
+      const offsetY = Math.random() * 4 - 2;
       const region = [
         [-6, -12],
         [0, -16],
