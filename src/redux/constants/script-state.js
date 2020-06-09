@@ -1,1 +1,0 @@
-export const REGISTER_SCRIPT = "REGISTER_SCRIPT";
