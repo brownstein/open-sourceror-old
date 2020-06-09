@@ -16,7 +16,7 @@ window.ace = Ace;
 import AceEditor from "react-ace";
 
 // pull in engine context
-import { EngineContext } from "./engine";
+import { EngineContext } from "../engine";
 
 import "./code-executor.less";
 

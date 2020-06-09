@@ -1,6 +1,13 @@
+import fs from "fs";
+
 import {
   SET_FOCUSED_SCRIPT,
   UPDATE_SCRIPT_STATES,
+
+  SET_SCRIPT_LIBRARY_ON_LOAD,
+
+  ADD_SCRIPT_TO_LIBRARY,
+  REMOVE_SCRIPT_FROM_LIBRARY,
 } from "../constants/scripts";
 
 /////////////////////////////
@@ -54,3 +61,30 @@ export function updateScriptStates(executionContext, focusedScriptId = null) {
     focusedScriptId
   };
 }
+
+export async function loadScriptLibraryFromDisc() {
+  return {
+    type: SET_SCRIPT_LIBRARY_ON_LOAD
+  };
+}
+
+export const setScriptLibraryOnLoad = () => ({
+  type: SET_SCRIPT_LIBRARY_ON_LOAD
+});
+
+export const addScriptToLibrary = ({
+  scriptName,
+  scriptContents
+}) => ({
+  type: ADD_SCRIPT_TO_LIBRARY,
+  scriptName,
+  scriptContents
+});
+
+export const removeScriptFromLibrary = ({
+  scriptName
+}) => ({
+  type: REMOVE_SCRIPT_FROM_LIBRARY,
+  scriptName,
+  scriptContents
+});

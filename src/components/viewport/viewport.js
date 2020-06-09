@@ -10,8 +10,8 @@ import {
   WebGLRenderer
 } from "three";
 
-import KeyState from "engine/key-state";
-import { EngineContext } from "./engine";
+import KeyState from "src/engine/key-state";
+import { EngineContext } from "../engine";
 import StatusOverlay from "./status-overlay";
 import { TargetingReticle } from "src/entities/presentational/targeting";
 

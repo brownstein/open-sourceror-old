@@ -3,8 +3,8 @@ import { Vector2 } from "three";
 
 // engine-level constructs
 import { EngineProvider } from "./engine";
-import { EngineViewport } from "./viewport";
-import CodeExecutor from "./code-executor";
+import { EngineViewport } from "./viewport/viewport";
+import CodeExecutor from "./code-pane/code-executor";
 import LoadingScreen from "./loading-screen";
 
 // import the first level

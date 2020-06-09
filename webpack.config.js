@@ -86,6 +86,10 @@ module.exports = (env, argv) => {
                 lessOptions: {
                   strictMath: true,
                   noIeCompat: true,
+                  paths: [
+                    path.resolve(__dirname, "node_modules"),
+                    path.resolve(__dirname)
+                  ]
                 },
               },
             },
