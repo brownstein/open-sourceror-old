@@ -38,19 +38,10 @@ export default class Engine extends EventEmitter {
     // script execution context
     this.scriptExecutionContext = new ScriptExecutionContext(this);
 
-    // three.js camera positioning will be managed at the engine level for now
+    // cameras are mostly handled at the viewport level - this array is an
+    // artifact of when they were handled by the engine
     const minCameraSize = { width: 200, height: 200 };
-    const camera = new OrthographicCamera(
-      -minCameraSize.width * 0.5, minCameraSize.width * 0.5,
-      -minCameraSize.height * 0.5, minCameraSize.height * 0.5,
-      -32, 32
-    );
-    camera.lookAt(new Vector3(0, 0, -1));
-    camera.position.copy(new Vector3(0, 0, 1));
-    this.cameras = [{
-      minCameraSize,
-      camera
-    }];
+    this.cameras = [{ minCameraSize }];
 
     // we will keep track of any entities with hovering DOM elements
     this.hoveringDomEntities = [];
@@ -77,7 +68,7 @@ export default class Engine extends EventEmitter {
     // pathfinding nav grid
     this.navGrid = null;
 
-    // connection to the controller and the Redux world (for script execution)
+    // connection to the Redux world
     this.store = null;
 
     // loading
@@ -352,13 +343,6 @@ export default class Engine extends EventEmitter {
 
     // run scripts
     this.scriptExecutionContext.onFrame(deltaTimeMs);
-
-    // track camera
-    if (this.followingEntity) {
-      this.cameras.forEach(cam => {
-        cam.camera.position.copy(this.followingEntity.mesh.position)
-      });
-    }
 
     // emit frame event to child components for rendering
     this.emit("frame", { deltaTimeMs });
