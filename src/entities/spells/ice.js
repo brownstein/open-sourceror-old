@@ -14,7 +14,7 @@ import {
   Vector3,
 } from "three";
 
-import BaseEntity from "src/entities/base";
+import BaseEntity, { EphemeralEntity } from "src/entities/base";
 import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
 import { castToVec2 } from "src/p2-utils/vec2-utils";
 
@@ -48,20 +48,32 @@ export class IceCrystal extends BaseEntity {
     }
 
     return new IceCrystal({
+      engine,
       position,
-      convexes
+      convexes,
+      expansions: 1
     });
   }
   constructor(params) {
     super(params);
-
+    this.engine = params.engine;
     const position = params.position || [0, 0];
+    const angle = params.angle || 0;
     const convexes = params.convexes;
+    const expansions = params.expansions || 0;
+    const inTerrain = params.inTerrain;
+
+    this.rawConvexes = convexes;
+    this.inTerrain = inTerrain;
+    this.expanded = 0;
+    this.expansions = expansions;
 
     this.body = new Body({
-      mass: 100,
+      mass: inTerrain ? 0 : 100,
+      isStatic: inTerrain,
       friction: 0.9,
-      position: position
+      position: position,
+      angle: angle
     });
     this.convexes = convexes.map(vertices => new Convex({
       vertices
@@ -69,5 +81,23 @@ export class IceCrystal extends BaseEntity {
     this.convexes.forEach(c => this.body.addShape(c));
 
     this.mesh = getThreeJsObjectForP2Body(this.body);
+    
+    this.syncMeshWithBody();
+  }
+  collisionHandler(engine, shapeId, otherBodyId, otherEntity, eq) {
+    if (otherEntity instanceof EphemeralEntity) {
+      return;
+    }
+    if (otherEntity.isTerrain && !this.inTerrain) {
+      engine.removeEntity(this);
+      const frozenEntity = new IceCrystal({
+        position: this.body.position,
+        angle: this.body.angle,
+        convexes: this.rawConvexes,
+        expansions: this.expansions - 1,
+        inTerrain: true
+      });
+      engine.addEntity(frozenEntity);
+    }
   }
 }
