@@ -21,6 +21,9 @@ export default function ItemGrid({
   width = 8
 }) {
   const canvasRef = useRef(null);
+  useEffect(() => {
+    console.log(canvasRef.current);
+  }, []);
 
   const gridItems = [];
   for (let i = 0; i < slots; i++) {

@@ -44,6 +44,13 @@ class _GameController extends Component {
     this._updateLoop = this._updateLoop.bind(this);
     this._focusLost = this._focusLost.bind(this);
     this._focusGained = this._focusGained.bind(this);
+
+    // add pausing functionality
+    this.engine.keyEventBus.on("keyboard-event", e => {
+      if (e.key === "Escape" && e.up) {
+        this.pause();
+      }
+    });
   }
   componentDidMount() {
     // attach window focus events for automatic pausing
@@ -85,7 +92,7 @@ class _GameController extends Component {
       engine: this.engine,
       running: this.state.running,
       loading: this.state.loading,
-      unPause: () => this._focusGained()
+      unPause: () => this.unPause()
     };
     return (
       <ControllerContext.Provider value={ctx}>
@@ -121,6 +128,18 @@ class _GameController extends Component {
     this.setState({ running: false });
   }
   _focusGained() {
+    return;
+    this.running = true;
+    this.engine.running = true;
+    this.lastFrameTime = new Date().getTime();
+    this.setState({ running: true });
+  }
+  pause() {
+    this.running = false;
+    this.engine.running = false;
+    this.setState({ running: false });
+  }
+  unPause() {
     this.running = true;
     this.engine.running = true;
     this.lastFrameTime = new Date().getTime();

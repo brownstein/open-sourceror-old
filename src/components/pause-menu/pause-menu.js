@@ -14,6 +14,7 @@ export default function PauseMenu () {
     <div className="pause-overlay">
       <div className="pause-menu">
         <h2>Paused</h2>
+        <button onClick={unPause}>resume</button>
         <div className="content">
           <ItemGrid/>
         </div>
