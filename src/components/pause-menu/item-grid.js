@@ -42,8 +42,8 @@ export default function ItemGrid({
     renderer.setSize(canvasRect.width, canvasRect.height);
 
     const camera = new OrthographicCamera(
-      -10, 10,
-      -10, 10,
+      -8, 8,
+      -8, 8,
       -32, 32
     );
     camera.lookAt(new Vector3(0, 0, -1));
@@ -62,15 +62,23 @@ export default function ItemGrid({
       });
 
       const parentRect = canvas.getBoundingClientRect();
+      console.log(parentRect);
       for (let si = 0; si < slots; si++) {
         const gridItem = itemRefs.current[si];
         if (!gridItem) {
           return;
         }
+        camera.position.x = si * 100;
         const rect = gridItem.getBoundingClientRect();
         renderer.setScissor(
           rect.left - parentRect.left,
-          rect.top - parentRect.top,
+          -(rect.bottom - parentRect.bottom),
+          rect.width,
+          rect.height
+        );
+        renderer.setViewport(
+          rect.left - parentRect.left,
+          -(rect.bottom - parentRect.bottom),
           rect.width,
           rect.height
         );
