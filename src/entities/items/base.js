@@ -1,8 +1,8 @@
 export default class BaseItem {
-  getInstance() {
+  static getInstance() {
     return null;
   }
-  getIcon() {
+  static getIcon() {
     return null;
   }
 }

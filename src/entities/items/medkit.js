@@ -4,10 +4,10 @@ import medkitPNG from "./sprites/medkit.png";
 import BaseItem from "./base";
 
 export default class Medkit extends BaseItem {
-  getInstance() {
+  static getInstance() {
 
   }
-  getIcon() {
+  static getIcon() {
     return new SimpleSprite(medkitPNG);
   }
 }

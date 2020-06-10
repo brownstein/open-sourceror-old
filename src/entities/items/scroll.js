@@ -4,10 +4,10 @@ import scrollPNG from "./sprites/scroll.png";
 import BaseItem from "./base";
 
 export default class Scroll extends BaseItem {
-  getInstance() {
+  static getInstance() {
 
   }
-  getIcon() {
+  static getIcon() {
     return new SimpleSprite(scrollPNG);
   }
 }
