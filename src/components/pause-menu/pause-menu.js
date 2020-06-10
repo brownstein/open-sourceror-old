@@ -1,6 +1,5 @@
 import { useContext, useState, useEffect } from "react";
 import { ControllerContext } from "../controller";
-import KeyState from "src/engine/key-state";
 import ItemGrid from "./item-grid";
 
 import "./pause-menu.less";
