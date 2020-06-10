@@ -175,110 +175,11 @@ function mapStateToProps(state) {
       "Medkit",
       "Scroll",
       null,
-      "Medkit"
+      "Medkit",
+      null,
+      "Scroll"
     ]
   };
 }
 
 export default connect(mapStateToProps)(ItemGrid);
-
-// initial implementation
-
-export function _ItemGrid({
-  slots = 40,
-  width = 10
-}) {
-  const canvasRef = useRef(null);
-  const itemRefs = useRef([]);
-
-  useEffect(() => {
-
-    const canvas = canvasRef.current;
-    const canvasRect = canvas.getBoundingClientRect();
-
-    const scene = new Scene();
-    const renderer = new WebGLRenderer({
-      canvas,
-      alpha: true,
-      preserveDrawingBuffer: true
-    });
-    renderer.setClearAlpha(0);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(canvasRect.width, canvasRect.height);
-
-    const camera = new OrthographicCamera(
-      -8, 8,
-      -8, 8,
-      -32, 32
-    );
-    camera.lookAt(new Vector3(0, 0, -1));
-
-    async function initAllIcons() {
-      // by this point, we have access to the canvas reference, so we can go
-      // ahead and start drawing things on each grid item
-      const icons = [
-        new Scroll().getIcon(),
-        new Medkit().getIcon()
-      ];
-      await Promise.all(icons.map(i => i.readyPromise));
-
-      let x = 0;
-      icons.forEach(icon => {
-        icon.mesh.position.x = x;
-        x += 100;
-        scene.add(icon.mesh);
-      });
-
-      const parentRect = canvas.getBoundingClientRect();
-      for (let si = 0; si < slots; si++) {
-        const gridItem = itemRefs.current[si];
-        if (!gridItem) {
-          return;
-        }
-        camera.position.x = si * 100;
-        const rect = gridItem.getBoundingClientRect();
-        renderer.setScissor(
-          rect.left - parentRect.left,
-          -(rect.bottom - parentRect.bottom),
-          rect.width,
-          rect.height
-        );
-        renderer.setViewport(
-          rect.left - parentRect.left,
-          -(rect.bottom - parentRect.bottom),
-          rect.width,
-          rect.height
-        );
-        renderer.setScissorTest(true);
-        renderer.render(scene, camera);
-      }
-    }
-
-    initAllIcons();
-
-    return () => {
-      renderer.dispose();
-    };
-  }, []);
-
-  const gridItems = [];
-  for (let i = 0; i < slots; i++) {
-    const ii = i;
-    gridItems.push(
-      <div
-      key={i}
-      ref={el => itemRefs.current[ii] = el}
-      className="grid-item"
-      >
-        <div className="item-count">{i}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="item-grid">
-      <canvas ref={canvasRef} className="canvas-overlay"/>
-      {gridItems}
-    </div>
-  );
-}
