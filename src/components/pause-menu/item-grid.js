@@ -22,7 +22,7 @@ export default function ItemGrid({
 }) {
   const canvasRef = useRef(null);
   useEffect(() => {
-    console.log(canvasRef.current);
+    // console.log(canvasRef.current);
   }, []);
 
   const gridItems = [];

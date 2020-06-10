@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { ControllerContext } from "../controller";
+import KeyState from "src/engine/key-state";
 import ItemGrid from "./item-grid";
 
 import "./pause-menu.less";
@@ -7,6 +8,21 @@ import "./pause-menu.less";
 export default function PauseMenu () {
   const ctx = useContext(ControllerContext);
   const { running, unPause } = ctx;
+
+  // when pausing, detect use of the escape key to un-pause
+  useEffect(() => {
+    if (running) {
+      return;
+    }
+    const unPauseListener = e => {
+      if (e.key === "Escape") {
+        unPause();
+      }
+    };
+    window.addEventListener("keyup", unPauseListener);
+    return () => window.removeEventListener("keyup", unPauseListener);
+  }, [running]);
+
   if (running) {
     return null;
   }
