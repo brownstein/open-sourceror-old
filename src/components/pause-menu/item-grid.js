@@ -16,6 +16,7 @@ import {
 } from "three";
 
 import Scroll from "src/entities/items/scroll";
+import Medkit from "src/entities/items/medkit";
 
 import "./item-grid.less";
 
@@ -51,7 +52,10 @@ export default function ItemGrid({
     async function initAllIcons() {
       // by this point, we have access to the canvas reference, so we can go
       // ahead and start drawing things on each grid item
-      const icons = [new Scroll().getIcon()];
+      const icons = [
+        new Scroll().getIcon(),
+        new Medkit().getIcon()
+      ];
       await Promise.all(icons.map(i => i.readyPromise));
 
       let x = 0;
