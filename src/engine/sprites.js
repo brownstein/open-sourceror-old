@@ -54,12 +54,12 @@ export class SimpleSprite {
     this.geometry.faceVertexUvs[0].push([
       new Vector2(0, 0),
       new Vector2(1, 0),
-      new Vector2(0, 1)
+      new Vector2(1, 1)
     ]);
     this.geometry.faceVertexUvs[0].push([
       new Vector2(0, 0),
-      new Vector2(0, 1),
-      new Vector2(1, 1)
+      new Vector2(1, 1),
+      new Vector2(0, 1)
     ]);
 
     // TODO: reuse this

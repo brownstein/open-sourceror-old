@@ -28,14 +28,25 @@ export default function ItemGrid({
 
   useEffect(() => {
 
+    const canvas = canvasRef.current;
+    const canvasRect = canvas.getBoundingClientRect();
+
     const scene = new Scene();
     const renderer = new WebGLRenderer({
-      canvas: canvasRef.current
+      canvas,
+      alpha: true,
+      preserveDrawingBuffer: true
     });
-    renderer.setClearColor(new Color("#ffffff"), 0);
+    renderer.setClearAlpha(0);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(canvasRect.width, canvasRect.height);
 
-    console.log(itemRefs.current);
+    const camera = new OrthographicCamera(
+      -10, 10,
+      -10, 10,
+      -32, 32
+    );
+    camera.lookAt(new Vector3(0, 0, -1));
 
     async function initAllIcons() {
       // by this point, we have access to the canvas reference, so we can go
@@ -45,12 +56,27 @@ export default function ItemGrid({
 
       let x = 0;
       icons.forEach(icon => {
-        x += 100;
         icon.mesh.position.x = x;
+        x += 100;
         scene.add(icon.mesh);
       });
 
-      console.log(">>>>>");
+      const parentRect = canvas.getBoundingClientRect();
+      for (let si = 0; si < slots; si++) {
+        const gridItem = itemRefs.current[si];
+        if (!gridItem) {
+          return;
+        }
+        const rect = gridItem.getBoundingClientRect();
+        renderer.setScissor(
+          rect.left - parentRect.left,
+          rect.top - parentRect.top,
+          rect.width,
+          rect.height
+        );
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera);
+      }
     }
 
     initAllIcons();
@@ -62,14 +88,13 @@ export default function ItemGrid({
 
   const gridItems = [];
   for (let i = 0; i < slots; i++) {
+    const ii = i;
     gridItems.push(
       <div
       key={i}
-      ref={el => itemRefs.current[i] = el}
+      ref={el => itemRefs.current[ii] = el}
       className="grid-item"
-      >
-        {i}
-      </div>
+      />
     );
   }
 

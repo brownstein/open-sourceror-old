@@ -3,8 +3,10 @@
   flex-wrap: wrap;
   justify-content: center;
   position: relative;
+  z-index: 2;
 
   .canvas-overlay {
+    position: absolute;
     background: transparent;
     top: 0;
     left: 0;
@@ -17,8 +19,8 @@
 .grid-item {
   width: 32px;
   height: 32px;
-  margin: 1px;
-  background: #ccc;
+  margin: 2px;
+  border: 1px solid #444;
   display: flex;
   align-items: center;
   justify-content: center;
