@@ -22,7 +22,9 @@ export default function ItemGrid({
 }) {
   const canvasRef = useRef(null);
   useEffect(() => {
-    // console.log(canvasRef.current);
+    // by this point, we have access to the canvas reference, so we can go
+    // ahead and start drawing things on each grid item
+
   }, []);
 
   const gridItems = [];
@@ -36,7 +38,7 @@ export default function ItemGrid({
 
   return (
     <div className="item-grid">
-      <canvas ref={canvasRef} />
+      <canvas ref={canvasRef} className="canvas-overlay"/>
       {gridItems}
     </div>
   );
