@@ -11,6 +11,71 @@ import {
   Vector3,
 } from "three";
 
+export class SimpleSprite {
+  /**
+   * @constructor
+   * @param spriteImage - image URL of sprite sheet
+   */
+  constructor(spriteImage) {
+    this.spriteImage = spriteImage;
+
+    this.texture = null;
+    this.textureWidth = 128;
+    this.textureHeight = 128;
+
+    this.geometry = null;
+    this.material = null;
+    this.mesh = null;
+
+    this.ready = false;
+    this.readyPromise = this._init();
+  }
+  async _init() {
+    // TODO: inject this
+    const textureLoader = new TextureLoader();
+
+    // load the sprite's texture and extract dimensions
+    this.texture = await textureLoader.loadAsync(this.spriteImage);
+    this.texture.magFilter = NearestFilter;
+    this.textureWidth = this.texture.image.naturalWidth;
+    this.textureHeight = this.texture.image.naturalHeight;
+
+    const w = this.textureWidth;
+    const h = this.textureHeight;
+
+    // initialize three.js geometry, material, texture
+    this.geometry = new Geometry();
+    this.geometry.vertices.push(new Vector3(-w * 0.5, -h * 0.5, 0));
+    this.geometry.vertices.push(new Vector3( w * 0.5, -h * 0.5, 0));
+    this.geometry.vertices.push(new Vector3( w * 0.5,  h * 0.5, 0));
+    this.geometry.vertices.push(new Vector3(-w * 0.5,  h * 0.5, 0));
+    this.geometry.faces.push(new Face3(0, 1, 2));
+    this.geometry.faces.push(new Face3(0, 2, 3));
+    this.geometry.faceVertexUvs[0].push([
+      new Vector2(0, 0),
+      new Vector2(1, 0),
+      new Vector2(0, 1)
+    ]);
+    this.geometry.faceVertexUvs[0].push([
+      new Vector2(0, 0),
+      new Vector2(0, 1),
+      new Vector2(1, 1)
+    ]);
+
+    // TODO: reuse this
+    this.material = new MeshBasicMaterial({
+      map: this.texture,
+      side: DoubleSide,
+      transparent: true,
+      alphaTest: 0.1
+    });
+
+    this.mesh = new Mesh(this.geometry, this.material);
+    this.ready = true;
+  }
+}
+
+
 export class AnimatedSprite {
   /**
    * @constructor
