@@ -62,7 +62,6 @@ export default function ItemGrid({
       });
 
       const parentRect = canvas.getBoundingClientRect();
-      console.log(parentRect);
       for (let si = 0; si < slots; si++) {
         const gridItem = itemRefs.current[si];
         if (!gridItem) {
@@ -102,7 +101,9 @@ export default function ItemGrid({
       key={i}
       ref={el => itemRefs.current[ii] = el}
       className="grid-item"
-      />
+      >
+        <div className="item-count">{i}</div>
+      </div>
     );
   }
 
