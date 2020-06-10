@@ -6,6 +6,7 @@ import { GameController } from "./controller";
 import { EngineViewport } from "./viewport/viewport";
 import CodeExecutor from "./code-pane/code-executor";
 import LoadingScreen from "./loading-screen";
+import PauseMenu from "./pause-menu/pause-menu";
 
 // import the first level
 import Level1 from "src/rooms/intro/1";
@@ -33,6 +34,7 @@ export default function Game({ store }) {
             <div className="game-code-editor">
               <CodeExecutor/>
             </div>
+            <PauseMenu/>
           </LoadingScreen>
         </div>
       </GameController>

@@ -27,15 +27,18 @@ class _GameController extends Component {
     this.engine = new Engine();
     this.engine.store = props.store;
 
-    // build context object
-    this.ctx = {
-      engine: this.engine
-    };
+    // top-level control properties
+    this.gameState = "start-menu";
 
     // running properties
     this.running = false;
     this.loading = true;
     this.lastFrameTime = null;
+
+    this.state = {
+      running: false,
+      loading: true
+    };
 
     // bind event handlers
     this._updateLoop = this._updateLoop.bind(this);
@@ -56,10 +59,18 @@ class _GameController extends Component {
     // bootstrap the scene
     const { addThings } = this.props;
     if (addThings) {
+      this.setState({
+        running: false,
+        loading: true
+      });
       this.running = false;
       this.loading = true;
       addThings(this.engine);
       this.engine.getLoadingPromise().then(() => {
+        this.setState({
+          running: true,
+          loading: false
+        });
         this.running = true;
         this.loading = false;
       });
@@ -70,8 +81,14 @@ class _GameController extends Component {
   }
   render() {
     const { children } = this.props;
+    const ctx = {
+      engine: this.engine,
+      running: this.state.running,
+      loading: this.state.loading,
+      unPause: () => this._focusGained()
+    };
     return (
-      <ControllerContext.Provider value={this.ctx}>
+      <ControllerContext.Provider value={ctx}>
         { children }
       </ControllerContext.Provider>
     );
@@ -101,11 +118,13 @@ class _GameController extends Component {
   _focusLost() {
     this.running = false;
     this.engine.running = false;
+    this.setState({ running: false });
   }
   _focusGained() {
     this.running = true;
     this.engine.running = true;
     this.lastFrameTime = new Date().getTime();
+    this.setState({ running: true });
   }
 };
 

@@ -239,19 +239,19 @@ export class Player extends Character {
     const { position } = event;
     const pos2 = castToVec2(position);
 
-    const ice = IceCrystal.createIceCrystal(
-      engine,
-      castToVec2(position)
-    );
-
-    engine.addEntity(ice);
-
-    // const push = new Push(
-    //   this,
-    //   pos2,
-    //   50,
-    //   100
+    // const ice = IceCrystal.createIceCrystal(
+    //   engine,
+    //   castToVec2(position)
     // );
-    // engine.addEntity(push);
+    //
+    // engine.addEntity(ice);
+    
+    const push = new Push(
+      this,
+      pos2,
+      50,
+      100
+    );
+    engine.addEntity(push);
   }
 }

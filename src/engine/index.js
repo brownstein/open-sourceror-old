@@ -77,6 +77,9 @@ export default class Engine extends EventEmitter {
     // current room
     this.currentRoom = null;
 
+    // running flag (controlled by controller)
+    this.running = false;
+
     // set up P2 contact handlers
     this._initializeContactHandlers();
   }

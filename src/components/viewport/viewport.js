@@ -315,6 +315,12 @@ export class EngineViewport extends Component {
     this._updateMouseScreenCoordinates(event);
   }
   _onMouseMove(event) {
+    // if we're getting mouse movements all of a sudden, it means we probably
+    // deleted a node that was hovering over the canvas and it's time to begin
+    // acting as if we entered the screen
+    if (!this.mouseOnScreen) {
+      return this._onMouseEnter(event);
+    }
     this._updateMouseScreenCoordinates(event);
   }
   _onMouseDown(event) {
