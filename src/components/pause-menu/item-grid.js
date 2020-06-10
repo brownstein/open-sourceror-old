@@ -1,6 +1,7 @@
 import {
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from "react";
 import {
   Box3,
@@ -19,6 +20,7 @@ export default function ItemGrid({
   slots = 64,
   width = 8
 }) {
+  const canvasRef = useRef(null);
 
   const gridItems = [];
   for (let i = 0; i < slots; i++) {
@@ -31,6 +33,7 @@ export default function ItemGrid({
 
   return (
     <div className="item-grid">
+      <canvas ref={canvasRef} />
       {gridItems}
     </div>
   );
