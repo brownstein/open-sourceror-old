@@ -21,7 +21,6 @@ import Scroll from "src/entities/items/scroll";
 import Medkit from "src/entities/items/medkit";
 
 import * as items from "src/entities/items";
-
 import "./item-grid.less";
 
 class ItemGrid extends Component {
@@ -29,6 +28,7 @@ class ItemGrid extends Component {
     super(props);
     const { inventory } = props;
 
+    this.dpr = window.devicePixelRatio;
     this.iconSize = 40;
 
     this.webGLCanvas = null;
@@ -66,8 +66,6 @@ class ItemGrid extends Component {
     this.webGLCanvas = document.createElement("canvas");
     this.webGLCanvas.width = this.webGLCanvas.height = this.iconSize;
 
-    this.ig.appendChild(this.webGLCanvas);
-
     // initialize three.js (including webgl context)
     this.scene = new Scene();
 
@@ -93,10 +91,10 @@ class ItemGrid extends Component {
         return;
       }
       const data = this.inventoryRenderingData[i];
-      data.canvas.width = 40 * window.devicePixelRatio;
-      data.canvas.height = 40 * window.devicePixelRatio;
+      data.canvas.width = 40 * this.dpr;
+      data.canvas.height = 40 * this.dpr;
       data.context = data.canvas.getContext("2d");
-      data.context.scale(window.devicePixelRatio, window.devicePixelRatio);
+      data.context.scale(this.dpr, this.dpr);
     });
 
     // call frame renderer
