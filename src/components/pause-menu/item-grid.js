@@ -4,6 +4,8 @@ import {
   useEffect,
   useRef
 } from "react";
+import { useDrag, useDrop, DndProvider } from "react-dnd";
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { connect } from "react-redux";
 import {
   Box3,
@@ -75,7 +77,7 @@ class ItemGrid extends Component {
       preserveDrawingBuffer: true
     });
     this.renderer.setClearAlpha(0);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setPixelRatio(this.dpr);
     this.renderer.setSize(this.iconSize, this.iconSize);
 
     this.camera = new OrthographicCamera(
@@ -154,16 +156,38 @@ class ItemGrid extends Component {
       const index = i;
       const data = inventoryRenderingData[index] || {};
       tiles.push(
-        <div key={index} className="tile">
+        <Tile key={index} id={index}>
           <canvas ref={el => data.canvas = el}/>
-        </div>
+        </Tile>
       );
     }
 
     return (
-      <div className="item-grid" ref={el => this.ig = el}>{tiles}</div>
+      <DndProvider backend={HTML5Backend}>
+        <div className="item-grid" ref={el => this.ig = el}>{tiles}</div>
+      </DndProvider>
     );
   }
+}
+
+function Tile ({ id, children }) {
+  const ref = useRef(null);
+  const [,drop] = useDrop({
+    accept: "TILE",
+  });
+  const [{ isDragging }, drag] = useDrag({
+    item: { id, type: "TILE" }
+  });
+
+  const style = {
+    opacity: isDragging ? 0.25 : 1
+  };
+
+  drag(drop(ref));
+  
+  return (
+    <div className="tile" ref={ref} style={style}>{children}</div>
+  );
 }
 
 function mapStateToProps(state) {
