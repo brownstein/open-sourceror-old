@@ -19,6 +19,8 @@ import {
   Vector2
 } from "three";
 
+import { moveItemInInventory } from "src/redux/actions/inventory";
+
 import Scroll from "src/entities/items/scroll";
 import Medkit from "src/entities/items/medkit";
 
@@ -146,6 +148,9 @@ class ItemGrid extends Component {
       context.drawImage(this.webGLCanvas, 0, 0, this.iconSize, this.iconSize);
     });
   }
+  _moveItem() {
+    return false;
+  }
   render() {
     const { inventory, inventorySize } = this.props;
     const { inventoryRenderingData } = this;
@@ -156,9 +161,9 @@ class ItemGrid extends Component {
       const index = i;
       const data = inventoryRenderingData[index] || {};
       tiles.push(
-        <Tile key={index} id={index}>
+        <ItemTile key={index} id={index}>
           <canvas ref={el => data.canvas = el}/>
-        </Tile>
+        </ItemTile>
       );
     }
 
@@ -170,7 +175,7 @@ class ItemGrid extends Component {
   }
 }
 
-function Tile ({ id, children }) {
+function ItemTile ({ id, children }) {
   const ref = useRef(null);
   const [,drop] = useDrop({
     accept: "TILE",
@@ -184,23 +189,17 @@ function Tile ({ id, children }) {
   };
 
   drag(drop(ref));
-  
+
   return (
     <div className="tile" ref={ref} style={style}>{children}</div>
   );
 }
 
 function mapStateToProps(state) {
+  const { inventory } = state;
   return {
-    inventorySize: 8,
-    inventory: [
-      "Medkit",
-      "Scroll",
-      null,
-      "Medkit",
-      null,
-      "Scroll"
-    ]
+    inventory: inventory.inventory,
+    inventorySize: inventory.inventorySize
   };
 }
 
