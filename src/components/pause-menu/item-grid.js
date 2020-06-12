@@ -100,9 +100,6 @@ class ItemGrid extends Component {
       data.context = data.canvas.getContext("2d");
       data.context.scale(this.dpr, this.dpr);
     });
-
-    // call frame renderer
-    // this._renderFrame();
   }
   componentWillUnmount() {
     this.renderer.dispose();
