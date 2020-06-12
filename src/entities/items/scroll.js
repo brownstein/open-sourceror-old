@@ -17,6 +17,7 @@ export default class Scroll extends BaseItem {
       size: [12, 12]
     });
 
+    this.itemName = "Scroll";
     this.sprite = Scroll.getIcon();
 
     this.mesh = new Object3D();

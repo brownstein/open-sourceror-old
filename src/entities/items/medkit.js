@@ -17,6 +17,7 @@ export default class Medkit extends BaseItem {
       size: [12, 12]
     });
 
+    this.itemName = "Medkit";
     this.sprite = Medkit.getIcon();
 
     this.mesh = new Object3D();
