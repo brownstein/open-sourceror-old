@@ -20,10 +20,40 @@ const INITIAL_STATE = {
  */
 export default function reduceInventory(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case ADD_ITEM_TO_INVENTORY:
-      return state;
-    case REMOVE_ITEM_FROM_INVENTORY:
-      return state;
+    case ADD_ITEM_TO_INVENTORY: {
+      const itemName = action.itemName;
+      const inventorySize = state.inventorySize;
+      const inventory = [...state.inventory];
+      for (let i = 0; i < inventorySize; i++) {
+        if (!inventory[i]) {
+          inventory[i] = itemName;
+          break;
+        }
+      }
+      return {
+        ...state,
+        inventory
+      };
+    }
+    case REMOVE_ITEM_FROM_INVENTORY: {
+      const { itemName, itemSlot } = action;
+      const inventory = [...state.inventory];
+      if (itemSlot) {
+        inventory[itemSlot] = null;
+      }
+      else {
+        for (let i = 0; i < inventorySize; i++) {
+          if (inventory[i] === itemName) {
+            inventory[i] = null;
+            break;
+          }
+        }
+      }
+      return {
+        ...state,
+        inventory
+      };
+    }
     case MOVE_ITEM_IN_INVENTORY: {
       const newInventory = [...state.inventory];
       const a = newInventory[action.fromSlot];

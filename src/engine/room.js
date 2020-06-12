@@ -13,6 +13,7 @@ import { SmallBodyOfWater } from "src/entities/environment/water";
 import { DialogueEntity } from "src/entities/presentational/dialogue";
 import { NPC } from "src/entities/character/npc";
 import TransitionZone from "src/entities/environment/transition-zone";
+import { Medkit, Scroll } from "src/entities/items";
 
 import getContactMaterials from "src/entities/contact-materials";
 
@@ -108,12 +109,6 @@ export default class Room {
             break;
           }
           case "testDummyStart": {
-            let isSmart = false;
-            // o.properties && o.properties.forEach(p => {
-            //   if (p.name === "isSmart" && p.value) {
-            //     isSmart = true;
-            //   }
-            // });
             const DummyClazz = TestDummy;
             const dummy = new DummyClazz({
               position: [o.x, o.y]
@@ -164,6 +159,21 @@ export default class Room {
               npcDialogue
             });
             engine.addEntity(npc);
+            break;
+          }
+          case "scroll": {
+            const item = Scroll.getInstance({
+              position: [o.x, o.y]
+            });
+            engine.addEntity(item);
+            break;
+          }
+          case "medkit":
+          case "medpack": {
+            const item = Medkit.getInstance({
+              position: [o.x, o.y]
+            });
+            engine.addEntity(item);
             break;
           }
           default:

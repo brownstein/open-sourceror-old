@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="23">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="25">
  <editorsettings>
   <export target="level2.json" format="json"/>
  </editorsettings>
@@ -101,7 +101,7 @@
   </object>
   <object id="5" type="enemyStart" x="1029.34" y="533.808">
    <properties>
-    <property name="isSmart" type="bool" value="true"/>
+    <property name="isSmart" type="bool" value="false"/>
    </properties>
    <point/>
   </object>
@@ -153,22 +153,16 @@
    </properties>
    <point/>
   </object>
-  <object id="20" type="enemyStart" x="899.84" y="465.356">
-   <properties>
-    <property name="isSmart" type="bool" value="true"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="21" type="enemyStart" x="871.255" y="463.069">
-   <properties>
-    <property name="isSmart" type="bool" value="true"/>
-   </properties>
-   <point/>
-  </object>
   <object id="22" type="enemyStart" x="843.814" y="464.212">
    <properties>
     <property name="isSmart" type="bool" value="true"/>
    </properties>
+   <point/>
+  </object>
+  <object id="23" type="scroll" x="1104.5" y="377.315">
+   <point/>
+  </object>
+  <object id="24" type="medpack" x="1131.95" y="375.029">
    <point/>
   </object>
  </objectgroup>
