@@ -1,9 +1,10 @@
 import {
-  Mesh,
+  Color,
   DoubleSide,
   FontLoader,
-  ShapeBufferGeometry,
-  Color
+  Mesh,
+  MeshBasicMaterial,
+  ShapeBufferGeometry
 } from "three";
 
 import { castToVector3 } from "src/p2-utils/vec2-utils";
