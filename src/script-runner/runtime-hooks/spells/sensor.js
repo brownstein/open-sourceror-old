@@ -10,7 +10,7 @@ export default function getNativeSensor(interpreter, scope, runner) {
    */
   const nativeSensor = interpreter.createNativeFunction(
     function(radius) {
-      console.log("mounting sensor");
+      // console.log("mounting sensor");
 
       // apply mana cost to player
       const availableMana = runner.callingEntity.getMana();
@@ -20,7 +20,7 @@ export default function getNativeSensor(interpreter, scope, runner) {
       runner.callingEntity.incrementMana(-SPELL_COST);
 
       this.cleanupEffect = () => {
-        console.log("cleaning up sensor");
+        // console.log("cleaning up sensor");
         runner.engine.removeEntity(this.sensor);
       }
       runner.cleanupEffects.push(this.cleanupEffect);

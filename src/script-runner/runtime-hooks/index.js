@@ -21,7 +21,7 @@ export function initializeScope(interpreter, scope, runner) {
   const nativeConsole = interpreter.createObject();
   const nativeLogFunc = interpreter.createNativeFunction((...args) => {
     const nativeArgs = args.map(a => interpreter.pseudoToNative(a));
-    console.log(...nativeArgs);
+    // console.log(...nativeArgs);
     runner.engine.store.dispatch(consoleLog(...nativeArgs));
     return interpreter.nativeToPseudo(undefined);
   });

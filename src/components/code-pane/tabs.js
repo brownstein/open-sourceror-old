@@ -10,6 +10,7 @@ const SPLIT_PANE_TRANSITION_POINT = 650;
 export default function CodeConsoleTabs() {
   const containerRef = useRef(null);
   const [isSplit, setSplit] = useState(false);
+  const [currentTab, setCurrentTab] = useState("editor");
   useEffect(() => {
 
     function onResize() {
@@ -42,11 +43,28 @@ export default function CodeConsoleTabs() {
   return (
     <div ref={containerRef} className="code-and-console tabs">
       <div className="tabs">
-        [Editor] | [Console]
+        <Tab
+          selected={currentTab === "editor"}
+          onClick={() => setCurrentTab("editor")}
+          >
+          Code Editor
+        </Tab>
+        <Tab
+          selected={currentTab === "console"}
+          onClick={() => setCurrentTab("console")}
+          >
+          Console Output
+        </Tab>
       </div>
       <div className="content">
-        <CodeExecutor/>
+        { currentTab === "editor" ? <CodeExecutor/> : <Console/> }
       </div>
     </div>
   );
 }
+
+const Tab = ({ children, selected, onClick }) => (
+  <span className={ selected ? "tab selected" : "tab" } onClick={onClick}>
+    {children}
+  </span>
+);

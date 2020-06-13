@@ -7,8 +7,26 @@
     flex-direction: column;
 
     .tabs {
-      flex-basis: 16px;
+      flex-basis: 20px;
       flex-grow: 0;
+      background: #aaaaaa;
+      border-bottom: 1px solid #444444;
+
+      .tab {
+        padding: 2px 6px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border-top: 1px solid #444;
+        border-left: 1px solid #444;
+        border-right: 1px solid #444;
+        margin-left: 4px;
+        background-color: #dddddd;
+        cursor: pointer;
+
+        &.selected {
+          background-color: #ffffff;
+        }
+      }
     }
 
     .content {
