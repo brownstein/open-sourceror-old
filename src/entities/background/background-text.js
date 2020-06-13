@@ -4,6 +4,7 @@ import {
   FontLoader,
   Mesh,
   MeshBasicMaterial,
+  Object3D,
   ShapeBufferGeometry
 } from "three";
 
@@ -23,13 +24,26 @@ export class BackgroundText {
 
     this.shape = this.font.generateShapes(text, 12);
     this.geometry = new ShapeBufferGeometry(this.shape, 4);
-    this.material = new MeshBasicMaterial({
-      color: new Color("#000000"),
+    this.material1 = new MeshBasicMaterial({
+      color: new Color("#ffffff"),
+      side: DoubleSide
+    });
+    this.material2 = new MeshBasicMaterial({
+      color: new Color("#444444"),
       side: DoubleSide
     });
 
-    this.mesh = new Mesh(this.geometry, this.material);
-    this.mesh.rotation.x = Math.PI;
+    this.mesh = new Object3D();
+    const mainMesh = new Mesh(this.geometry, this.material1);
+    const secondMesh = new Mesh(this.geometry, this.material2);
+    this.mesh.add(mainMesh);
+    this.mesh.add(secondMesh);
+    mainMesh.rotation.x = Math.PI;
+    secondMesh.rotation.x = Math.PI;
+    secondMesh.position.x = 1;
+    secondMesh.position.y = 1;
+    secondMesh.position.z = -1;
+
     this.mesh.position.copy(position);
   }
 }
