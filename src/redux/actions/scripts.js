@@ -3,6 +3,7 @@ import fs from "fs";
 import {
   SET_FOCUSED_SCRIPT,
   UPDATE_SCRIPT_STATES,
+  LOG_TO_CONSOLE,
 
   SET_SCRIPT_LIBRARY_ON_LOAD,
 
@@ -59,6 +60,14 @@ export function updateScriptStates(executionContext, focusedScriptId = null) {
     type: UPDATE_SCRIPT_STATES,
     states,
     focusedScriptId
+  };
+}
+
+export const consoleLog = (...content) => {
+  const line = content.join(' ');
+  return {
+    type: LOG_TO_CONSOLE,
+    line
   };
 }
 

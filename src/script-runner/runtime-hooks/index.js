@@ -3,7 +3,7 @@ import * as acorn from "acorn";
 import { castToVec2 } from "p2-utils/vec2-utils";
 import promisePolyfill from "./promise-polyfill.txt";
 
-import { Sensor } from "src/entities/sensor";
+import { consoleLog } from "src/redux/actions/scripts";
 
 import {
   getNativeFire,
@@ -22,6 +22,7 @@ export function initializeScope(interpreter, scope, runner) {
   const nativeLogFunc = interpreter.createNativeFunction((...args) => {
     const nativeArgs = args.map(a => interpreter.pseudoToNative(a));
     console.log(...nativeArgs);
+    runner.engine.store.dispatch(consoleLog(...nativeArgs));
     return interpreter.nativeToPseudo(undefined);
   });
   interpreter.setProperty(scope, "log", nativeLogFunc);

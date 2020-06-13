@@ -1,6 +1,7 @@
 import {
   SET_FOCUSED_SCRIPT,
   UPDATE_SCRIPT_STATES,
+  LOG_TO_CONSOLE,
 } from "../constants/scripts";
 
 // default global state
@@ -8,6 +9,8 @@ const DEFAULT_STATE = {
   focusedScriptId: null,
   activeScripts: {},
   scriptLibrary: [],
+  outputLines: [],
+  maxOutputLines : 256
 };
 
 // default state for an active script
@@ -41,6 +44,17 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
         ...state,
         focusedScriptId,
         activeScripts
+      };
+    }
+    case LOG_TO_CONSOLE: {
+      let outputLines = [...state.outputLines];
+      outputLines.push(action.line);
+      while (outputLines.length > state.maxOutputLines) {
+        outputLines.shift();
+      }
+      return {
+        ...state,
+        outputLines
       };
     }
     default:

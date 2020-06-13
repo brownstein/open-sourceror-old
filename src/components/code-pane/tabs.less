@@ -1,0 +1,27 @@
+.code-and-console {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  &.tabs {
+    flex-direction: column;
+
+    .tabs {
+      flex-basis: 16px;
+      flex-grow: 0;
+    }
+
+    .content {
+      flex-grow: 1;
+    }
+  }
+
+  &.split > div {
+    width: 50%;
+    overflow-x: hidden;
+
+    &:first-child {
+      border-right: 1px solid #444444;
+    }
+  }
+}

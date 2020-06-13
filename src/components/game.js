@@ -4,7 +4,8 @@ import { Vector2 } from "three";
 // engine-level constructs
 import { GameController } from "./controller";
 import { EngineViewport } from "./viewport/viewport";
-import CodeExecutor from "./code-pane/code-executor";
+// import CodeExecutor from "./code-pane/code-executor";
+import CodeConsoleTabs from "./code-pane/tabs";
 import LoadingScreen from "./loading-screen";
 import PauseMenu from "./pause-menu/pause-menu";
 
@@ -32,7 +33,7 @@ export default function Game({ store }) {
               <EngineViewport/>
             </div>
             <div className="game-code-editor">
-              <CodeExecutor/>
+              <CodeConsoleTabs/>
             </div>
             <PauseMenu/>
           </LoadingScreen>

@@ -17,7 +17,7 @@ export class Enemy extends Character {
   constructor(props) {
     super(props);
     this.i = Math.random() * 100 * Math.PI;
-    this.health = 100;
+    this.health = 20;
     this.invTimer = 0;
   }
   onFrame() {
@@ -40,51 +40,6 @@ export class Enemy extends Character {
       this.engine.removeEntity(this);
       this.engine.addEntity(new DeadEnemy(this));
     }
-  }
-}
-
-export class DeadEnemy extends BaseEntity {
-  constructor(srcEnemy) {
-    super();
-    const srcBody = srcEnemy.body;
-    this.body = new Body({
-      mass: 1,
-      position: srcBody.interpolatedPosition,
-      velocity: srcBody.velocity,
-      angle: srcBody.angle,
-      angularVelocity: srcBody.angularVelocity + (Math.random() - 0.5) * Math.PI
-    });
-
-    const srcConvex = srcBody.shapes[0];
-    const convex = new Convex({
-      angle: srcConvex.angle,
-      axes: srcConvex.axes,
-      vertices: srcConvex.vertices,
-      material: srcConvex.material,
-    });
-
-    // convex.collisionMask = 0b100;
-    this.convex = convex;
-
-    this.body.addShape(convex, srcConvex.position, srcConvex.angle);
-    this.body.allowSleep = true;
-    this.body.sleepSpeedLimit = 1;
-    this.body.sleepTimeLimit = 1;
-
-    this.mesh = srcEnemy.mesh;
-    this.mesh.children[0].material.opacity = 0.25;
-
-    this.dead = true;
-
-    this._possiblySleep = this._possiblySleep.bind(this);
-    setTimeout(this._possiblySleep, 1000);
-  }
-  _possiblySleep() {
-    if (this.body.sleepState === Body.SLEEPING) {
-      this.convex.collisionMask = 0b100;
-      return;
-    }
-    setTimeout(this._possiblySleep, 1000);
   }
 }
 
@@ -284,5 +239,50 @@ export class SmartEnemy extends Enemy {
     if (yDiff > 0) {
       this.plannedAccelleration[1] = yDiff * 60 - this.body.velocity[1];
     }
+  }
+}
+
+export class DeadEnemy extends BaseEntity {
+  constructor(srcEnemy) {
+    super();
+    const srcBody = srcEnemy.body;
+    this.body = new Body({
+      mass: 1,
+      position: srcBody.interpolatedPosition,
+      velocity: srcBody.velocity,
+      angle: srcBody.angle,
+      angularVelocity: srcBody.angularVelocity + (Math.random() - 0.5) * Math.PI
+    });
+
+    const srcConvex = srcBody.shapes[0];
+    const convex = new Convex({
+      angle: srcConvex.angle,
+      axes: srcConvex.axes,
+      vertices: srcConvex.vertices,
+      material: srcConvex.material,
+    });
+
+    // convex.collisionMask = 0b100;
+    this.convex = convex;
+
+    this.body.addShape(convex, srcConvex.position, srcConvex.angle);
+    this.body.allowSleep = true;
+    this.body.sleepSpeedLimit = 1;
+    this.body.sleepTimeLimit = 1;
+
+    this.mesh = srcEnemy.mesh;
+    this.mesh.children[0].material.opacity = 0.25;
+
+    this.dead = true;
+
+    this._possiblySleep = this._possiblySleep.bind(this);
+    setTimeout(this._possiblySleep, 1000);
+  }
+  _possiblySleep() {
+    if (this.body.sleepState === Body.SLEEPING) {
+      this.convex.collisionMask = 0b100;
+      return;
+    }
+    setTimeout(this._possiblySleep, 1000);
   }
 }
