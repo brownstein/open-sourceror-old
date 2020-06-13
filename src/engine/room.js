@@ -14,6 +14,7 @@ import { DialogueEntity } from "src/entities/presentational/dialogue";
 import { NPC } from "src/entities/character/npc";
 import TransitionZone from "src/entities/environment/transition-zone";
 import { Medkit, Scroll } from "src/entities/items";
+import { BackgroundText } from "src/entities/background/background-text";
 
 import getContactMaterials from "src/entities/contact-materials";
 
@@ -174,6 +175,15 @@ export default class Room {
               position: [o.x, o.y]
             });
             engine.addEntity(item);
+            break;
+          }
+          case ("backgroundText"): {
+            const text = new BackgroundText({
+              position: o,
+              text: o.text.text,
+              size: o.text.pixelsize
+            });
+            engine.addEntity(text);
             break;
           }
           default:

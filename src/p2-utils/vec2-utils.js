@@ -19,6 +19,16 @@ export function castToVec2(src) {
   return [0, 0];
 }
 
+export function castToVector3(src) {
+  if (Array.isArray(src) || src instanceof Float32Array) {
+    return new Vector3(src[0], src[1] || 0, 0);
+  }
+  if (src && src.x) {
+    return new Vector3(src.x, src.y || 0, 0);
+  }
+  return new Vector3(0, 0, 0);
+}
+
 export function vec2ToVector2(src) {
   return new Vector2(src[0], src[1]);
 }
