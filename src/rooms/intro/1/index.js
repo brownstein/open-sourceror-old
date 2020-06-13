@@ -30,7 +30,9 @@ export default class Level1 extends Room {
         wrapX: true,
         extendX: true,
         moveParallax: true,
-        parallaxCenter: new Vector2(0, -60),
+        parallaxCenter: new Vector2(0, 10),
+        parallaxCoefficient: 0.1,
+        pixelScale: 0.8,
         layer: 1
       }),
       new RepeatingBackgroundImage(bgSea, {
@@ -38,16 +40,16 @@ export default class Level1 extends Room {
         extendX: true,
         extendY: true,
         moveParallax: true,
-        parallaxCenter: new Vector2(0, 64),
+        parallaxCenter: new Vector2(0, 100),
         layer: 2,
         parallaxCoefficient: 0.2
       }),
       new RepeatingBackgroundImage(bgFarGrounds, {
         moveParallax: true,
-        parallaxCenter: new Vector2(100, 100),
+        parallaxCenter: new Vector2(400, 100),
         layer: 3,
         extendY: true,
-        pixelScale: 3,
+        pixelScale: 1,
         parallaxCoefficient: 0.4
       })
     ];
