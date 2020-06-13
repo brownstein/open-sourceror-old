@@ -27,7 +27,7 @@ export class Push extends EphemeralEntity {
       sensor: true
     });
     this.body.addShape(this.sensor);
-    this.mesh = getThreeJsObjectForP2Body(this.body);
+    this.mesh = getThreeJsObjectForP2Body(this.body, false);
 
     this.startRadius = radius * 0.25;
     this.eventualRadius = radius;

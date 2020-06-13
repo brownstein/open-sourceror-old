@@ -85,7 +85,7 @@ export class TargetingReticle {
   }
   syncMeshWithViewport(viewport) {
     const { engine } = this;
-    
+
     this.blockOutlineMesh.position.copy(viewport.mouseSceneCoordinates);
     this.blockOutlineMesh.position.x = Math
       .floor(this.blockOutlineMesh.position.x / 16) * 16 + 8;
@@ -118,9 +118,13 @@ export class TargetingReticle {
     this.lineConnectionMesh.position.copy(playerPosition);
     this.lineConnectionGeom.vertices[0]
       .multiplyScalar(0)
+      .add(posDiffTangent)
+      .multiplyScalar(16)
       .add(posDiffNormal);
     this.lineConnectionGeom.vertices[1]
       .multiplyScalar(0)
+      .add(posDiffTangent)
+      .multiplyScalar(16)
       .sub(posDiffNormal);
     this.lineConnectionGeom.vertices[2]
       .multiplyScalar(0)
