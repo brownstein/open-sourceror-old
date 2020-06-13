@@ -22,7 +22,7 @@ export default function PauseMenu () {
     return () => window.removeEventListener("keyup", unPauseListener);
   }, [running]);
 
-  if (true || running) {
+  if (running) {
     return null;
   }
   return (
