@@ -46,7 +46,7 @@ export default class Level1 extends Room {
       }),
       new RepeatingBackgroundImage(bgFarGrounds, {
         moveParallax: true,
-        parallaxCenter: new Vector2(400, 100),
+        parallaxCenter: new Vector2(200, 100),
         layer: 3,
         extendY: true,
         pixelScale: 1,

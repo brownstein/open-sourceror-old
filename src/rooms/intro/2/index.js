@@ -12,6 +12,7 @@ import tilesetPNG from "src/tilesets/magic-cliffs/PNG/tileset.png";
 import bgSky from "src/tilesets/magic-cliffs/PNG/sky.png";
 import bgClouds from "src/tilesets/magic-cliffs/PNG/clouds.png";
 import bgSea from "src/tilesets/magic-cliffs/PNG/sea.png";
+import bgFarGrounds from "src/tilesets/magic-cliffs/PNG/far-grounds.png";
 
 export default class Level2 extends Room {
   constructor() {
@@ -42,6 +43,14 @@ export default class Level2 extends Room {
         parallaxCenter: new Vector2(0, 100),
         layer: 2,
         parallaxCoefficient: 0.2
+      }),
+      new RepeatingBackgroundImage(bgFarGrounds, {
+        moveParallax: true,
+        parallaxCenter: new Vector2(200, 100),
+        layer: 3,
+        extendY: true,
+        pixelScale: 1,
+        parallaxCoefficient: 0.4
       })
     ];
   }
