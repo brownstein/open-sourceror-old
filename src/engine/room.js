@@ -15,6 +15,7 @@ import { NPC } from "src/entities/character/npc";
 import TransitionZone from "src/entities/environment/transition-zone";
 import { Medkit, Scroll } from "src/entities/items";
 import { BackgroundText } from "src/entities/background/background-text";
+import { ConditionWall } from "src/entities/environment/condition-wall";
 
 import getContactMaterials from "src/entities/contact-materials";
 
@@ -201,7 +202,15 @@ export default class Room {
             break;
           }
           case "progressBlocker": {
-            // { condition: "hello_world" }
+            const wall = new ConditionWall({
+              position: {
+                x: o.x + o.width / 2,
+                y: o.y + o.height / 2
+              },
+              width: o.width,
+              height: o.height
+            });
+            engine.addEntity(wall);
             break;
           }
           default:
