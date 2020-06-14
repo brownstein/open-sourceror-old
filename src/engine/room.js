@@ -181,7 +181,19 @@ export default class Room {
             const text = new BackgroundText({
               position: o,
               text: o.text.text,
-              size: o.text.pixelsize
+              size: o.text.pixelsize,
+              color: o.text.color || "#000000"
+            });
+            engine.addEntity(text);
+            break;
+          }
+          // TODO
+          case ("foregroundText"): {
+            const text = new BackgroundText({
+              position: o,
+              text: o.text.text,
+              size: o.text.pixelsize,
+              color: o.text.color
             });
             engine.addEntity(text);
             break;

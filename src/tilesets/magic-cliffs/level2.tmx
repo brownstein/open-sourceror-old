@@ -165,9 +165,10 @@
   <object id="24" type="medpack" x="1131.95" y="375.029">
    <point/>
   </object>
-  <object id="25" type="backgroundText" x="123.654" y="363.804" width="146.861" height="31.9221">
+  <object id="25" type="backgroundText" x="113.823" y="336.329" width="146.861" height="49.1739">
    <text fontfamily=".AppleSystemUIFont" pixelsize="13" wrap="1" halign="center">Hello World
-Test 123</text>
+Test 123
+TEST</text>
   </object>
  </objectgroup>
 </map>
