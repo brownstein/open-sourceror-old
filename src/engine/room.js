@@ -177,7 +177,7 @@ export default class Room {
             engine.addEntity(item);
             break;
           }
-          case ("backgroundText"): {
+          case "backgroundText": {
             const text = new BackgroundText({
               position: o,
               text: o.text.text,
@@ -189,7 +189,7 @@ export default class Room {
             break;
           }
           // TODO
-          case ("foregroundText"): {
+          case "foregroundText": {
             const text = new BackgroundText({
               position: o,
               text: o.text.text,
@@ -198,6 +198,10 @@ export default class Room {
               z: 2
             });
             engine.addEntity(text);
+            break;
+          }
+          case "progressBlocker": {
+            // { condition: "hello_world" }
             break;
           }
           default:
