@@ -77,7 +77,7 @@
                      "text":"Press D to move right.",
                      "wrap":true
                     },
-                 "type":"backgroundText",
+                 "type":"foregroundText",
                  "visible":true,
                  "width":141.688469734199,
                  "x":78.5790731226653,
@@ -116,7 +116,7 @@
                      "text":"Press W to jump.",
                      "wrap":true
                     },
-                 "type":"backgroundText",
+                 "type":"foregroundText",
                  "visible":true,
                  "width":107.50351578524,
                  "x":544.827613032186,
@@ -136,7 +136,7 @@
                      "text":"Type 'console.log(\"Hello World\")'\ninto the code editor and hit run to\nrun your first line of code.",
                      "wrap":true
                     },
-                 "type":"backgroundText",
+                 "type":"foregroundText",
                  "visible":true,
                  "width":209.817906108725,
                  "x":805.532655132349,
@@ -173,7 +173,7 @@
                      "text":"Great, you're a programmer!\nHead right for the next part of the tutorial.",
                      "wrap":true
                     },
-                 "type":"backgroundText",
+                 "type":"foregroundText",
                  "visible":true,
                  "width":261.725038701279,
                  "x":1254.43563072591,

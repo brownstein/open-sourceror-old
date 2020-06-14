@@ -140,17 +140,17 @@
   <object id="1" type="playerStart" x="82.5062" y="320.741">
    <point/>
   </object>
-  <object id="2" type="backgroundText" x="78.5791" y="360.993" width="141.688" height="21.7709">
+  <object id="2" type="foregroundText" x="78.5791" y="360.993" width="141.688" height="21.7709">
    <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">Press D to move right.</text>
   </object>
   <object id="3" type="backgroundText" x="73.0238" y="229.792" width="170.846" height="53.6181">
    <text fontfamily="Roboto" pixelsize="24" wrap="1" halign="center">Welcome to
 Open Sourceror.</text>
   </object>
-  <object id="4" type="backgroundText" x="544.828" y="358.997" width="107.504" height="21.7709">
+  <object id="4" type="foregroundText" x="544.828" y="358.997" width="107.504" height="21.7709">
    <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">Press W to jump.</text>
   </object>
-  <object id="5" type="backgroundText" x="805.533" y="352.563" width="209.818" height="56.2053">
+  <object id="5" type="foregroundText" x="805.533" y="352.563" width="209.818" height="56.2053">
    <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">Type 'console.log(&quot;Hello World&quot;)'
 into the code editor and hit run to
 run your first line of code.</text>
@@ -160,7 +160,7 @@ run your first line of code.</text>
     <property name="condition" value="hello_world"/>
    </properties>
   </object>
-  <object id="7" type="backgroundText" x="1254.44" y="338.81" width="261.725" height="57.7438">
+  <object id="7" type="foregroundText" x="1254.44" y="338.81" width="261.725" height="57.7438">
    <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">Great, you're a programmer!
 Head right for the next part of the tutorial.</text>
   </object>

@@ -28,6 +28,7 @@ export class BackgroundText {
     const textColor = props.color || "#ffffff";
     const addOutline = props.outline !== undefined ? props.outline : true;
     const textOutlineColor = props.outlineColor || "#444444";
+    const z = props.z || -1;
 
     this.text = text;
     this.textAlign = textAlign;
@@ -43,7 +44,7 @@ export class BackgroundText {
 
     this.mesh = new Object3D();
     this.mesh.position.copy(position);
-    this.mesh.position.z = 2;
+    this.mesh.position.z = z;
 
     this.readyPromise = this._init();
   }

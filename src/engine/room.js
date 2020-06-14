@@ -182,7 +182,8 @@ export default class Room {
               position: o,
               text: o.text.text,
               size: o.text.pixelsize,
-              color: o.text.color || "#000000"
+              color: o.text.color || "#000000",
+              outline: !!o.text.color
             });
             engine.addEntity(text);
             break;
@@ -193,7 +194,8 @@ export default class Room {
               position: o,
               text: o.text.text,
               size: o.text.pixelsize,
-              color: o.text.color
+              color: o.text.color,
+              z: 2
             });
             engine.addEntity(text);
             break;
