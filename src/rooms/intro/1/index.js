@@ -17,6 +17,7 @@ import bgFarGrounds from "src/tilesets/magic-cliffs/PNG/far-grounds.png";
 export default class Level1 extends Room {
   constructor() {
     super();
+    this.roomName = "tutorial-1";
     this.tileLevel = levelJson;
     this.tileSheet = tilesetJson;
     this.tileSheetPNG = tilesetPNG;

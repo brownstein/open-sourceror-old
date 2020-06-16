@@ -1,4 +1,12 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"tutorial-2.json"
+        }
+    },
  "height":40,
  "infinite":false,
  "layers":[
@@ -40,11 +48,11 @@
                  "type":"playerStart",
                  "visible":true,
                  "width":0,
-                 "x":47.0109090909091,
-                 "y":235.054545454545
+                 "x":47.0109,
+                 "y":235.055
                 }, 
                 {
-                 "height":20.3285229626425,
+                 "height":20.3285,
                  "id":3,
                  "name":"",
                  "rotation":0,
@@ -59,12 +67,12 @@
                     },
                  "type":"foregroundText",
                  "visible":true,
-                 "width":192.171196307515,
-                 "x":20.0257533535266,
-                 "y":276.147580434155
+                 "width":192.171,
+                 "x":20.0258,
+                 "y":276.148
                 }, 
                 {
-                 "height":35.4734588922544,
+                 "height":35.4735,
                  "id":4,
                  "name":"",
                  "rotation":0,
@@ -79,9 +87,32 @@
                     },
                  "type":"foregroundText",
                  "visible":true,
-                 "width":144.5725577672,
-                 "x":375.571791215924,
-                 "y":320.861280073561
+                 "width":144.573,
+                 "x":375.572,
+                 "y":320.861
+                }, 
+                {
+                 "height":50.6259834439351,
+                 "id":5,
+                 "name":"",
+                 "rotation":0,
+                 "type":"savePoint",
+                 "visible":true,
+                 "width":28.0495313675857,
+                 "x":345.423751089861,
+                 "y":240.879974220073
+                }, 
+                {
+                 "height":0,
+                 "id":6,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"scroll",
+                 "visible":true,
+                 "width":0,
+                 "x":189.060134321985,
+                 "y":238.751504328584
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -90,7 +121,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":5,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

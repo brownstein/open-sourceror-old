@@ -2,14 +2,29 @@ import EventEmitter from "events";
 import { vec2 } from "p2";
 
 export default class BaseEntity{
-  static _id = 1;
+  static _autoIncrementId = 1;
   constructor () {
-    this._id = BaseEntity._id++;
+    // unique identifier system
+    this.entityId = BaseEntity._autoIncrementId++;
+
+    // persistence identifier
+    this.persistId = null;
+
+    // persistence flag
+    this.persists = false;
+
+    // engine reference
     this.engine = null;
+
+    // mesh and physics body used by the renderer and engine
     this.mesh = null;
     this.body = null;
+
+    // DOM overlay properties
     this.hoverPosition = null;
     this.hoverElement = null;
+
+    // event emitter for things that need to be listened to
     this.events = null;
   }
   attachToEngine(engine) {
@@ -34,17 +49,26 @@ export default class BaseEntity{
       this.mesh.rotation.z = this.body.interpolatedAngle;
     }
   }
+  /**
+   * Subscribe to broadcast events
+   */
   on(eventName, callback) {
     if (this.events === null) {
       this.events = new EventEmitter();
     }
     this.events.on(eventName, callback);
   }
+  /**
+   * Unsubscribe from broadcast events
+   */
   off(eventName, callback) {
     if (this.events !== null) {
       this.events.off(eventName, callback);
     }
   }
+  /**
+   * Emit an event
+   */
   emit(eventName, contents) {
     if (this.events) {
       this.events.emit(eventName, contents);

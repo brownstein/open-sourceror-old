@@ -17,6 +17,8 @@ export default class Scroll extends BaseItem {
       size: [12, 12]
     });
 
+    this.persist = true;
+
     this.itemName = "Scroll";
     this.sprite = Scroll.getIcon();
 

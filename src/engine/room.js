@@ -16,6 +16,7 @@ import TransitionZone from "src/entities/environment/transition-zone";
 import { Medkit, Scroll } from "src/entities/items";
 import { BackgroundText } from "src/entities/background/background-text";
 import { ConditionWall } from "src/entities/environment/condition-wall";
+import SavePoint from "src/entities/environment/save-point";
 
 import getContactMaterials from "src/entities/contact-materials";
 
@@ -54,6 +55,7 @@ export default class Room {
     });
     engine.setControllingEntity(null);
     engine.followEntity(null);
+    engine.levelBBox.makeEmpty();
 
     getContactMaterials().forEach(m => engine.world.removeContactMaterial(m));
 
@@ -83,8 +85,11 @@ export default class Room {
     navGrid.initNavWorker();
 
     // add level entities
+    let persistIdIncrement = 0;
     this.tileLevel.layers.filter(l => l.type === "objectgroup").forEach(l => {
       l.objects.forEach(o => {
+        const persistId = `${o.type}-${persistIdIncrement++}`;
+
         const props = o.properties ?
           o.properties.reduce((o, p) => {
             o[p.name] = p.value;
@@ -107,6 +112,7 @@ export default class Room {
             const enemy = new EnemyClazz({
               position: [o.x, o.y]
             });
+            enemy.persistId = persistId;
             engine.addEntity(enemy);
             break;
           }
@@ -167,6 +173,7 @@ export default class Room {
             const item = Scroll.getInstance({
               position: [o.x, o.y]
             });
+            item.persistId = persistId;
             engine.addEntity(item);
             break;
           }
@@ -175,6 +182,7 @@ export default class Room {
             const item = Medkit.getInstance({
               position: [o.x, o.y]
             });
+            item.persistId = persistId;
             engine.addEntity(item);
             break;
           }
@@ -211,6 +219,18 @@ export default class Room {
               height: o.height
             });
             engine.addEntity(wall);
+            break;
+          }
+          case "savePoint": {
+            const savePoint = new SavePoint({
+              position: {
+                x: o.x + o.width / 2,
+                y: o.y + o.height / 2
+              },
+              width: o.width,
+              height: o.height
+            });
+            engine.addEntity(savePoint);
             break;
           }
           default:
