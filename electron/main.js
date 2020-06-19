@@ -53,7 +53,7 @@ function createWindow () {
     slashes: true
   }));
 
-  // show window once reacy
+  // show window once ready
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
     if (cmdArgs.dev) {
