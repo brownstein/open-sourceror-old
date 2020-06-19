@@ -94,7 +94,6 @@ class _GameController extends Component {
     if (engine.currentRoom) {
       engine.currentRoom.cleanup(engine);
     }
-    // this.engine.ks.unmount();
   }
   componentDidUpdate(prevProps) {
     const { currentRoom: roomName } = this.props;
