@@ -7,7 +7,8 @@ export default class LoadSaveStore {
     this.saveFileName = "open-sourceror-savegame.json";
 
     const userDataPath = remote.app.getPath("userData");
-    this.path = path.join(userDataPath, saveFileName);
+
+    this.path = path.join(userDataPath, this.saveFileName);
     this.saveData = {};
   }
   saveFileExists() {
@@ -19,6 +20,7 @@ export default class LoadSaveStore {
     return this.saveData;
   }
   save(data) {
-    fs.writeFileSync(this.path, JSON.stringify(this.saveData));
+    this.saveData = data;
+    fs.writeFileSync(this.path, JSON.stringify(data));
   }
 }

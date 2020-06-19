@@ -1,5 +1,6 @@
 import { ipcRenderer, remote } from "electron";
 
+import LoadSaveStore from "src/engine/load-save";
 import {
   SAVE_GAME,
   LOAD_GAME
@@ -8,14 +9,18 @@ import {
 
 export function saveGame(engine) {
   const room = engine.currentRoom;
-  const persistEntities = engine.activeEntities.filter(e => e.persist);
+  const controllingEntity = engine.controllingEntity;
 
-  console.log('SAVING', { room, persistEntities });
+  const persistEntities = engine.activeEntities.filter(e => e.persist);
 
   return (dispatch, getState) => {
     const status = getState().status;
 
-    console.log('S', { status });
+    const loadSaveStore = new LoadSaveStore();
+    loadSaveStore.save({
+      status,
+      room: room.roomName
+    });
 
     ipcRenderer.send('save', {
       status,
