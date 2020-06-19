@@ -31,8 +31,6 @@ catch (ex) {
 // commander won't fire its action clause without a file argument
 cmdArgs.dev = cmdArgs.dev || commander.dev;
 
-console.log(cmdArgs);
-
 // need global reference to prevent GC deref
 let mainWindow;
 function createWindow () {
@@ -60,6 +58,11 @@ function createWindow () {
     mainWindow.show();
     if (cmdArgs.dev) {
       mainWindow.webContents.openDevTools();
+    }
+    if (cmdArgs.room) {
+      mainWindow.send("set-room", {
+        room: cmdArgs.room
+      });
     }
   });
 

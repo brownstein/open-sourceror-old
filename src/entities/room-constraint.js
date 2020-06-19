@@ -14,6 +14,6 @@ export default class RoomConstraint {
     this.box = new Box({ width: size[0], height: size[1] });
     this.body.addShape(this.box);
 
-    this.mesh = getThreeJsObjectForP2Body(this.body);
+    this.mesh = getThreeJsObjectForP2Body(this.body, false, "#000000", 1);
   }
 }

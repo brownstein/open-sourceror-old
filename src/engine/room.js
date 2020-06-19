@@ -42,7 +42,11 @@ export default class Room {
     });
 
     // consrain room by level geometry
-    engine.on("everythingReady", () => engine.constrainRoom());
+    function _constrain() {
+      engine.constrainRoom()
+      engine.off("everythingReady", _constrain);
+    }
+    engine.on("everythingReady", _constrain);
 
     // apply contact materials (TODO: make this not room-specific)
     getContactMaterials().forEach(m => engine.world.addContactMaterial(m));

@@ -1,3 +1,4 @@
+import delay from "delay";
 import EventEmitter from "events";
 import { createContext, Component } from "react";
 import { connect } from "react-redux";
@@ -107,7 +108,9 @@ class _GameController extends Component {
     const { engine } = this;
     const room = await requireRoom(roomName);
     if (engine.currentRoom) {
+      await engine.getLoadingPromise();
       engine.currentRoom.cleanup(engine);
+      await delay(100);
     }
     room.init(engine);
   }

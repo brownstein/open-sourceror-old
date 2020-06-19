@@ -1,17 +1,13 @@
+import { ipcRenderer } from "electron";
 import { Provider } from "react-redux";
 import { Vector2 } from "three";
 
 // engine-level constructs
 import { GameController } from "./controller";
 import { EngineViewport } from "./viewport/viewport";
-// import CodeExecutor from "./code-pane/code-executor";
 import CodeConsoleTabs from "./code-pane/tabs";
 import LoadingScreen from "./loading-screen";
 import PauseMenu from "./pause-menu/pause-menu";
-
-// import the first level
-// import Level1 from "src/rooms/intro/1";
-// import Level1 from "src/rooms/test/pathfinding-tester";
 
 import { transitionToRoom } from "src/redux/actions/rooms";
 
@@ -19,11 +15,20 @@ import { transitionToRoom } from "src/redux/actions/rooms";
 import "./game.less";
 
 // current loading construct
+var _engine = null, initialRoom = null;
+
 function addThings(engine) {
-  // const level = new Level1();
-  // level.init(engine);
-  engine.store.dispatch(transitionToRoom("tutorial-1"));
+  _engine = engine;
+  _engine.store.dispatch(transitionToRoom(initialRoom || "tutorial-1"));
 }
+
+ipcRenderer.on("set-room", function(event, data) {
+  const { room } = data;
+  initialRoom = room;
+  if (_engine && initialRoom) {
+    _engine.store.dispatch(transitionToRoom(room));
+  }
+});
 
 // default component for the game
 export default function Game({ store }) {

@@ -55,6 +55,7 @@ export class RepeatingBackgroundImage {
     const textureLoader = new TextureLoader();
     this.texture = null;
     this.imageSize = null;
+
     this.readyPromise = new Promise((resolve, reject) => {
       this.texture = textureLoader.load(textureImage, resolve, null, reject);
     })
@@ -64,7 +65,7 @@ export class RepeatingBackgroundImage {
         this.texture.image.naturalHeight
       );
     });
-    
+
     this.material = new MeshBasicMaterial({
       map: this.texture,
       transparent: true
@@ -80,8 +81,8 @@ export class RepeatingBackgroundImage {
     this.mesh.position.y = 100;
   }
   async attachToEngine() {
-    await delay(200); // this should be long enough to load all other assets
     await this.readyPromise;
+    await delay(200); // this should be long enough to load all other assets
     this.updateForScreenBBox(); // update the size to reflect the screen bbox
   }
   updateForScreenBBox() {
@@ -94,7 +95,7 @@ export class RepeatingBackgroundImage {
     const scaledSize = this.imageSize.clone();
     scaledSize.multiplyScalar(this.pixelScale);
     const wrappedSize = scaledSize.clone();
-    const wrapNumber = 2;
+    const wrapNumber = 3;
     if (this.extendX) {
       wrappedSize.x = this.roomSize.x * wrapNumber * this.pixelScale;
     }
@@ -129,6 +130,9 @@ export class RepeatingBackgroundImage {
     this.geometry.faceVertexUvs[0][1][1].y = 0.5 - uvSize.y * 0.5;
     this.geometry.faceVertexUvs[0][1][2].x = 0.5 + uvSize.x * 0.5;
     this.geometry.faceVertexUvs[0][1][2].y = 0.5 + uvSize.y * 0.5;
+
+    this.geometry.verticesNeedUpdate = true;
+    this.geometry.uvsNeedUpdate = true;
   }
   updateForCameraBBox(camera) {
     const engine = this.engine;

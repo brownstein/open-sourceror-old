@@ -25,7 +25,8 @@ const simpleEdgeMaterial = new MeshBasicMaterial({
 export default function getThreeJsObjectForP2Body (
   body,
   addWireframe = true,
-  bodyColor = null
+  bodyColor = null,
+  bodyOpacity = null
 ) {
   const shapes = body.shapes;
 
@@ -33,7 +34,7 @@ export default function getThreeJsObjectForP2Body (
   const mat = new MeshBasicMaterial({
     side: DoubleSide,
     transparent: true,
-    opacity: 0.25,
+    opacity: bodyOpacity || 0.25,
     color: bodyColor || new Color(
       0.3 + 0.7 * Math.random(),
       0.3 + 0.7 * Math.random(),
