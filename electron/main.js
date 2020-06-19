@@ -64,6 +64,9 @@ function createWindow () {
         room: cmdArgs.room
       });
     }
+    if (cmdArgs.load) {
+      mainWindow.send("load-game", {});
+    }
   });
 
   // install developer tools
