@@ -1,8 +1,8 @@
 import { Body, Box } from "p2";
 import { castToVec2 } from "src/p2-utils/vec2-utils";
 import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
-import requireRoom from "src/rooms/require-room";
 import BaseEntity from "src/entities/base";
+import { transitionToRoom } from "src/redux/actions/rooms";
 
 export default class TransitionZone extends BaseEntity {
   constructor(props) {
@@ -32,10 +32,6 @@ export default class TransitionZone extends BaseEntity {
       return;
     }
 
-    // this could be cleaner, also we need to dispatch some stuff to re-sync
-    // redux with the next room
-    const nextLevel = await requireRoom(this.transitionToLevel);
-    engine.currentRoom.cleanup(engine);
-    nextLevel.init(engine);
+    engine.store.dispatch(transitionToRoom(this.transitionToLevel));
   }
 }

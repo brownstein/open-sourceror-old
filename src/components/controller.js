@@ -15,7 +15,8 @@ import {
   World
 } from "p2";
 
-import Engine from "../engine";
+import Engine from "src/engine";
+import requireRoom from "src/rooms/require-room";
 
 export const ControllerContext = createContext({
   engine: null
@@ -82,9 +83,33 @@ class _GameController extends Component {
         this.loading = false;
       });
     }
+
+    if (this.props.currentRoom) {
+      this._swapRoom(this.props.currentRoom);
+    }
   }
   componentWillUnmount() {
+    const { engine } = this;
+    if (engine.currentRoom) {
+      engine.currentRoom.cleanup(engine);
+    }
     // this.engine.ks.unmount();
+  }
+  componentDidUpdate(prevProps) {
+    const { currentRoom: roomName } = this.props;
+    const { currentRoom: previousRoomName } = prevProps;
+
+    if (roomName !== previousRoomName) {
+      this._swapRoom(roomName);
+    }
+  }
+  async _swapRoom(roomName) {
+    const { engine } = this;
+    const room = await requireRoom(roomName);
+    if (engine.currentRoom) {
+      engine.currentRoom.cleanup(engine);
+    }
+    room.init(engine);
   }
   render() {
     const { children } = this.props;
@@ -147,4 +172,13 @@ class _GameController extends Component {
   }
 };
 
-export const GameController = connect()(_GameController);
+function mapStateToProps(state) {
+  const { rooms } = state;
+  const { currentRoom } = rooms;
+
+  return {
+    currentRoom
+  };
+}
+
+export const GameController = connect(mapStateToProps)(_GameController);

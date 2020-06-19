@@ -10,16 +10,19 @@ import LoadingScreen from "./loading-screen";
 import PauseMenu from "./pause-menu/pause-menu";
 
 // import the first level
-import Level1 from "src/rooms/intro/1";
+// import Level1 from "src/rooms/intro/1";
 // import Level1 from "src/rooms/test/pathfinding-tester";
+
+import { transitionToRoom } from "src/redux/actions/rooms";
 
 // global styles
 import "./game.less";
 
 // current loading construct
 function addThings(engine) {
-  const level = new Level1();
-  level.init(engine);
+  // const level = new Level1();
+  // level.init(engine);
+  engine.store.dispatch(transitionToRoom("tutorial-1"));
 }
 
 // default component for the game

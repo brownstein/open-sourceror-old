@@ -143,7 +143,7 @@
   <object id="2" type="foregroundText" x="78.5791" y="360.993" width="141.688" height="21.7709">
    <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">Press D to move right.</text>
   </object>
-  <object id="3" type="backgroundText" x="73.0238" y="229.792" width="170.846" height="53.6181">
+  <object id="3" type="backgroundText" x="73.9659" y="242.981" width="170.846" height="53.6181">
    <text fontfamily="Roboto" pixelsize="24" wrap="1" halign="center">Welcome to
 Open Sourceror.</text>
   </object>

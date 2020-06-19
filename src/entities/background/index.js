@@ -54,9 +54,17 @@ export class RepeatingBackgroundImage {
 
     const textureLoader = new TextureLoader();
     this.texture = null;
+    this.imageSize = null;
     this.readyPromise = new Promise((resolve, reject) => {
       this.texture = textureLoader.load(textureImage, resolve, null, reject);
+    })
+    .then(() => {
+      this.imageSize = new Vector2(
+        this.texture.image.naturalWidth,
+        this.texture.image.naturalHeight
+      );
     });
+    
     this.material = new MeshBasicMaterial({
       map: this.texture,
       transparent: true
@@ -70,17 +78,11 @@ export class RepeatingBackgroundImage {
     this.mesh.position.z = -31 + this.layer * 0.1;
     this.mesh.position.x = 100;
     this.mesh.position.y = 100;
-
-    this.imageSize = null;
-
-    this.readyPromise = this.readyPromise.then(async () => {
-      this.imageSize = new Vector2(
-        this.texture.image.naturalWidth,
-        this.texture.image.naturalHeight
-      );
-      await delay(200); // this should be long enough to load all other assets
-      this.updateForScreenBBox(); // update the size to reflect the screen bbox
-    });
+  }
+  async attachToEngine() {
+    await delay(200); // this should be long enough to load all other assets
+    await this.readyPromise;
+    this.updateForScreenBBox(); // update the size to reflect the screen bbox
   }
   updateForScreenBBox() {
     const engine = this.engine;

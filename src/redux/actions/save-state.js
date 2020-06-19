@@ -1,7 +1,10 @@
+import { ipcRenderer, remote } from "electron";
+
 import {
   SAVE_GAME,
   LOAD_GAME
 } from "src/redux/constants/save-state";
+
 
 export function saveGame(engine) {
   const room = engine.currentRoom;
@@ -13,6 +16,11 @@ export function saveGame(engine) {
     const status = getState().status;
 
     console.log('S', { status });
+
+    ipcRenderer.send('save', {
+      status,
+      room: room.roomName
+    });
 
     dispatch({
       type: SAVE_GAME

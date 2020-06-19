@@ -11,7 +11,17 @@ const cmdArgs = {};
 try {
   commander
   .option("--dev", "open DevTools")
-  .action(({ dev }) => Object.assign(cmdArgs, { dev }));
+  .option("--room <room name>", "open a specific room")
+  .option("--load", "load a saved game")
+  .action(({
+    dev,
+    room,
+    load
+  }) => Object.assign(cmdArgs, {
+    dev,
+    room,
+    load
+  }));
   commander.parse(process.argv.filter(a => typeof a === "string"));
 }
 catch (ex) {
@@ -20,6 +30,8 @@ catch (ex) {
 
 // commander won't fire its action clause without a file argument
 cmdArgs.dev = cmdArgs.dev || commander.dev;
+
+console.log(cmdArgs);
 
 // need global reference to prevent GC deref
 let mainWindow;
@@ -73,6 +85,10 @@ function createWindow () {
   ipcMain.on("finished", function () {
     mainWindow = null;
     process.exit(0);
+  });
+
+  ipcMain.on("save", function(event, data) {
+    console.log("D", data);
   });
 }
 
