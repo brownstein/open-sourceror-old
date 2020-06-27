@@ -3,6 +3,7 @@ import {
   REMOVE_ITEM_FROM_INVENTORY,
   MOVE_ITEM_IN_INVENTORY
 } from "../constants/inventory";
+import { LOAD_GAME } from "../constants/save-state";
 
 const INITIAL_STATE = {
   inventorySize: 10,

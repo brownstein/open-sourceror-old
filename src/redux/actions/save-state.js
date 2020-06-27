@@ -14,11 +14,15 @@ export function saveGame(engine) {
   const persistEntities = engine.activeEntities.filter(e => e.persist);
 
   return (dispatch, getState) => {
-    const status = getState().status;
+    const {
+      status,
+      inventory
+    } = getState();
 
     const loadSaveStore = new LoadSaveStore();
     loadSaveStore.save({
       status,
+      inventory,
       room: room.roomName
     });
 
@@ -33,7 +37,7 @@ export function saveGame(engine) {
   };
 }
 
-export const loadGame = (gameFile) => ({
+export const loadGame = (gameFileContents) => ({
   type: LOAD_GAME,
-  gameFile
+  gameFileContents
 });
