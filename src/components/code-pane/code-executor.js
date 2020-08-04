@@ -18,7 +18,7 @@ import AceEditor from "react-ace";
 // pull in engine context
 import { ControllerContext } from "src/components/controller";
 
-import { saveScript } from "src/redux/actions/scripts";
+import { openSaveScriptMenu } from "src/redux/actions/ui";
 
 import "./code-executor.less";
 
@@ -289,7 +289,7 @@ class CodeExecutor extends Component {
   _save() {
     const { dispatch } = this.props;
     const { scriptContents } = this.state;
-    dispatch(saveScript(scriptContents));
+    dispatch(openSaveScriptMenu(scriptContents));
   }
 
   // hax

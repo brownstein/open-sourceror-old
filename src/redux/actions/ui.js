@@ -2,6 +2,8 @@ import {
   OPEN_MODAL,
   CLOSE_MODAL,
   PAUSE,
+  SAVE_SCRIPT,
+  LOAD_SCRIPT,
   MANAGE_SCRIPTS
 } from "../constants/ui";
 import {
@@ -26,5 +28,10 @@ export const openPauseMenu = () => {
   }
   return noop();
 }
+
+export const openSaveScriptMenu = (scriptContents) => openModal(
+  SAVE_SCRIPT,
+  { scriptContents }
+);
 
 export const openManageScriptsMenu = () => openModal(MANAGE_SCRIPTS);
