@@ -5,6 +5,7 @@ import statusReducer from "./status";
 import saveStateReducer from "./save-state";
 import roomsReducer from "./rooms";
 import inventoryReducer from "./inventory";
+import uiReducer from "./ui";
 
 export default combineReducers({
   panes: panesReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
   status: statusReducer,
   saveState: saveStateReducer,
   rooms: roomsReducer,
-  inventory: inventoryReducer
+  inventory: inventoryReducer,
+  ui: uiReducer
 });

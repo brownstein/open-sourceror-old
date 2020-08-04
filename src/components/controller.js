@@ -18,6 +18,8 @@ import {
 
 import Engine from "src/engine";
 import requireRoom from "src/rooms/require-room";
+import { canOpenPauseMenu } from "src/redux/selectors/ui";
+import { openPauseMenu, closeModal } from "src/redux/actions/ui";
 
 export const ControllerContext = createContext({
   engine: null
@@ -77,7 +79,6 @@ class _GameController extends Component {
       addThings(this.engine);
       this.engine.getLoadingPromise().then(() => {
         this.setState({
-          running: true,
           loading: false
         });
         this.running = true;
@@ -96,8 +97,18 @@ class _GameController extends Component {
     }
   }
   componentDidUpdate(prevProps) {
-    const { currentRoom: roomName } = this.props;
+    const { currentRoom: roomName, paused } = this.props;
     const { currentRoom: previousRoomName } = prevProps;
+
+    const { loading } = this.state;
+
+    const running = !paused && !loading;
+
+    if (!this.running && running) {
+      this.lastFrameTime = new Date().getTime();
+    }
+    this.running = running;
+    this.engine.running = running;
 
     if (roomName !== previousRoomName) {
       this._swapRoom(roomName);
@@ -114,11 +125,12 @@ class _GameController extends Component {
     room.init(engine);
   }
   render() {
-    const { children } = this.props;
+    const { children, paused } = this.props;
+    const { loading } = this.state;
     const ctx = {
       engine: this.engine,
-      running: this.state.running,
-      loading: this.state.loading,
+      running: !paused && !loading,
+      loading: loading,
       unPause: () => this.unPause()
     };
     return (
@@ -137,7 +149,8 @@ class _GameController extends Component {
     requestAnimationFrame(this._updateLoop);
   }
   _updateFrame() {
-    if (!this.running) {
+    const { paused } = this.props;
+    if (paused) {
       return;
     }
 
@@ -150,36 +163,29 @@ class _GameController extends Component {
     this.engine.step(deltaTimeMs);
   }
   _focusLost() {
-    this.running = false;
-    this.engine.running = false;
-    this.setState({ running: false });
+    const { dispatch } = this.props;
+    dispatch(openPauseMenu());
   }
   _focusGained() {
-    return;
-    this.running = true;
-    this.engine.running = true;
-    this.lastFrameTime = new Date().getTime();
-    this.setState({ running: true });
+    // dispatch(closeModal());
   }
   pause() {
-    this.running = false;
-    this.engine.running = false;
-    this.setState({ running: false });
+    const { dispatch } = this.props;
+    dispatch(openPauseMenu());
   }
   unPause() {
-    this.running = true;
-    this.engine.running = true;
-    this.lastFrameTime = new Date().getTime();
-    this.setState({ running: true });
+    const { dispatch } = this.props;
+    dispatch(closeModal());
   }
 };
 
 function mapStateToProps(state) {
-  const { rooms } = state;
+  const { rooms, ui } = state;
   const { currentRoom } = rooms;
-
   return {
-    currentRoom
+    currentRoom,
+    paused: !!ui.modalStack.length,
+    canOpenPauseMenu: canOpenPauseMenu(state)
   };
 }
 

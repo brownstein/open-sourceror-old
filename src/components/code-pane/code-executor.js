@@ -18,11 +18,13 @@ import AceEditor from "react-ace";
 // pull in engine context
 import { ControllerContext } from "src/components/controller";
 
+import { saveScript } from "src/redux/actions/scripts";
+
 import "./code-executor.less";
 
 // source script to run - this gets transpiled from ES6 to normal ES5, then
 // run inside of a JS-based JS interpreter so that it is totally sandboxed
-const defaultSrcScript =
+const _defaultSrcScript =
 `"use strict";
 const fire = require("fire");
 const push = require("push");
@@ -62,6 +64,12 @@ setTimeout(() => {
 }, 10000);
 `;
 
+const defaultSrcScript =
+`"use strict";
+
+console.log("hello world");
+`;
+
 class CodeExecutor extends Component {
   static contextType = ControllerContext;
   constructor() {
@@ -86,6 +94,7 @@ class CodeExecutor extends Component {
     this._loadEditor = this._loadEditor.bind(this);
     this._onChange = this._onChange.bind(this);
     this._setExecutionSpeed = this._setExecutionSpeed.bind(this);
+    this._save = this._save.bind(this);
     this._run = this._run.bind(this);
     this._pause = this._pause.bind(this);
     this._step = this._step.bind(this);
@@ -124,6 +133,7 @@ class CodeExecutor extends Component {
     return (
       <div className="code-executor">
         <div className="toolbar">
+          <button onClick={this._save}>save</button>
           <button onClick={this._run} disabled={running}>run</button>
           <button onClick={this._stop} disabled={!running}>stop</button>
           <span>Speed:</span>
@@ -275,6 +285,11 @@ class CodeExecutor extends Component {
     const { activeScriptName } = this.props;
     const { engine } = this.context;
     engine.scriptExecutionContext.stopScript(activeScriptName);
+  }
+  _save() {
+    const { dispatch } = this.props;
+    const { scriptContents } = this.state;
+    dispatch(saveScript(scriptContents));
   }
 
   // hax

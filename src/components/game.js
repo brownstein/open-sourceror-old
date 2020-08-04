@@ -7,7 +7,7 @@ import { GameController } from "./controller";
 import { EngineViewport } from "./viewport/viewport";
 import CodeConsoleTabs from "./code-pane/tabs";
 import LoadingScreen from "./loading-screen";
-import PauseMenu from "./pause-menu/pause-menu";
+import ModalsDisplay from "./modals/modals-display";
 import LoadSaveStore from "src/engine/load-save";
 
 import { transitionToRoom } from "src/redux/actions/rooms";
@@ -26,7 +26,7 @@ function addThings(engine) {
 ipcRenderer.on("set-room", function(event, data) {
   const { room } = data;
   initialRoom = room;
-  
+
   if (_engine && room) {
     _engine.store.dispatch(transitionToRoom(room));
   }
@@ -61,7 +61,7 @@ export default function Game({ store }) {
             <div className="game-code-editor">
               <CodeConsoleTabs/>
             </div>
-            <PauseMenu/>
+            <ModalsDisplay/>
           </LoadingScreen>
         </div>
       </GameController>

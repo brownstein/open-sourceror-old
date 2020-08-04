@@ -1,4 +1,5 @@
 import fs from "fs";
+import uuid from "uuid";
 
 import {
   SET_FOCUSED_SCRIPT,
@@ -9,6 +10,8 @@ import {
 
   ADD_SCRIPT_TO_LIBRARY,
   REMOVE_SCRIPT_FROM_LIBRARY,
+
+  SAVE_SCRIPT
 } from "../constants/scripts";
 
 /////////////////////////////
@@ -81,19 +84,30 @@ export const setScriptLibraryOnLoad = () => ({
   type: SET_SCRIPT_LIBRARY_ON_LOAD
 });
 
+export const saveScript = (scriptContents) => {
+  console.log(scriptContents);
+  return (dispatch, getState) => {
+
+    dispatch({
+      type: SAVE_SCRIPT
+
+    });
+  };
+};
+
 export const addScriptToLibrary = ({
   scriptName,
   scriptContents
 }) => ({
+  id: uuid(),
   type: ADD_SCRIPT_TO_LIBRARY,
   scriptName,
   scriptContents
 });
 
-export const removeScriptFromLibrary = ({
-  scriptName
-}) => ({
+export const removeScriptFromLibrary = (
+  scriptId
+) => ({
   type: REMOVE_SCRIPT_FROM_LIBRARY,
-  scriptName,
-  scriptContents
+  scriptId
 });

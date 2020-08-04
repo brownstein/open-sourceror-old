@@ -2,6 +2,9 @@ import {
   SET_FOCUSED_SCRIPT,
   UPDATE_SCRIPT_STATES,
   LOG_TO_CONSOLE,
+
+  ADD_SCRIPT_TO_LIBRARY,
+  REMOVE_SCRIPT_FROM_LIBRARY
 } from "../constants/scripts";
 
 // default global state
@@ -55,6 +58,20 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
       return {
         ...state,
         outputLines
+      };
+    }
+    case ADD_SCRIPT_TO_LIBRARY: {
+      const { script } = action;
+      return {
+        ...state,
+        scriptLibrary: scriptLibrary.push(script)
+      };
+    }
+    case REMOVE_SCRIPT_FROM_LIBRARY: {
+      const { scriptId } = action;
+      return {
+        ...state,
+        scriptLibrary: scriptLibrary.filter(s => s.id !== scriptId)
       };
     }
     default:
