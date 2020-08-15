@@ -1,3 +1,5 @@
+import shortid from "shortid";
+
 import {
   SET_FOCUSED_SCRIPT,
   UPDATE_SCRIPT_STATES,
@@ -61,17 +63,22 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
       };
     }
     case ADD_SCRIPT_TO_LIBRARY: {
-      const { script } = action;
+      const { id, scriptName, scriptContents } = action;
+      const script = {
+        id,
+        scriptName,
+        scriptContents
+      };
       return {
         ...state,
-        scriptLibrary: scriptLibrary.push(script)
+        scriptLibrary: state.scriptLibrary.concat([script])
       };
     }
     case REMOVE_SCRIPT_FROM_LIBRARY: {
       const { scriptId } = action;
       return {
         ...state,
-        scriptLibrary: scriptLibrary.filter(s => s.id !== scriptId)
+        scriptLibrary: state.scriptLibrary.filter(s => s.id !== scriptId)
       };
     }
     default:

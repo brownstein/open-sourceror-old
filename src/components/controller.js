@@ -164,7 +164,7 @@ class _GameController extends Component {
   }
   _focusLost() {
     const { dispatch } = this.props;
-    dispatch(openPauseMenu());
+    // dispatch(openPauseMenu());
   }
   _focusGained() {
     // dispatch(closeModal());

@@ -1,25 +1,32 @@
 import { useEffect } from "react";
-import { compose } from "react-redux";
+import { connect } from "react-redux";
 import { closeModal } from "src/redux/actions/ui";
 import useKey from "src/components/hooks/use-key";
 
 import "./base.less";
 
-export default function Modal({
+function Modal({
   allowClose = true,
   modalClassName = null,
-  children
+  children,
+  dispatchCloseModal
 }) {
-  const { dispatch } = this.props;
-  useKey("Escape", () => (allowClose && dispatch(closeModal())));
+  useKey("Escape", () => (allowClose && dispatchCloseModal()));
 
   return (
     <div className="modal-overlay">
       <div className={modalClassName || "modal"}>
+        <div className="modal-close-btn" onClick={dispatchCloseModal}>X</div>
         { children }
       </div>
-    </div>;
-  )
+    </div>
+  );
 }
 
-export default compose()(Modal);
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatchCloseModal: () => dispatch(closeModal())
+  };
+}
+
+export default connect(null, mapDispatchToProps)(Modal);
