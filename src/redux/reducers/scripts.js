@@ -13,7 +13,43 @@ import {
 const DEFAULT_STATE = {
   focusedScriptId: null,
   activeScripts: {},
-  scriptLibrary: [],
+  scriptLibrary: [
+    {
+      id: shortid(),
+      scriptName: shortid(),
+      scriptContents: 'console.log("Hello World");',
+    },
+    {
+      id: shortid(),
+      scriptName: shortid(),
+      scriptContents: 'console.log("Hello World");',
+    },
+    {
+      id: shortid(),
+      scriptName: shortid(),
+      scriptContents: 'console.log("Hello World");',
+    },
+    {
+      id: shortid(),
+      scriptName: shortid(),
+      scriptContents: 'console.log("Hello World");',
+    },
+    {
+      id: shortid(),
+      scriptName: shortid(),
+      scriptContents: 'console.log("Hello World");',
+    },
+    {
+      id: shortid(),
+      scriptName: shortid(),
+      scriptContents: 'console.log("Hello World");',
+    },
+    {
+      id: shortid(),
+      scriptName: shortid(),
+      scriptContents: 'console.log("Hello World");',
+    }
+  ],
   outputLines: [],
   maxOutputLines : 256
 };

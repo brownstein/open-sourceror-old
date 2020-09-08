@@ -1,0 +1,44 @@
+ul.script-list {
+
+  display: block;
+  list-style: none;
+  list-style-type: none;
+  padding: 0;
+
+  border: 1px solid #ccc;
+  background: #aaa;
+
+  flex-grow: 1;
+
+  overflow-y: scroll;
+
+  li {
+    display: block;
+    line-height: 32px;
+    height: 32px;
+
+    margin: 2px 0;
+    padding: 4px 8px;
+    text-overflow: ellipsis;
+
+    color: #000;
+    background-image: linear-gradient(#eee, #ccc);
+
+    border-radius: 5px;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+
+    &:first-child {
+      margin-top: 0;
+      margin-bottom: 0;
+      border-top: none;
+    }
+
+    cursor: pointer;
+
+    &:hover {
+      color: #222;
+      background-image: linear-gradient(#fff, #ddd);
+    }
+  }
+}

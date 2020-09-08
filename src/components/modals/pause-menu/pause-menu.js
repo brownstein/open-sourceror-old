@@ -18,7 +18,7 @@ export default function PauseMenu () {
   return (
     <div className="pause-overlay">
       <div className="pause-menu">
-        <h2>Paused</h2>
+        <h2 className="filler">Paused</h2>
         <div className="content">
           <div>
             <button onClick={unPause}>resume</button>
