@@ -19,6 +19,9 @@ import {
   Vector2
 } from "three";
 
+import { ControllerContext } from "src/components/controller";
+import { ItemRenderer } from "src/components/items/item-slot";
+
 import { moveItemInInventory } from "src/redux/actions/inventory";
 
 import Scroll from "src/entities/items/scroll";
@@ -28,6 +31,7 @@ import * as items from "src/entities/items";
 import "./item-grid.less";
 
 class ItemGrid extends Component {
+  static contextType = ControllerContext;
   constructor(props) {
     super(props);
     const { inventory, inventorySize } = props;
@@ -135,6 +139,8 @@ class ItemGrid extends Component {
     Promise.all(promises).then(this._renderFrame);
   }
   _renderFrame() {
+    const { previewRenderer } = this.context;
+
     if (!this.mounted) {
       return;
     }
@@ -142,24 +148,35 @@ class ItemGrid extends Component {
       const tileData = this.tileCanvasesAndContexts[i];
       const { canvas, context } = tileData;
 
-      // clear the 2D canvas no matter what
       context.clearRect(0, 0, canvas.width, canvas.height);
 
-      // get the sprite
       const sprite = this.tileSprites[i];
       if (!sprite) {
         continue;
       }
 
-      // render the sprite into the scene and then immediately remove it
       if (sprite.mesh) {
-        this.scene.add(sprite.mesh);
-        this.renderer.render(this.scene, this.camera);
-        this.scene.remove(sprite.mesh);
+        previewRenderer.renderPreview(sprite.mesh, canvas, context, new Vector2(40, 40));
       }
 
-      // copy webgl canvas to inexpensive 2D canvas
-      context.drawImage(this.webGLCanvas, 0, 0, this.iconSize, this.iconSize);
+      // // clear the 2D canvas no matter what
+      // context.clearRect(0, 0, canvas.width, canvas.height);
+      //
+      // // get the sprite
+      // const sprite = this.tileSprites[i];
+      // if (!sprite) {
+      //   continue;
+      // }
+      //
+      // // render the sprite into the scene and then immediately remove it
+      // if (sprite.mesh) {
+      //   this.scene.add(sprite.mesh);
+      //   this.renderer.render(this.scene, this.camera);
+      //   this.scene.remove(sprite.mesh);
+      // }
+      //
+      // // copy webgl canvas to inexpensive 2D canvas
+      // context.drawImage(this.webGLCanvas, 0, 0, this.iconSize, this.iconSize);
     }
   }
   _onDragStart(draggingFromSlot) {
@@ -219,7 +236,8 @@ class ItemGrid extends Component {
           onDropHover: _onDropHover,
           onDragFinish: _onDragFinish
         }}>
-          <canvas ref={el => tileData.canvas = el }/>
+          <canvas ref={el => tileData.canvas = el } style={{display: 'none'}}/>
+          <ItemRenderer item={item}/>
           <div className="itemname">{item.itemName}</div>
         </ItemTile>
       );

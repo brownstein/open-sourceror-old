@@ -20,9 +20,11 @@ import Engine from "src/engine";
 import requireRoom from "src/rooms/require-room";
 import { canOpenPauseMenu } from "src/redux/selectors/ui";
 import { openPauseMenu, closeModal } from "src/redux/actions/ui";
+import PreviewRenderer from "src/engine/preview-renderer";
 
 export const ControllerContext = createContext({
-  engine: null
+  engine: null,
+  previewRenderer: null
 });
 
 class _GameController extends Component {
@@ -55,6 +57,9 @@ class _GameController extends Component {
         this.pause();
       }
     });
+
+    // add preview renderer
+    this.previewRenderer = new PreviewRenderer();
   }
   componentDidMount() {
     // attach window focus events for automatic pausing
@@ -89,12 +94,15 @@ class _GameController extends Component {
     if (this.props.currentRoom) {
       this._swapRoom(this.props.currentRoom);
     }
+
+    this.previewRenderer.mount();
   }
   componentWillUnmount() {
     const { engine } = this;
     if (engine.currentRoom) {
       engine.currentRoom.cleanup(engine);
     }
+    this.previewRenderer.unmount();
   }
   componentDidUpdate(prevProps) {
     const { currentRoom: roomName, paused } = this.props;
@@ -131,7 +139,8 @@ class _GameController extends Component {
       engine: this.engine,
       running: !paused && !loading,
       loading: loading,
-      unPause: () => this.unPause()
+      unPause: () => this.unPause(),
+      previewRenderer: this.previewRenderer
     };
     return (
       <ControllerContext.Provider value={ctx}>
