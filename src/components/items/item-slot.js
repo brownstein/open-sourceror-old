@@ -21,6 +21,9 @@ function getSpriteForItem(item) {
   return ItemClass.getIcon();
 }
 
+/**
+ * Item renderer - renders one cell in an item grid
+ */
 export function ItemRenderer({
   item,
   width = 40,
@@ -82,4 +85,15 @@ export function ItemRenderer({
       }}
       />
   );
+}
+
+/**
+ * Once cell in an item grid
+ */
+export default function ItemSlot({
+  hotkey = null,
+  inventorySlot,
+
+}) {
+
 }

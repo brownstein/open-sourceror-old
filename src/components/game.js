@@ -1,4 +1,6 @@
+import { DndProvider } from "react-dnd";
 import { ipcRenderer } from "electron";
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from "react-redux";
 import { Vector2 } from "three";
 
@@ -55,13 +57,15 @@ export default function Game({ store }) {
       <GameController addThings={addThings} store={store}>
         <div className="game">
           <LoadingScreen>
-            <div className="game-viewport">
-              <EngineViewport/>
-            </div>
-            <div className="game-code-editor">
-              <CodeConsoleTabs/>
-            </div>
-            <ModalsDisplay/>
+            <DndProvider backend={HTML5Backend}>
+              <div className="game-viewport">
+                <EngineViewport/>
+              </div>
+              <div className="game-code-editor">
+                <CodeConsoleTabs/>
+              </div>
+              <ModalsDisplay/>
+            </DndProvider>
           </LoadingScreen>
         </div>
       </GameController>

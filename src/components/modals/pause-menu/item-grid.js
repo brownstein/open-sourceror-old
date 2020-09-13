@@ -4,8 +4,7 @@ import {
   useEffect,
   useRef
 } from "react";
-import { useDrag, useDrop, DndProvider } from "react-dnd";
-import { HTML5Backend } from 'react-dnd-html5-backend'
+import { useDrag, useDrop } from "react-dnd";
 import { connect } from "react-redux";
 import {
   Box3,
@@ -244,9 +243,7 @@ class ItemGrid extends Component {
     }
 
     return (
-      <DndProvider backend={HTML5Backend}>
-        <div className="item-grid" ref={el => this.ig = el}>{tiles}</div>
-      </DndProvider>
+      <div className="item-grid" ref={el => this.ig = el}>{tiles}</div>
     );
   }
 }
