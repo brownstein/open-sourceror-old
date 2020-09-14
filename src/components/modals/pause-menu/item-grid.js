@@ -35,148 +35,15 @@ class ItemGrid extends Component {
     super(props);
     const { inventory, inventorySize } = props;
 
-    this.mounted = false;
-    this.dpr = window.devicePixelRatio;
-    this.iconSize = 40;
-
-    this.webGLCanvas = null;
-
-    this.scene = null;
-    this.camera = null;
-    this.renderer = null;
-
-    this.tileCanvasesAndContexts = [];
-    this.tileSprites = [];
-
-    for (let i = 0; i < inventorySize; i++) {
-      this.tileCanvasesAndContexts[i] = {
-        canvas: null,
-        context: null
-      };
-      this.tileSprites[i] = null;
-    }
-
     this.state = {
       draggingFromSlot: null,
       draggingToSlot: null,
       dragInventory: null
     };
 
-    this._prepareFrame = this._prepareFrame.bind(this);
-    this._renderFrame = this._renderFrame.bind(this);
-
     this._onDragStart = this._onDragStart.bind(this);
     this._onDropHover = this._onDropHover.bind(this);
     this._onDragFinish = this._onDragFinish.bind(this);
-  }
-  componentDidMount() {
-
-    // initialize an offscreen canvas element
-    this.webGLCanvas = document.createElement("canvas");
-    this.webGLCanvas.width = this.webGLCanvas.height = this.iconSize;
-
-    // initialize three.js (including webgl context)
-    this.scene = new Scene();
-    this.renderer = new WebGLRenderer({
-      canvas: this.webGLCanvas,
-      alpha: true,
-      preserveDrawingBuffer: true
-    });
-    this.renderer.setClearAlpha(0);
-    this.renderer.setPixelRatio(this.dpr);
-    this.renderer.setSize(this.iconSize, this.iconSize);
-    this.camera = new OrthographicCamera(
-      -10, 10,
-      -10, 10,
-      -32, 32
-    );
-    this.camera.lookAt(new Vector3(0, 0, -1));
-
-    // initialize the onscreen canvases
-    for (let i = 0; i < this.tileCanvasesAndContexts.length; i++) {
-      const data = this.tileCanvasesAndContexts[i];
-      data.canvas.width = 40 * this.dpr;
-      data.canvas.height = 40 * this.dpr;
-      data.context = data.canvas.getContext("2d");
-      data.context.scale(this.dpr, this.dpr);
-    }
-
-    this.mounted = true;
-    this._prepareFrame();
-  }
-  componentDidUpdate() {
-    this._prepareFrame();
-  }
-  componentWillUnmount() {
-    this.mounted = false;
-    this.renderer.dispose();
-  }
-  _prepareFrame() {
-    if (!this.mounted) {
-      return;
-    }
-    const { inventory, inventorySize } = this.props;
-    const { dragInventory } = this.state;
-
-    const currentInventory = dragInventory || inventory;
-
-    const promises = [];
-    for (let i = 0; i < inventorySize; i++) {
-      const { itemName, id } = currentInventory[i] || {};
-      if (!itemName) {
-        this.tileSprites[i] = null;
-        continue;
-      }
-      const ItemClass = items[itemName];
-      if (!ItemClass) {
-        throw new Error("Missing item", itemName);
-      }
-      const itemSprite = ItemClass.getIcon();
-      this.tileSprites[i] = itemSprite;
-      promises.push(itemSprite.readyPromise);
-    }
-    Promise.all(promises).then(this._renderFrame);
-  }
-  _renderFrame() {
-    const { previewRenderer } = this.context;
-
-    if (!this.mounted) {
-      return;
-    }
-    for (let i = 0; i < this.tileSprites.length; i++) {
-      const tileData = this.tileCanvasesAndContexts[i];
-      const { canvas, context } = tileData;
-
-      context.clearRect(0, 0, canvas.width, canvas.height);
-
-      const sprite = this.tileSprites[i];
-      if (!sprite) {
-        continue;
-      }
-
-      if (sprite.mesh) {
-        previewRenderer.renderPreview(sprite.mesh, canvas, context, new Vector2(40, 40));
-      }
-
-      // // clear the 2D canvas no matter what
-      // context.clearRect(0, 0, canvas.width, canvas.height);
-      //
-      // // get the sprite
-      // const sprite = this.tileSprites[i];
-      // if (!sprite) {
-      //   continue;
-      // }
-      //
-      // // render the sprite into the scene and then immediately remove it
-      // if (sprite.mesh) {
-      //   this.scene.add(sprite.mesh);
-      //   this.renderer.render(this.scene, this.camera);
-      //   this.scene.remove(sprite.mesh);
-      // }
-      //
-      // // copy webgl canvas to inexpensive 2D canvas
-      // context.drawImage(this.webGLCanvas, 0, 0, this.iconSize, this.iconSize);
-    }
   }
   _onDragStart(draggingFromSlot) {
     this.setState({
@@ -219,7 +86,6 @@ class ItemGrid extends Component {
   render() {
     const { inventory, inventorySize } = this.props;
     const {
-      tileCanvasesAndContexts,
       _onDragStart,
       _onDropHover,
       _onDragFinish
@@ -228,14 +94,12 @@ class ItemGrid extends Component {
     const tiles = [];
     for (let i = 0; i < inventorySize; i++) {
       const item = inventory[i] || { itemName: null };
-      const tileData = tileCanvasesAndContexts[i];
       tiles.push(
         <ItemTile key={i} index={i} {...{
           onDragStart: _onDragStart,
           onDropHover: _onDropHover,
           onDragFinish: _onDragFinish
         }}>
-          <canvas ref={el => tileData.canvas = el } style={{display: 'none'}}/>
           <ItemRenderer item={item}/>
           <div className="itemname">{item.itemName}</div>
         </ItemTile>
