@@ -59,10 +59,18 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
       const newInventory = [...state.inventory];
       const a = newInventory[action.fromSlot];
       const b = newInventory[action.toSlot] || null;
-      newInventory[action.fromSlot] = b;
-      newInventory[action.toSlot] = a;
+      newInventory[action.fromSlot] = null;
+      newInventory.splice(action.toSlot, 0, a);
+      let shift = 0;
       for (let i = 0; i < newInventory.length; i++) {
         if (newInventory[i] === undefined) {
+          newInventory[i] = null;
+        }
+        if (newInventory[i] === null) {
+          shift++;
+        }
+        if (shift && newInventory[i]) {
+          newInventory[i - shift] = newInventory[i];
           newInventory[i] = null;
         }
       }

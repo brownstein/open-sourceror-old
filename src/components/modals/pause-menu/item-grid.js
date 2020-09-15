@@ -69,12 +69,14 @@ class ItemGrid extends Component {
       dragInventory
     });
   }
-  _onDragFinish(onTarget) {
+  _onDragFinish(onTarget, target) {
+    console.log(target, this.state);
+
     const { moveItem } = this.props;
     const { draggingFromSlot, draggingToSlot } = this.state;
 
-    if (onTarget && draggingFromSlot !== draggingToSlot) {
-      moveItem(draggingFromSlot, draggingToSlot);
+    if (onTarget && draggingFromSlot !== target.index) {
+      moveItem(draggingFromSlot, target.index);
     }
 
     this.setState({
@@ -120,27 +122,13 @@ function ItemTile ({
   onDragFinish
 }) {
   const ref = useRef(null);
-  const [,drop] = useDrop({
+  const [{ canDrop, isOver },drop] = useDrop({
     accept: "TILE",
-    hover: (item, monitor) => {
-      const dragIndex = item.index;
-      const hoverIndex = index;
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-      const hBBox = ref.current.getBoundingClientRect();
-      const hCenter = {
-        x: hBBox.left + hBBox.width / 2,
-        y: hBBox.top + hBBox.height / 2
-      };
-      const clientOffset = monitor.getClientOffset();
-      if (
-        Math.abs(clientOffset.x - hCenter.x) < 20 &&
-        Math.abs(clientOffset.y - hCenter.y) < 20
-      ) {
-        onDropHover(hoverIndex);
-      }
-    }
+    collect: (monitor) => ({
+      canDrop: monitor.canDrop(),
+      isOver: monitor.isOver()
+    }),
+    drop: item => ({ index })
   });
   const [{ isDragging }, drag] = useDrag({
     item: { index, id: index, type: "TILE" },
@@ -151,12 +139,14 @@ function ItemTile ({
       onDragStart(index);
     },
     end: (dropResult, monitor) => {
-      onDragFinish(monitor.didDrop());
+      onDragFinish(monitor.didDrop(), monitor.getDropResult());
     }
   });
 
   const style = {
-    opacity: isDragging ? 0.25 : 1
+    opacity: isDragging ? 0.25 : 1,
+    borderRadius: canDrop ? 4 : 0,
+    border: isOver ? '2px solid #4ff' : null
   };
 
   drag(drop(ref));
