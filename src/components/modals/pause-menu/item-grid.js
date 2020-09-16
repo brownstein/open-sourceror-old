@@ -23,9 +23,6 @@ import { ItemRenderer } from "src/components/items/item-slot";
 
 import { moveItemInInventory } from "src/redux/actions/inventory";
 
-import Scroll from "src/entities/items/scroll";
-import Medkit from "src/entities/items/medkit";
-
 import * as items from "src/entities/items";
 import "./item-grid.less";
 
@@ -34,56 +31,15 @@ class ItemGrid extends Component {
   constructor(props) {
     super(props);
     const { inventory, inventorySize } = props;
-
-    this.state = {
-      draggingFromSlot: null,
-      draggingToSlot: null,
-      dragInventory: null
-    };
-
-    this._onDragStart = this._onDragStart.bind(this);
-    this._onDropHover = this._onDropHover.bind(this);
     this._onDragFinish = this._onDragFinish.bind(this);
   }
-  _onDragStart(draggingFromSlot) {
-    this.setState({
-      draggingFromSlot: draggingFromSlot,
-      dragInventory: [...this.props.inventory]
-    });
-  }
-  _onDropHover(draggingToSlot) {
-    const { inventory } = this.props;
-    const { draggingFromSlot, draggingToSlot: current } = this.state;
-    if (current === draggingToSlot) {
-      return;
-    }
-
-    const dragInventory = [...inventory];
-    const a = dragInventory[draggingFromSlot] || null;
-    const b = dragInventory[draggingToSlot] || null;
-    dragInventory[draggingFromSlot] = b;
-    dragInventory[draggingToSlot] = a;
-
-    this.setState({
-      draggingToSlot,
-      dragInventory
-    });
-  }
-  _onDragFinish(onTarget, target) {
-    console.log(target, this.state);
-
+  _onDragFinish(onTarget, dropProps) {
     const { moveItem } = this.props;
-    const { draggingFromSlot, draggingToSlot } = this.state;
+    const { dragIndex, dropIndex } = dropProps;
 
-    if (onTarget && draggingFromSlot !== target.index) {
-      moveItem(draggingFromSlot, target.index);
+    if (onTarget && dragIndex !== dropIndex) {
+      moveItem(dragIndex, dropIndex);
     }
-
-    this.setState({
-      draggingFromSlot: null,
-      draggingToSlot: null,
-      dragInventory: null
-    });
   }
   render() {
     const { inventory, inventorySize } = this.props;
@@ -98,12 +54,9 @@ class ItemGrid extends Component {
       const item = inventory[i] || { itemName: null };
       tiles.push(
         <ItemTile key={i} index={i} {...{
-          onDragStart: _onDragStart,
-          onDropHover: _onDropHover,
           onDragFinish: _onDragFinish
         }}>
           <ItemRenderer item={item}/>
-          <div className="itemname">{item.itemName}</div>
         </ItemTile>
       );
     }
@@ -128,18 +81,18 @@ function ItemTile ({
       canDrop: monitor.canDrop(),
       isOver: monitor.isOver()
     }),
-    drop: item => ({ index })
+    drop: item => ({ dragIndex: item.index, dropIndex: index })
   });
   const [{ isDragging }, drag] = useDrag({
     item: { index, id: index, type: "TILE" },
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     }),
-    begin: (monitor) => {
-      onDragStart(index);
-    },
     end: (dropResult, monitor) => {
-      onDragFinish(monitor.didDrop(), monitor.getDropResult());
+      onDragFinish(
+        monitor.didDrop(),
+        monitor.getDropResult()
+      );
     }
   });
 
@@ -159,7 +112,7 @@ function ItemTile ({
 function mapStateToProps(state) {
   const { inventory } = state;
   return {
-    inventory: inventory.inventory.map((itemName, id) => ({ itemName, id })),
+    inventory: inventory.inventory,
     inventorySize: inventory.inventorySize
   };
 }

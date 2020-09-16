@@ -10,11 +10,13 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { ControllerContext } from "src/components/controller";
 
+import { moveItemInInventory } from "src/redux/actions/inventory";
+
 import * as itemEntities from "src/entities/items";
 
 function getSpriteForItem(item) {
   const { itemName } = item;
-  const ItemClass = itemEntities[itemName];
+  const ItemClass = itemEntities.getItemClass(item);
   if (!ItemClass) {
     throw new Error("missing item definition");
   }
@@ -68,22 +70,30 @@ export function ItemRenderer({
     }
 
     // queue up a render
-    itemSprite.readyPromise.then(() => {
+    if (itemSprite.ready) {
       previewRenderer.renderPreview(itemSprite.mesh, canvasEl, canvasCtx);
-    });
+    }
+    else {
+      itemSprite.readyPromise.then(() => {
+        previewRenderer.renderPreview(itemSprite.mesh, canvasEl, canvasCtx);
+      });
+    }
 
   }, [item, width, height]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={width}
-      height={height}
-      style={{
-        width,
-        height
-      }}
-      />
+    <>
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        style={{
+          width,
+          height
+        }}
+        />
+      <div className="itemname">{item.itemName}</div>
+    </>
   );
 }
 

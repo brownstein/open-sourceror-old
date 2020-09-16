@@ -1,3 +1,4 @@
+import shortId from "shortid";
 import {
   ADD_ITEM_TO_INVENTORY,
   REMOVE_ITEM_FROM_INVENTORY,
@@ -6,13 +7,12 @@ import {
 import { LOAD_GAME } from "../constants/save-state";
 
 const INITIAL_STATE = {
-  inventorySize: 10,
+  inventorySize: 16,
   inventory: [
-    "Scroll",
-    "Medkit",
-    "Scroll",
-    null,
-    "Medkit"
+    { id: shortId(), itemName: "Scroll" },
+    { id: shortId(), itemName: "Medkit" },
+    { id: shortId(), itemName: "Scroll" },
+    { id: shortId(), itemName: "Medkit" },
   ]
 };
 
@@ -27,7 +27,10 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
       const inventory = [...state.inventory];
       for (let i = 0; i < inventorySize; i++) {
         if (!inventory[i]) {
-          inventory[i] = itemName;
+          inventory[i] = {
+            id: shortId(),
+            itemName
+          };
           break;
         }
       }
@@ -69,6 +72,7 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
         if (newInventory[i] === null) {
           shift++;
         }
+        // slide items left
         if (shift && newInventory[i]) {
           newInventory[i - shift] = newInventory[i];
           newInventory[i] = null;

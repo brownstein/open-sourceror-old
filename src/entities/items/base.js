@@ -2,6 +2,7 @@ import {
   Body,
   Box
 } from "p2";
+import shortId from "shortid";
 import { castToVec2 } from "src/p2-utils/vec2-utils";
 import { addItemToInventory } from "src/redux/actions/inventory";
 import BaseEntity from "../base";
@@ -15,7 +16,9 @@ export default class BaseItem extends BaseEntity {
   }
   constructor(props) {
     super(props);
-    const { position, mass, size } = props;
+    const { position, mass, size, itemId } = props;
+
+    this.itemId = itemId || shortId();
 
     this.body = new Body({
       position: castToVec2(position),
