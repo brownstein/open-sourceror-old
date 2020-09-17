@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { ControllerContext } from "src/components/controller";
 import useKey from "src/components/hooks/use-key";
-import ItemGrid from "./item-grid";
+import ItemGrid from "src/components/items/item-grid";
 
 import "./pause-menu.less";
 
