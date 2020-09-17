@@ -1,22 +1,5 @@
-import {
-  Component,
-  useState,
-  useEffect,
-  useRef
-} from "react";
-import { useDrag, useDrop } from "react-dnd";
+import { Component } from "react";
 import { connect } from "react-redux";
-import {
-  Box3,
-  Box2,
-  Color,
-  WebGLRenderer,
-  Camera,
-  OrthographicCamera,
-  Scene,
-  Vector3,
-  Vector2
-} from "three";
 
 import { ControllerContext } from "src/components/controller";
 import ItemSlot from "src/components/items/item-slot";
