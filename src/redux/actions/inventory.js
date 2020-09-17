@@ -1,7 +1,8 @@
 import {
   ADD_ITEM_TO_INVENTORY,
   REMOVE_ITEM_FROM_INVENTORY,
-  MOVE_ITEM_IN_INVENTORY
+  MOVE_ITEM_IN_INVENTORY,
+  ASSIGN_HOTKEY_TO_ITEM,
 } from "../constants/inventory";
 
 export function addItemToInventory(itemName) {
@@ -30,5 +31,13 @@ export function moveItemInInventory({
     type: MOVE_ITEM_IN_INVENTORY,
     fromSlot,
     toSlot
+  };
+}
+
+export function assignHotkeyToItem(hotkey, currentInventorySlot) {
+  return {
+    type: ASSIGN_HOTKEY_TO_ITEM,
+    hotkey,
+    currentInventorySlot
   };
 }

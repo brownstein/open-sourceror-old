@@ -2,7 +2,8 @@ import shortId from "shortid";
 import {
   ADD_ITEM_TO_INVENTORY,
   REMOVE_ITEM_FROM_INVENTORY,
-  MOVE_ITEM_IN_INVENTORY
+  MOVE_ITEM_IN_INVENTORY,
+  ASSIGN_HOTKEY_TO_ITEM,
 } from "../constants/inventory";
 import { LOAD_GAME } from "../constants/save-state";
 
@@ -13,7 +14,8 @@ const INITIAL_STATE = {
     { id: shortId(), itemName: "Medkit" },
     { id: shortId(), itemName: "Scroll" },
     { id: shortId(), itemName: "Medkit" },
-  ]
+  ],
+  numericHotkeyMap: {}
 };
 
 /**
@@ -81,6 +83,17 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
       return {
         ...state,
         inventory: newInventory
+      };
+    }
+    case ASSIGN_HOTKEY_TO_ITEM: {
+      const item = state.inventory[action.currentInventorySlot];
+      const itemId = item ? item.id : null;
+      return {
+        ...state,
+        numericHotkeyMap: {
+          ...state.numericHotkeyMap,
+          [action.hotkey]: itemId
+        }
       };
     }
     default:
