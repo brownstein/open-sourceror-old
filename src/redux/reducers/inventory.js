@@ -44,20 +44,33 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
     case REMOVE_ITEM_FROM_INVENTORY: {
       const { itemName, itemSlot } = action;
       const inventory = [...state.inventory];
+      let removedItem = null;
       if (itemSlot) {
+        removedItem = inventory[itemSlot];
         inventory[itemSlot] = null;
       }
       else {
         for (let i = 0; i < inventorySize; i++) {
           if (inventory[i] === itemName) {
+            removedItem = inventory[i];
             inventory[i] = null;
             break;
           }
         }
       }
+      const updatedHotkeyMap = { ...state.numericHotkeyMap };
+      if (removedItem) {
+        Object.keys(updatedHotkeyMap).forEach(hotkey => {
+          const itemId = updatedHotkeyMap[hotkey];
+          if (itemId === removedItem.id) {
+            delete updatedHotkeyMap[hotkey];
+          }
+        });
+      }
       return {
         ...state,
-        inventory
+        inventory,
+        numericHotkeyMap: updatedHotkeyMap
       };
     }
     case MOVE_ITEM_IN_INVENTORY: {
