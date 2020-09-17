@@ -1,26 +1,32 @@
 import { Component } from "react";
 import { connect } from "react-redux";
 
-import { ControllerContext } from "src/components/controller";
 import ItemSlot from "src/components/items/item-slot";
+import {
+  moveItemInInventory,
+  assignHotkeyToItem
+} from "src/redux/actions/inventory";
 
-import { moveItemInInventory } from "src/redux/actions/inventory";
-
-import * as items from "src/entities/items";
 import "./item-grid.less";
 
 class ItemGrid extends Component {
-  static contextType = ControllerContext;
   constructor(props) {
     super(props);
     const { inventory, inventorySize } = props;
     this._onDragFinish = this._onDragFinish.bind(this);
   }
   _onDragFinish(dropProps) {
-    const { moveItem } = this.props;
+    const { moveItem, assignHotkey } = this.props;
     const { draggedFrom, draggedTo } = dropProps;
-    if (draggedFrom !== draggedTo) {
-      moveItem(draggedFrom, draggedTo);
+    const [,draggedFromIndex] = draggedFrom;
+    const [draggedToWhat, draggedToIndex] = draggedTo;
+    if (draggedToWhat === "inventory") {
+      if (draggedFromIndex !== draggedToIndex) {
+        moveItem(draggedFromIndex, draggedToIndex);
+      }
+    }
+    else if (draggedToWhat === "hotkeys") {
+      assignHotkey(draggedFromIndex, draggedToIndex);
     }
   }
   render() {
@@ -34,8 +40,7 @@ class ItemGrid extends Component {
         <ItemSlot
           key={i}
           item={item}
-          inventoryLocation={i}
-          displayHotkey={i}
+          inventoryLocation={["inventory", i]}
           onDropItem={_onDragFinish}
           />
       );
@@ -60,7 +65,11 @@ function mapDispatchToProps(dispatch) {
     moveItem: (fromSlot, toSlot) => dispatch(moveItemInInventory({
       fromSlot,
       toSlot
-    }))
+    })),
+    assignHotkey: (fromSlot, hotkey) => dispatch(assignHotkeyToItem(
+      hotkey,
+      fromSlot
+    ))
   };
 }
 

@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { ControllerContext } from "src/components/controller";
 import useKey from "src/components/hooks/use-key";
 import ItemGrid from "src/components/items/item-grid";
+import HotkeyRow from "src/components/items/hotkey-row";
 
 import "./pause-menu.less";
 
@@ -24,6 +25,7 @@ export default function PauseMenu () {
             <button onClick={unPause}>resume</button>
           </div>
           <ItemGrid/>
+          <HotkeyRow/>
         </div>
       </div>
     </div>

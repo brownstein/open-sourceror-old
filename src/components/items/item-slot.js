@@ -11,8 +11,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { ControllerContext } from "src/components/controller";
 
-import { moveItemInInventory } from "src/redux/actions/inventory";
-
 import * as itemEntities from "src/entities/items";
 
 import "./item-slot.less";
