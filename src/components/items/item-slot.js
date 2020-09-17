@@ -108,7 +108,7 @@ export const ItemBox = forwardRef(({
     className = [className, ...extraClasses].join(" ");
   }
   let hotkeyDisplay = null;
-  if (displayHotkey) {
+  if (displayHotkey !== null) {
     hotkeyDisplay = <div className="hotkey-display">{displayHotkey}</div>;
   }
   return (

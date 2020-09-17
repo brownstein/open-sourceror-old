@@ -13,6 +13,7 @@ import {
 import KeyState from "src/engine/key-state";
 import { ControllerContext } from "src/components/controller";
 import StatusOverlay from "./status-overlay";
+import HotkeyRow from "src/components/items/hotkey-row";
 import { TargetingReticle } from "src/entities/presentational/targeting";
 
 import "./viewport.less";
@@ -134,6 +135,7 @@ export class EngineViewport extends Component {
       >
       <canvas ref={r => this.canvasEl = r}/>
       <StatusOverlay/>
+      <div className="hotkeys"><HotkeyRow interactive={false}/></div>
       { entityOverlays }
     </div>;
   }

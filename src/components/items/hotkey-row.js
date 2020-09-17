@@ -17,13 +17,13 @@ function HotkeyRow({
           return (
             <ItemSlot
               key={index}
-              inventoryLocation={["hotkeys", index + 1]}
+              inventoryLocation={["hotkeys", (index + 1) % 10]}
               item={item}
-              displayHotkey={index + 1}
+              displayHotkey={(index + 1) % 10}
               onDropItem={({ draggedTo, draggedItem }) =>
                 dragItemToInventory(draggedTo[1], draggedItem)
               }
-              onDropOut={() => dragItemToInventory(index + 1, null)}
+              onDropOut={() => dragItemToInventory((index + 1 % 10), null)}
               />
           );
         }
@@ -32,7 +32,7 @@ function HotkeyRow({
             <ItemBox
               key={index}
               item={item}
-              displayHotkey={index + 1}
+              displayHotkey={(index + 1) % 10}
               />
           );
         }
@@ -44,8 +44,8 @@ function HotkeyRow({
 function mapStateToProps(state) {
   const { inventory } = state;
   const hotkeyItemArray = [];
-  for (let i = 0; i < 8; i++) {
-    const itemId = inventory.numericHotkeyMap[i + 1];
+  for (let i = 0; i < 10; i++) {
+    const itemId = inventory.numericHotkeyMap[(i + 1) % 10];
     let item = null;
     if (itemId) {
       item = inventory.inventory.find(item => item.id === itemId) || null;
