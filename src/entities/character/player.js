@@ -67,6 +67,7 @@ export class Player extends Character {
     this.readyPromise = this.loadSprites();
 
     this._onClick = this._onClick.bind(this);
+    this._onKeyboardEvent = this._onKeyboardEvent.bind(this);
     this._unsubscribeFromStore = null;
   }
   async loadSprites() {
@@ -210,6 +211,7 @@ export class Player extends Character {
   }
   attachToEngine(engine) {
     this.engine.on("mousedown", this._onClick);
+    this.engine.keyEventBus.on("keyboard-event", this._onKeyboardEvent);
 
     // pull current stats from the store
     this._syncStatus();
@@ -220,6 +222,7 @@ export class Player extends Character {
   }
   cleanup() {
     this.engine.off("mousedown", this._onClick);
+    this.engine.keyEventBus.off("keyboard-event", this._onKeyboardEvent);
     if (this._unsubscribeFromStore) {
       this._unsubscribeFromStore();
       this._unsubscribeFromStore = null;
@@ -245,7 +248,7 @@ export class Player extends Character {
     // );
     //
     // engine.addEntity(ice);
-    
+
     const push = new Push(
       this,
       pos2,
@@ -253,5 +256,15 @@ export class Player extends Character {
       100
     );
     engine.addEntity(push);
+  }
+  _onKeyboardEvent(event) {
+    const { key, down } = event;
+    const state = this.engine.store.getState();
+    const { inventory } = state;
+    if (down && inventory.numericHotkeyMap[key]) {
+      const itemId = inventory.numericHotkeyMap[key];
+      const item = inventory.inventory.find(item => item && item.id === itemId);
+      console.log('used ' + item.itemName);
+    }
   }
 }
