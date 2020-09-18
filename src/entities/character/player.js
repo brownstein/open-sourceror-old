@@ -264,6 +264,8 @@ export class Player extends Character {
     if (down && inventory.numericHotkeyMap[key]) {
       const itemId = inventory.numericHotkeyMap[key];
       const item = inventory.inventory.find(item => item && item.id === itemId);
+
+      // spell trigger here once that's in the inventory system
       console.log('used ' + item.itemName);
     }
   }
