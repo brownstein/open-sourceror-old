@@ -4,7 +4,11 @@ import {
   REMOVE_ITEM_FROM_INVENTORY,
   MOVE_ITEM_IN_INVENTORY,
   ASSIGN_HOTKEY_TO_ITEM,
+  USE_ITEM
 } from "../constants/inventory";
+import {
+  ADD_SCRIPT_TO_LIBRARY
+} from "../constants/scripts";
 import { LOAD_GAME } from "../constants/save-state";
 
 const INITIAL_STATE = {
@@ -108,6 +112,39 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
           [action.hotkey]: itemId
         }
       };
+    }
+    case ADD_SCRIPT_TO_LIBRARY: {
+      const scriptItem = {
+        id: action.id,
+        itemName: "Scroll",
+        itemData: {
+          color: "#aff",
+          isScript: true,
+          scriptContents: action.scriptContents
+        }
+      };
+      const newInventory = [...state.inventory, scriptItem];
+      return {
+        ...state,
+        inventory: newInventory
+      };
+    }
+    case USE_ITEM: {
+      return {
+        ...state,
+        inventory: state.inventory.map(item => {
+          if (!item) {
+            return item;
+          }
+          if (item.id === action.itemId) {
+            return {
+              ...item,
+              lastUsedAt: new Date().getTime()
+            };
+          }
+          return item;
+        })
+      }
     }
     default:
       return state;

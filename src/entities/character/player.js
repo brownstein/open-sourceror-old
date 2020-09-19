@@ -26,6 +26,9 @@ import {
   setPlayerMana,
   setPlayerHealth
 } from "src/redux/actions/status";
+import {
+  useItem
+} from "src/redux/actions/inventory";
 import { castToVec2, vec2ToVector3 } from "src/p2-utils/vec2-utils";
 
 import { Push } from "src/entities/spells/push";
@@ -264,9 +267,9 @@ export class Player extends Character {
     if (down && inventory.numericHotkeyMap[key]) {
       const itemId = inventory.numericHotkeyMap[key];
       const item = inventory.inventory.find(item => item && item.id === itemId);
-
-      // spell trigger here once that's in the inventory system
-      console.log('used ' + item.itemName);
+      if (item) {
+        this.engine.store.dispatch(useItem(item.id));
+      }
     }
   }
 }

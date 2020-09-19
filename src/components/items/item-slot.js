@@ -98,7 +98,24 @@ export const ItemBox = forwardRef(({
   displayHotkey = null,
   extraClasses = null
 }, ref) => {
+  const [justUsed, setJustUsed] = useState(false);
+
+  useEffect(() => {
+    if (!item || !item.lastUsedAt) {
+      return;
+    }
+    const lastUse = item.lastUsedAt;
+    const now = new Date().getTime();
+    if (now - lastUse < 250) {
+      setJustUsed(true);
+      setTimeout(() => setJustUsed(false), 250);
+    }
+  }, [item && item.lastUsedAt]);
+
   let className = "item-box";
+  if (justUsed) {
+    className = className + " just-used";
+  }
   if (extraClasses) {
     className = [className, ...extraClasses].join(" ");
   }

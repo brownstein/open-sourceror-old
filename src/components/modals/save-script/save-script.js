@@ -48,18 +48,7 @@ function SaveScriptModal({
             <input type="text" value={spellName} onChange={updateName}/>
           </label>
         </div>
-        <div className="filler">
-          <label>Existing Scripts</label>
-          <ul className="script-list">
-            {
-              scriptLibrary.map(s => (
-                <li key={s.id} onClick={() => selectScript(s)}>
-                  {s.scriptName}
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+        <div className="filler"></div>
       </div>
       <div><button onClick={saveScript}>save</button></div>
     </BaseModal>

@@ -3,6 +3,7 @@ import {
   REMOVE_ITEM_FROM_INVENTORY,
   MOVE_ITEM_IN_INVENTORY,
   ASSIGN_HOTKEY_TO_ITEM,
+  USE_ITEM,
 } from "../constants/inventory";
 
 export function addItemToInventory(itemName) {
@@ -39,5 +40,12 @@ export function assignHotkeyToItem(hotkey, currentInventorySlot) {
     type: ASSIGN_HOTKEY_TO_ITEM,
     hotkey,
     currentInventorySlot
+  };
+}
+
+export function useItem(itemId) {
+  return {
+    type: USE_ITEM,
+    itemId
   };
 }
