@@ -16,8 +16,10 @@ export class SimpleSprite {
    * @constructor
    * @param spriteImage - image URL of sprite sheet
    */
-  constructor(spriteImage) {
+  constructor(spriteImage, options = {}) {
     this.spriteImage = spriteImage;
+
+    this.color = options.color || "#ffffff";
 
     this.texture = null;
     this.textureWidth = 128;
@@ -67,7 +69,8 @@ export class SimpleSprite {
       map: this.texture,
       side: DoubleSide,
       transparent: true,
-      alphaTest: 0.1
+      alphaTest: 0.1,
+      color: this.color
     });
 
     this.mesh = new Mesh(this.geometry, this.material);

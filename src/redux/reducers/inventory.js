@@ -10,7 +10,7 @@ import { LOAD_GAME } from "../constants/save-state";
 const INITIAL_STATE = {
   inventorySize: 20,
   inventory: [
-    { id: shortId(), itemName: "Scroll" },
+    { id: shortId(), itemName: "Scroll", itemData: { color: "#ffa" } },
     { id: shortId(), itemName: "Medkit" },
     { id: shortId(), itemName: "Scroll" },
     { id: shortId(), itemName: "Medkit" },

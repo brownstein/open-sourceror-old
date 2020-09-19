@@ -16,12 +16,7 @@ import * as itemEntities from "src/entities/items";
 import "./item-slot.less";
 
 function getSpriteForItem(item) {
-  const { itemName } = item;
-  const ItemClass = itemEntities.getItemClass(item);
-  if (!ItemClass) {
-    throw new Error("missing item definition");
-  }
-  return ItemClass.getIcon();
+  return itemEntities.getItemIcon(item);
 }
 
 /**

@@ -1,13 +1,13 @@
 import Medkit from "./medkit";
 import Scroll from "./scroll";
 
-function getItemClass(item) {
+function getItemIcon(item) {
   const { itemName, id: itemId } = item;
   switch (itemName) {
     case "Medkit":
-      return Medkit;
+      return Medkit.getIcon(item.itemData);
     case "Scroll":
-      return Scroll;
+      return Scroll.getIcon(item.itemData);
     default:
       return null;
   }
@@ -16,5 +16,5 @@ function getItemClass(item) {
 export {
   Medkit,
   Scroll,
-  getItemClass
+  getItemIcon
 };

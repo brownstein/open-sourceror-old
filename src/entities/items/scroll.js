@@ -8,8 +8,8 @@ export default class Scroll extends BaseItem {
   static getInstance(props) {
     return new Scroll(props);
   }
-  static getIcon() {
-    return new SimpleSprite(scrollPNG);
+  static getIcon(itemData) {
+    return new SimpleSprite(scrollPNG, itemData);
   }
   constructor(props) {
     super({
