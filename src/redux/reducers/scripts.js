@@ -19,36 +19,6 @@ const DEFAULT_STATE = {
       scriptName: shortid(),
       scriptContents: 'console.log("Hello World");',
     },
-    {
-      id: shortid(),
-      scriptName: shortid(),
-      scriptContents: 'console.log("Hello World");',
-    },
-    {
-      id: shortid(),
-      scriptName: shortid(),
-      scriptContents: 'console.log("Hello World");',
-    },
-    {
-      id: shortid(),
-      scriptName: shortid(),
-      scriptContents: 'console.log("Hello World");',
-    },
-    {
-      id: shortid(),
-      scriptName: shortid(),
-      scriptContents: 'console.log("Hello World");',
-    },
-    {
-      id: shortid(),
-      scriptName: shortid(),
-      scriptContents: 'console.log("Hello World");',
-    },
-    {
-      id: shortid(),
-      scriptName: shortid(),
-      scriptContents: 'console.log("Hello World");',
-    }
   ],
   outputLines: [],
   maxOutputLines : 256
