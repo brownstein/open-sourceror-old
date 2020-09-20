@@ -24,7 +24,11 @@ import PreviewRenderer from "src/engine/preview-renderer";
 
 export const ControllerContext = createContext({
   engine: null,
-  previewRenderer: null
+  previewRenderer: null,
+  cursorPosition: {
+    x: 0,
+    y: 0
+  }
 });
 
 class _GameController extends Component {
@@ -46,10 +50,14 @@ class _GameController extends Component {
       loading: true
     };
 
+    // track cursor position so that the viewport can spawn with focus
+    this.lastCursorPosition = { x: 0, y: 0 };
+
     // bind event handlers
     this._updateLoop = this._updateLoop.bind(this);
     this._focusLost = this._focusLost.bind(this);
     this._focusGained = this._focusGained.bind(this);
+    this._onMouseMove = this._onMouseMove.bind(this);
 
     // add pausing functionality
     this.engine.keyEventBus.on("keyboard-event", e => {
@@ -91,6 +99,9 @@ class _GameController extends Component {
       });
     }
 
+    // track cursor
+    window.addEventListener("mousemove", this._onMouseMove);
+
     if (this.props.currentRoom) {
       this._swapRoom(this.props.currentRoom);
     }
@@ -103,6 +114,8 @@ class _GameController extends Component {
       engine.currentRoom.cleanup(engine);
     }
     this.previewRenderer.unmount();
+
+    window.removeEventListener("mousemove", this._onMouseMove);
   }
   componentDidUpdate(prevProps) {
     const { currentRoom: roomName, paused } = this.props;
@@ -140,7 +153,8 @@ class _GameController extends Component {
       running: !paused && !loading,
       loading: loading,
       unPause: () => this.unPause(),
-      previewRenderer: this.previewRenderer
+      previewRenderer: this.previewRenderer,
+      cursorPosition: this.lastCursorPosition
     };
     return (
       <ControllerContext.Provider value={ctx}>
@@ -185,6 +199,10 @@ class _GameController extends Component {
   unPause() {
     const { dispatch } = this.props;
     dispatch(closeModal());
+  }
+  _onMouseMove(e) {
+    this.lastCursorPosition.x = e.pageX;
+    this.lastCursorPosition.y = e.pageY;
   }
 };
 

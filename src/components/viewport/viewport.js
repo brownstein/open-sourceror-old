@@ -62,7 +62,7 @@ export class EngineViewport extends Component {
     this._onClick = this._onClick.bind(this);
   }
   componentDidMount() {
-    const { engine } = this.context;
+    const { engine, cursorPosition } = this.context;
     const { minCameraSize } = engine.cameras[0];
 
     this.ks.mount(document);
@@ -98,6 +98,24 @@ export class EngineViewport extends Component {
 
     // queue second resize to be sure (windows)
     requestAnimationFrame(this._onResize);
+
+    // handle current cursor position
+    const viewportBounds = this.viewportEl.getBoundingClientRect();
+    console.log(cursorPosition, viewportBounds);
+    if (
+      viewportBounds.top <= cursorPosition.y &&
+      viewportBounds.bottom >= cursorPosition.y &&
+      viewportBounds.left <= cursorPosition.x &&
+      viewportBounds.right >= cursorPosition.x
+    ) {
+      this.mouseOnScreen = true;
+      this.targetingReticle.setVisible(true);
+      engine.handleViewportFocus(true);
+      this._updateMouseScreenCoordinates({
+        clientX: cursorPosition.x,
+        clientY: cursorPosition.y
+      });
+    }
   }
   componentWillUnmount() {
     const { engine } = this.context;
