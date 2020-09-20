@@ -53,20 +53,32 @@ function createWindow () {
     slashes: true
   }));
 
+  // initialize the game on ready-to-show and refresh
+  function initializeGame() {
+    if (cmdArgs.room) {
+      mainWindow.send("set-room", {
+        room: cmdArgs.room
+      });
+    }
+    else if (cmdArgs.load) {
+      mainWindow.send("load-game", {});
+    }
+    else {
+      mainWindow.send("start-game");
+    }
+  }
+
   // show window once ready
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
     if (cmdArgs.dev) {
       mainWindow.webContents.openDevTools();
     }
-    if (cmdArgs.room) {
-      mainWindow.send("set-room", {
-        room: cmdArgs.room
-      });
-    }
-    if (cmdArgs.load) {
-      mainWindow.send("load-game", {});
-    }
+    initializeGame();
+  });
+
+  ipcMain.on("on-before-unload", () => {
+    setTimeout(initializeGame, 500);
   });
 
   // install developer tools

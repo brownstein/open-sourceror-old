@@ -22,7 +22,6 @@ var _engine = null, initialRoom = null;
 
 function addThings(engine) {
   _engine = engine;
-  _engine.store.dispatch(transitionToRoom(initialRoom || "tutorial-1"));
 }
 
 ipcRenderer.on("set-room", function(event, data) {
@@ -49,6 +48,14 @@ ipcRenderer.on("load-game", function() {
     _engine.store.dispatch(transitionToRoom(room));
   }
 });
+
+ipcRenderer.on("start-game", function() {
+  _engine.store.dispatch(transitionToRoom(initialRoom || "tutorial-1"));
+});
+
+window.onbeforeunload = function() {
+  ipcRenderer.send("on-before-unload");
+}
 
 // default component for the game
 export default function Game({ store }) {

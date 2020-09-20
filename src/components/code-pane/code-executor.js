@@ -22,53 +22,8 @@ import { openSaveScriptMenu } from "src/redux/actions/ui";
 
 import "./code-executor.less";
 
-// source script to run - this gets transpiled from ES6 to normal ES5, then
-// run inside of a JS-based JS interpreter so that it is totally sandboxed
-const _defaultSrcScript =
-`"use strict";
-const fire = require("fire");
-const push = require("push");
-const Sensor = require("sensor");
 
-var s = new Sensor(100);
-var active = true;
-
-// our main attack loop is going to start running immediately and execute every
-// 50 milliseconds
-function keepGoing() {
-  if (!active) {
-    return;
-  }
-  s.getNearbyThings().forEach(n => {
-    const relativeVelocity = {
-      x: n.relativePosition.x * 5,
-      y: n.relativePosition.y * 5
-    };
-    const relativePosition = {
-      x: n.relativePosition.x,
-      y: n.relativePosition.y + 16
-    };
-    fire(null, relativeVelocity);
-    // push(relativePosition, 10, 100);
-  });
-  setTimeout(keepGoing, 50);
-
-  // un-comment to enable variable sensor radius
-  // s.setRadius(30 + (new Date().getTime() % 1000) * 0.1);
-}
-keepGoing();
-
-// set a timeout to end execution
-setTimeout(() => {
-  active = false;
-}, 10000);
-`;
-
-const defaultSrcScript =
-`"use strict";
-
-console.log("hello world");
-`;
+const defaultSrcScript = "";
 
 class CodeExecutor extends Component {
   static contextType = ControllerContext;
@@ -121,13 +76,15 @@ class CodeExecutor extends Component {
   render() {
     const {
       running,
-      paused
+      paused,
+      activeScriptContents
     } = this.props;
     const {
       scriptContents,
       editorSize,
       executionSpeed
     } = this.state;
+    const isUnsaved = activeScriptContents !== scriptContents;
     const errors = [];
     const { width, height } = editorSize;
     return (
@@ -147,6 +104,7 @@ class CodeExecutor extends Component {
           <button onClick={this._step} disabled={!running || !paused}>step</button>
           <button onClick={this._resume} disabled={!running || !paused}>resume</button>
           <button className="hax" onClick={this._resetPlayerMana}>reset mana</button>
+          <span>{ isUnsaved ? "unsaved" : "saved" }</span>
         </div>
         <div className="editor-container" ref={r => this.editorContainerEl = r}>
           { errors }
