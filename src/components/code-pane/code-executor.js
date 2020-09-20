@@ -84,7 +84,10 @@ class CodeExecutor extends Component {
       editorSize,
       executionSpeed
     } = this.state;
-    const isUnsaved = activeScriptContents !== scriptContents;
+    const isUnsaved = (
+      (scriptContents || activeScriptContents) &&
+      activeScriptContents !== scriptContents
+    );
     const errors = [];
     const { width, height } = editorSize;
     return (
