@@ -11,16 +11,36 @@ import {
 } from "../constants/scripts";
 import { LOAD_GAME } from "../constants/save-state";
 
+import helloWorld from "raw-loader!src/in-game-scripts/hello-world.js";
+import demo from "raw-loader!src/in-game-scripts/demo.js";
+
 const INITIAL_STATE = {
   inventorySize: 20,
   inventory: [
-    { id: shortId(), itemName: "Scroll", itemData: { color: "#ffa" } },
+    {
+      id: shortId(),
+      itemName: "Scroll",
+      itemData: {
+        color: "#ffa",
+        scriptContents: demo
+      }
+    },
+    {
+      id: shortId(),
+      itemName: "Scroll",
+      itemData: {
+        color: "#acf",
+        scriptContents: helloWorld
+      }
+    },
     { id: shortId(), itemName: "Medkit" },
-    { id: shortId(), itemName: "Scroll" },
     { id: shortId(), itemName: "Medkit" },
   ],
   numericHotkeyMap: {}
 };
+
+INITIAL_STATE.numericHotkeyMap['1'] = INITIAL_STATE.inventory[0].id;
+INITIAL_STATE.numericHotkeyMap['2'] = INITIAL_STATE.inventory[1].id;
 
 /**
  * Reducer for the player's inventory system
