@@ -87,7 +87,7 @@ export class EngineViewport extends Component {
     window.addEventListener("resize", this._onResize);
 
     // add targeting reticle to the scene
-    engine.addEntity(this.targetingReticle);
+    // engine.addEntity(this.targetingReticle);
 
     // size canvas to the current size of it's container
     this._onResize();
@@ -104,7 +104,7 @@ export class EngineViewport extends Component {
     this.ks.unmount(document);
     window.removeEventListener("resize", this._onResize);
     engine.off("frame", this._onFrame);
-    engine.removeEntity(this.targetingReticle);
+    // engine.removeEntity(this.targetingReticle);
   }
   render() {
     const { hoveringDomEntities } = this.state;
@@ -294,7 +294,7 @@ export class EngineViewport extends Component {
     // update mouse coordinates in the scene
     this.mouseSceneCoordinates.copy(this.mouseScreenCoordinates);
     this.getScenePositionForScreenPosition(this.mouseSceneCoordinates, true);
-    this.targetingReticle.syncMeshWithViewport(this);
+    // this.targetingReticle.syncMeshWithViewport(this);
 
     // update entities that have to be resized with the camera
     const { engine } = this.context;
