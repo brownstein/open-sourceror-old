@@ -7,7 +7,8 @@ import {
   useRef
 } from "react";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
-import { HTML5Backend } from 'react-dnd-html5-backend'
+import { HTML5Backend } from "react-dnd-html5-backend";
+import Popover from "react-popover";
 
 import { ControllerContext } from "src/components/controller";
 
@@ -25,7 +26,8 @@ function getSpriteForItem(item) {
 export function ItemRenderer({
   item,
   width = 40,
-  height = 40
+  height = 40,
+  showItemName = true
 }) {
   // get a handle on the item preview renderer
   const { previewRenderer } = useContext(ControllerContext);
@@ -88,7 +90,7 @@ export function ItemRenderer({
           height
         }}
         />
-      <div className="item-name">{item && item.itemName}</div>
+      <div className="item-name">{showItemName && item && item.itemName}</div>
     </>
   );
 }
@@ -96,7 +98,8 @@ export function ItemRenderer({
 export const ItemBox = forwardRef(({
   item,
   displayHotkey = null,
-  extraClasses = null
+  extraClasses = null,
+  enablePopover = false
 }, ref) => {
   const [justUsed, setJustUsed] = useState(false);
 
@@ -123,11 +126,49 @@ export const ItemBox = forwardRef(({
   if (displayHotkey !== null) {
     hotkeyDisplay = <div className="hotkey-display">{displayHotkey}</div>;
   }
+
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  let popoverContent = null;
+  function onClick() {
+    if (!item || !enablePopover) {
+      return;
+    }
+    setPopoverOpen(!popoverOpen);
+  }
+  function onMouseOut() {
+    setPopoverOpen(false);
+  }
+  if (item && popoverOpen) {
+    popoverContent = (
+      <div className="item-details-popover">
+        <ItemRenderer item={item} width={90} height={90} showItemName={false}/>
+        <div>
+          <div>{item.itemName}</div>
+          { item.itemData && item.itemData.scriptName && (
+            <div>{item.itemData.scriptName}</div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={className} ref={ref}>
-      <ItemRenderer item={item} width={40} height={40}/>
-      { hotkeyDisplay }
-    </div>
+    <Popover
+      isOpen={popoverOpen}
+      preferPlace="right"
+      body={popoverContent}
+    >
+      <div
+        className={className}
+        ref={ref}
+        onClick={onClick}
+        onMouseOut={onMouseOut}
+        >
+        <ItemRenderer item={item} width={40} height={40}/>
+        { hotkeyDisplay }
+      </div>
+    </Popover>
   );
 });
 
@@ -192,6 +233,7 @@ export default function ItemSlot({
     <ItemBox
       item={item}
       displayHotkey={displayHotkey}
+      enablePopover={true}
       extraClasses={extraClasses}
       ref={ref}
       />

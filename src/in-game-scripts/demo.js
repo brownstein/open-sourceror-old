@@ -29,6 +29,8 @@ function keepGoing() {
   // un-comment to enable variable sensor radius
   // s.setRadius(30 + (new Date().getTime() % 1000) * 0.1);
 }
+
+// start the loop
 keepGoing();
 
 // set a timeout to end execution

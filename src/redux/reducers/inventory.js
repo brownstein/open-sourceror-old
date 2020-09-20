@@ -22,6 +22,7 @@ const INITIAL_STATE = {
       itemName: "Scroll",
       itemData: {
         color: "#ffa",
+        scriptName: "demo",
         scriptContents: demo
       }
     },
@@ -30,6 +31,7 @@ const INITIAL_STATE = {
       itemName: "Scroll",
       itemData: {
         color: "#acf",
+        scriptName: "hello world",
         scriptContents: helloWorld
       }
     },

@@ -545,6 +545,8 @@
    <property name="depthBias" type="int" value="1"/>
   </properties>
  </tile>
+ <tile id="393" type="decal"/>
+ <tile id="394" type="decal"/>
  <tile id="395" type="decal"/>
  <tile id="396" type="decal">
   <properties>
