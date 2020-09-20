@@ -129,7 +129,7 @@ export const ItemBox = forwardRef(({
 
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  let popoverContent = null;
+  let popoverContent = <div/>;
   function onClick() {
     if (!item || !enablePopover) {
       return;
