@@ -269,6 +269,13 @@ export class Player extends Character {
       const item = inventory.inventory.find(item => item && item.id === itemId);
       if (item) {
         this.engine.store.dispatch(useItem(item.id));
+        if (item.itemName === "Scroll" && item.itemData.scriptContents) {
+          this.engine.scriptExecutionContext.runScript(
+            item.itemData.scriptContents,
+            this,
+            1.0
+          );
+        }
       }
     }
   }

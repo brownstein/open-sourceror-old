@@ -6,6 +6,10 @@ import {
   USE_ITEM,
 } from "../constants/inventory";
 
+import {
+  runScript
+} from "./scripts";
+
 export function addItemToInventory(itemName) {
   return {
     type: ADD_ITEM_TO_INVENTORY,
