@@ -21,14 +21,14 @@ const SCRIPT_ERRORED_OUT = "SCRIPT_ERRORED_OUT";
 export class RunningScript {
   constructor({
     engine,
-    scriptName,
+    scriptId,
     scriptRunner,
     runningEntity,
     executionSpeed
   }) {
     this.engine = engine;
     this.id = shortid(),
-    this.scriptName = scriptName;
+    this.scriptId = scriptId;
     this.scriptContents = scriptRunner.sourceScript;
     this.scriptRunner = scriptRunner;
     this.runningEntity = runningEntity; // unused?
@@ -43,12 +43,12 @@ export class RunningScript {
     this.runtimeError = null;
   }
   static withTranspileError({
-    scriptName,
+    scriptId,
     scriptRunner,
     transpileError
   }) {
     const rs = new RunningScript({
-      scriptName,
+      scriptId,
       scriptRunner
     });
     rs.running = false;
@@ -165,7 +165,7 @@ export class ScriptExecutionContext {
     this._flushInactiveScripts();
 
     const engine = this.engine;
-    const scriptName = `scr-${shortid()}`;
+    const scriptId = shortid();
 
     // create the runner
     const scriptRunner = new ScriptRunner(
@@ -176,7 +176,7 @@ export class ScriptExecutionContext {
 
     // create the execution state manager
     const exState = new RunningScript({
-      scriptName,
+      scriptId,
       scriptRunner,
       runningEntity,
       executionSpeed
@@ -218,36 +218,36 @@ export class ScriptExecutionContext {
     engine.dispatch(updateScriptStates(this, exState.id));
     return exState;
   }
-  pauseScript(scriptName) {
+  pauseScript(scriptId) {
     const engine = this.engine;
-    const paused = this.runningScripts.find(s => s.scriptName === scriptName);
+    const paused = this.runningScripts.find(s => s.scriptId === scriptId);
     if (!paused) {
       return;
     }
     paused.paused = true;
     engine.dispatch(updateScriptStates(this));
   }
-  resumeScript(scriptName) {
+  resumeScript(scriptId) {
     const engine = this.engine;
-    const paused = this.runningScripts.find(s => s.scriptName === scriptName);
+    const paused = this.runningScripts.find(s => s.scriptId === scriptId);
     if (!paused) {
       return;
     }
     paused.paused = false;
     engine.dispatch(updateScriptStates(this));
   }
-  stepScript(scriptName) {
+  stepScript(scriptId) {
     const engine = this.engine;
-    const paused = this.runningScripts.find(s => s.scriptName === scriptName);
+    const paused = this.runningScripts.find(s => s.scriptId === scriptId);
     if (!paused || !paused.paused) {
       return;
     }
     paused._continueRunning(0, true);
     engine.dispatch(updateScriptStates(this));
   }
-  stopScript(scriptName) {
+  stopScript(scriptId) {
     const engine = this.engine;
-    const stopped = this.runningScripts.find(s => s.scriptName === scriptName);
+    const stopped = this.runningScripts.find(s => s.scriptId === scriptId);
     stopped.running = false;
     stopped.scriptRunner.cleanup();
     this.runningScripts = this.runningScripts.filter(s => s => stopped);
