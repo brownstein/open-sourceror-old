@@ -18,7 +18,7 @@ import AceEditor from "react-ace";
 // pull in engine context
 import { ControllerContext } from "src/components/controller";
 
-import { openSaveScriptMenu } from "src/redux/actions/ui";
+import { openSaveScriptMenu, openLoadScriptMenu } from "src/redux/actions/ui";
 
 import "./code-executor.less";
 
@@ -50,6 +50,7 @@ class CodeExecutor extends Component {
     this._onChange = this._onChange.bind(this);
     this._setExecutionSpeed = this._setExecutionSpeed.bind(this);
     this._save = this._save.bind(this);
+    this._load = this._load.bind(this);
     this._run = this._run.bind(this);
     this._pause = this._pause.bind(this);
     this._step = this._step.bind(this);
@@ -94,6 +95,7 @@ class CodeExecutor extends Component {
       <div className="code-executor">
         <div className="toolbar">
           <button onClick={this._save}>save</button>
+          <button onClick={this._load}>load</button>
           <button onClick={this._run} disabled={running}>run</button>
           <button onClick={this._stop} disabled={!running}>stop</button>
           <span>Speed:</span>
@@ -251,6 +253,10 @@ class CodeExecutor extends Component {
     const { dispatch } = this.props;
     const { scriptContents } = this.state;
     dispatch(openSaveScriptMenu(scriptContents));
+  }
+  _load() {
+    const { dispatch } = this.props;
+    dispatch(openLoadScriptMenu());
   }
 
   // hax

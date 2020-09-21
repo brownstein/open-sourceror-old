@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { connect } from "react-redux";
 
-import { closeModal } from "src/redux/actions/ui"
+import { closeModal } from "src/redux/actions/ui";
 import { addScriptToLibrary } from "src/redux/actions/scripts";
 
 import BaseModal from "../base";
-import "src/less/forms.less";
 
+import "src/less/forms.less";
 import "./save-script.less";
 
 function SaveScriptModal({

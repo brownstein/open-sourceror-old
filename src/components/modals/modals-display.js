@@ -7,10 +7,12 @@ import {
 } from "src/redux/constants/ui";
 import pauseMenu from "./pause-menu/pause-menu";
 import saveScript from "./save-script/save-script";
+import loadScript from "./load-script/load-script";
 
 const MODALS = {
   [PAUSE]: pauseMenu,
-  [SAVE_SCRIPT]: saveScript
+  [SAVE_SCRIPT]: saveScript,
+  [LOAD_SCRIPT]: loadScript
 };
 
 function ModalsDisplay({

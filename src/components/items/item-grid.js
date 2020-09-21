@@ -30,18 +30,33 @@ class ItemGrid extends Component {
     }
   }
   render() {
-    const { inventory, inventorySize } = this.props;
+    const {
+      inventory,
+      inventorySize,
+      enableItemTypes = null,
+      onClickItem = null,
+    } = this.props;
     const { _onDragFinish } = this;
 
     const tiles = [];
     for (let i = 0; i < inventorySize; i++) {
       const item = inventory[i] || null;
+      let itemEnabled = true;
+      let onClick = null;
+      if (enableItemTypes) {
+        itemEnabled = item && enableItemTypes.includes(item.itemName);
+      }
+      if (onClickItem && itemEnabled) {
+        onClick = () => onClickItem(item);
+      }
       tiles.push(
         <ItemSlot
           key={i}
           item={item}
+          disabled={!itemEnabled}
           inventoryLocation={["inventory", i]}
           onDropItem={_onDragFinish}
+          onClick={onClick}
           />
       );
     }

@@ -34,4 +34,8 @@ export const openSaveScriptMenu = (scriptContents) => openModal(
   { scriptContents }
 );
 
+export const openLoadScriptMenu = () => openModal(
+  LOAD_SCRIPT
+);
+
 export const openManageScriptsMenu = () => openModal(MANAGE_SCRIPTS);

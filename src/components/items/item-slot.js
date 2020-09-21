@@ -98,8 +98,10 @@ export function ItemRenderer({
 export const ItemBox = forwardRef(({
   item,
   displayHotkey = null,
+  disabled = false,
   extraClasses = null,
-  enablePopover = false
+  enablePopover = false,
+  onClick = null
 }, ref) => {
   const [justUsed, setJustUsed] = useState(false);
 
@@ -130,8 +132,8 @@ export const ItemBox = forwardRef(({
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   let popoverContent = <div/>;
-  function onClick() {
-    if (!item || !enablePopover) {
+  function _onClick() {
+    if (!item || !enablePopover || disabled) {
       return;
     }
     setPopoverOpen(!popoverOpen);
@@ -162,7 +164,7 @@ export const ItemBox = forwardRef(({
       <div
         className={className}
         ref={ref}
-        onClick={onClick}
+        onClick={onClick || _onClick}
         onMouseOut={onMouseOut}
         >
         <ItemRenderer item={item} width={40} height={40}/>
@@ -179,10 +181,12 @@ export default function ItemSlot({
   inventoryLocation,
   item,
   displayHotkey = null,
+  disabled = false,
   itemType = "ITEM",
   acceptType = "ITEM",
   onDropItem,
-  onDropOut
+  onDropOut,
+  onClick = null
 }) {
   const ref = useRef(null);
   const [{ canDrop, isOver },drop] = useDrop({
@@ -216,7 +220,9 @@ export default function ItemSlot({
     }
   });
 
-  drag(drop(ref));
+  if (!disabled) {
+    drag(drop(ref));
+  }
 
   const extraClasses = ["interactive"];
   if (isDragging) {
@@ -228,13 +234,18 @@ export default function ItemSlot({
   if (isOver) {
     extraClasses.push("is-over");
   }
+  if (disabled) {
+    extraClasses.push("disabled");
+  }
 
   return (
     <ItemBox
       item={item}
       displayHotkey={displayHotkey}
+      disabled={disabled}
       enablePopover={true}
       extraClasses={extraClasses}
+      onClick={onClick}
       ref={ref}
       />
   );
