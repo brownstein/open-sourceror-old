@@ -230,24 +230,24 @@ class CodeExecutor extends Component {
     engine.scriptExecutionContext.runScript(scriptContents, player, exSpeed);
   }
   _pause() {
-    const { activeScriptName } = this.props;
+    const { activeScriptId } = this.props;
     const { engine } = this.context;
-    engine.scriptExecutionContext.pauseScript(activeScriptName);
+    engine.scriptExecutionContext.pauseScript(activeScriptId);
   }
   _step() {
-    const { activeScriptName } = this.props;
+    const { activeScriptId } = this.props;
     const { engine } = this.context;
-    engine.scriptExecutionContext.stepScript(activeScriptName);
+    engine.scriptExecutionContext.stepScript(activeScriptId);
   }
   _resume() {
-    const { activeScriptName } = this.props;
+    const { activeScriptId } = this.props;
     const { engine } = this.context;
-    engine.scriptExecutionContext.resumeScript(activeScriptName);
+    engine.scriptExecutionContext.resumeScript(activeScriptId);
   }
   _stop() {
-    const { activeScriptName } = this.props;
+    const { activeScriptId } = this.props;
     const { engine } = this.context;
-    engine.scriptExecutionContext.stopScript(activeScriptName);
+    engine.scriptExecutionContext.stopScript(activeScriptId);
   }
   _save() {
     const { dispatch } = this.props;
@@ -274,7 +274,7 @@ function mapStateToProps(state) {
   const { scripts } = state;
   const { focusedScriptId, activeScripts } = scripts;
 
-  let activeScriptName = null;
+  let activeScriptId = null;
   let activeScriptContents = null;
   let running = false;
   let paused = false;
@@ -287,7 +287,7 @@ function mapStateToProps(state) {
   if (focusedScriptId) {
     const activeScript = activeScripts[focusedScriptId];
     if (activeScript) {
-      activeScriptName = activeScript.scriptName;
+      activeScriptId = activeScript.scriptId;
       activeScriptContents = activeScript.scriptContents;
       running = activeScript.running;
       paused = activeScript.paused;
@@ -300,7 +300,7 @@ function mapStateToProps(state) {
   }
 
   return {
-    activeScriptName,
+    activeScriptId,
     activeScriptContents,
     running,
     paused,
