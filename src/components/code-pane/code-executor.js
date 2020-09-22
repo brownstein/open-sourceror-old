@@ -30,6 +30,7 @@ class CodeExecutor extends Component {
   constructor() {
     super();
     this.state = {
+      currentlyLoadedScript: null,
       scriptContents: defaultSrcScript,
       editorSize: { width: 400, height : 400 },
       executionSpeed: 1
@@ -138,11 +139,13 @@ class CodeExecutor extends Component {
     this.editor = editor;
   }
   static getDerivedStateFromProps(props, state) {
-    if (!state.scriptContents && props.loadedScript) {
+    if (state.currentlyLoadedScript !== props.loadedScript) {
       return {
+        currentlyLoadedScript: props.loadedScript,
         scriptContents: props.loadedScript.scriptContents
       };
     }
+    return null;
   }
   componentDidUpdate(prevProps) {
     const props = this.props;
