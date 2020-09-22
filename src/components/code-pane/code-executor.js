@@ -137,6 +137,13 @@ class CodeExecutor extends Component {
   _loadEditor(editor) {
     this.editor = editor;
   }
+  static getDerivedStateFromProps(props, state) {
+    if (!state.scriptContents && props.loadedScript) {
+      return {
+        scriptContents: props.loadedScript.scriptContents
+      };
+    }
+  }
   componentDidUpdate(prevProps) {
     const props = this.props;
     const editor = this.editor;
@@ -272,7 +279,7 @@ class CodeExecutor extends Component {
  */
 function mapStateToProps(state) {
   const { scripts } = state;
-  const { focusedScriptId, activeScripts } = scripts;
+  const { focusedScriptId, activeScripts, loadedScript } = scripts;
 
   let activeScriptId = null;
   let activeScriptContents = null;
@@ -300,6 +307,7 @@ function mapStateToProps(state) {
   }
 
   return {
+    loadedScript,
     activeScriptId,
     activeScriptContents,
     running,

@@ -22,6 +22,7 @@ const INITIAL_STATE = {
       itemName: "Scroll",
       itemData: {
         color: "#ffa",
+        scriptId: shortId(),
         scriptName: "demo",
         scriptContents: demo
       }
@@ -31,6 +32,7 @@ const INITIAL_STATE = {
       itemName: "Scroll",
       itemData: {
         color: "#acf",
+        scriptId: shortId(),
         scriptName: "hello world",
         scriptContents: helloWorld
       }
@@ -142,6 +144,7 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
         itemData: {
           color: "#aff",
           isScript: true,
+          scriptId: action.id,
           scriptContents: action.scriptContents
         }
       };

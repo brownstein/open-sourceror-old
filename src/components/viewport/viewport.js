@@ -101,7 +101,6 @@ export class EngineViewport extends Component {
 
     // handle current cursor position
     const viewportBounds = this.viewportEl.getBoundingClientRect();
-    console.log(cursorPosition, viewportBounds);
     if (
       viewportBounds.top <= cursorPosition.y &&
       viewportBounds.bottom >= cursorPosition.y &&

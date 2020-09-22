@@ -2,6 +2,7 @@ import { useState } from "react";
 import { connect } from "react-redux";
 
 import { closeModal } from "src/redux/actions/ui";
+import { loadScriptFromItem } from "src/redux/actions/scripts";
 import useKey from "src/components/hooks/use-key";
 import ItemGrid from "src/components/items/item-grid";
 import BaseModal from "../base";
@@ -28,7 +29,7 @@ function mapDispatchToProps(dispatch) {
   return {
     onSelectItem: item => {
       dispatch(closeModal());
-      console.log(item.itemData.scriptName);
+      dispatch(loadScriptFromItem(item));
     }
   };
 }

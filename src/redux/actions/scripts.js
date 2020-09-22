@@ -11,7 +11,8 @@ import {
   ADD_SCRIPT_TO_LIBRARY,
   REMOVE_SCRIPT_FROM_LIBRARY,
 
-  SAVE_SCRIPT
+  SAVE_SCRIPT,
+  LOAD_SCRIPT
 } from "../constants/scripts";
 
 /////////////////////////////
@@ -90,10 +91,16 @@ export const saveScript = (scriptContents) => {
 
     dispatch({
       type: SAVE_SCRIPT
-
     });
   };
 };
+
+export const loadScriptFromItem = (item) => ({
+  type: LOAD_SCRIPT,
+  scriptId: item.itemData.scriptId,
+  scriptName: item.itemData.scriptName,
+  scriptContents: item.itemData.scriptContents
+});
 
 export const addScriptToLibrary = ({
   scriptName,
@@ -104,6 +111,8 @@ export const addScriptToLibrary = ({
   scriptName,
   scriptContents
 });
+
+// unused
 
 export const removeScriptFromLibrary = (
   scriptId

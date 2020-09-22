@@ -5,14 +5,20 @@ import {
   UPDATE_SCRIPT_STATES,
   LOG_TO_CONSOLE,
 
+  LOAD_SCRIPT,
+
   ADD_SCRIPT_TO_LIBRARY,
-  REMOVE_SCRIPT_FROM_LIBRARY
+  REMOVE_SCRIPT_FROM_LIBRARY,
 } from "../constants/scripts";
 
 // default global state
 const DEFAULT_STATE = {
   focusedScriptId: null,
   activeScripts: {},
+
+  loadedScript: null,
+
+  // unused
   scriptLibrary: [
     {
       id: shortid(),
@@ -20,6 +26,8 @@ const DEFAULT_STATE = {
       scriptContents: 'console.log("Hello World");',
     },
   ],
+
+
   outputLines: [],
   maxOutputLines : 256
 };
@@ -85,6 +93,17 @@ export default function scriptsReducer(state = DEFAULT_STATE, action) {
       return {
         ...state,
         scriptLibrary: state.scriptLibrary.filter(s => s.id !== scriptId)
+      };
+    }
+    case LOAD_SCRIPT: {
+      const { scriptId, scriptName, scriptContents } = action;
+      return {
+        ...state,
+        loadedScript: {
+          scriptId,
+          scriptName,
+          scriptContents
+        }
       };
     }
     default:
