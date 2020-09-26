@@ -13,6 +13,7 @@ import { LOAD_GAME } from "../constants/save-state";
 
 import helloWorld from "raw-loader!src/in-game-scripts/hello-world.js";
 import demo from "raw-loader!src/in-game-scripts/demo.js";
+import laserDemo from "raw-loader!src/in-game-scripts/laser-demo.js";
 
 const INITIAL_STATE = {
   inventorySize: 20,
@@ -35,6 +36,16 @@ const INITIAL_STATE = {
         scriptId: shortId(),
         scriptName: "hello world",
         scriptContents: helloWorld
+      }
+    },
+    {
+      id: shortId(),
+      itemName: "Scroll",
+      itemData: {
+        color: "#f00",
+        scriptId: shortId(),
+        scriptName: "laser demo",
+        scriptContents: laserDemo
       }
     },
     { id: shortId(), itemName: "Medkit" },

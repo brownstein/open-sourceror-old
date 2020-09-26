@@ -189,6 +189,9 @@ export default class Engine extends EventEmitter {
       entity.children.forEach(child => this.removeEntity(child));
     }
   }
+  getEntityByBodyId(bodyId) {
+    return this.activeEntitiesByBodyId[bodyId] || null;
+  }
   expandSceneToFitEntity(entity) {
     if (entity.mesh) {
       this.levelBBox.expandByObject(entity.mesh);

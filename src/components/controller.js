@@ -179,7 +179,7 @@ class _GameController extends Component {
 
     // timekeeping
     const currentFrameTime = new Date().getTime();
-    const deltaTimeMs = currentFrameTime - this.lastFrameTime;
+    const deltaTimeMs = Math.min(currentFrameTime - this.lastFrameTime, 1000);
     this.lastFrameTime = currentFrameTime;
 
     // run the engine

@@ -33,6 +33,7 @@ import { castToVec2, vec2ToVector3 } from "src/p2-utils/vec2-utils";
 
 import { Push } from "src/entities/spells/push";
 import { IceCrystal } from "src/entities/spells/ice";
+import { Laser } from "src/entities/spells/laser";
 
 const CHARACTER_COLOR_SCHEME = {
   shoes: "#555555",
@@ -252,13 +253,24 @@ export class Player extends Character {
     //
     // engine.addEntity(ice);
 
-    const push = new Push(
-      this,
-      pos2,
-      50,
-      100
-    );
-    engine.addEntity(push);
+    // const push = new Push(
+    //   this,
+    //   pos2,
+    //   50,
+    //   100
+    // );
+    // engine.addEntity(push);
+
+    const vector = pos2;
+    vec2.sub(vector, vector, this.body.position);
+    vec2.normalize(vector, vector);
+    const laser = new Laser({
+      fromEntity: this,
+      position: this.body.position,
+      vector
+    });
+
+    engine.addEntity(laser);
   }
   _onKeyboardEvent(event) {
     const { key, down } = event;
