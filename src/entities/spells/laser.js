@@ -121,16 +121,40 @@ export class Laser {
       world.raycast(result, ray);
 
       if (closestApplicableEntity) {
-        this.segments.push([startPoint, closestApplicablePoint]);
-        hit = true;
-      }
-      else {
-        this.segments.push([vec2.clone(startPoint), vec2.clone(endPoint)]);
+        endPoint = closestApplicablePoint;
+        vec2.sub(endPoint, endPoint, tangent);
+        this.segments.push([
+          vec2.clone(startPoint),
+          vec2.clone(closestApplicablePoint)
+        ]);
+        dist += closestApplicableDist || 1;
+        const closestNormal = closestApplicableNormal;
+        const closestTangent = vec2.create();
+        closestTangent[0] = -closestNormal[1];
+        closestTangent[1] = closestNormal[0];
+        const relativeNormalDist = vec2.dot(closestNormal, tangent);
+        const relativeTangentDist = vec2.dot(closestTangent, tangent);
+        tangent[0] = -closestNormal[0] * relativeNormalDist +
+          closestTangent[0] * relativeTangentDist;
+        tangent[1] = -closestNormal[1] * relativeNormalDist +
+          closestTangent[1] * relativeTangentDist;
+        vec2.normalize(tangent, tangent);
         vec2.copy(startPoint, endPoint);
         vec2.copy(endPoint, tangent);
         vec2.scale(endPoint, endPoint, this.maxSegDistance);
         vec2.add(endPoint, startPoint, endPoint);
+        // hit = true;
+      }
+      else {
+        this.segments.push([
+          vec2.clone(startPoint),
+          vec2.clone(endPoint)
+        ]);
         dist += this.maxSegDistance;
+        vec2.copy(startPoint, endPoint);
+        vec2.copy(endPoint, tangent);
+        vec2.scale(endPoint, endPoint, this.maxSegDistance);
+        vec2.add(endPoint, startPoint, endPoint);
       }
     }
   }
