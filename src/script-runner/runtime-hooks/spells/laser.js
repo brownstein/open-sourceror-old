@@ -50,6 +50,8 @@ export default function getNativeLaser (interpreter, scope, runner) {
         vector
       });
       engine.addEntity(laser);
+
+      // TODO: on, off, charging, targeting
     }
   );
 
