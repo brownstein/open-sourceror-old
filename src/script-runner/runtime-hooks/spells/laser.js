@@ -51,6 +51,7 @@ export default function getNativeLaser (interpreter, scope, runner) {
         position: fromPosition,
         vector
       });
+      laser.lifeSpan = Infinity;
       engine.addEntity(laser);
 
       // make sure to de-spawn laser when script finishes
@@ -58,6 +59,19 @@ export default function getNativeLaser (interpreter, scope, runner) {
         runner.engine.removeEntity(laser);
       };
       runner.cleanupEffects.push(this.cleanupEffect);
+
+      this.off = function() {
+        laser.on = false;
+        return interpreter.nativeToPseudo(undefined);
+      };
+      this.on = function() {
+        laser.on = true;
+        return interpreter.nativeToPseudo(undefined);
+      };
+      interpreter.setProperty(this, "off",
+        interpreter.createNativeFunction(this.off));
+      interpreter.setProperty(this, "on",
+        interpreter.createNativeFunction(this.on));
 
       // TODO: on, off, charging, targeting
 

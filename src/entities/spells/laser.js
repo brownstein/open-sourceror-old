@@ -50,6 +50,7 @@ export class Laser {
     );
     this.mesh.position.z = 20;
 
+    this.on = true;
     this.mesh.visible = false;
 
     this.lifeSpan = 1000;
@@ -194,7 +195,7 @@ export class Laser {
     this.startPosition.add(this.relativePosition);
     this._doCast();
     this._computeGeometry();
-    this.mesh.visible = true;
+    this.mesh.visible = this.on;
     this.lifeSpan -= timeDelta;
     if (this.lifeSpan <= 0) {
       this.engine.removeEntity(this);

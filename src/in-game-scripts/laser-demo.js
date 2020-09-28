@@ -14,8 +14,8 @@ const l = new Laser({
   }
 });
 
-// fire the laser
-l.fire();
-
 // turn laser off after 5 seconds
-setTimeout(() => l.off(), 5000);
+setTimeout(() => l.off(), 1000);
+setTimeout(() => l.on(), 1500);
+setTimeout(() => l.off(), 2000);
+setTimeout(() => {}, 5000);

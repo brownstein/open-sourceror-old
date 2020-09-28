@@ -29,7 +29,7 @@ export default function patchInterpreter(Interpreter) {
     })
     this.setProperty(scope, 'arguments', argsList);
     var last = func.node.body.body[func.node.body.body.length - 1];
-    if(last.type == 'ReturnStatement') {
+    if(last && (last.type == 'ReturnStatement')) {
       last.type = 'ExpressionStatement';
       last.expression = last.argument;
       delete last.argument;
