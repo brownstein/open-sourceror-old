@@ -53,8 +53,8 @@ export default function getNativeLaser (interpreter, scope, runner) {
       });
       engine.addEntity(laser);
 
+      // make sure to de-spawn laser when script finishes
       this.cleanupEffect = () => {
-        // console.log("cleaning up sensor");
         runner.engine.removeEntity(laser);
       };
       runner.cleanupEffects.push(this.cleanupEffect);
