@@ -7,7 +7,7 @@ export default function getNativeLaser (interpreter, scope, runner) {
   const MANA_COST = 5;
 
   const nativeLaser = interpreter.createNativeFunction(
-    (rawRelativePosition, rawRelativeTargetPosition) => {
+    (rawOptions) => {
 
       const {
         engine,
@@ -19,17 +19,25 @@ export default function getNativeLaser (interpreter, scope, runner) {
       }
       callingEntity.incrementMana(-MANA_COST);
 
-      let relativePosition = null;
-      let relativeTargetPosition = null;
-      if (rawRelativePosition) {
-        relativePosition = castToVec2(
-          interpreter.pseudoToNative(rawRelativePosition)
-        );
+      let options = {};
+      if (rawOptions) {
+        options = interpreter.pseudoToNative(rawOptions);
       }
-      if (rawRelativeTargetPosition) {
-        relativeTargetPosition = castToVec2(
-          interpreter.pseudoToNative(rawRelativeTargetPosition)
-        );
+
+      let relativePosition = null;
+      let vector = null;
+      if (options.relativePosition) {
+        relativePosition = castToVec2(options.relativePosition);
+      }
+      if (options.direction) {
+        vector = castToVec2(options.direction);
+      }
+      else {
+        const targetingPosition = engine.controllingEntity.targetCoordinates;
+        vector = vec2.create();
+        vec2.copy(vector, castToVec2(targetingPosition));
+        vec2.sub(vector, vector, fromPosition);
+        vec2.normalize(vector, vector);
       }
 
       const casterPosition = engine.controllingEntity.body.position;
@@ -37,12 +45,6 @@ export default function getNativeLaser (interpreter, scope, runner) {
       if (relativePosition) {
         vec2.add(fromPosition, fromPosition, relativePosition);
       }
-
-      const targetingPosition = engine.controllingEntity.targetCoordinates;
-      const vector = vec2.create();
-      vec2.copy(vector, castToVec2(targetingPosition));
-      vec2.sub(vector, vector, fromPosition);
-      vec2.normalize(vector, vector);
 
       const laser = new Laser({
         fromEntity: callingEntity,
@@ -52,6 +54,8 @@ export default function getNativeLaser (interpreter, scope, runner) {
       engine.addEntity(laser);
 
       // TODO: on, off, charging, targeting
+
+      return interpreter.nativeToPseudo(undefined);
     }
   );
 
