@@ -3,10 +3,21 @@ import { castToVec2 } from "p2-utils/vec2-utils";
 import { Laser } from "src/entities/spells/laser";
 
 export default function getNativeLaser (interpreter, scope, runner) {
-  const { engine } = runner;
+
+  const MANA_COST = 5;
 
   const nativeLaser = interpreter.createNativeFunction(
     (rawRelativePosition, rawRelativeTargetPosition) => {
+
+      const {
+        engine,
+        callingEntity
+      } = runner;
+
+      if (callingEntity.getMana() < MANA_COST) {
+        throw new OutOfManaError();
+      }
+      callingEntity.incrementMana(-MANA_COST);
 
       let relativePosition = null;
       let relativeTargetPosition = null;
@@ -29,15 +40,16 @@ export default function getNativeLaser (interpreter, scope, runner) {
 
       const targetingPosition = engine.controllingEntity.targetCoordinates;
       const vector = vec2.create();
-      if (rawRelativeVelocity) {
-        vec2.sub(vector, fromPosition, relativeTargetPosition);
-      }
-      else {
-        vec2.sub(vector, fromPosition, targetingPosition);
-      }
+      vec2.copy(vector, castToVec2(targetingPosition));
+      vec2.sub(vector, vector, fromPosition);
+      vec2.normalize(vector, vector);
 
-      // const laser = new Laser(relativePosition, vector);
-      // engine.addEntity(laser);
+      const laser = new Laser({
+        fromEntity: callingEntity,
+        position: fromPosition,
+        vector
+      });
+      engine.addEntity(laser);
     }
   );
 
