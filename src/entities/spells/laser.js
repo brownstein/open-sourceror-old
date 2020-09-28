@@ -43,6 +43,7 @@ export class Laser {
       this.geometry,
       this.material
     );
+    this.mesh.position.z = 20;
 
     this.mesh.visible = false;
 
@@ -87,7 +88,7 @@ export class Laser {
           const hitBody = result.body;
           const hitNormal = result.normal;
           result.getHitPoint(hitPoint, ray);
-          const hitDist = result.getHitDistance(ray);
+          const hitDist = vec2.distance(startPoint, hitPoint);
 
           if (hitDist >= closestApplicableDist) {
             return;

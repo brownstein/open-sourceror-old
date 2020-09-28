@@ -28,7 +28,7 @@ export default function getNativeLaser (interpreter, scope, runner) {
       }
 
       const targetingPosition = engine.controllingEntity.targetCoordinates;
-      const vector = vec2.init();
+      const vector = vec2.create();
       if (rawRelativeVelocity) {
         vec2.sub(vector, fromPosition, relativeTargetPosition);
       }
@@ -36,8 +36,10 @@ export default function getNativeLaser (interpreter, scope, runner) {
         vec2.sub(vector, fromPosition, targetingPosition);
       }
 
-      const laser = new Laser(relativePosition, vector);
-      engine.addEntity(laser);
+      // const laser = new Laser(relativePosition, vector);
+      // engine.addEntity(laser);
     }
   );
+
+  return nativeLaser;
 }

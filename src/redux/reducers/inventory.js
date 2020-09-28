@@ -56,6 +56,7 @@ const INITIAL_STATE = {
 
 INITIAL_STATE.numericHotkeyMap['1'] = INITIAL_STATE.inventory[0].id;
 INITIAL_STATE.numericHotkeyMap['2'] = INITIAL_STATE.inventory[1].id;
+INITIAL_STATE.numericHotkeyMap['3'] = INITIAL_STATE.inventory[2].id;
 
 /**
  * Reducer for the player's inventory system

@@ -179,7 +179,7 @@ class _GameController extends Component {
 
     // timekeeping
     const currentFrameTime = new Date().getTime();
-    const deltaTimeMs = Math.min(currentFrameTime - this.lastFrameTime, 1000);
+    const deltaTimeMs = currentFrameTime - this.lastFrameTime;
     this.lastFrameTime = currentFrameTime;
 
     // run the engine
@@ -199,6 +199,7 @@ class _GameController extends Component {
   unPause() {
     const { dispatch } = this.props;
     dispatch(closeModal());
+    this.lastFrameTime = new Date().getTime();
   }
   _onMouseMove(e) {
     this.lastCursorPosition.x = e.pageX;
