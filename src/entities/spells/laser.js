@@ -26,6 +26,11 @@ export class Laser {
     this.startTangent = vec2ToVector3(props.vector);
     this.startTangent.normalize();
 
+    this.relativePosition = new Vector3();
+    this.relativePosition.add(this.startPosition);
+    const entityPosition = vec2ToVector3(props.fromEntity.body.position);
+    this.relativePosition.sub(entityPosition);
+
     this.maxBounces = 100;
     this.maxDistance = 1000;
     this.maxSegDistance = 16;
@@ -47,7 +52,7 @@ export class Laser {
 
     this.mesh.visible = false;
 
-    this.lifeSpan = 200;
+    this.lifeSpan = 1000;
   }
   attachToEngine(engine) {
 
@@ -106,7 +111,7 @@ export class Laser {
         }
       });
 
-      // sad that we have to do this
+      // sad that we have to do this - and even when we do, raycast has bugs
       if (startPoint[0] >= endPoint[0]) {
         vec2.copy(ray.from, startPoint);
         vec2.copy(ray.to, endPoint);
@@ -167,6 +172,7 @@ export class Laser {
     this.segments.forEach(([startPoint, endPoint]) => {
       const start = vec2ToVector3(startPoint);
       const end = vec2ToVector3(endPoint);
+
       const tangent = end.clone().sub(start).normalize();
       const normal = new Vector3(-tangent.y, tangent.x, 0);
 
@@ -181,8 +187,11 @@ export class Laser {
     });
 
     this.geometry.verticesNeedUpdate = true;
+    this.geometry.elementsNeedUpdate = true;
   }
   onFrame(timeDelta) {
+    this.startPosition = vec2ToVector3(this.fromEntity.body.interpolatedPosition);
+    this.startPosition.add(this.relativePosition);
     this._doCast();
     this._computeGeometry();
     this.mesh.visible = true;
