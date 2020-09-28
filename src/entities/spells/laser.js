@@ -50,7 +50,7 @@ export class Laser {
     );
     this.mesh.position.z = 20;
 
-    this.on = true;
+    this.on = props.on !== undefined ? props.on : true;
     this.mesh.visible = false;
 
     this.lifeSpan = 1000;
