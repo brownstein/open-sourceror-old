@@ -7,7 +7,7 @@ export default function getNativeLaser (interpreter, scope, runner) {
   const MANA_COST = 5;
 
   const nativeLaser = interpreter.createNativeFunction(
-    (rawOptions) => {
+    function (rawOptions) {
 
       const {
         engine,
@@ -53,10 +53,17 @@ export default function getNativeLaser (interpreter, scope, runner) {
       });
       engine.addEntity(laser);
 
+      this.cleanupEffect = () => {
+        // console.log("cleaning up sensor");
+        runner.engine.removeEntity(laser);
+      };
+      runner.cleanupEffects.push(this.cleanupEffect);
+
       // TODO: on, off, charging, targeting
 
       return interpreter.nativeToPseudo(undefined);
-    }
+    },
+    true
   );
 
   return nativeLaser;
