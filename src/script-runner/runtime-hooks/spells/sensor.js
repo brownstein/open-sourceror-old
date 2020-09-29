@@ -22,7 +22,7 @@ export default function getNativeSensor(interpreter, scope, runner) {
       this.cleanupEffect = () => {
         // console.log("cleaning up sensor");
         runner.engine.removeEntity(this.sensor);
-      }
+      };
       runner.cleanupEffects.push(this.cleanupEffect);
       this.sensor = new Sensor(runner.callingEntity, radius || 50);
       this.sensor.attachUpdateHandler(

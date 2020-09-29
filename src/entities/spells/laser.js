@@ -17,6 +17,38 @@ import {
   castToVec2,
   vec2ToVector3
 } from "src/p2-utils/vec2-utils";
+//
+// Ray.prototype.intersectShape = function(result, shape, angle, position, body){
+//     var from = this.from;
+//
+//     // Checking radius
+//     var distance = distanceFromIntersectionSquared(from, this.direction, position);
+//     if (distance > shape.boundingRadius * shape.boundingRadius) {
+//         // return;
+//     }
+//
+//     this._currentBody = body;
+//     this._currentShape = shape;
+//
+//     console.log("ISHAPE", shape);
+//     shape.raycast(result, this, position, angle);
+//
+//     this._currentBody = this._currentShape = null;
+// };
+// var v0 = vec2.create(),
+//     intersect = vec2.create();
+// function distanceFromIntersectionSquared(from, direction, position) {
+//
+//     // v0 is vector from from to position
+//     vec2.sub(v0, position, from);
+//     var dot = vec2.dot(v0, direction);
+//
+//     // intersect = direction * dot + from
+//     vec2.scale(intersect, direction, dot);
+//     vec2.add(intersect, intersect, from);
+//
+//     return vec2.squaredDistance(position, intersect);
+// }
 
 export class Laser {
   constructor(props) {
@@ -33,7 +65,7 @@ export class Laser {
 
     this.maxBounces = 100;
     this.maxDistance = 1000;
-    this.maxSegDistance = 16;
+    this.maxSegDistance = 100;
     this.segments = [];
 
     this.geometry = new Geometry();
@@ -53,7 +85,7 @@ export class Laser {
     this.on = props.on !== undefined ? props.on : true;
     this.mesh.visible = false;
 
-    this.lifeSpan = 1000;
+    this.lifeSpan = 100;
   }
   attachToEngine(engine) {
 
@@ -113,14 +145,9 @@ export class Laser {
       });
 
       // sad that we have to do this - and even when we do, raycast has bugs
-      if (startPoint[0] >= endPoint[0]) {
-        vec2.copy(ray.from, startPoint);
-        vec2.copy(ray.to, endPoint);
-      }
-      else {
-        vec2.copy(ray.to, startPoint);
-        vec2.copy(ray.from, endPoint);
-      }
+      vec2.copy(ray.from, startPoint);
+      vec2.copy(ray.to, endPoint);
+      ray.update();
 
       const result = new RaycastResult();
       result.reset();
@@ -135,6 +162,7 @@ export class Laser {
           vec2.clone(closestApplicablePoint)
         ]);
         dist += closestApplicableDist || 1;
+        bounces++;
         const closestNormal = closestApplicableNormal;
         const closestTangent = vec2.create();
         closestTangent[0] = -closestNormal[1];
