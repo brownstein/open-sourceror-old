@@ -5,12 +5,12 @@ const Laser = require("laser");
 const l = new Laser({
   intensity: 1,
   relativePosition: {
-    x: 32,
+    x: 16,
     y: 0
   },
   direction: {
     x: 1,
-    y: -1
+    y: 0
   }
 });
 

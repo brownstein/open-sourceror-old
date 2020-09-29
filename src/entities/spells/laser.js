@@ -13,10 +13,12 @@ import {
   Vector2,
   Vector3
 } from "three";
+
 import {
   castToVec2,
   vec2ToVector3
 } from "src/p2-utils/vec2-utils";
+import { EphemeralEntity } from "src/entities/base";
 
 
 export class Laser {
@@ -102,10 +104,13 @@ export class Laser {
           }
 
           const hitEntity = this.engine.getEntityByBodyId(hitBody.id);
-          if (hitEntity === this.fromEntity) {
+          if (
+            hitEntity === this.fromEntity ||
+            hitEntity instanceof EphemeralEntity
+          ) {
             return;
           }
-
+          
           closestApplicableDist = hitDist;
           closestApplicableEntity = hitEntity;
           vec2.copy(closestApplicablePoint, hitPoint);
@@ -131,23 +136,28 @@ export class Laser {
           vec2.clone(closestApplicablePoint)
         ]);
         dist += closestApplicableDist || 1;
-        bounces++;
-        const closestNormal = closestApplicableNormal;
-        const closestTangent = vec2.create();
-        closestTangent[0] = -closestNormal[1];
-        closestTangent[1] = closestNormal[0];
-        const relativeNormalDist = vec2.dot(closestNormal, tangent);
-        const relativeTangentDist = vec2.dot(closestTangent, tangent);
-        tangent[0] = -closestNormal[0] * relativeNormalDist +
-          closestTangent[0] * relativeTangentDist;
-        tangent[1] = -closestNormal[1] * relativeNormalDist +
-          closestTangent[1] * relativeTangentDist;
-        vec2.normalize(tangent, tangent);
-        vec2.copy(startPoint, endPoint);
-        vec2.copy(endPoint, tangent);
-        vec2.scale(endPoint, endPoint, this.maxSegDistance);
-        vec2.add(endPoint, startPoint, endPoint);
-        // hit = true;
+
+        hit = true;
+
+        // TODO: implement mirrors to actually use this
+        if (!hit) {
+          bounces++;
+          const closestNormal = closestApplicableNormal;
+          const closestTangent = vec2.create();
+          closestTangent[0] = -closestNormal[1];
+          closestTangent[1] = closestNormal[0];
+          const relativeNormalDist = vec2.dot(closestNormal, tangent);
+          const relativeTangentDist = vec2.dot(closestTangent, tangent);
+          tangent[0] = -closestNormal[0] * relativeNormalDist +
+            closestTangent[0] * relativeTangentDist;
+          tangent[1] = -closestNormal[1] * relativeNormalDist +
+            closestTangent[1] * relativeTangentDist;
+          vec2.normalize(tangent, tangent);
+          vec2.copy(startPoint, endPoint);
+          vec2.copy(endPoint, tangent);
+          vec2.scale(endPoint, endPoint, this.maxSegDistance);
+          vec2.add(endPoint, startPoint, endPoint);
+        }
       }
       else {
         this.segments.push([

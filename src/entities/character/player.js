@@ -246,31 +246,20 @@ export class Player extends Character {
     const { position } = event;
     const pos2 = castToVec2(position);
 
-    // const ice = IceCrystal.createIceCrystal(
-    //   engine,
-    //   castToVec2(position)
-    // );
-    //
-    // engine.addEntity(ice);
+    const ice = IceCrystal.createIceCrystal(
+      engine,
+      castToVec2(position)
+    );
 
-    // const push = new Push(
-    //   this,
-    //   pos2,
-    //   50,
-    //   100
-    // );
-    // engine.addEntity(push);
+    engine.addEntity(ice);
 
-    const vector = pos2;
-    vec2.sub(vector, vector, this.body.position);
-    vec2.normalize(vector, vector);
-    const laser = new Laser({
-      fromEntity: this,
-      position: this.body.position,
-      vector
-    });
-
-    engine.addEntity(laser);
+    const push = new Push(
+      this,
+      pos2,
+      50,
+      100
+    );
+    engine.addEntity(push);
   }
   _onKeyboardEvent(event) {
     const { key, down } = event;
