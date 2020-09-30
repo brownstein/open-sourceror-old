@@ -63,6 +63,8 @@ export class IceCrystal extends BaseEntity {
     const expansions = params.expansions || 0;
     const inTerrain = params.inTerrain;
 
+    this.isIce = true;
+
     this.rawConvexes = convexes;
     this.inTerrain = inTerrain;
     this.expanded = 0;
@@ -88,7 +90,11 @@ export class IceCrystal extends BaseEntity {
     if (otherEntity instanceof EphemeralEntity) {
       return;
     }
-    if (otherEntity.isTerrain && !this.inTerrain) {
+    if ((
+        otherEntity.isTerrain ||
+        (otherEntity.isIce && otherEntity.inTerrain)
+      ) && !this.inTerrain
+    ) {
       engine.removeEntity(this);
       const frozenEntity = new IceCrystal({
         position: this.body.position,
