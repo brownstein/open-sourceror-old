@@ -110,7 +110,7 @@ export class Laser {
           ) {
             return;
           }
-          
+
           closestApplicableDist = hitDist;
           closestApplicableEntity = hitEntity;
           vec2.copy(closestApplicablePoint, hitPoint);
@@ -137,7 +137,7 @@ export class Laser {
         ]);
         dist += closestApplicableDist || 1;
 
-        hit = true;
+        hit = !closestApplicableEntity.reflects;
 
         // TODO: implement mirrors to actually use this
         if (!hit) {
