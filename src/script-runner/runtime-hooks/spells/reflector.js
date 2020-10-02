@@ -71,12 +71,27 @@ export default function getNativeReflector(interpreter, scope, runner) {
       interpreter.setProperty(this, "move",
         interpreter.createNativeFunction(this.move));
 
+      this.moveTo = function(nativePos) {
+        const pos = castToVec2(interpreter.pseudoToNative(nativePos));
+        reflector.relativePosition.x = pos[0];
+        reflector.relativePosition.y = pos[1];
+      }
+      interpreter.setProperty(this, "moveTo",
+        interpreter.createNativeFunction(this.moveTo));
+
       this.rotate = function(nativeDelta) {
         const delta = interpreter.pseudoToNative(nativeDelta);
         reflector.body.angle += delta;
       }
       interpreter.setProperty(this, "rotate",
         interpreter.createNativeFunction(this.rotate));
+
+      this.rotateTo = function(nativeDirection) {
+        const direction = interpreter.pseudoToNative(nativeDirection);
+        reflector.body.direction = direction;
+      }
+      interpreter.setProperty(this, "rotateTo",
+        interpreter.createNativeFunction(this.rotateTo));
 
       return interpreter.nativeToPseudo(undefined);
     },
