@@ -63,6 +63,14 @@ export default function getNativeReflector(interpreter, scope, runner) {
       };
       runner.cleanupEffects.push(this.cleanupEffect);
 
+      this.move = function(nativeVect) {
+        const vect = castToVec2(interpreter.pseudoToNative(nativeVect));
+        reflector.relativePosition.x += vect[0];
+        reflector.relativePosition.y += vect[1];
+      };
+      interpreter.setProperty(this, "move",
+        interpreter.createNativeFunction(this.move));
+
       return interpreter.nativeToPseudo(undefined);
     },
     true

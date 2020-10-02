@@ -29,4 +29,21 @@ const r2 = new Reflector({
 setTimeout(() => l.off(), 1000);
 setTimeout(() => l.on(), 1500);
 setTimeout(() => l.off(), 2000);
-setTimeout(() => {}, 3000);
+
+let done = false;
+let t = 0;
+function moveReflectors() {
+  if (done) {
+    return;
+  }
+  setTimeout(moveReflectors, 5);
+  r.move([0, Math.sin(t / 10) / 2]);
+  r2.move([0, -Math.sin(t / 10) / 2]);
+  t++;
+}
+
+moveReflectors();
+
+setTimeout(() => {
+  done = true;
+}, 3000);
