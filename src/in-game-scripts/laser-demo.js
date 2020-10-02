@@ -5,14 +5,14 @@ const l = new Laser({
   intensity: 1,
   relativePosition: {
     x: 16,
-    y: 0
+    y: -30
   },
   direction: Math.PI * -0.1
 });
 
 const r = new Reflector({
   relativePosition: {
-    x: 100,
+    x: 60,
     y: -26
   },
   direction: Math.PI * 0.75
@@ -20,7 +20,7 @@ const r = new Reflector({
 
 const r2 = new Reflector({
   relativePosition: {
-    x: 110,
+    x: 70,
     y: -80
   }
 });
@@ -38,6 +38,7 @@ function moveReflectors() {
     return;
   }
   setTimeout(moveReflectors, 5);
+  l.aim(Math.sin(t / 5) * 0.2);
   r.move([0, Math.sin(t / 10) / 2]);
   r2.rotate(0.01);
   t++;

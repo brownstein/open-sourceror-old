@@ -1,5 +1,5 @@
 import { vec2 } from "p2";
-import { castToVec2 } from "p2-utils/vec2-utils";
+import { castToVec2, vec2ToVector3 } from "p2-utils/vec2-utils";
 import {
   castDirectionToVec2,
   getOptionsFromObjectWithDefaults
@@ -71,14 +71,24 @@ export default function getNativeLaser (interpreter, scope, runner) {
         laser.on = false;
         return interpreter.nativeToPseudo(undefined);
       };
+      interpreter.setProperty(this, "off",
+        interpreter.createNativeFunction(this.off));
+
       this.on = function() {
         laser.on = true;
         return interpreter.nativeToPseudo(undefined);
       };
-      interpreter.setProperty(this, "off",
-        interpreter.createNativeFunction(this.off));
       interpreter.setProperty(this, "on",
         interpreter.createNativeFunction(this.on));
+
+      this.aim = function(nativeDirection) {
+        const direction = castDirectionToVec2(
+          interpreter.pseudoToNative(nativeDirection));
+        laser.startTangent.copy(vec2ToVector3(direction));
+        return interpreter.nativeToPseudo(undefined);
+      };
+      interpreter.setProperty(this, "aim",
+        interpreter.createNativeFunction(this.aim));
 
       // TODO: on, off, charging, targeting
 
