@@ -90,6 +90,14 @@ export default function getNativeLaser (interpreter, scope, runner) {
       interpreter.setProperty(this, "aim",
         interpreter.createNativeFunction(this.aim));
 
+      this.move = function(nativeDelta) {
+        const delta = castToVec2(interpreter.pseudoToNative(nativeDelta));
+        laser.relativePosition.add(vec2ToVector3(delta));
+        return interpreter.nativeToPseudo(undefined);
+      };
+      interpreter.setProperty(this, "move",
+        interpreter.createNativeFunction(this.move));
+
       // TODO: on, off, charging, targeting
 
       return interpreter.nativeToPseudo(undefined);

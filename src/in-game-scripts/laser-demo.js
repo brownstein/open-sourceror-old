@@ -39,6 +39,7 @@ function moveReflectors() {
   }
   setTimeout(moveReflectors, 5);
   l.aim(Math.sin(t / 5) * 0.2);
+  l.move([0, Math.sin(t / 10) / 3]);
   r.move([0, Math.sin(t / 10) / 2]);
   r2.rotate(0.01);
   t++;
