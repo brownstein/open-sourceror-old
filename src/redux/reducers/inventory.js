@@ -14,6 +14,7 @@ import { LOAD_GAME } from "../constants/save-state";
 import helloWorld from "raw-loader!src/in-game-scripts/hello-world.js";
 import demo from "raw-loader!src/in-game-scripts/demo.js";
 import laserDemo from "raw-loader!src/in-game-scripts/laser-demo.js";
+import iceDemo from "raw-loader!src/in-game-scripts/ice-demo.js";
 
 const INITIAL_STATE = {
   inventorySize: 20,
@@ -48,6 +49,16 @@ const INITIAL_STATE = {
         scriptContents: laserDemo
       }
     },
+    {
+      id: shortId(),
+      itemName: "Scroll",
+      itemData: {
+        color: "#0af",
+        scriptId: shortId(),
+        scriptName: "ice demo",
+        scriptContents: iceDemo
+      }
+    },
     { id: shortId(), itemName: "Medkit" },
     { id: shortId(), itemName: "Medkit" },
   ],
@@ -57,6 +68,7 @@ const INITIAL_STATE = {
 INITIAL_STATE.numericHotkeyMap['1'] = INITIAL_STATE.inventory[0].id;
 INITIAL_STATE.numericHotkeyMap['2'] = INITIAL_STATE.inventory[1].id;
 INITIAL_STATE.numericHotkeyMap['3'] = INITIAL_STATE.inventory[2].id;
+INITIAL_STATE.numericHotkeyMap['4'] = INITIAL_STATE.inventory[3].id;
 
 /**
  * Reducer for the player's inventory system
