@@ -1,5 +1,5 @@
 const Laser = require("laser");
-// const hardfield = require("hardfield");
+const Reflector = require("reflector");
 // const solarpanel = require("solarpanel");
 
 const l = new Laser({
@@ -13,6 +13,8 @@ const l = new Laser({
     y: 0
   }
 });
+
+const r = new Reflector([100, 0]);
 
 // turn laser off after 5 seconds
 setTimeout(() => l.off(), 1000);

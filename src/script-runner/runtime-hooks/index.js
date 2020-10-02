@@ -9,7 +9,8 @@ import {
   getNativeFire,
   getNativeSensor,
   getNativeLaser,
-  getNativePush
+  getNativePush,
+  getNativeReflector
 } from "./spells";
 
 /**
@@ -72,6 +73,9 @@ export function initializeScope(interpreter, scope, runner) {
           break;
         case "push":
           requirement = getNativePush(interpreter, scope, runner);
+          break;
+        case "reflector":
+          requirement = getNativeReflector(interpreter, scope, runner);
           break;
         default:
           throw new Error("Unknown module - have you tried getting gud?");
