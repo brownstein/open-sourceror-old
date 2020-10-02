@@ -39,7 +39,7 @@ function moveReflectors() {
   }
   setTimeout(moveReflectors, 5);
   r.move([0, Math.sin(t / 10) / 2]);
-  r2.move([0, -Math.sin(t / 10) / 2]);
+  r2.rotate(0.01);
   t++;
 }
 moveReflectors();
