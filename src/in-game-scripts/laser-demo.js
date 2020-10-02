@@ -30,6 +30,7 @@ setTimeout(() => l.off(), 1000);
 setTimeout(() => l.on(), 1500);
 setTimeout(() => l.off(), 2000);
 
+// test reflector movement
 let done = false;
 let t = 0;
 function moveReflectors() {
@@ -41,7 +42,6 @@ function moveReflectors() {
   r2.move([0, -Math.sin(t / 10) / 2]);
   t++;
 }
-
 moveReflectors();
 
 setTimeout(() => {
