@@ -1,5 +1,9 @@
 import { vec2 } from "p2";
 import { castToVec2 } from "src/p2-utils/vec2-utils";
+import {
+  castDirectionToVec2,
+  getOptionsFromObjectWithDefaults
+} from "src/utils/casting-utils";
 import { Reflector } from "src/entities/spells/reflector";
 import { OutOfManaError } from "../errors";
 
@@ -9,8 +13,7 @@ export default function getNativeReflector(interpreter, scope, runner) {
 
   // add support for casting fireball
   const nativeReflector = interpreter.createNativeFunction(
-    function (rawRelativePosition) {
-
+    function (rawOptions) {
       const {
         engine,
         callingEntity
@@ -21,18 +24,20 @@ export default function getNativeReflector(interpreter, scope, runner) {
       }
       callingEntity.incrementMana(-MANA_COST);
 
-      let relativePosition = null;
-      let relativeVelocity = null;
-      if (rawRelativePosition) {
-        relativePosition = castToVec2(
-          interpreter.pseudoToNative(rawRelativePosition)
-        );
+      // extract options
+      let nativeOptions = {};
+      if (rawOptions) {
+        nativeOptions = interpreter.pseudoToNative(rawOptions);
       }
-      // if (rawRelativeVelocity) {
-      //   relativeVelocity = castToVec2(
-      //     interpreter.pseudoToNative(rawRelativeVelocity)
-      //   );
-      // }
+      const options = getOptionsFromObjectWithDefaults(nativeOptions, {
+        relativePosition: [[0, 0], castToVec2],
+        direction: [null, castDirectionToVec2]
+      });
+
+      const {
+        relativePosition,
+        direction
+      } = options;
 
       const reflectorPosition = vec2.clone(callingEntity.body.position);
       if (relativePosition) {
@@ -45,19 +50,18 @@ export default function getNativeReflector(interpreter, scope, runner) {
       const reflector = new Reflector({
         fromEntity: callingEntity,
         position: reflectorPosition,
-        vector: [1, 1]
+        vector: direction || [1, 0]
       });
+      reflector.lifeSpan = Infinity;
 
       vec2.copy(reflector.body.velocity, callingEntity.body.velocity);
-      if (relativeVelocity) {
-        vec2.add(
-          reflector.body.velocity,
-          reflector.body.velocity,
-          relativeVelocity
-        );
-      }
-
       engine.addEntity(reflector);
+
+      // make sure to de-spawn reflector when script finishes
+      this.cleanupEffect = () => {
+        runner.engine.removeEntity(reflector);
+      };
+      runner.cleanupEffects.push(this.cleanupEffect);
 
       return interpreter.nativeToPseudo(undefined);
     },

@@ -1,5 +1,9 @@
 import { vec2 } from "p2";
 import { castToVec2 } from "p2-utils/vec2-utils";
+import {
+  castDirectionToVec2,
+  getOptionsFromObjectWithDefaults
+} from "src/utils/casting-utils";
 import { Laser } from "src/entities/spells/laser";
 
 export default function getNativeLaser (interpreter, scope, runner) {
@@ -8,7 +12,6 @@ export default function getNativeLaser (interpreter, scope, runner) {
 
   const nativeLaser = interpreter.createNativeFunction(
     function (rawOptions) {
-
       const {
         engine,
         callingEntity
@@ -19,18 +22,22 @@ export default function getNativeLaser (interpreter, scope, runner) {
       }
       callingEntity.incrementMana(-MANA_COST);
 
-      let options = {};
+      // extract options
+      let nativeOptions = {};
       if (rawOptions) {
-        options = interpreter.pseudoToNative(rawOptions);
+        nativeOptions = interpreter.pseudoToNative(rawOptions);
       }
+      const options = getOptionsFromObjectWithDefaults(nativeOptions, {
+        intensity: 1,
+        relativePosition: [[0, 0], castToVec2],
+        direction: [null, castDirectionToVec2]
+      });
 
-      let relativePosition = null;
+      const relativePosition = options.relativePosition;
       let vector = null;
-      if (options.relativePosition) {
-        relativePosition = castToVec2(options.relativePosition);
-      }
       if (options.direction) {
-        vector = castToVec2(options.direction);
+        vector = options.direction;
+        vec2.normalize(vector, vector);
       }
       else {
         const targetingPosition = engine.controllingEntity.targetCoordinates;
