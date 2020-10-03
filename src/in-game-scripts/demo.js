@@ -12,6 +12,9 @@ function keepGoing() {
   if (!active) {
     return;
   }
+
+  let f;
+
   s.getNearbyThings().forEach(n => {
     const relativeVelocity = {
       x: n.relativePosition.x * 5,
@@ -21,8 +24,20 @@ function keepGoing() {
       x: n.relativePosition.x,
       y: n.relativePosition.y + 16
     };
-    fire(null, relativeVelocity);
-    // push(relativePosition, 10, 100);
+
+    f = fire(null, relativeVelocity);
+    let t = 100;
+
+    function changeAccelleration() {
+      t -= 1;
+      if (t <= 0) {
+        return;
+      }
+      setTimeout(changeAccelleration, 10);
+      f.accelerate([0, 10]);
+    }
+
+    changeAccelleration();
   });
   setTimeout(keepGoing, 50);
 
