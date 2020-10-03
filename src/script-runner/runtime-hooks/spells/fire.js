@@ -58,6 +58,22 @@ export default function getNativeFireSpell (interpreter, scope, runner) {
 
       engine.addEntity(fireball);
 
+      this.move = function(nativeDelta) {
+        const delta = castToVec2(interpreter.pseudoToNative(nativeDelta));
+        vec2.add(fireball.body.position, fireball.body.position, delta);
+        return interpreter.nativeToPseudo(undefined);
+      };
+      interpreter.setProperty(this, "move",
+        interpreter.createNativeFunction(this.move));
+
+      this.accelerate = function(nativeDelta) {
+        const delta = castToVec2(interpreter.pseudoToNative(nativeDelta));
+        vec2.add(fireball.body.velocity, fireball.body.velocity, delta);
+        return interpreter.nativeToPseudo(undefined);
+      };
+      interpreter.setProperty(this, "accelerate",
+        interpreter.createNativeFunction(this.accelerate));
+
       return interpreter.nativeToPseudo(undefined);
     }
   );
