@@ -155,7 +155,7 @@ Open Sourceror.</text>
 into the code editor and hit run to
 run your first line of code.</text>
   </object>
-  <object id="6" type="progressBlocker" x="1032.3" y="152.287" width="22.3186" height="163.397">
+  <object id="6" type="progressBlocker" x="1032.3" y="136.647" width="22.3186" height="179.037">
    <properties>
     <property name="condition" value="hello_world"/>
    </properties>

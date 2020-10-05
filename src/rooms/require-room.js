@@ -1,10 +1,10 @@
 export default async function requireRoom(roomName) {
   let roomModule = null;
   switch (roomName) {
-    case "tutorial-1":
+    case "room-1":
       roomModule = await import("./intro/1");
       break;
-    case "tutorial-2":
+    case "room-2":
       roomModule = await import("./intro/2");
       break;
     case "pathfinder-test":

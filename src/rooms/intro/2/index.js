@@ -4,7 +4,7 @@ import Room from "src/engine/room";
 import { RepeatingBackgroundImage } from "src/entities/background";
 
 // level-specific constructs
-import levelJson from "src/tilesets/magic-cliffs/tutorial-2.json";
+import levelJson from "src/tilesets/magic-cliffs/room-2.json";
 import tilesetJson from "src/tilesets/magic-cliffs/tileset.json";
 import tilesetPNG from "src/tilesets/magic-cliffs/PNG/tileset.png";
 
@@ -17,7 +17,7 @@ import bgFarGrounds from "src/tilesets/magic-cliffs/PNG/far-grounds.png";
 export default class Level2 extends Room {
   constructor() {
     super();
-    this.roomName = "tutorial-2";
+    this.roomName = "room-2";
     this.tileLevel = levelJson;
     this.tileSheet = tilesetJson;
     this.tileSheetPNG = tilesetPNG;

@@ -50,7 +50,7 @@ ipcRenderer.on("load-game", function() {
 });
 
 ipcRenderer.on("start-game", function() {
-  _engine.store.dispatch(transitionToRoom(initialRoom || "tutorial-1"));
+  _engine.store.dispatch(transitionToRoom(initialRoom || "room-1"));
 });
 
 window.onbeforeunload = function() {

@@ -3,7 +3,9 @@ import {
 } from "src/redux/constants/rooms";
 
 const INITIAL_STATE = {
-  currentRoom: null
+  currentRoom: null,
+  previousRoom: null,
+  transitionPosition: null
 };
 
 export default function reduceRoomState(state = INITIAL_STATE, action) {
@@ -11,7 +13,9 @@ export default function reduceRoomState(state = INITIAL_STATE, action) {
     case TRANSITION_TO_ROOM:
       return {
         ...state,
-        currentRoom: action.room
+        currentRoom: action.room,
+        previousRoom: state.currentRoom,
+        transitionPosition: action.transitionPosition
       };
     default:
       break;
