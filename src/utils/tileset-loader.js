@@ -3,7 +3,7 @@ import clipping from "polygon-clipping";
 const ANGLE_TOLERANCE = 0.05;
 const DISTANCE_TOLERANCE = 0.05;
 
-export function loadTilesetForPolygonTraversal (tilesetSrc, tilesetImage) {
+export function loadTilesetForPolygonTraversal (tilesetSrc, tilesetImage, startgid = 1) {
   const {
     tilewidth,
     tileheight,
@@ -17,7 +17,9 @@ export function loadTilesetForPolygonTraversal (tilesetSrc, tilesetImage) {
     [1, 1],
     [0, 1]
   ]];
-  const tiles = tilesetSrc.tiles.map(tileSrc => {
+
+  const tiles = {};
+  tilesetSrc.tiles.forEach(tileSrc => {
     const { id, type, objectgroup = null, properties = null } = tileSrc;
     const tileIndex = id;
     const tile = {
@@ -169,7 +171,8 @@ export function loadTilesetForPolygonTraversal (tilesetSrc, tilesetImage) {
         sideMapping.right = closestSide.name;
       }
     }
-    return tile;
+
+    tiles[tileIndex + startgid] = tile;
   });
 
   return {

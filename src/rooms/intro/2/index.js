@@ -6,7 +6,9 @@ import { RepeatingBackgroundImage } from "src/entities/background";
 // level-specific constructs
 import levelJson from "src/tilesets/magic-cliffs/room-2.json";
 import tilesetJson from "src/tilesets/magic-cliffs/tileset.json";
+import wallsJson from "src/tilesets/walls/walls-1.json";
 import tilesetPNG from "src/tilesets/magic-cliffs/PNG/tileset.png";
+import walls1PNG from "src/tilesets/walls/walls.png";
 
 // level background images
 import bgSky from "src/tilesets/magic-cliffs/PNG/sky.png";
@@ -19,8 +21,14 @@ export default class Level2 extends Room {
     super();
     this.roomName = "room-2";
     this.tileLevel = levelJson;
-    this.tileSheet = tilesetJson;
-    this.tileSheetPNG = tilesetPNG;
+    this.tileSheets = {
+      "tileset": tilesetJson,
+      "walls-1": wallsJson
+    };
+    this.tileSheetPNGs = {
+      "tileset": tilesetPNG,
+      "walls-1": walls1PNG
+    };
     this.backgroundEntities = [
       new RepeatingBackgroundImage(bgSky, {
         wrapX: true,

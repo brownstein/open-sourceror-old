@@ -642,11 +642,7 @@ export function traverseTileGrid(
 ) {
 
   // map tile definitions by ID for faster reference
-  const tileDefsById = {};
-  for (let ti = 0; ti < tileset.tiles.length; ti++) {
-    const tileDef = tileset.tiles[ti];
-    tileDefsById[tileDef.id] = tileDef;
-  }
+  const tileDefsById = tileset.tiles;
 
   // fill a grid with blocks
   const blocks = [];
@@ -659,7 +655,7 @@ export function traverseTileGrid(
     decals[x] = decalColumn;
     for (let y = 0; y < gridHeight; y++) {
       const sourceVal = sourceGridArr[x + y * gridWidth];
-      const tileDef = tileDefsById[sourceVal - 1];
+      const tileDef = tileDefsById[sourceVal];
       if (!tileDef) {
         column.push(null);
         decalColumn.push(null);

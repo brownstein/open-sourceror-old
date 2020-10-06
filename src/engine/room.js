@@ -25,11 +25,17 @@ export default class Room {
   constructor() {
     this.tileLevel = null;
     this.tileSheet = null;
+    this.tileSheets = null; // plural
     this.tileSheetPNG = null;
+    this.tileSheetPNGs = null; // plural
     this.backgroundEntities = [];
   }
   init(engine, roomState) {
-    if (this.tileLevel && this.tileSheet && this.tileSheetPNG) {
+    if (
+      this.tileLevel &&
+      (this.tileSheet || this.tileSheets) &&
+      (this.tileSheetPNG || this.tileSheetPNGs)
+    ) {
       this.initTileLevel(engine, roomState);
     }
     else {
@@ -71,8 +77,11 @@ export default class Room {
     const { transitionPosition, currentRoom, previousRoom } = roomState;
 
     // add the map
-    const terrain = new TilesetTerrain(this.tileLevel, this.tileSheet,
-      this.tileSheetPNG);
+    const terrain = new TilesetTerrain(
+      this.tileLevel,
+      this.tileSheet || this.tileSheets,
+      this.tileSheetPNG || this.tileSheetPNGs
+    );
     terrain.getEntities().forEach(e => {
       engine.addEntity(e);
       engine.expandSceneToFitEntity(e);
@@ -81,14 +90,14 @@ export default class Room {
     // add the navigation grid
     const primaryLayer = this.tileLevel.layers.find(l => l.name === "primary") ||
       this.tileLevel.layers.find(l => l.layertype === "tilelayer");
-    const navGrid = AsyncNavGrid.createNavGridForTileGrid(
-      primaryLayer.data,
-      primaryLayer.width,
-      this.tileLevel.tilewidth,
-      this.tileSheet
-    );
-    engine.addNavGrid(navGrid);
-    navGrid.initNavWorker();
+    // const navGrid = AsyncNavGrid.createNavGridForTileGrid(
+    //   primaryLayer.data,
+    //   primaryLayer.width,
+    //   this.tileLevel.tilewidth,
+    //   this.tileSheet
+    // );
+    // engine.addNavGrid(navGrid);
+    // navGrid.initNavWorker();
 
     let playerSpawned = false;
     const roomTransitions = [];

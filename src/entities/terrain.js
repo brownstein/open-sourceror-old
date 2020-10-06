@@ -52,10 +52,33 @@ export class TerrainEntity {
 }
 
 export class TilesetTerrain extends Terrain {
-  constructor(levelJson, tilesetJson, tilesetPng) {
+  constructor(levelJson, tilesetJsons, tilesetPngs) {
     super();
 
-    this.tileset = loadTilesetForPolygonTraversal(tilesetJson, tilesetPng);
+    // get the start gid of each tile set
+    this.tileset = {
+      tiles: {},
+      tilewidth: 0,
+      tileheight: 0
+    };
+
+    // for each referenced tileset, load tiles
+    levelJson.tilesets.forEach(ts => {
+      const sourceNameResult = /(.*\/)*(.+).tsx/.exec(ts.source);
+      const sourceName = sourceNameResult[2];
+      const firstgid = ts.firstgid;
+      const tileset = loadTilesetForPolygonTraversal(
+        tilesetJsons[sourceName],
+        tilesetPngs[sourceName],
+        firstgid
+      );
+      Object.assign(this.tileset.tiles, tileset.tiles);
+      this.tileset.tilewidth = tileset.tilewidth;
+      this.tileset.tileheight = tileset.tileheight;
+    });
+
+    console.log(this.tileset);
+
     this.level = levelJson;
 
     // identify the primary layer

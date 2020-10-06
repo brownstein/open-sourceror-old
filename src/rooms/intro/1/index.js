@@ -19,8 +19,13 @@ export default class Level1 extends Room {
     super();
     this.roomName = "tutorial-1";
     this.tileLevel = levelJson;
-    this.tileSheet = tilesetJson;
-    this.tileSheetPNG = tilesetPNG;
+    this.tileSheets = {
+      tileset: tilesetJson
+    };
+    this.tileSheetPNGs = {
+      tileset: tilesetPNG
+    };
+
     this.backgroundEntities = [
       new RepeatingBackgroundImage(bgSky, {
         wrapX: true,
