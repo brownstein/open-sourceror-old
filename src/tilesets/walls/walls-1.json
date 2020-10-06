@@ -19,39 +19,62 @@
  "tiles":[
         {
          "id":0,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":1,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":2,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":3,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":4,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":5,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":6,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":7,
-         "type":"wall"
+         "type":"ground"
         }, 
         {
          "id":8,
-         "type":"wall"
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":17.5955185291583,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":9.87503590922149,
+                     "x":3.05228382648664,
+                     "y":-0.718184429761562
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"verticalDoor"
         }],
  "tilewidth":16,
  "type":"tileset",

@@ -67,6 +67,7 @@ export class TilesetTerrain extends Terrain {
       const sourceNameResult = /(.*\/)*(.+).tsx/.exec(ts.source);
       const sourceName = sourceNameResult[2];
       const firstgid = ts.firstgid;
+      console.log(firstgid);
       const tileset = loadTilesetForPolygonTraversal(
         tilesetJsons[sourceName],
         tilesetPngs[sourceName],
@@ -198,76 +199,105 @@ export class TilesetTerrainEntity extends TerrainEntity {
   async _init(tiles, textureLoader) {
     if (tiles && tiles.length) {
 
-      const texture = await textureLoader.loadAsync(tiles[0].tile.srcImage);
-      texture.magFilter = NearestFilter;
-
-      const tileMat = new MeshBasicMaterial({
-        side: DoubleSide,
-        map: texture,
-        transparent: true,
-        opacity: DEBUG_TERRAIN ? 0.75 : 1,
-        // to swap this off, we have to use separate meshes for each Z index
-        // to deal with the fact that three.js's face sorting is geometry-
-        // internal
-        alphaTest: 0.1
+      // load all textures
+      const textureSet = {};
+      tiles.forEach(tile => {
+        textureSet[tile.tile.srcImage] = true;
       });
 
-      // split tile geometries and meshes by Z index
-      const tilesByZ = {};
-      tiles.forEach(tileInstance => {
-        const tile = tileInstance.tile;
-        let z = tile.depthBias || 0.6;
-        if (!tilesByZ[z]) {
-          tilesByZ[z] = [];
-        }
-        tilesByZ[z].push(tileInstance);
-      });
+      const texturesBySrc = {};
+      const materialsBySrc = {};
+      await Promise.all(Object.keys(textureSet).map(async (img) => {
+        const texture = await textureLoader.loadAsync(img);
 
-      // create tile geometries and meshes
-      const ov = 0.01;
-      Object.keys(tilesByZ).forEach(rawZ => {
-        const z = Number(rawZ);
-        const tileGeom = new Geometry();
-        tilesByZ[rawZ].forEach(tileInstance => {
-          const tile = tileInstance.tile;
-          tileGeom.vertices.push(new Vector3(
-            tileInstance.x - ov,
-            tileInstance.y - ov,
-            z
-          ));
-          tileGeom.vertices.push(new Vector3(
-            tileInstance.x - ov + tile.srcWidth + ov,
-            tileInstance.y - ov,
-            z
-          ));
-          tileGeom.vertices.push(new Vector3(
-            tileInstance.x - ov + tile.srcWidth + ov,
-            tileInstance.y + tile.srcHeight  + ov,
-            z
-          ));
-          tileGeom.vertices.push(new Vector3(
-            tileInstance.x - ov,
-            tileInstance.y + tile.srcHeight + ov,
-            z
-          ));
-          const vtxIndex = tileGeom.vertices.length - 4;
-          tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
-          tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));
-          [
-            [[0, 0], [1, 0], [1, 1]],
-            [[0, 0], [1, 1], [0, 1]]
-          ].forEach(faceUVs => {
-            tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
-            new Vector2(
-              (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
-              1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
-            )));
-          });
+        texture.magFilter = NearestFilter;
+        texturesBySrc[img] = texture;
+
+        const tileMat = new MeshBasicMaterial({
+          side: DoubleSide,
+          map: texture,
+          transparent: true,
+          opacity: DEBUG_TERRAIN ? 0.75 : 1,
+          // to swap this off, we have to use separate meshes for each Z index
+          // to deal with the fact that three.js's face sorting is geometry-
+          // internal
+          alphaTest: 0.1
         });
 
-        const tileMesh = new Mesh(tileGeom, tileMat);
-        tileMesh.position.z = z;
-        this.mesh.add(tileMesh);
+        materialsBySrc[img] = tileMat;
+      }));
+
+      // split tiles by texture/material
+      const tilesBySrc = {};
+      tiles.forEach(tile => {
+        const src = tile.tile.srcImage;
+        if (!tilesBySrc[src]) {
+          tilesBySrc[src] = [];
+        }
+        tilesBySrc[src].push(tile);
+      });
+
+      // for each material, create a mesh
+      Object.keys(tilesBySrc).forEach(src => {
+        const tileMat = materialsBySrc[src];
+
+        // split tile geometries and meshes by Z index
+        const tilesByZ = {};
+        tilesBySrc[src].forEach(tileInstance => {
+          const tile = tileInstance.tile;
+          let z = tile.depthBias || 0.6;
+          if (!tilesByZ[z]) {
+            tilesByZ[z] = [];
+          }
+          tilesByZ[z].push(tileInstance);
+        });
+
+        // create tile geometries and meshes
+        const ov = 0.01;
+        Object.keys(tilesByZ).forEach(rawZ => {
+          const z = Number(rawZ);
+          const tileGeom = new Geometry();
+          tilesByZ[rawZ].forEach(tileInstance => {
+            const tile = tileInstance.tile;
+            tileGeom.vertices.push(new Vector3(
+              tileInstance.x - ov,
+              tileInstance.y - ov,
+              z
+            ));
+            tileGeom.vertices.push(new Vector3(
+              tileInstance.x - ov + tile.srcWidth + ov,
+              tileInstance.y - ov,
+              z
+            ));
+            tileGeom.vertices.push(new Vector3(
+              tileInstance.x - ov + tile.srcWidth + ov,
+              tileInstance.y + tile.srcHeight  + ov,
+              z
+            ));
+            tileGeom.vertices.push(new Vector3(
+              tileInstance.x - ov,
+              tileInstance.y + tile.srcHeight + ov,
+              z
+            ));
+            const vtxIndex = tileGeom.vertices.length - 4;
+            tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 1, vtxIndex + 2));
+            tileGeom.faces.push(new Face3(vtxIndex + 0, vtxIndex + 2, vtxIndex + 3));
+            [
+              [[0, 0], [1, 0], [1, 1]],
+              [[0, 0], [1, 1], [0, 1]]
+            ].forEach(faceUVs => {
+              tileGeom.faceVertexUvs[0].push(faceUVs.map(([x, y]) =>
+              new Vector2(
+                (tile.srcX + (x * tile.srcWidth)) / tile.srcImageWidth,
+                1-(tile.srcY + (y * tile.srcHeight)) / tile.srcImageHeight,
+              )));
+            });
+          });
+
+          const tileMesh = new Mesh(tileGeom, tileMat);
+          tileMesh.position.z = z;
+          this.mesh.add(tileMesh);
+        });
       });
     }
 

@@ -4,13 +4,17 @@
   <export target="walls-1.json" format="json"/>
  </editorsettings>
  <image source="walls.png" width="256" height="256"/>
- <tile id="0" type="wall"/>
- <tile id="1" type="wall"/>
- <tile id="2" type="wall"/>
- <tile id="3" type="wall"/>
- <tile id="4" type="wall"/>
- <tile id="5" type="wall"/>
- <tile id="6" type="wall"/>
- <tile id="7" type="wall"/>
- <tile id="8" type="wall"/>
+ <tile id="0" type="ground"/>
+ <tile id="1" type="ground"/>
+ <tile id="2" type="ground"/>
+ <tile id="3" type="ground"/>
+ <tile id="4" type="ground"/>
+ <tile id="5" type="ground"/>
+ <tile id="6" type="ground"/>
+ <tile id="7" type="ground"/>
+ <tile id="8" type="verticalDoor">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="3.05228" y="-0.718184" width="9.87504" height="17.5955"/>
+  </objectgroup>
+ </tile>
 </tileset>
