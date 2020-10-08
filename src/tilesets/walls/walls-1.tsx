@@ -9,7 +9,7 @@
  <tile id="2" type="ground"/>
  <tile id="3" type="ground"/>
  <tile id="4" type="ground"/>
- <tile id="5" type="ground"/>
+ <tile id="5" type="decal"/>
  <tile id="6" type="ground"/>
  <tile id="7" type="ground"/>
  <tile id="8" type="verticalDoor">

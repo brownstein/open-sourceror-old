@@ -88,21 +88,18 @@ export class AsyncNavGrid extends NavGrid {
     );
   }
   static createNavGridForTileGrid(
-    sourceGridArr,
-    gridWidth,
-    tileSize,
-    tileSet,
+    levelJson,
+    tileSets,
     useTileTypes = ["ground", "oneWayPlatform"]
   ) {
     const {
       grid,
       gridScale,
+      gridWidth,
       gridHeight
     } = NavGrid.createNavGridForTileGrid(
-      sourceGridArr,
-      gridWidth,
-      tileSize,
-      tileSet,
+      levelJson,
+      tileSets,
       useTileTypes
     );
     return new AsyncNavGrid(grid, gridScale, gridWidth, gridHeight);

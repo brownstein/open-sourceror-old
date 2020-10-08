@@ -697,57 +697,75 @@ export class NavGrid {
     return nodePath;
   }
   static createNavGridForTileGrid(
-    sourceGridArr,
-    gridWidth,
-    tileSize,
-    tileSet,
+    tileLevel,
+    tileSets,
     useTileTypes = ["ground", "oneWayPlatform"]
   ) {
-    const gridHeight = sourceGridArr.length / gridWidth;
+    // add the navigation grid
+    const primaryLayer = tileLevel.layers.find(l => l.name === "primary") ||
+      tileLevel.layers.find(l => l.layertype === "tilelayer");
 
-    // map tile definitions by ID for faster reference
+    const sourceGridArr = primaryLayer.data;
+    const gridWidth = primaryLayer.width;
+    const gridHeight = sourceGridArr.length / gridWidth;
+    const tileSize = tileLevel.tilewidth;
+
+    // get the start gid of each tile set
     const tileDefsById = {};
-    for (let ti = 0; ti < tileSet.tiles.length; ti++) {
-      const srcTileDef = tileSet.tiles[ti];
-      let tileDef;
-      if (srcTileDef.objectgroup) {
-        let xMin = Infinity;
-        let xMax = -Infinity;
-        let yMin = Infinity;
-        let yMax = -Infinity;
-        srcTileDef.objectgroup.objects.forEach(obj => {
-          obj.polygon.forEach(vtx => {
-            xMin = Math.min(xMin, obj.x + vtx.x);
-            xMax = Math.max(xMax, obj.x + vtx.x);
-            yMin = Math.min(yMin, obj.y + vtx.y);
-            yMax = Math.max(yMax, obj.y + vtx.y);
+
+    // for each referenced tileset, load tiles
+    tileLevel.tilesets.forEach(ts => {
+      const sourceNameResult = /(.*\/)*(.+).tsx/.exec(ts.source);
+      const sourceName = sourceNameResult[2];
+      const firstgid = ts.firstgid;
+      const tileSet = tileSets[sourceName];
+      if (!tileSet) {
+        throw new Error(`referenced tileset ${sourceName} not found`);
+      }
+      for (let ti = 0; ti < tileSet.tiles.length; ti++) {
+        const srcTileDef = tileSet.tiles[ti];
+        let tileDef;
+        if (srcTileDef.objectgroup) {
+          let xMin = Infinity;
+          let xMax = -Infinity;
+          let yMin = Infinity;
+          let yMax = -Infinity;
+          srcTileDef.objectgroup.objects.forEach(obj => {
+            if (obj.polygon) {
+              obj.polygon.forEach(vtx => {
+                xMin = Math.min(xMin, obj.x + vtx.x);
+                xMax = Math.max(xMax, obj.x + vtx.x);
+                yMin = Math.min(yMin, obj.y + vtx.y);
+                yMax = Math.max(yMax, obj.y + vtx.y);
+              });
+            }
           });
-        });
-        xMin -= tileSize / 2;
-        xMax -= tileSize / 2;
-        yMin -= tileSize / 2;
-        yMax -= tileSize / 2;
-        xMin = Math.max(xMin, -tileSize / 2);
-        xMax = Math.min(xMax, tileSize / 2);
-        yMin = Math.max(yMin, -tileSize / 2);
-        yMax = Math.min(yMax, tileSize / 2);
-        tileDef = {
-          full: false,
-          type: srcTileDef.type,
-          xMin,
-          xMax,
-          yMin,
-          yMax
-        };
+          xMin -= tileSize / 2;
+          xMax -= tileSize / 2;
+          yMin -= tileSize / 2;
+          yMax -= tileSize / 2;
+          xMin = Math.max(xMin, -tileSize / 2);
+          xMax = Math.min(xMax, tileSize / 2);
+          yMin = Math.max(yMin, -tileSize / 2);
+          yMax = Math.min(yMax, tileSize / 2);
+          tileDef = {
+            full: false,
+            type: srcTileDef.type,
+            xMin,
+            xMax,
+            yMin,
+            yMax
+          };
+        }
+        else {
+          tileDef = {
+            full: true,
+            type: srcTileDef.type
+          };
+        }
+        tileDefsById[srcTileDef.id + firstgid] = tileDef;
       }
-      else {
-        tileDef = {
-          full: true,
-          type: srcTileDef.type
-        };
-      }
-      tileDefsById[srcTileDef.id] = tileDef;
-    }
+    });
 
     // preprocess block lookup table
     const grid = [];
@@ -763,7 +781,7 @@ export class NavGrid {
         column.push(null);
         continue;
       }
-      const tileDef = tileDefsById[sourceVal - 1];
+      const tileDef = tileDefsById[sourceVal];
       if (!tileDef) {
         column.push(null);
         continue;
@@ -790,5 +808,8 @@ export class NavGrid {
 
     // return a shiny new nagivation grid
     return new NavGrid(grid, tileSize, gridWidth, gridHeight);
+  }
+  cleanup() {
+    // no-op
   }
 }

@@ -181,3 +181,7 @@ export function loadTilesetForPolygonTraversal (tilesetSrc, tilesetImage, startg
     tileheight
   };
 }
+
+export function loadTilesetForNavGrid(tilesetSrc, startgid = 1) {
+  
+}

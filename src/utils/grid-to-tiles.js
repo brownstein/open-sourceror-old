@@ -6,11 +6,7 @@ export function getTilesForDecals(
 ) {
 
   // map tile definitions by ID for faster reference
-  const tileDefsById = {};
-  for (let ti = 0; ti < tileset.tiles.length; ti++) {
-    const tileDef = tileset.tiles[ti];
-    tileDefsById[tileDef.id] = tileDef;
-  }
+  const tileDefsById = tileset.tiles;
 
   // for each value in the source array, generate a decal definition
   const allTiles = [];
@@ -19,7 +15,7 @@ export function getTilesForDecals(
     if (!gridValue) {
       continue;
     }
-    const tileDef = tileDefsById[gridValue - 1];
+    const tileDef = tileDefsById[gridValue];
     if (!tileDef) {
       continue;
     }

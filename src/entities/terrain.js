@@ -78,8 +78,6 @@ export class TilesetTerrain extends Terrain {
       this.tileset.tileheight = tileset.tileheight;
     });
 
-    console.log(this.tileset);
-
     this.level = levelJson;
 
     // identify the primary layer

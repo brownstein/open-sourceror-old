@@ -4,6 +4,7 @@ import { vec2 } from "p2";
 // navigation meshes
 // import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
 import { AsyncNavGrid } from "src/pathfinding/navigation-grid-async";
+// import { NavGrid } from "src/pathfinding/navigation-grid";
 
 // game entities
 import { Player } from "src/entities/character/player";
@@ -24,17 +25,15 @@ import getContactMaterials from "src/entities/contact-materials";
 export default class Room {
   constructor() {
     this.tileLevel = null;
-    this.tileSheet = null;
-    this.tileSheets = null; // plural
-    this.tileSheetPNG = null;
-    this.tileSheetPNGs = null; // plural
+    this.tileSheets = null;
+    this.tileSheetPNGs = null;
     this.backgroundEntities = [];
   }
   init(engine, roomState) {
     if (
       this.tileLevel &&
-      (this.tileSheet || this.tileSheets) &&
-      (this.tileSheetPNG || this.tileSheetPNGs)
+      this.tileSheets &&
+      this.tileSheetPNGs
     ) {
       this.initTileLevel(engine, roomState);
     }
@@ -79,8 +78,8 @@ export default class Room {
     // add the map
     const terrain = new TilesetTerrain(
       this.tileLevel,
-      this.tileSheet || this.tileSheets,
-      this.tileSheetPNG || this.tileSheetPNGs
+      this.tileSheets,
+      this.tileSheetPNGs
     );
     terrain.getEntities().forEach(e => {
       engine.addEntity(e);
@@ -88,16 +87,12 @@ export default class Room {
     });
 
     // add the navigation grid
-    const primaryLayer = this.tileLevel.layers.find(l => l.name === "primary") ||
-      this.tileLevel.layers.find(l => l.layertype === "tilelayer");
-    // const navGrid = AsyncNavGrid.createNavGridForTileGrid(
-    //   primaryLayer.data,
-    //   primaryLayer.width,
-    //   this.tileLevel.tilewidth,
-    //   this.tileSheet
-    // );
-    // engine.addNavGrid(navGrid);
-    // navGrid.initNavWorker();
+    const navGrid = AsyncNavGrid.createNavGridForTileGrid(
+      this.tileLevel,
+      this.tileSheets
+    );
+    engine.addNavGrid(navGrid);
+    navGrid.initNavWorker();
 
     let playerSpawned = false;
     const roomTransitions = [];
