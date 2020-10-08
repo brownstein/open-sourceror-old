@@ -2,9 +2,8 @@ import { Vector2 } from "three";
 import { vec2 } from "p2";
 
 // navigation meshes
-// import { getNavGridForTileGrid } from "src/utils/grid-to-navnodes";
-import { AsyncNavGrid } from "src/pathfinding/navigation-grid-async";
 // import { NavGrid } from "src/pathfinding/navigation-grid";
+import { AsyncNavGrid } from "src/pathfinding/navigation-grid-async";
 
 // game entities
 import { Player } from "src/entities/character/player";

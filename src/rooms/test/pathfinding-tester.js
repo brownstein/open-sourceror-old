@@ -11,10 +11,10 @@ export default class PathfindingTest extends Room {
   constructor() {
     super();
     this.tileLevel = levelJson;
-    this.tileSheet = {
+    this.tileSheets = {
       tileset: tilesetJson
     };
-    this.tileSheetPNG = {
+    this.tileSheetPNGs = {
       tileset: tilesetPNG
     };
   }
