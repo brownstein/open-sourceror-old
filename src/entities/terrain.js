@@ -100,8 +100,10 @@ export class TilesetTerrain extends Terrain {
       primaryLayer.width,
       levelJson.tilewidth,
       this.tileset,
-      ['ground', 'oneWayPlatform']
+      ['ground', 'oneWayPlatform', 'verticalDoor']
     );
+
+    console.log(this.levelPolygonsAndTiles);
 
     const textureLoader = new TextureLoader();
 

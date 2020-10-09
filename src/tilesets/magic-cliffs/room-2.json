@@ -120,22 +120,22 @@
                  "y":196.758
                 }, 
                 {
-                 "height":0,
-                 "id":5,
+                 "height":36.8449500800053,
+                 "id":6,
                  "name":"",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"isSmart",
-                         "type":"bool",
-                         "value":false
-                        }],
                  "rotation":0,
-                 "type":"testDummyStart",
+                 "text":
+                    {
+                     "color":"#ffffff",
+                     "halign":"center",
+                     "text":"type \"console.log('hello world')\"",
+                     "wrap":true
+                    },
+                 "type":"foregroundText",
                  "visible":true,
-                 "width":0,
-                 "x":325.355023668245,
-                 "y":266.684445629709
+                 "width":282.226386967464,
+                 "x":267.247363886759,
+                 "y":289.931415219348
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -144,7 +144,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":6,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

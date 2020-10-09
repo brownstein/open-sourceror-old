@@ -14,6 +14,19 @@ import BaseEntity from "../base";
 import { Character } from "./base";
 
 export class Enemy extends Character {
+  static roomEntityNames = ["enemyStart"];
+  static roomInitializer(engine, obj, props) {
+    if (props.isSmart) {
+      return SmartEnemy.roomInitializer(engine, obj, props);
+    }
+    const enemy = new Enemy({
+      position: [obj.x, obj.y]
+    });
+    enemy.persistId = persistId;
+    engine.addEntity(enemy);
+    return enemy;
+  }
+
   constructor(props) {
     super(props);
     this.i = Math.random() * 100 * Math.PI;
@@ -44,6 +57,15 @@ export class Enemy extends Character {
 }
 
 export class SmartEnemy extends Enemy {
+  static roomInitializer(engine, obj, props) {
+    const enemy = new SmartEnemy({
+      position: [obj.x, obj.y]
+    });
+    enemy.persistId = persistId;
+    engine.addEntity(enemy);
+    return enemy;
+  }
+
   constructor(props) {
     super(props);
 

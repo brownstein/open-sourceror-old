@@ -156,11 +156,5 @@ Open Sourceror.</text>
     <property name="room" value="room-2"/>
    </properties>
   </object>
-  <object id="11" name="room-transition" type="room-transition" x="208.283" y="300.069" width="92.0116" height="32.5424">
-   <properties>
-    <property name="direction" value="down"/>
-    <property name="room" value="room-2"/>
-   </properties>
-  </object>
  </objectgroup>
 </map>

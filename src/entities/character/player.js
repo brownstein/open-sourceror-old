@@ -55,6 +55,17 @@ const CHARACTER_LAYERS = {
 };
 
 export class Player extends Character {
+  static roomEntityNames = ["playerStart"];
+  static roomInitializer(engine, obj, props) {
+    const player = new Player({
+      position: [obj.x, obj.y]
+    });
+    engine.addEntity(player);
+    engine.followEntity(player);
+    engine.setControllingEntity(player);
+    return player;
+  }
+
   constructor(props) {
     super(props);
 
@@ -261,17 +272,6 @@ export class Player extends Character {
       100
     );
     engine.addEntity(push);
-
-    const reflector = new Reflector({
-      fromEntity: this,
-      position: [
-        this.body.position[0] + 100,
-        this.body.position[1]
-      ],
-      vector: [-1, 1]
-    });
-
-    engine.addEntity(reflector);
   }
   _onKeyboardEvent(event) {
     const { key, down } = event;

@@ -4,6 +4,15 @@ import { CollisionBBox } from "src/pathfinding/navigation-grid";
 import { Character } from "./base";
 
 export class TestDummy extends Character {
+  static roomEntityNames = ["testDummyStart"];
+  static roomInitializer(engine, obj, props) {
+    const dummy = new TestDummy({
+      position: [obj.x, obj.y]
+    });
+    engine.addEntity(dummy);
+    return dummy;
+  }
+
   static _id = 1;
   constructor(props) {
     super(props);

@@ -21,6 +21,11 @@ import SavePoint from "src/entities/environment/save-point";
 
 import getContactMaterials from "src/entities/contact-materials";
 
+const ENTITIES = [
+  Player,
+  Enemy
+];
+
 export default class Room {
   constructor() {
     this.tileLevel = null;
@@ -101,169 +106,157 @@ export default class Room {
     this.tileLevel.layers.filter(l => l.type === "objectgroup").forEach(l => {
       l.objects.forEach(o => {
         const persistId = `${o.type}-${persistIdIncrement++}`;
-
+        const EntityClass = ENTITIES.find(
+          clazz =>
+          clazz.roomEntityNames &&
+          clazz.roomEntityNames.includes(o.type)
+        );
         const props = o.properties ?
           o.properties.reduce((o, p) => {
             o[p.name] = p.value;
             return o;
           }, {}) :
           {};
-        switch (o.type) {
-          case "playerStart": {
-            const player = new Player({
-              position: [o.x, o.y]
-            });
-            engine.addEntity(player);
-            engine.followEntity(player);
-            engine.setControllingEntity(player);
-            playerSpawned = true;
-            break;
+
+        if (EntityClass) {
+          EntityClass.roomInitializer(engine, o, props);
+          switch (o.type) {
+            case "playerStart":
+              playerSpawned = true;
+            default:
+              break;
           }
-          case "enemyStart": {
-            const isSmart = props.isSmart || false;
-            const EnemyClazz = isSmart ? SmartEnemy : Enemy;
-            const enemy = new EnemyClazz({
-              position: [o.x, o.y]
-            });
-            enemy.persistId = persistId;
-            engine.addEntity(enemy);
-            break;
-          }
-          case "testDummyStart": {
-            const DummyClazz = TestDummy;
-            const dummy = new DummyClazz({
-              position: [o.x, o.y]
-            });
-            engine.addEntity(dummy);
-            break;
-          }
-          case "water": {
-            const water = new SmallBodyOfWater({
-              position: {
-                x: o.x + o.width / 2,
-                y: o.y + o.height / 2
-              },
-              width: o.width,
-              height: o.height
-            });
-            engine.addEntity(water);
-            break;
-          }
-          case "dialogue": {
-            const dialogue = new DialogueEntity({
-              x: o.x,
-              y: o.y
-            }, props.message, props.size);
-            engine.addEntity(dialogue);
-            break;
-          }
-          case "transitZone": {
-            const zone = new TransitionZone({
-              position: {
-                x: o.x + o.width / 2,
-                y: o.y + o.height / 2
-              },
-              width: o.width,
-              height: o.height,
-              level: props.level
-            });
-            engine.addEntity(zone);
-            break;
-          }
-          case "npc": {
-            const npcDialogue = props.npcDialogue;
-            const npc = new NPC({
-              position: {
+        }
+        else {
+          switch (o.type) {
+            case "water": {
+              const water = new SmallBodyOfWater({
+                position: {
+                  x: o.x + o.width / 2,
+                  y: o.y + o.height / 2
+                },
+                width: o.width,
+                height: o.height
+              });
+              engine.addEntity(water);
+              break;
+            }
+            case "dialogue": {
+              const dialogue = new DialogueEntity({
                 x: o.x,
                 y: o.y
-              },
-              npcDialogue
-            });
-            engine.addEntity(npc);
-            break;
+              }, props.message, props.size);
+              engine.addEntity(dialogue);
+              break;
+            }
+            case "transitZone": {
+              const zone = new TransitionZone({
+                position: {
+                  x: o.x + o.width / 2,
+                  y: o.y + o.height / 2
+                },
+                width: o.width,
+                height: o.height,
+                level: props.level
+              });
+              engine.addEntity(zone);
+              break;
+            }
+            case "npc": {
+              const npcDialogue = props.npcDialogue;
+              const npc = new NPC({
+                position: {
+                  x: o.x,
+                  y: o.y
+                },
+                npcDialogue
+              });
+              engine.addEntity(npc);
+              break;
+            }
+            case "scroll": {
+              const item = Scroll.getInstance({
+                position: [o.x, o.y]
+              });
+              item.persistId = persistId;
+              engine.addEntity(item);
+              break;
+            }
+            case "medkit":
+            case "medpack": {
+              const item = Medkit.getInstance({
+                position: [o.x, o.y]
+              });
+              item.persistId = persistId;
+              engine.addEntity(item);
+              break;
+            }
+            case "backgroundText": {
+              const text = new BackgroundText({
+                position: o,
+                text: o.text.text,
+                size: o.text.pixelsize,
+                color: o.text.color || "#000000",
+                outline: !!o.text.color
+              });
+              engine.addEntity(text);
+              break;
+            }
+            // TODO
+            case "foregroundText": {
+              const text = new BackgroundText({
+                position: o,
+                text: o.text.text,
+                size: o.text.pixelsize,
+                color: o.text.color,
+                z: 2
+              });
+              engine.addEntity(text);
+              break;
+            }
+            case "progressBlocker": {
+              const wall = new ConditionWall({
+                position: {
+                  x: o.x + o.width / 2,
+                  y: o.y + o.height / 2
+                },
+                width: o.width,
+                height: o.height
+              });
+              engine.addEntity(wall);
+              break;
+            }
+            case "savePoint": {
+              const savePoint = new SavePoint({
+                position: {
+                  x: o.x + o.width / 2,
+                  y: o.y + o.height / 2
+                },
+                width: o.width,
+                height: o.height
+              });
+              engine.addEntity(savePoint);
+              break;
+            }
+            case "room-transition": {
+              const nextRoom = props.room;
+              const nextRoomDirection = props.direction;
+              const zone = new TransitionZone({
+                position: {
+                  x: o.x + o.width / 2,
+                  y: o.y + o.height / 2
+                },
+                width: o.width,
+                height: o.height,
+                level: nextRoom
+              });
+              roomTransitions.push(zone);
+              engine.addEntity(zone);
+              break;
+            }
+            default:
+              break;
           }
-          case "scroll": {
-            const item = Scroll.getInstance({
-              position: [o.x, o.y]
-            });
-            item.persistId = persistId;
-            engine.addEntity(item);
-            break;
-          }
-          case "medkit":
-          case "medpack": {
-            const item = Medkit.getInstance({
-              position: [o.x, o.y]
-            });
-            item.persistId = persistId;
-            engine.addEntity(item);
-            break;
-          }
-          case "backgroundText": {
-            const text = new BackgroundText({
-              position: o,
-              text: o.text.text,
-              size: o.text.pixelsize,
-              color: o.text.color || "#000000",
-              outline: !!o.text.color
-            });
-            engine.addEntity(text);
-            break;
-          }
-          // TODO
-          case "foregroundText": {
-            const text = new BackgroundText({
-              position: o,
-              text: o.text.text,
-              size: o.text.pixelsize,
-              color: o.text.color,
-              z: 2
-            });
-            engine.addEntity(text);
-            break;
-          }
-          case "progressBlocker": {
-            const wall = new ConditionWall({
-              position: {
-                x: o.x + o.width / 2,
-                y: o.y + o.height / 2
-              },
-              width: o.width,
-              height: o.height
-            });
-            engine.addEntity(wall);
-            break;
-          }
-          case "savePoint": {
-            const savePoint = new SavePoint({
-              position: {
-                x: o.x + o.width / 2,
-                y: o.y + o.height / 2
-              },
-              width: o.width,
-              height: o.height
-            });
-            engine.addEntity(savePoint);
-            break;
-          }
-          case "room-transition": {
-            const nextRoom = props.room;
-            const nextRoomDirection = props.direction;
-            const zone = new TransitionZone({
-              position: {
-                x: o.x + o.width / 2,
-                y: o.y + o.height / 2
-              },
-              width: o.width,
-              height: o.height,
-              level: nextRoom
-            });
-            roomTransitions.push(zone);
-            engine.addEntity(zone);
-            break;
-          }
-          default:
-            break;
         }
       });
 

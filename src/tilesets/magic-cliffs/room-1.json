@@ -143,28 +143,6 @@
                  "width":92.0116,
                  "x":1321.56,
                  "y":447.263
-                }, 
-                {
-                 "height":32.5424,
-                 "id":11,
-                 "name":"room-transition",
-                 "properties":[
-                        {
-                         "name":"direction",
-                         "type":"string",
-                         "value":"down"
-                        }, 
-                        {
-                         "name":"room",
-                         "type":"string",
-                         "value":"room-2"
-                        }],
-                 "rotation":0,
-                 "type":"room-transition",
-                 "visible":true,
-                 "width":92.0116,
-                 "x":208.28304292493,
-                 "y":300.068987370726
                 }],
          "opacity":1,
          "type":"objectgroup",
