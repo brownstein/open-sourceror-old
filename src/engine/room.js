@@ -23,7 +23,8 @@ import getContactMaterials from "src/entities/contact-materials";
 
 const ENTITIES = [
   Player,
-  Enemy
+  Enemy,
+  TestDummy
 ];
 
 export default class Room {
