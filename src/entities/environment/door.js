@@ -18,6 +18,8 @@ import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
 
 import BaseEntity from "src/entities/base";
 
+const DEBUG_DOORS = false;
+
 export class DoorSpawn extends BaseEntity {
   static roomEntityNames = ["door"];
   static roomInitializer(engine, obj, props) {
@@ -27,7 +29,8 @@ export class DoorSpawn extends BaseEntity {
         obj.y + obj.height / 2
       ],
       width: obj.width,
-      heigth: obj.height
+      heigth: obj.height,
+      openCondition: props.open
     });
     engine.addEntity(door);
     return door;
@@ -38,6 +41,9 @@ export class DoorSpawn extends BaseEntity {
     const position = castToVec2(props.position);
     const width = props.width || 64;
     const height = props.height || 64;
+    const openCondition = props.openCondition || "auto";
+
+    this.openCondition = openCondition;
 
     this.body = new Body({
       position,
@@ -53,6 +59,8 @@ export class DoorSpawn extends BaseEntity {
 
     this.body.addShape(this.sensor);
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
+    this.mesh.visible = DEBUG_DOORS;
+
     this.removed = false;
   }
   collisionHandler(engine, shapeId, otherBodyId, otherEntity) {
@@ -67,7 +75,7 @@ export class DoorSpawn extends BaseEntity {
       vec2.copy(verticalDoorBounds, verticalDoorBBox.upperBound);
       vec2.sub(verticalDoorBounds, verticalDoorBounds, verticalDoorBBox.lowerBound);
 
-      const DoorClass = chooseDoorClass(null);
+      const DoorClass = chooseDoorClass(this.openCondition);
       const door = new DoorClass({
         position: verticalDoorCenter,
         width: verticalDoorBounds[0],
@@ -83,6 +91,9 @@ export class DoorSpawn extends BaseEntity {
 
 function chooseDoorClass(doorCondition) {
   switch (doorCondition) {
+    case "hello world":
+      return HelloDoor;
+    case "auto":
     default:
       return AutomaticDoor;
   }
@@ -110,6 +121,7 @@ export class Door extends BaseEntity {
 
     this.body.addShape(this.sensor);
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
+    this.mesh.visible = DEBUG_DOORS;
 
     this.width = width;
     this.height = height;
@@ -153,5 +165,37 @@ export class AutomaticDoor extends Door {
       return;
     }
     this.close();
+  }
+}
+
+export class HelloDoor extends Door {
+  constructor(props) {
+    super(props);
+    this._onStoreUpdate = this._onStoreUpdate.bind(this);
+    this.unsubscribe = null;
+  }
+  attachToEngine(engine) {
+    this.unsubscribe = engine.store.subscribe(this._onStoreUpdate);
+  }
+  cleanup() {
+    if (!this.unsubscribe) {
+      return;
+    }
+    this.unsubscribe();
+    this.unsubscribe = null;
+  }
+  _onStoreUpdate() {
+    const { engine } = this;
+    const state = engine.store.getState();
+    const { scripts } = state;
+    if (
+      scripts.outputLines.length &&
+      scripts.outputLines[scripts.outputLines.length - 1]
+      .toLowerCase() === "hello world"
+    ) {
+      this.open();
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
   }
 }

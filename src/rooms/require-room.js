@@ -7,6 +7,9 @@ export default async function requireRoom(roomName) {
     case "room-2":
       roomModule = await import("./intro/2");
       break;
+    case "room-3":
+      roomModule = await import("./intro/3");
+      break;
     case "pathfinder-test":
       roomModule = await import ("./test/pathfinding-tester");
       break;

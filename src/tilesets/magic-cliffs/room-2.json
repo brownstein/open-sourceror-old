@@ -120,22 +120,66 @@
                  "y":196.758
                 }, 
                 {
-                 "height":36.8449500800053,
+                 "height":18.1770388859257,
                  "id":6,
                  "name":"",
                  "rotation":0,
                  "text":
                     {
                      "color":"#ffffff",
+                     "fontfamily":"Roboto",
                      "halign":"center",
-                     "text":"type \"console.log('hello world')\"",
+                     "pixelsize":14,
+                     "text":"TODO: interaction here",
                      "wrap":true
                     },
                  "type":"foregroundText",
                  "visible":true,
-                 "width":282.226386967464,
-                 "x":267.247363886759,
-                 "y":289.931415219348
+                 "width":172.21905314521,
+                 "x":329.918208609741,
+                 "y":74.5837253733583
+                }, 
+                {
+                 "height":38.1784,
+                 "id":7,
+                 "name":"",
+                 "rotation":0,
+                 "text":
+                    {
+                     "color":"#ffffff",
+                     "fontfamily":"Roboto",
+                     "halign":"center",
+                     "pixelsize":14,
+                     "text":"type \"console.log('hello world')\",\nand hit \"run\"",
+                     "wrap":true
+                    },
+                 "type":"foregroundText",
+                 "visible":true,
+                 "width":200.888,
+                 "x":312.250179611974,
+                 "y":282.930934675645
+                }, 
+                {
+                 "height":79.8853335555704,
+                 "id":8,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"right"
+                        }, 
+                        {
+                         "name":"room",
+                         "type":"string",
+                         "value":"room-3"
+                        }],
+                 "rotation":0,
+                 "type":"room-transition",
+                 "visible":true,
+                 "width":14.6446108740582,
+                 "x":640.054186329089,
+                 "y":191.739445363024
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -144,7 +188,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":7,
+ "nextobjectid":9,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",
