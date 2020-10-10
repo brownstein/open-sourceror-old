@@ -1,0 +1,90 @@
+{ "frames": {
+   "foxi 0.png": {
+    "frame": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 1.png": {
+    "frame": { "x": 17, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 2.png": {
+    "frame": { "x": 34, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 3.png": {
+    "frame": { "x": 51, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 4.png": {
+    "frame": { "x": 68, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 5.png": {
+    "frame": { "x": 85, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 6.png": {
+    "frame": { "x": 102, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 7.png": {
+    "frame": { "x": 119, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   },
+   "foxi 8.png": {
+    "frame": { "x": 136, "y": 0, "w": 17, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 17, "h": 16 },
+    "sourceSize": { "w": 17, "h": 16 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.25-x64",
+  "image": "fox-hangoutt.png",
+  "format": "I8",
+  "size": { "w": 153, "h": 16 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Sprite Sheet", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
