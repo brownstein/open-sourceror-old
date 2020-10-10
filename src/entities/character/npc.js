@@ -63,9 +63,14 @@ export class NPC extends BaseEntity {
       this.npcDialogueStep++;
       engine.removeEntity(this.dialogueEntity);
       if (this.npcDialogueStep < this.npcDialogue.length) {
+        let size = null;
+        if (this.npcDialogue[this.npcDialogueStep].length > 100) {
+          size = "large";
+        }
         this.dialogueEntity = new DialogueEntity(
           vec2ToVector2(this.body.position).add(new Vector2(0, -16)),
-          this.npcDialogue[this.npcDialogueStep]
+          this.npcDialogue[this.npcDialogueStep],
+          size
         );
         engine.addEntity(this.dialogueEntity);
       }
