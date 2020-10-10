@@ -14,15 +14,15 @@ export default function patchInterpreter(Interpreter) {
     if (!state || state.node.type != 'Program') {
       // do an emergency patch of the state stack to represent the end of the
       // program. the alternative is simply to bail.
-      interpreter.stateStack.push({
+      console.warn('Expecting original AST to start with a Program node... patching state');
+      state = {
         node: interpreter.ast,
         scope: interpreter.global,
         thisExpression: interpreter.global,
         done: false,
         n_: Infinity // we're on step infinity, there's nothing to do
-      });
-      console.warn('Expecting original AST to start with a Program node.');
-      state = this.stateStack[0];
+      };
+      interpreter.stateStack.push(state);
       // throw Error('Expecting original AST to start with a Program node.');
     }
     state.done = false;
