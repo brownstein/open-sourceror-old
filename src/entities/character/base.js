@@ -50,6 +50,8 @@ export class Character extends BaseEntity {
     this.maxHealth = 100;
     this.mana = 100;
     this.maxMana = 100;
+
+    this.laserPassthrough = true;
   }
   syncMeshWithBody() {
     this.mesh.position.x = this.body.interpolatedPosition[0];

@@ -74,6 +74,7 @@ export class Laser {
     let dist = 0;
     let bounces = 0;
 
+    const hitList = [];
     this.segments = [];
 
     while (
@@ -111,6 +112,13 @@ export class Laser {
             return;
           }
 
+          // if the entity accepts passthrough hits, add it to the hit list
+          // and ignore it for bounce / stop calculations
+          if (hitEntity.laserPassthrough) {
+            hitList.push(hitEntity);
+            return;
+          }
+
           closestApplicableDist = hitDist;
           closestApplicableEntity = hitEntity;
           vec2.copy(closestApplicablePoint, hitPoint);
@@ -136,6 +144,8 @@ export class Laser {
           vec2.clone(closestApplicablePoint)
         ]);
         dist += closestApplicableDist || 1;
+
+        hitList.push(closestApplicableEntity);
 
         hit = !closestApplicableEntity.reflects;
 
@@ -171,6 +181,8 @@ export class Laser {
         vec2.add(endPoint, startPoint, endPoint);
       }
     }
+
+    return hitList;
   }
   _computeGeometry() {
     this.geometry.vertices.length = 0;
@@ -200,7 +212,14 @@ export class Laser {
   onFrame(timeDelta) {
     this.startPosition = vec2ToVector3(this.fromEntity.body.interpolatedPosition);
     this.startPosition.add(this.relativePosition);
-    this._doCast();
+    const hits = this._doCast();
+
+    hits.forEach(hit => {
+      if (hit.onHit) {
+        hit.onHit(this.intensity);
+      }
+    });
+
     this._computeGeometry();
     this.mesh.visible = this.on;
     this.lifeSpan -= timeDelta;
