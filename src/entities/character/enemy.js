@@ -15,9 +15,9 @@ import { Character } from "./base";
 
 export class Enemy extends Character {
   static roomEntityNames = ["enemyStart"];
-  static roomInitializer(engine, obj, props) {
+  static roomInitializer(engine, obj, props, persistId, persistenceState = null) {
     if (props.isSmart) {
-      return SmartEnemy.roomInitializer(engine, obj, props);
+      return SmartEnemy.roomInitializer(engine, obj, props, persistId, persistenceState);
     }
     const enemy = new Enemy({
       position: [obj.x, obj.y]
@@ -57,7 +57,7 @@ export class Enemy extends Character {
 }
 
 export class SmartEnemy extends Enemy {
-  static roomInitializer(engine, obj, props) {
+  static roomInitializer(engine, obj, props, persistId, persistenceState = null) {
     const enemy = new SmartEnemy({
       position: [obj.x, obj.y]
     });
