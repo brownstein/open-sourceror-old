@@ -18,13 +18,15 @@ import { Medkit, Scroll } from "src/entities/items";
 import { BackgroundText } from "src/entities/background/background-text";
 import { ConditionWall } from "src/entities/environment/condition-wall";
 import SavePoint from "src/entities/environment/save-point";
+import { DoorSpawn } from "src/entities/environment/door";
 
 import getContactMaterials from "src/entities/contact-materials";
 
 const ENTITIES = [
   Player,
   Enemy,
-  TestDummy
+  TestDummy,
+  DoorSpawn
 ];
 
 export default class Room {

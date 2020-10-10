@@ -158,6 +158,8 @@ export class TilesetTerrainEntity extends TerrainEntity {
     this.sourcePolygons = polygons;
     this.sourceTiles = tiles;
 
+    this.blockType = blockType;
+    this.isVerticalDoor = blockType === "verticalDoor";
     this.isOneWayPlatform = blockType === "oneWayPlatform";
     this.oneWayPlatformTracking = [];
 
