@@ -31,13 +31,15 @@ const ENTITIES = [
 
 const PERSIST_STORE = {};
 
-function persistRoomState(roomId, engine) {
+// we'll access this from the load/save code directly
+export function persistRoomState(roomId, engine) {
   const snapshot = engine.getSnapshot();
   PERSIST_STORE[roomId] = snapshot;
   console.log("SAVE PERSIST STORE", PERSIST_STORE);
 }
 
-function getPersistedRoomState(roomId, entities) {
+// we'll access this from the load/save code directly
+export function getPersistedRoomState(roomId, entities) {
   const roomState = PERSIST_STORE[roomId];
   console.log("GET PERSIST STORE", PERSIST_STORE);
   return roomState || {};

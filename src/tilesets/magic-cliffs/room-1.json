@@ -143,6 +143,24 @@
                  "width":92.0116,
                  "x":1321.56,
                  "y":447.263
+                }, 
+                {
+                 "height":0,
+                 "id":12,
+                 "name":"dialogue",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"message",
+                         "type":"string",
+                         "value":"<story here>... just go jump in the hole please"
+                        }],
+                 "rotation":0,
+                 "type":"dialogue",
+                 "visible":true,
+                 "width":0,
+                 "x":813.967635965446,
+                 "y":227.521596301253
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -151,7 +169,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":12,
+ "nextobjectid":13,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",
