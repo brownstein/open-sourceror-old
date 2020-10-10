@@ -67,7 +67,6 @@ export class TilesetTerrain extends Terrain {
       const sourceNameResult = /(.*\/)*(.+).tsx/.exec(ts.source);
       const sourceName = sourceNameResult[2];
       const firstgid = ts.firstgid;
-      console.log(firstgid);
       const tileset = loadTilesetForPolygonTraversal(
         tilesetJsons[sourceName],
         tilesetPngs[sourceName],
@@ -102,8 +101,6 @@ export class TilesetTerrain extends Terrain {
       this.tileset,
       ['ground', 'oneWayPlatform', 'verticalDoor']
     );
-
-    console.log(this.levelPolygonsAndTiles);
 
     const textureLoader = new TextureLoader();
 

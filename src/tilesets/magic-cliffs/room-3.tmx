@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="60" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="3">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="60" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="5">
  <editorsettings>
   <export target="room-3.json" format="json"/>
  </editorsettings>
@@ -87,6 +87,18 @@
   <object id="2" name="enemyStart" type="enemyStart" x="727.92" y="322.441">
    <properties>
     <property name="isSmart" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3" name="enemyStart" type="enemyStart" x="600.669" y="276.07">
+   <properties>
+    <property name="isSmart" type="bool" value="false"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="4" name="enemyStart" type="enemyStart" x="890.758" y="457.241">
+   <properties>
+    <property name="isSmart" type="bool" value="false"/>
    </properties>
    <point/>
   </object>

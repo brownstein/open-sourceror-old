@@ -1,5 +1,5 @@
 "use strict";
-const fire = require("fire");
+const Fire = require("fire");
 const push = require("push");
 const Sensor = require("sensor");
 
@@ -25,7 +25,7 @@ function keepGoing() {
       y: n.relativePosition.y + 16
     };
 
-    f = fire(null, relativeVelocity);
+    f = new Fire(null, relativeVelocity);
     let t = 100;
 
     function changeAccelleration() {
@@ -33,8 +33,8 @@ function keepGoing() {
       if (t <= 0) {
         return;
       }
-      setTimeout(changeAccelleration, 10);
-      f.accelerate([0, 10]);
+      setTimeout(changeAccelleration, 20);
+      f.accelerate([0, -2]);
     }
 
     changeAccelleration();

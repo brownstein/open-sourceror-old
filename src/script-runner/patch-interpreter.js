@@ -12,7 +12,17 @@ export default function patchInterpreter(Interpreter) {
     var state = this.stateStack[0];
     var interpreter = this;
     if (!state || state.node.type != 'Program') {
-      throw Error('Expecting original AST to start with a Program node.');
+      // this used to be catestrophic - now, we just do an emergency patch
+      // of the state stack
+      interpreter.stateStack.push({
+        node: interpreter.ast,
+        scope: interpreter.global,
+        thisExpression: interpreter.global,
+        done: false
+      });
+      console.warn('Expecting original AST to start with a Program node.');
+      state = this.stateStack[0];
+      // throw Error('Expecting original AST to start with a Program node.');
     }
     state.done = false;
     var scope = this.createScope(func.node.body, func.parentScope);

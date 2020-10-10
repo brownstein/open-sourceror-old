@@ -9,7 +9,7 @@ export default function getNativeFireSpell (interpreter, scope, runner) {
 
   // add support for casting fireball
   const nativeFireball = interpreter.createNativeFunction(
-    (rawRelativePosition, rawRelativeVelocity) => {
+    function (rawRelativePosition, rawRelativeVelocity) {
 
       const {
         engine,
@@ -74,8 +74,9 @@ export default function getNativeFireSpell (interpreter, scope, runner) {
       interpreter.setProperty(this, "accelerate",
         interpreter.createNativeFunction(this.accelerate));
 
-      return interpreter.nativeToPseudo(undefined);
-    }
+      return this;
+    },
+    true
   );
 
   return nativeFireball;
