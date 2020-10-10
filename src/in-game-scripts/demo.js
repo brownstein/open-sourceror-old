@@ -30,7 +30,7 @@ function keepGoing() {
 
     function changeAccelleration() {
       t -= 1;
-      if (t <= 0) {
+      if (t <= 0 || !active) {
         return;
       }
       setTimeout(changeAccelleration, 20);

@@ -12,13 +12,14 @@ export default function patchInterpreter(Interpreter) {
     var state = this.stateStack[0];
     var interpreter = this;
     if (!state || state.node.type != 'Program') {
-      // this used to be catestrophic - now, we just do an emergency patch
-      // of the state stack
+      // do an emergency patch of the state stack to represent the end of the
+      // program. the alternative is simply to bail.
       interpreter.stateStack.push({
         node: interpreter.ast,
         scope: interpreter.global,
         thisExpression: interpreter.global,
-        done: false
+        done: false,
+        n_: Infinity // we're on step infinity, there's nothing to do
       });
       console.warn('Expecting original AST to start with a Program node.');
       state = this.stateStack[0];
