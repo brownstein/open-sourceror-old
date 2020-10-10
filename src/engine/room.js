@@ -26,7 +26,8 @@ const ENTITIES = [
   Player,
   Enemy,
   TestDummy,
-  DoorSpawn
+  DoorSpawn,
+  NPC
 ];
 
 const PERSIST_STORE = {};
@@ -183,18 +184,6 @@ export default class Room {
                 level: props.level
               });
               engine.addEntity(zone);
-              break;
-            }
-            case "npc": {
-              const npcDialogue = props.npcDialogue;
-              const npc = new NPC({
-                position: {
-                  x: o.x,
-                  y: o.y
-                },
-                npcDialogue
-              });
-              engine.addEntity(npc);
               break;
             }
             case "scroll": {

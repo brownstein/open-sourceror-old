@@ -120,7 +120,12 @@
     <property name="room" value="room-1"/>
    </properties>
   </object>
-  <object id="2" type="teacherEvent" x="408.365" y="266.848">
+  <object id="2" name="Teacher" type="npc" x="419.032" y="248.18">
+   <properties>
+    <property name="npcDialogue">Hello!|
+You must have many questions.|
+I'm the NPC character, now type &quot;console.log('hello world');&quot; into the console to start your adventure.</property>
+   </properties>
    <point/>
   </object>
   <object id="3" type="door" x="279.202" y="195.372" width="32.562" height="19.3986">

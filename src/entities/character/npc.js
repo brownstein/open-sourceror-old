@@ -15,21 +15,37 @@ import { DialogueEntity } from "src/entities/presentational/dialogue";
 import { Sensor } from "src/entities/sensor";
 
 export class NPC extends BaseEntity {
+  static roomEntityNames = ["npc"];
+  static roomInitializer(engine, obj, props) {
+    const npc = new NPC({
+      position: {
+        x: obj.x,
+        y: obj.y
+      },
+      npcDialogue: props.npcDialogue
+    });
+    engine.addEntity(npc);
+    return npc;
+  }
+
   constructor(props) {
     super(props);
     const { position, npcDialogue } = props;
     const color = new Color(0.2, 1, 0.2);
 
     this.body = new Body({
-      mass: 0,
+      mass: 1,
       position: castToVec2(position)
     });
     this.convex = new Convex({
       vertices: characterPolygon.vertices,
-      sensor: true
+      // sensor: true
     });
     this.body.addShape(this.convex);
-    this.mesh = getThreeJsObjectForP2Body(this.body, null, color);
+    this.mesh = getThreeJsObjectForP2Body(this.body, true, color);
+
+    // set to not collide with the player
+    this.convex.collisionMask = 0b100;
 
     this.sensor = new Sensor(this, 50);
     this.sensor.attachUpdateHandler(this._onSensorUpdate.bind(this));
