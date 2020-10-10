@@ -66,7 +66,9 @@ export class DoorSpawn extends BaseEntity {
       const verticalDoorBounds = vec2.create();
       vec2.copy(verticalDoorBounds, verticalDoorBBox.upperBound);
       vec2.sub(verticalDoorBounds, verticalDoorBounds, verticalDoorBBox.lowerBound);
-      const door = new Door({
+
+      const DoorClass = chooseDoorClass(null);
+      const door = new DoorClass({
         position: verticalDoorCenter,
         width: verticalDoorBounds[0],
         height: verticalDoorBounds[1],
@@ -76,6 +78,13 @@ export class DoorSpawn extends BaseEntity {
       engine.removeEntity(this);
       this.removed = true;
     }
+  }
+}
+
+function chooseDoorClass(doorCondition) {
+  switch (doorCondition) {
+    default:
+      return AutomaticDoor;
   }
 }
 
@@ -104,16 +113,37 @@ export class Door extends BaseEntity {
 
     this.width = width;
     this.height = height;
-    this.collidingWithPlayer = false;
+
+    this.isOpen = false;
     this.initialDoorPosition = this.terrainEntity.body.position;
   }
+  open() {
+    if (this.isOpen) {
+      return;
+    }
+    this.isOpen = true;
+    this.terrainEntity.body.position[1] += this.height;
+  }
+  close() {
+    if (!this.isOpen) {
+      return;
+    }
+    this.isOpen = false;
+    this.terrainEntity.body.position[1] -= this.height;
+  }
+}
 
+export class AutomaticDoor extends Door {
+  constructor(props) {
+    super(props);
+    this.collidingWithPlayer = false;
+  }
   collisionHandler(engine, shapeId, otherBodyId, otherEntity) {
     if (otherEntity !== engine.controllingEntity) {
       return;
     }
     this.collidingWithPlayer = true;
-    this.terrainEntity.body.position[1] += this.height;
+    this.open();
   }
   endCollisionHandler(engine, shapeId, otherBodyId, otherEntity) {
     if (!this.collidingWithPlayer) {
@@ -122,7 +152,6 @@ export class Door extends BaseEntity {
     if (otherEntity !== engine.controllingEntity) {
       return;
     }
-    this.collidingWithPlayer = false;
-    this.terrainEntity.body.position[1] -= this.height;
+    this.close();
   }
 }
