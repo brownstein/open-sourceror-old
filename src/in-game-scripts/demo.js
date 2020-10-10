@@ -33,8 +33,8 @@ function keepGoing() {
       if (t <= 0 || !active) {
         return;
       }
-      setTimeout(changeAccelleration, 20);
-      f.accelerate([0, -2]);
+      setTimeout(changeAccelleration, 15);
+      f.accelerate([0, -3]);
     }
 
     changeAccelleration();
