@@ -217,6 +217,7 @@ function mapStateToProps(state) {
   const { currentRoom, previousRoom, transitionPosition } = rooms;
   return {
     currentRoom,
+    previousRoom,
     transitionPosition,
     paused: !!ui.modalStack.length,
     canOpenPauseMenu: canOpenPauseMenu(state)

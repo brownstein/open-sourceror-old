@@ -365,4 +365,16 @@ export default class Engine extends EventEmitter {
   dispatch(event) {
     return this.store.dispatch(event);
   }
+  /**
+   * Gets a persistence snapshot for all entities that implement it
+   */
+  getSnapshot() {
+    const snapshot = {};
+    this.activeEntities.forEach(entity => {
+      if (entity.persist && entity.persistId) {
+        snapshot[entity.persistId] = entity.persist();
+      }
+    });
+    return snapshot;
+  }
 }

@@ -22,7 +22,7 @@ const DEBUG_DOORS = false;
 
 export class DoorSpawn extends BaseEntity {
   static roomEntityNames = ["door"];
-  static roomInitializer(engine, obj, props) {
+  static roomInitializer(engine, obj, props, persistId, persistSnapshot) {
     const door = new DoorSpawn({
       position: [
         obj.x + obj.width / 2,
@@ -30,7 +30,9 @@ export class DoorSpawn extends BaseEntity {
       ],
       width: obj.width,
       heigth: obj.height,
-      openCondition: props.open
+      openCondition: props.open,
+      persistId,
+      persistSnapshot
     });
     engine.addEntity(door);
     return door;
@@ -61,6 +63,9 @@ export class DoorSpawn extends BaseEntity {
     this.mesh = getThreeJsObjectForP2Body(this.body, false);
     this.mesh.visible = DEBUG_DOORS;
 
+    this.persistId = props.persistId;
+    this.persistSnapshot = props.persistSnapshot;
+
     this.removed = false;
   }
   collisionHandler(engine, shapeId, otherBodyId, otherEntity) {
@@ -80,7 +85,9 @@ export class DoorSpawn extends BaseEntity {
         position: verticalDoorCenter,
         width: verticalDoorBounds[0],
         height: verticalDoorBounds[1],
-        terrainEntity: otherEntity
+        terrainEntity: otherEntity,
+        persistId: this.persistId,
+        persistSnapshot: this.persistSnapshot
       });
       engine.addEntity(door);
       engine.removeEntity(this);
@@ -106,6 +113,8 @@ export class Door extends BaseEntity {
     const width = props.width;
     const height = props.height;
     this.terrainEntity = props.terrainEntity;
+    this.persistId = props.persistId;
+    this.persistSnapshot = props.persistSnapshot;
 
     this.body = new Body({
       position,
@@ -128,6 +137,10 @@ export class Door extends BaseEntity {
 
     this.isOpen = false;
     this.initialDoorPosition = this.terrainEntity.body.position;
+
+    if (this.persistSnapshot && this.persistSnapshot.isOpen) {
+      this.open();
+    }
   }
   open() {
     if (this.isOpen) {
@@ -142,6 +155,11 @@ export class Door extends BaseEntity {
     }
     this.isOpen = false;
     this.terrainEntity.body.position[1] -= this.height;
+  }
+  persist() {
+    return {
+      isOpen: this.isOpen
+    };
   }
 }
 

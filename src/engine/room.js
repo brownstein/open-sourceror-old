@@ -29,6 +29,20 @@ const ENTITIES = [
   DoorSpawn
 ];
 
+const PERSIST_STORE = {};
+
+function persistRoomState(roomId, engine) {
+  const snapshot = engine.getSnapshot();
+  PERSIST_STORE[roomId] = snapshot;
+  console.log("SAVE PERSIST STORE", PERSIST_STORE);
+}
+
+function getPersistedRoomState(roomId, entities) {
+  const roomState = PERSIST_STORE[roomId];
+  console.log("GET PERSIST STORE", PERSIST_STORE);
+  return roomState || {};
+}
+
 export default class Room {
   constructor() {
     this.tileLevel = null;
@@ -67,6 +81,8 @@ export default class Room {
     engine.currentRoom = this;
   }
   cleanup(engine) {
+    persistRoomState(this.roomName, engine);
+
     engine.activeEntities.forEach(e => {
       engine.removeEntity(e);
     });
@@ -81,6 +97,7 @@ export default class Room {
   }
   initTileLevel(engine, roomState) {
     const { transitionPosition, currentRoom, previousRoom } = roomState;
+    const persistenceState = getPersistedRoomState(this.roomName);
 
     // add the map
     const terrain = new TilesetTerrain(
@@ -122,7 +139,8 @@ export default class Room {
           {};
 
         if (EntityClass) {
-          EntityClass.roomInitializer(engine, o, props);
+          const persisted = persistenceState[persistId];
+          EntityClass.roomInitializer(engine, o, props, persistId, persisted);
           switch (o.type) {
             case "playerStart":
               playerSpawned = true;
@@ -265,11 +283,15 @@ export default class Room {
 
       if (!playerSpawned) {
         let roomTransition;
+        console.log("PR", previousRoom);
         roomTransitions.forEach(t => {
-          if (t.level === previousRoom) {
+          if (t.transitionToLevel === previousRoom) {
             roomTransition = t;
           }
         });
+        if (!roomTransition) {
+          roomTransition = roomTransitions[0];
+        }
         if (!roomTransition) {
           throw new Error("unable to find room transition");
         }
