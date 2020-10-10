@@ -236,7 +236,9 @@ export class EngineViewport extends Component {
       this.camera.position.x = cameraPosition.x;
       this.camera.position.y = cameraPosition.y;
       if (this.constrainCameraToScene) {
+        // see if we have to letterbox
         if (levelBBox.max.x - levelBBox.min.x >= this.cameraSize.width) {
+          // non-letterbox constraint
           this.camera.position.x = Math.max(
             levelBBox.min.x + this.cameraSize.width / 2 - DEBUG_OUTER_VIEW,
             Math.min(
@@ -246,9 +248,13 @@ export class EngineViewport extends Component {
           );
         }
         else {
+          // letterbox constraint
           this.camera.position.x = (levelBBox.max.x + levelBBox.min.x) / 2;
+          // TODO: fill extra area in if necessary
         }
+        // see if we have to letterbox
         if (levelBBox.max.y - levelBBox.min.y >= this.cameraSize.height) {
+          // non-letterbox constraint
           this.camera.position.y = Math.max(
             levelBBox.min.y + this.cameraSize.height / 2 - DEBUG_OUTER_VIEW,
             Math.min(
@@ -258,7 +264,9 @@ export class EngineViewport extends Component {
           );
         }
         else {
+          // letterbox constraint
           this.camera.position.y = (levelBBox.max.y + levelBBox.min.y) / 2;
+          // TODO: fill extra area in if necessary
         }
       }
     }
