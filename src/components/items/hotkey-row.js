@@ -9,6 +9,7 @@ function HotkeyRow({
   interactive = true,
   hotkeyItemArray,
   dragItemToInventory,
+  activeScriptIds
 }) {
   return (
     <div className="hotkey-row">
@@ -28,11 +29,14 @@ function HotkeyRow({
           );
         }
         else {
+          const isActive = item && item.itemData &&
+            activeScriptIds.includes(item.itemData.scriptId);
           return (
             <ItemBox
               key={index}
               item={item}
               displayHotkey={(index + 1) % 10}
+              extraClasses={isActive ? ["active"] : []}
               />
           );
         }
@@ -42,7 +46,7 @@ function HotkeyRow({
 }
 
 function mapStateToProps(state) {
-  const { inventory } = state;
+  const { inventory, scripts } = state;
   const hotkeyItemArray = [];
   for (let i = 0; i < 10; i++) {
     const itemId = inventory.numericHotkeyMap[(i + 1) % 10];
@@ -52,8 +56,15 @@ function mapStateToProps(state) {
     }
     hotkeyItemArray.push(item);
   }
+
+  const activeScriptIds = Object.keys(scripts.activeScripts)
+    .map(k => scripts.activeScripts[k])
+    .filter(s => s.running)
+    .map(s => s.scriptId);
+
   return {
-    hotkeyItemArray
+    hotkeyItemArray,
+    activeScriptIds
   };
 }
 

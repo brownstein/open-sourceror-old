@@ -161,11 +161,11 @@ export class ScriptExecutionContext {
   /**
    * Runs a script with a given name
    */
-  async runScript(scriptSrc, runningEntity, executionSpeed) {
+  async runScript(scriptSrc, runningEntity, executionSpeed, existingId = null) {
     this._flushInactiveScripts();
 
     const engine = this.engine;
-    const scriptId = shortid();
+    const scriptId = existingId || shortid();
 
     // create the runner
     const scriptRunner = new ScriptRunner(
@@ -247,12 +247,19 @@ export class ScriptExecutionContext {
   }
   stopScript(scriptId) {
     const engine = this.engine;
-    const stopped = this.runningScripts.find(s => s.scriptId === scriptId);
-    stopped.running = false;
-    stopped.scriptRunner.cleanup();
-    this.runningScripts = this.runningScripts.filter(s => s => stopped);
-    engine.dispatch(updateScriptStates(this));
-    return stopped;
+    for (let i = 0; i < this.runningScripts.length; i++) {
+      const stopped = this.runningScripts[i];
+      if (stopped.running && stopped.scriptId === scriptId) {
+        stopped.running = false;
+        stopped.scriptRunner.cleanup();
+        this.runningScripts = this.runningScripts.filter(s =>
+          s.scriptId !== scriptId ||
+          s === stopped
+        );
+        engine.dispatch(updateScriptStates(this));
+        return stopped;
+      }
+    }
   }
   getRunningScripts() {
     return this.runningScripts;

@@ -276,6 +276,7 @@ export class Player extends Character {
   _onKeyboardEvent(event) {
     const { key, down } = event;
     const state = this.engine.store.getState();
+    const exContext = this.engine.scriptExecutionContext;
     const { inventory, scripts } = state;
     if (down && inventory.numericHotkeyMap[key]) {
       const itemId = inventory.numericHotkeyMap[key];
@@ -285,13 +286,28 @@ export class Player extends Character {
         if (item.itemName === "Scroll" && item.itemData.scriptContents) {
 
           // figure out if we're already running the script in question
-          
+          let alreadyRunning = false;
+          Object.keys(scripts.activeScripts).forEach(k => {
+            const script = scripts.activeScripts[k];
+            if (
+              script.running &&
+              script.scriptId === item.itemData.scriptId
+            ) {
+              alreadyRunning = true;
+            }
+          });
 
-          this.engine.scriptExecutionContext.runScript(
-            item.itemData.scriptContents,
-            this,
-            1.0
-          );
+          if (alreadyRunning) {
+            exContext.stopScript(item.itemData.scriptId);
+          }
+          else {
+            exContext.runScript(
+              item.itemData.scriptContents,
+              this,
+              1.0,
+              item.itemData.scriptId
+            );
+          }
         }
       }
     }

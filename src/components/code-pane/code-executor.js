@@ -235,9 +235,15 @@ class CodeExecutor extends Component {
   _run() {
     const { scriptContents } = this.state;
     const { engine } = this.context;
+    const { activeScriptId } = this.props;
     const player = engine.controllingEntity;
     const exSpeed = this.state.executionSpeed;
-    engine.scriptExecutionContext.runScript(scriptContents, player, exSpeed);
+    engine.scriptExecutionContext.runScript(
+      scriptContents,
+      player,
+      exSpeed,
+      activeScriptId
+    );
   }
   _pause() {
     const { activeScriptId } = this.props;
