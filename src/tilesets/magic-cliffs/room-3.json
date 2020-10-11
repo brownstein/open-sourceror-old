@@ -94,8 +94,8 @@
                  "type":"enemyStart",
                  "visible":true,
                  "width":0,
-                 "x":600.668607786046,
-                 "y":276.0703116575
+                 "x":599.590208131133,
+                 "y":281.462309932061
                 }, 
                 {
                  "height":0,
@@ -114,6 +114,29 @@
                  "width":0,
                  "x":890.758114957403,
                  "y":457.241453682735
+                }, 
+                {
+                 "height":0,
+                 "id":5,
+                 "name":"test dummy",
+                 "point":true,
+                 "rotation":0,
+                 "type":"testDummy",
+                 "visible":true,
+                 "width":0,
+                 "x":341.852690607139,
+                 "y":313.814299579424
+                }, 
+                {
+                 "height":66.8607786045508,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"savePoint",
+                 "visible":true,
+                 "width":38.822387576836,
+                 "x":622.236600884288,
+                 "y":164.995147201553
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -122,7 +145,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":5,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

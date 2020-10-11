@@ -46,6 +46,11 @@ export function getPersistedRoomState(roomId, entities) {
   return roomState || {};
 }
 
+// we'll access this from the load/save code directly
+export function getCompletePersistenceState() {
+  return PERSIST_STORE;
+}
+
 export default class Room {
   constructor() {
     this.tileLevel = null;
