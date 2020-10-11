@@ -21,7 +21,6 @@ const r = new Reflector({
 // turn laser off after 5 seconds
 setTimeout(() => l.off(), 1000);
 setTimeout(() => l.on(), 1500);
-setTimeout(() => l.off(), 2000);
 
 // test reflector movement
 let done = false;
