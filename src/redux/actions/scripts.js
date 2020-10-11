@@ -83,10 +83,12 @@ export const loadScriptFromItem = (item) => ({
 });
 
 export const saveScript = ({
+  scriptId = null,
   scriptName,
   scriptContents
 }) => ({
-  id: uuid(),
+  id: scriptId || uuid(),
+  replace: !!scriptId,
   type: SAVE_SCRIPT,
   scriptName,
   scriptContents

@@ -16,23 +16,23 @@ function SaveScriptModal({
   dispatch
 }) {
   const [state, setState] = useState({
-    spellName: ""
+    spellName: "",
+    existingScriptId: null
   });
   const {
-    spellName
+    spellName,
+    existingScriptId
   } = state;
   const isValid = !!spellName;
 
   const updateName = (e) => setState({
     ...state,
-    spellName: e.target.value
-  });
-  const selectScript = s => setState({
-    ...state,
-    spellName: s.scriptName
+    spellName: e.target.value,
+    existingScriptId: null
   });
   const saveSpell = () => {
     dispatch(saveScript({
+      scriptId: existingScriptId,
       scriptName: spellName || "untitled",
       scriptContents
     }));
@@ -41,7 +41,8 @@ function SaveScriptModal({
   const onSelectItem = item => {
     setState({
       ...state,
-      spellName: item.itemData.scriptName
+      spellName: item.itemData.scriptName,
+      existingScriptId: item.itemData.scriptId
     });
   };
 

@@ -163,7 +163,7 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
     }
     case SAVE_SCRIPT: {
       const scriptItem = {
-        id: action.id,
+        id: shortId(),
         itemName: "Scroll",
         itemData: {
           color: "#aff",
@@ -172,6 +172,27 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
           scriptContents: action.scriptContents
         }
       };
+      if (action.replace) {
+        let itemIndex = 0;
+        for (itemIndex = 0; itemIndex < state.inventory.length; itemIndex++) {
+          const item = state.inventory[itemIndex];
+          if (item.itemData && item.itemData.scriptId === action.id) {
+            scriptItem.id = item.id;
+            break;
+          }
+        }
+        if (itemIndex < state.inventory.length) {
+          const newInventory = state.inventory
+            .slice(0, itemIndex)
+            .concat([scriptItem])
+            .concat(state.inventory.slice(itemIndex + 1,
+              state.inventory.length));
+          return {
+            ...state,
+            inventory: newInventory
+          };
+        }
+      }
       const newInventory = [...state.inventory, scriptItem];
       return {
         ...state,
