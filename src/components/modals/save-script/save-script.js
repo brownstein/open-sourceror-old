@@ -2,8 +2,9 @@ import { useState } from "react";
 import { connect } from "react-redux";
 
 import { closeModal } from "src/redux/actions/ui";
-import { addScriptToLibrary } from "src/redux/actions/scripts";
+import { saveScript } from "src/redux/actions/scripts";
 
+import ItemGrid from "src/components/items/item-grid";
 import BaseModal from "../base";
 
 import "src/less/forms.less";
@@ -30,13 +31,19 @@ function SaveScriptModal({
     ...state,
     spellName: s.scriptName
   });
-  const saveScript = () => {
-    dispatch(addScriptToLibrary({
-      scriptName: spellName,
+  const saveSpell = () => {
+    dispatch(saveScript({
+      scriptName: spellName || "untitled",
       scriptContents
     }));
     dispatch(closeModal());
   }
+  const onSelectItem = item => {
+    setState({
+      ...state,
+      spellName: item.itemData.scriptName
+    });
+  };
 
   return (
     <BaseModal>
@@ -48,20 +55,16 @@ function SaveScriptModal({
             <input type="text" value={spellName} onChange={updateName}/>
           </label>
         </div>
-        <div className="filler"></div>
+        <div className="filler">
+          <ItemGrid
+            onClickItem={onSelectItem}
+            enableItemTypes={["Scroll"]}
+            />
+        </div>
       </div>
-      <div><button onClick={saveScript}>save</button></div>
+      <div><button onClick={saveSpell}>save</button></div>
     </BaseModal>
   );
 }
 
-function mapStateToProps(state) {
-  const { scriptLibrary } = state.scripts;
-  const sortedScripts = [...scriptLibrary];
-  sortedScripts.sort((a, b) => a.scriptName > b.scriptName);
-  return {
-    scriptLibrary: sortedScripts,
-  };
-}
-
-export default connect(mapStateToProps)(SaveScriptModal);
+export default connect()(SaveScriptModal);

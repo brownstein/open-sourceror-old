@@ -7,7 +7,7 @@ import {
   USE_ITEM
 } from "../constants/inventory";
 import {
-  ADD_SCRIPT_TO_LIBRARY
+  SAVE_SCRIPT
 } from "../constants/scripts";
 import { LOAD_GAME } from "../constants/save-state";
 
@@ -161,7 +161,7 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
         }
       };
     }
-    case ADD_SCRIPT_TO_LIBRARY: {
+    case SAVE_SCRIPT: {
       const scriptItem = {
         id: action.id,
         itemName: "Scroll",

@@ -75,26 +75,6 @@ export const consoleLog = (...content) => {
   };
 }
 
-export async function loadScriptLibraryFromDisc() {
-  return {
-    type: SET_SCRIPT_LIBRARY_ON_LOAD
-  };
-}
-
-export const setScriptLibraryOnLoad = () => ({
-  type: SET_SCRIPT_LIBRARY_ON_LOAD
-});
-
-export const saveScript = (scriptContents) => {
-  console.log(scriptContents);
-  return (dispatch, getState) => {
-
-    dispatch({
-      type: SAVE_SCRIPT
-    });
-  };
-};
-
 export const loadScriptFromItem = (item) => ({
   type: LOAD_SCRIPT,
   scriptId: item.itemData.scriptId,
@@ -102,21 +82,12 @@ export const loadScriptFromItem = (item) => ({
   scriptContents: item.itemData.scriptContents
 });
 
-export const addScriptToLibrary = ({
+export const saveScript = ({
   scriptName,
   scriptContents
 }) => ({
   id: uuid(),
-  type: ADD_SCRIPT_TO_LIBRARY,
+  type: SAVE_SCRIPT,
   scriptName,
   scriptContents
-});
-
-// unused
-
-export const removeScriptFromLibrary = (
-  scriptId
-) => ({
-  type: REMOVE_SCRIPT_FROM_LIBRARY,
-  scriptId
 });

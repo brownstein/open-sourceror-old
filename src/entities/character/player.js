@@ -276,13 +276,17 @@ export class Player extends Character {
   _onKeyboardEvent(event) {
     const { key, down } = event;
     const state = this.engine.store.getState();
-    const { inventory } = state;
+    const { inventory, scripts } = state;
     if (down && inventory.numericHotkeyMap[key]) {
       const itemId = inventory.numericHotkeyMap[key];
       const item = inventory.inventory.find(item => item && item.id === itemId);
       if (item) {
         this.engine.store.dispatch(useItem(item.id));
         if (item.itemName === "Scroll" && item.itemData.scriptContents) {
+
+          // figure out if we're already running the script in question
+          
+
           this.engine.scriptExecutionContext.runScript(
             item.itemData.scriptContents,
             this,
