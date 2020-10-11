@@ -179,7 +179,7 @@ export class Player extends Character {
       this.direction = "left";
       this.sprite.mesh.scale.x = -1;
     }
-    if (ks.isKeyDown("w")) {
+    if (ks.isKeyDown("w") || ks.isKeyDown(" ")) {
       if (!this.upHeld) {
         this.upHeld = true;
         this.plannedAccelleration[1] = -this.jumpAcceleration;
