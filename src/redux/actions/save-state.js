@@ -6,12 +6,25 @@ import {
   LOAD_GAME
 } from "src/redux/constants/save-state";
 
+import {
+  getCompletePersistenceState,
+  setCompletePersistenceState
+} from "src/engine/room";
 
 export function saveGame(engine) {
   const room = engine.currentRoom;
   const controllingEntity = engine.controllingEntity;
 
-  const persistEntities = engine.activeEntities.filter(e => e.persist);
+  const currentRoomState = engine.getSnapshot();
+  const restOfRoomState = getCompletePersistenceState();
+
+  // form a complete picture of the game's persistence
+  const persistState = {
+    ...restOfRoomState,
+    current: currentRoomState
+  };
+
+  console.log(persistState);
 
   return (dispatch, getState) => {
     const {

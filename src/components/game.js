@@ -14,6 +14,8 @@ import LoadSaveStore from "src/engine/load-save";
 
 import { transitionToRoom } from "src/redux/actions/rooms";
 
+
+
 // global styles
 import "./game.less";
 
@@ -41,8 +43,9 @@ ipcRenderer.on("load-game", function() {
 
   const data = saveStore.load();
 
-  const { room } = data;
-  initialRoom = room;
+  const { room, persistence } = data;
+
+  console.log("LOAD", room, persistence);
 
   if (_engine && room) {
     _engine.store.dispatch(transitionToRoom(room));

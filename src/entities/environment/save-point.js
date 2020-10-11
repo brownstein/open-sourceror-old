@@ -6,6 +6,20 @@ import BaseEntity from "src/entities/base";
 import { saveGame } from "src/redux/actions/save-state";
 
 export default class SavePoint extends BaseEntity {
+  static roomEntityNames = ["savePoint"];
+  static roomInitializer(engine, obj, props, persistId, persistSnapshot) {
+    const point = new SavePoint({
+      position: {
+        x: obj.x + obj.width / 2,
+        y: obj.y + obj.height / 2
+      },
+      width: obj.width,
+      height: obj.height,
+    });
+    engine.addEntity(point);
+    return point;
+  }
+
   constructor(props) {
     super(props);
     const position = castToVec2(props.position);

@@ -56,7 +56,7 @@ const CHARACTER_LAYERS = {
 
 export class Player extends Character {
   static roomEntityNames = ["playerStart"];
-  static roomInitializer(engine, obj, props) {
+  static roomInitializer(engine, obj, props, persistId, persistenceState = null) {
     const player = new Player({
       position: [obj.x, obj.y]
     });

@@ -5,6 +5,8 @@ import { vec2 } from "p2";
 // import { NavGrid } from "src/pathfinding/navigation-grid";
 import { AsyncNavGrid } from "src/pathfinding/navigation-grid-async";
 
+import { vec2ToVector3 } from "src/p2-utils/vec2-utils";
+
 // game entities
 import { Player } from "src/entities/character/player";
 import { Enemy, SmartEnemy } from "src/entities/character/enemy";
@@ -27,7 +29,8 @@ const ENTITIES = [
   Enemy,
   TestDummy,
   DoorSpawn,
-  NPC
+  NPC,
+  SavePoint
 ];
 
 const PERSIST_STORE = {};
@@ -49,6 +52,11 @@ export function getPersistedRoomState(roomId, entities) {
 // we'll access this from the load/save code directly
 export function getCompletePersistenceState() {
   return PERSIST_STORE;
+}
+
+// we'll access this from the load/save code directly
+export function setCompletePersistenceState(fullState) {
+  Object.assign(PERSIST_STORE, fullState);
 }
 
 export default class Room {
@@ -243,18 +251,6 @@ export default class Room {
               engine.addEntity(wall);
               break;
             }
-            case "savePoint": {
-              const savePoint = new SavePoint({
-                position: {
-                  x: o.x + o.width / 2,
-                  y: o.y + o.height / 2
-                },
-                width: o.width,
-                height: o.height
-              });
-              engine.addEntity(savePoint);
-              break;
-            }
             case "room-transition": {
               const nextRoom = props.room;
               const nextRoomDirection = props.direction;
@@ -277,9 +273,11 @@ export default class Room {
         }
       });
 
+      // if the player isn't explicitly positioned in the room,
+      // they probably entered through a door. find that door and spawn
+      // the player there
       if (!playerSpawned) {
         let roomTransition;
-        console.log("PR", previousRoom);
         roomTransitions.forEach(t => {
           if (t.transitionToLevel === previousRoom) {
             roomTransition = t;
@@ -294,12 +292,8 @@ export default class Room {
 
         roomTransition.spawnColliding = true;
 
-        const player = new Player({
-          position: vec2.clone(roomTransition.body.position)
-        });
-        engine.addEntity(player);
-        engine.followEntity(player);
-        engine.setControllingEntity(player);
+        const playerPos = vec2ToVector3(roomTransition.body.position);
+        Player.roomInitializer(engine, playerPos, {}, 'player', null);
         playerSpawned = true;
       }
     });
