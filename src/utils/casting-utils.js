@@ -20,7 +20,7 @@ export function castDirectionToVec2(direction) {
   }
 
   // { x, y } style direction
-  if (direction && direction.x && direction.y) {
+  if (direction && direction.x !== undefined && direction.y !== undefined) {
     result[0] = direction.x;
     result[1] = direction.y;
     return result;

@@ -4,25 +4,18 @@ const Reflector = require("reflector");
 const l = new Laser({
   intensity: 1,
   relativePosition: {
-    x: 16,
-    y: -30
+    x: 0,
+    y: -32
   },
-  direction: Math.PI * -0.1
+  direction: Math.PI
 });
 
 const r = new Reflector({
   relativePosition: {
-    x: 60,
-    y: -26
+    x: 0,
+    y: -64
   },
-  direction: Math.PI * 0.75
-});
-
-const r2 = new Reflector({
-  relativePosition: {
-    x: 70,
-    y: -80
-  }
+  direction: Math.PI * 0.55
 });
 
 // turn laser off after 5 seconds
@@ -38,10 +31,9 @@ function moveReflectors() {
     return;
   }
   setTimeout(moveReflectors, 5);
-  l.aim(0.1 - Math.sin(t / 5) * 0.2);
-  l.move([0, Math.sin(t / 10) / 3]);
-  r.move([0, Math.sin(t / 10) / 2]);
-  r2.rotate(-0.015);
+  l.aim(Math.sin(t / 5) * 0.2 - Math.PI * 0.5);
+  r.move([0, Math.sin(t / 10) / 3]);
+  r.rotate(-0.02);
   t++;
 }
 moveReflectors();

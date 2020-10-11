@@ -13,7 +13,7 @@ export function castToVec2(src) {
       return [src[0], src[1] || 0];
     }
   }
-  if (src && src.x) {
+  if (src && src.x !== undefined) {
     return [src.x, src.y || 0];
   }
   return [0, 0];
