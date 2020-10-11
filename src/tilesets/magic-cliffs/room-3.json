@@ -137,6 +137,30 @@
                  "width":38.822387576836,
                  "x":622.236600884288,
                  "y":164.995147201553
+                }, 
+                {
+                 "height":0,
+                 "id":7,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"scroll",
+                 "visible":true,
+                 "width":0,
+                 "x":504.691038498868,
+                 "y":240.483123045401
+                }, 
+                {
+                 "height":0,
+                 "id":8,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"medkit",
+                 "visible":true,
+                 "width":0,
+                 "x":529.494230561846,
+                 "y":321.363097163809
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -145,7 +169,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":7,
+ "nextobjectid":9,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

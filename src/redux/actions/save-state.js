@@ -24,7 +24,7 @@ export function saveGame(engine) {
     current: currentRoomState
   };
 
-  console.log(persistState);
+  console.log("PERSIST", persistState);
 
   return (dispatch, getState) => {
     const {

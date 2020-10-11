@@ -11,6 +11,16 @@ export default class Scroll extends BaseItem {
   static getIcon(itemData) {
     return new SimpleSprite(scrollPNG, itemData);
   }
+
+  static roomEntityNames = ["scroll"];
+  static roomInitializer(engine, obj, props, persistId, persistSnapshot = null) {
+    const scroll = new Scroll({
+      position: [obj.x, obj.y]
+    });
+    engine.addEntity(scroll);
+    return scroll;
+  }
+
   constructor(props) {
     super({
       position: props.position,

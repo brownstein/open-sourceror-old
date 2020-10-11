@@ -30,7 +30,9 @@ const ENTITIES = [
   TestDummy,
   DoorSpawn,
   NPC,
-  SavePoint
+  SavePoint,
+  Scroll,
+  Medkit
 ];
 
 const PERSIST_STORE = {};
@@ -197,23 +199,6 @@ export default class Room {
                 level: props.level
               });
               engine.addEntity(zone);
-              break;
-            }
-            case "scroll": {
-              const item = Scroll.getInstance({
-                position: [o.x, o.y]
-              });
-              item.persistId = persistId;
-              engine.addEntity(item);
-              break;
-            }
-            case "medkit":
-            case "medpack": {
-              const item = Medkit.getInstance({
-                position: [o.x, o.y]
-              });
-              item.persistId = persistId;
-              engine.addEntity(item);
               break;
             }
             case "backgroundText": {

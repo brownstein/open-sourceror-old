@@ -40,7 +40,6 @@ export default class SavePoint extends BaseEntity {
     });
 
     this.body.addShape(sensor);
-
     this.mesh = getThreeJsObjectForP2Body(this.body);
 
     this.transitionToLevel = level;

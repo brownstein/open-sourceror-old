@@ -11,6 +11,16 @@ export default class Medkit extends BaseItem {
   static getIcon() {
     return new SimpleSprite(medkitPNG);
   }
+
+  static roomEntityNames = ["medkit"];
+  static roomInitializer(engine, obj, props, persistId, persistSnapshot = null) {
+    const medkit = new Medkit({
+      position: [obj.x, obj.y]
+    });
+    engine.addEntity(medkit);
+    return medkit;
+  }
+
   constructor(props) {
     super({
       position: props.position,
