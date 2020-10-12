@@ -5,6 +5,23 @@ import BaseEntity from "src/entities/base";
 import { transitionToRoom } from "src/redux/actions/rooms";
 
 export default class TransitionZone extends BaseEntity {
+  static roomEntityNames = ["transitionZone", "room-transition"];
+  static roomInitializer(engine, obj, props, persistId, persistSnapshot = null) {
+    const nextRoom = props.room;
+    const nextRoomDirection = props.direction;
+    const zone = new TransitionZone({
+      position: {
+        x: obj.x + obj.width / 2,
+        y: obj.y + obj.height / 2
+      },
+      width: obj.width,
+      height: obj.height,
+      level: nextRoom
+    });
+    engine.addEntity(zone);
+    return zone;
+  }
+
   constructor(props) {
     super(props);
     const position = castToVec2(props.position);

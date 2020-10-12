@@ -32,7 +32,8 @@ const ENTITIES = [
   NPC,
   SavePoint,
   Scroll,
-  Medkit
+  Medkit,
+  TransitionZone
 ];
 
 const PERSIST_STORE = {};
@@ -158,10 +159,15 @@ export default class Room {
 
         if (EntityClass) {
           const persisted = persistenceState[persistId];
-          EntityClass.roomInitializer(engine, o, props, persistId, persisted);
+          const entity = EntityClass.roomInitializer(engine, o, props,
+            persistId, persisted);
           switch (o.type) {
             case "playerStart":
               playerSpawned = true;
+              break;
+            case "room-transition":
+              roomTransitions.push(entity);
+              break;
             default:
               break;
           }
@@ -234,22 +240,6 @@ export default class Room {
                 height: o.height
               });
               engine.addEntity(wall);
-              break;
-            }
-            case "room-transition": {
-              const nextRoom = props.room;
-              const nextRoomDirection = props.direction;
-              const zone = new TransitionZone({
-                position: {
-                  x: o.x + o.width / 2,
-                  y: o.y + o.height / 2
-                },
-                width: o.width,
-                height: o.height,
-                level: nextRoom
-              });
-              roomTransitions.push(zone);
-              engine.addEntity(zone);
               break;
             }
             default:

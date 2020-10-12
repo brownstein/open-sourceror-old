@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="60" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="9">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="60" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="10">
  <editorsettings>
   <export target="room-3.json" format="json"/>
  </editorsettings>
@@ -106,10 +106,19 @@
    <point/>
   </object>
   <object id="6" type="savePoint" x="622.237" y="164.995" width="38.8224" height="66.8608"/>
-  <object id="7" type="scroll" x="504.691" y="240.483">
+  <object id="7" type="scroll" x="502.534" y="245.875">
+   <properties>
+    <property name="persist" type="bool" value="true"/>
+   </properties>
    <point/>
   </object>
   <object id="8" type="medkit" x="529.494" y="321.363">
+   <point/>
+  </object>
+  <object id="9" type="scroll" x="297.638" y="311.658">
+   <properties>
+    <property name="persist" type="bool" value="false"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>
