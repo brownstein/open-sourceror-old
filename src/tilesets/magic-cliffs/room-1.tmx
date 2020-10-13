@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="13">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="14">
  <editorsettings>
-  <export target="room-0.json" format="json"/>
+  <export target="room-1.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer id="2" name="secondary" width="100" height="40">
@@ -141,7 +141,7 @@
    <point/>
   </object>
   <object id="2" type="foregroundText" x="78.5791" y="360.993" width="141.688" height="21.7709">
-   <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">Press D to move right.</text>
+   <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">Use WASD to move</text>
   </object>
   <object id="3" type="backgroundText" x="66.936" y="233.608" width="170.846" height="53.6181">
    <text fontfamily="Roboto" pixelsize="24" wrap="1" halign="center">Welcome to
@@ -162,5 +162,6 @@ Open Sourceror.</text>
    </properties>
    <point/>
   </object>
+  <object id="13" type="water" x="423.409" y="430.709" width="114.369" height="46.2343"/>
  </objectgroup>
 </map>

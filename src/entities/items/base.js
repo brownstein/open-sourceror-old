@@ -6,6 +6,7 @@ import shortId from "shortid";
 import { castToVec2 } from "src/p2-utils/vec2-utils";
 import { addItemToInventory } from "src/redux/actions/inventory";
 import BaseEntity from "../base";
+import LackOfItem from "./lack-of-item";
 
 export default class BaseItem extends BaseEntity {
   static getInstance() {
@@ -36,6 +37,11 @@ export default class BaseItem extends BaseEntity {
     if (otherEntity === controllingEntity) {
       engine.removeEntity(this);
       engine.store.dispatch(addItemToInventory(this.itemName));
+      if (this.shouldPersist) {
+        console.log("SHOULD PERSIST", this.persistId);
+        const lackOfItem = new LackOfItem(this.persistId);
+        engine.addEntity(lackOfItem);
+      }
     }
   }
 }

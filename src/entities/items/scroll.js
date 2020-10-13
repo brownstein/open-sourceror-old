@@ -14,8 +14,13 @@ export default class Scroll extends BaseItem {
 
   static roomEntityNames = ["scroll"];
   static roomInitializer(engine, obj, props, persistId, persistSnapshot = null) {
+    if (persistSnapshot && persistSnapshot.removed) {
+      return null;
+    }
     const scroll = new Scroll({
-      position: [obj.x, obj.y]
+      position: [obj.x, obj.y],
+      persistId,
+      shouldPersist: props.persist
     });
     engine.addEntity(scroll);
     return scroll;
@@ -27,7 +32,8 @@ export default class Scroll extends BaseItem {
       size: [12, 12]
     });
 
-    this.persist = true;
+    this.persistId = props.persistId;
+    this.shouldPersist = props.shouldPersist;
 
     this.itemName = "Scroll";
     this.sprite = Scroll.getIcon();
@@ -38,5 +44,8 @@ export default class Scroll extends BaseItem {
     this.readyPromise.then(() => {
       this.mesh.add(this.sprite.mesh);
     });
+  }
+  persist() {
+    return { removed: false };
   }
 }

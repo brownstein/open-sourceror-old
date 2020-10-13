@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"room-0.json"
+         "target":"room-1.json"
         }
     },
  "height":40,
@@ -74,7 +74,7 @@
                      "fontfamily":"Roboto",
                      "halign":"center",
                      "pixelsize":14,
-                     "text":"Press D to move right.",
+                     "text":"Use WASD to move",
                      "wrap":true
                     },
                  "type":"foregroundText",
@@ -161,6 +161,17 @@
                  "width":0,
                  "x":813.967635965446,
                  "y":227.521596301253
+                }, 
+                {
+                 "height":46.23433507726,
+                 "id":13,
+                 "name":"",
+                 "rotation":0,
+                 "type":"water",
+                 "visible":true,
+                 "width":114.369144664801,
+                 "x":423.409173865434,
+                 "y":430.709332035527
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -169,7 +180,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":13,
+ "nextobjectid":14,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

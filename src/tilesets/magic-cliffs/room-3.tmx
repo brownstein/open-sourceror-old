@@ -117,7 +117,7 @@
   </object>
   <object id="9" type="scroll" x="297.638" y="311.658">
    <properties>
-    <property name="persist" type="bool" value="false"/>
+    <property name="persist" type="bool" value="true"/>
    </properties>
    <point/>
   </object>
