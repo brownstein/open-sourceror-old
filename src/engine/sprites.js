@@ -88,7 +88,7 @@ export class AnimatedSprite {
   constructor(spriteSheetImage, spriteDefinition, options = {}) {
     this.spriteSheetImage = spriteSheetImage;
     this.spriteDefinition = spriteDefinition;
-    this.frameRegex = options.frameRegex || /.+ ([0-9]+).ase/;
+    this.frameRegex = options.frameRegex || /.+ ([0-9]+)(\..*)/;
     this.frameRegexIndex = options.frameRegexIndex || 1;
 
     this.texture = null;

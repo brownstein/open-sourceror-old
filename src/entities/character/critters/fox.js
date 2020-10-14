@@ -51,26 +51,45 @@ export class Fox extends BaseEntity {
     this.readyPromise = this._loadSprites();
   }
   async _loadSprites() {
-    const sitSprite = new AnimatedSprite(runImage, runSheet);
+    const runSprite = new AnimatedSprite(runImage, runSheet);
+    const sitSprite = new AnimatedSprite(hangoutImage, hangoutSheet);
+    await runSprite.readyPromise;
     await sitSprite.readyPromise;
     this.spritesLoaded = true;
-    this.sprite = sitSprite;
+    this.sprites = {
+      sitSprite,
+      runSprite
+    };
     sitSprite.playAnimation();
+    runSprite.playAnimation();
     this.mesh.add(sitSprite.mesh);
+    this.mesh.add(runSprite.mesh);
+    this.currentSprite = sitSprite;
   }
   syncMeshWithBody(timeDelta) {
     super.syncMeshWithBody(timeDelta);
     if (this.spritesLoaded) {
-      this.sprite.animate(timeDelta);
+      this.currentSprite.animate(timeDelta);
     }
   }
   onFrame(timeDelta) {
+    if (!this.spritesLoaded) {
+      return;
+    }
     const controllingEntity = this.engine.controllingEntity;
     if (Math.abs(
       controllingEntity.body.position[0] -
       this.body.position[0]
     ) < 100) {
       this.body.velocity[0] += 10;
+      this.sprites.sitSprite.mesh.visible = false;
+      this.sprites.runSprite.mesh.visible = true;
+      this.currentSprite = this.sprites.runSprite;
+    }
+    else {
+      this.sprites.sitSprite.mesh.visible = true;
+      this.sprites.runSprite.mesh.visible = false;
+      this.currentSprite = this.sprites.sitSprite;
     }
   }
 }
