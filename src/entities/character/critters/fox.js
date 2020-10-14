@@ -47,6 +47,8 @@ export class Fox extends BaseEntity {
     this.jumping = false;
     this.runningRight = false;
 
+    this.t = 0;
+
     this.spritesLoaded = false;
     this.readyPromise = this._loadSprites();
   }
@@ -77,14 +79,21 @@ export class Fox extends BaseEntity {
       return;
     }
     const controllingEntity = this.engine.controllingEntity;
+
+    // move to the right if the player is nearby, jump from time to time
     if (Math.abs(
       controllingEntity.body.position[0] -
       this.body.position[0]
     ) < 100) {
+      this.t += timeDelta;
       this.body.velocity[0] += 10;
       this.sprites.sitSprite.mesh.visible = false;
       this.sprites.runSprite.mesh.visible = true;
       this.currentSprite = this.sprites.runSprite;
+      if (this.t > 1000) {
+        this.t = 0;
+        this.body.velocity[1] -= 200;
+      }
     }
     else {
       this.sprites.sitSprite.mesh.visible = true;
