@@ -14,11 +14,6 @@ import ModalsDisplay from "./modals/modals-display";
 import { transitionToRoom } from "src/redux/actions/rooms";
 import { loadGame } from "src/redux/actions/save-state";
 
-import {
-  getCompletePersistenceState,
-  setCompletePersistenceState
-} from "src/engine/room";
-
 // global styles
 import "./game.less";
 
@@ -32,7 +27,6 @@ function addThings(engine) {
 ipcRenderer.on("set-room", function(event, data) {
   const { room } = data;
   initialRoom = room;
-
   if (_engine && room) {
     _engine.store.dispatch(transitionToRoom(room));
   }
