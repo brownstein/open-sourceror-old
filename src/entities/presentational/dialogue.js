@@ -6,6 +6,16 @@ import "./dialogue.less";
  * Floating dialogue entity - the basic building block of labled things
  */
 export class DialogueEntity {
+  static roomEntityNames = ["dialogue"];
+  static roomInitializer(engine, obj, props) {
+    const dialogue = new DialogueEntity({
+      x: obj.x,
+      y: obj.y
+    }, props.message, props.size);
+    engine.addEntity(dialogue);
+    return dialogue;
+  }
+
   constructor(position, text = null, size = null) {
     this.engine = null;
 

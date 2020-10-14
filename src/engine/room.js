@@ -33,7 +33,10 @@ const ENTITIES = [
   SavePoint,
   Scroll,
   Medkit,
-  TransitionZone
+  TransitionZone,
+  SmallBodyOfWater,
+  DialogueEntity,
+  BackgroundText
 ];
 
 const PERSIST_STORE = {};
@@ -192,78 +195,7 @@ export default class Room {
           }
         }
         else {
-          switch (o.type) {
-            case "water": {
-              const water = new SmallBodyOfWater({
-                position: {
-                  x: o.x + o.width / 2,
-                  y: o.y + o.height / 2
-                },
-                width: o.width,
-                height: o.height
-              });
-              engine.addEntity(water);
-              break;
-            }
-            case "dialogue": {
-              const dialogue = new DialogueEntity({
-                x: o.x,
-                y: o.y
-              }, props.message, props.size);
-              engine.addEntity(dialogue);
-              break;
-            }
-            case "transitZone": {
-              const zone = new TransitionZone({
-                position: {
-                  x: o.x + o.width / 2,
-                  y: o.y + o.height / 2
-                },
-                width: o.width,
-                height: o.height,
-                level: props.level
-              });
-              engine.addEntity(zone);
-              break;
-            }
-            case "backgroundText": {
-              const text = new BackgroundText({
-                position: o,
-                text: o.text.text,
-                size: o.text.pixelsize,
-                color: o.text.color || "#000000",
-                outline: !!o.text.color
-              });
-              engine.addEntity(text);
-              break;
-            }
-            // TODO
-            case "foregroundText": {
-              const text = new BackgroundText({
-                position: o,
-                text: o.text.text,
-                size: o.text.pixelsize,
-                color: o.text.color,
-                z: 2
-              });
-              engine.addEntity(text);
-              break;
-            }
-            case "progressBlocker": {
-              const wall = new ConditionWall({
-                position: {
-                  x: o.x + o.width / 2,
-                  y: o.y + o.height / 2
-                },
-                width: o.width,
-                height: o.height
-              });
-              engine.addEntity(wall);
-              break;
-            }
-            default:
-              break;
-          }
+          console.warn("unrecognized entity in room", this.roomName, o.type);
         }
       });
 

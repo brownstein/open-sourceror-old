@@ -222,7 +222,7 @@ class _GameController extends Component {
 function mapStateToProps(state) {
   const { rooms, ui } = state;
   const {
-    urrentRoom,
+    currentRoom,
     previousRoom,
     transitionPosition,
     transitionType

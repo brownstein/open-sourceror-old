@@ -18,6 +18,19 @@ const WATER_RESOLUTION = 8;
 
 // TODO
 export class SmallBodyOfWater {
+  static roomEntityNames = ["water"];
+  static roomInitializer(engine, obj, props) {
+    const water = new SmallBodyOfWater({
+      position: {
+        x: obj.x + obj.width / 2,
+        y: obj.y + obj.height / 2
+      },
+      width: obj.width,
+      height: obj.height
+    });
+    engine.addEntity(water);
+    return water;
+  }
 
   constructor(props) {
     this.width = props.width || 100;

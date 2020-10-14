@@ -20,6 +20,32 @@ import robotoFnt from "src/fonts/sdf/roboto-regular.fnt";
 import robotoPng from "src/fonts/sdf/roboto-regular.png";
 
 export class BackgroundText {
+  static roomEntityNames=["backgroundText", "foregroundText"];
+  static roomInitializer(engine, obj, props) {
+    if (obj.type === "backgroundText") {
+      const text = new BackgroundText({
+        position: obj,
+        text: obj.text.text,
+        size: obj.text.pixelsize,
+        color: obj.text.color || "#000000",
+        outline: !!obj.text.color
+      });
+      engine.addEntity(text);
+      return text;
+    }
+    else {
+      const text = new BackgroundText({
+        position: obj,
+        text: obj.text.text,
+        size: obj.text.pixelsize,
+        color: obj.text.color,
+        z: 2
+      });
+      engine.addEntity(text);
+      return text;
+    }
+  }
+
   constructor(props) {
     const position = castToVector3(props.position);
     const text = props.text || "[]";
