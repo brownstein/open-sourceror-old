@@ -31,17 +31,15 @@ export function saveGame(engine) {
     } = getState();
 
     const loadSaveStore = new LoadSaveStore();
-    loadSaveStore.save({
+    const data = {
       status,
       inventory,
       room: room.roomName,
       persistState
-    });
+    };
 
-    ipcRenderer.send('save', {
-      status,
-      room: room.roomName
-    });
+    loadSaveStore.save(data);
+    ipcRenderer.send('save', data);
 
     dispatch({
       type: SAVE_GAME
@@ -59,7 +57,6 @@ export const loadGame = () => {
     }
 
     const data = saveStore.load();
-
     setCompletePersistenceState(data.persistState);
 
     return dispatch({
