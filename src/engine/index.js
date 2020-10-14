@@ -80,6 +80,9 @@ export default class Engine extends EventEmitter {
     // running flag (controlled by controller)
     this.running = false;
 
+    // controlled by room transition
+    this.currentRoomName = null;
+
     // set up P2 contact handlers
     this._initializeContactHandlers();
   }
@@ -364,6 +367,12 @@ export default class Engine extends EventEmitter {
   }
   dispatch(event) {
     return this.store.dispatch(event);
+  }
+  setCurrentRoom(roomName) {
+    this.currentRoomName = roomName;
+  }
+  getCurrentRoom() {
+    return this.currentRoomName;
   }
   /**
    * Gets a persistence snapshot for all entities that implement it

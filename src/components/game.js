@@ -14,7 +14,10 @@ import LoadSaveStore from "src/engine/load-save";
 
 import { transitionToRoom } from "src/redux/actions/rooms";
 
-
+import {
+  getCompletePersistenceState,
+  setCompletePersistenceState
+} from "src/engine/room";
 
 // global styles
 import "./game.less";
@@ -42,10 +45,11 @@ ipcRenderer.on("load-game", function() {
   }
 
   const data = saveStore.load();
+  console.log("LOAD", data);
 
-  const { room, persistence } = data;
+  const { room, persistState, status, inventory } = data;
 
-  console.log("LOAD", room, persistence);
+  setCompletePersistenceState(persistState);
 
   if (_engine && room) {
     _engine.store.dispatch(transitionToRoom(room));

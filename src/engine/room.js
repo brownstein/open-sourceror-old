@@ -41,7 +41,12 @@ const PERSIST_STORE = {};
 // we'll access this from the load/save code directly
 export function persistRoomState(roomId, engine) {
   const snapshot = engine.getSnapshot();
-  PERSIST_STORE[roomId] = snapshot;
+  if (!PERSIST_STORE[roomId]) {
+    PERSIST_STORE[roomId] = snapshot;
+  }
+  else {
+    Object.assign(PERSIST_STORE[roomId], snapshot);
+  }
   console.log("SAVE PERSIST STORE", PERSIST_STORE);
 }
 

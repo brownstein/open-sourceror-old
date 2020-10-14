@@ -12,21 +12,19 @@ import {
 } from "src/engine/room";
 
 export function saveGame(engine) {
-  const room = engine.currentRoom;
-  const controllingEntity = engine.controllingEntity;
-
-  const currentRoomState = engine.getSnapshot();
-  const restOfRoomState = getCompletePersistenceState();
-
-  // form a complete picture of the game's persistence
-  const persistState = {
-    ...restOfRoomState,
-    current: currentRoomState
-  };
-
-  console.log("PERSIST", persistState);
-
   return (dispatch, getState) => {
+    const room = engine.currentRoom;
+    const controllingEntity = engine.controllingEntity;
+
+    const currentRoomState = engine.getSnapshot();
+    const restOfRoomState = getCompletePersistenceState();
+
+    // form a complete picture of the game's persistence
+    const persistState = {
+      ...restOfRoomState,
+      [engine.getCurrentRoom()]: currentRoomState
+    };
+
     const {
       status,
       inventory
@@ -36,7 +34,8 @@ export function saveGame(engine) {
     loadSaveStore.save({
       status,
       inventory,
-      room: room.roomName
+      room: room.roomName,
+      persistState
     });
 
     ipcRenderer.send('save', {
@@ -50,7 +49,9 @@ export function saveGame(engine) {
   };
 }
 
-export const loadGame = (gameFileContents) => ({
-  type: LOAD_GAME,
-  gameFileContents
-});
+export const loadGame = (state) => {
+  return {
+    type: LOAD_GAME,
+    state
+  };
+};

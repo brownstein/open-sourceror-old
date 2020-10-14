@@ -144,6 +144,7 @@ class _GameController extends Component {
       engine.currentRoom.cleanup(engine);
       await delay(100);
     }
+    engine.setCurrentRoom(roomName);
     room.init(engine, {
       currentRoom,
       previousRoom,
