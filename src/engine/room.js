@@ -151,6 +151,7 @@ export default class Room {
     navGrid.initNavWorker();
 
     let playerSpawned = false;
+    let savePoint = null;
     const roomTransitions = [];
 
     // add level entities
@@ -186,6 +187,13 @@ export default class Room {
               roomTransitions.push(entity);
               break;
             }
+            case "savePoint": {
+              const persisted = persistenceState[persistId];
+              const entity = EntityClass.roomInitializer(engine, o, props,
+                persistId, persisted);
+              savePoint = entity;
+              break;
+            }
             default: {
               const persisted = persistenceState[persistId];
               const entity = EntityClass.roomInitializer(engine, o, props,
@@ -203,24 +211,35 @@ export default class Room {
       // they probably entered through a door. find that door and spawn
       // the player there
       if (!playerSpawned) {
-        let roomTransition;
-        roomTransitions.forEach(t => {
-          if (t.transitionToLevel === previousRoom) {
-            roomTransition = t;
+        if (transitionType === "traverse") {
+          let roomTransition;
+          roomTransitions.forEach(t => {
+            if (t.transitionToLevel === previousRoom) {
+              roomTransition = t;
+            }
+          });
+          if (!roomTransition) {
+            roomTransition = roomTransitions[0];
           }
-        });
-        if (!roomTransition) {
-          roomTransition = roomTransitions[0];
-        }
-        if (!roomTransition) {
-          throw new Error("unable to find room transition");
-        }
+          if (!roomTransition) {
+            throw new Error("unable to find room transition");
+          }
 
-        roomTransition.spawnColliding = true;
+          roomTransition.spawnColliding = true;
 
-        const playerPos = vec2ToVector3(roomTransition.body.position);
-        Player.roomInitializer(engine, playerPos, {}, 'player', null);
-        playerSpawned = true;
+          const playerPos = vec2ToVector3(roomTransition.body.position);
+          Player.roomInitializer(engine, playerPos, {}, 'player', null);
+          playerSpawned = true;
+        }
+        else {
+          if (!savePoint) {
+            throw new Error("no save point in room");
+          }
+
+          const playerPos = vec2ToVector3(savePoint.body.position);
+          Player.roomInitializer(engine, playerPos, {}, 'player', null);
+          playerSpawned = true;
+        }
       }
     });
   }
