@@ -136,7 +136,12 @@ class _GameController extends Component {
     }
   }
   async _swapRoom(roomName) {
-    const { currentRoom, previousRoom, transitionPosition } = this.props;
+    const {
+      currentRoom,
+      previousRoom,
+      transitionPosition,
+      transitionType
+    } = this.props;
     const { engine } = this;
     const room = await requireRoom(roomName);
     if (engine.currentRoom) {
@@ -148,7 +153,8 @@ class _GameController extends Component {
     room.init(engine, {
       currentRoom,
       previousRoom,
-      transitionPosition
+      transitionPosition,
+      transitionType
     });
   }
   render() {
@@ -215,11 +221,17 @@ class _GameController extends Component {
 
 function mapStateToProps(state) {
   const { rooms, ui } = state;
-  const { currentRoom, previousRoom, transitionPosition } = rooms;
+  const {
+    urrentRoom,
+    previousRoom,
+    transitionPosition,
+    transitionType
+  } = rooms;
   return {
     currentRoom,
     previousRoom,
     transitionPosition,
+    transitionType,
     paused: !!ui.modalStack.length,
     canOpenPauseMenu: canOpenPauseMenu(state)
   };

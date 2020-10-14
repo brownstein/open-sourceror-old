@@ -10,9 +10,9 @@ import { EngineViewport } from "./viewport/viewport";
 import CodeConsoleTabs from "./code-pane/tabs";
 import LoadingScreen from "./loading-screen";
 import ModalsDisplay from "./modals/modals-display";
-import LoadSaveStore from "src/engine/load-save";
 
 import { transitionToRoom } from "src/redux/actions/rooms";
+import { loadGame } from "src/redux/actions/save-state";
 
 import {
   getCompletePersistenceState,
@@ -39,21 +39,7 @@ ipcRenderer.on("set-room", function(event, data) {
 });
 
 ipcRenderer.on("load-game", function() {
-  const saveStore = new LoadSaveStore();
-  if (!saveStore.saveFileExists) {
-    throw new Error("no save file present");
-  }
-
-  const data = saveStore.load();
-  console.log("LOAD", data);
-
-  const { room, persistState, status, inventory } = data;
-
-  setCompletePersistenceState(persistState);
-
-  if (_engine && room) {
-    _engine.store.dispatch(transitionToRoom(room));
-  }
+  _engine.store.dispatch(loadGame());
 });
 
 ipcRenderer.on("start-game", function() {

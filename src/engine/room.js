@@ -120,7 +120,12 @@ export default class Room {
     engine.currentRoom = null;
   }
   initTileLevel(engine, roomState) {
-    const { transitionPosition, currentRoom, previousRoom } = roomState;
+    const {
+      transitionPosition,
+      currentRoom,
+      previousRoom,
+      transitionType // TODO: use me
+    } = roomState;
     const persistenceState = getPersistedRoomState(this.roomName);
 
     // add the map
@@ -163,18 +168,27 @@ export default class Room {
           {};
 
         if (EntityClass) {
-          const persisted = persistenceState[persistId];
-          const entity = EntityClass.roomInitializer(engine, o, props,
-            persistId, persisted);
           switch (o.type) {
-            case "playerStart":
+            case "playerStart": {
+              const persisted = persistenceState[persistId];
+              const entity = EntityClass.roomInitializer(engine, o, props,
+                persistId, persisted);
               playerSpawned = true;
               break;
-            case "room-transition":
+            }
+            case "room-transition": {
+              const persisted = persistenceState[persistId];
+              const entity = EntityClass.roomInitializer(engine, o, props,
+                persistId, persisted);
               roomTransitions.push(entity);
               break;
-            default:
+            }
+            default: {
+              const persisted = persistenceState[persistId];
+              const entity = EntityClass.roomInitializer(engine, o, props,
+                persistId, persisted);
               break;
+            }
           }
         }
         else {

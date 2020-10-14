@@ -9,7 +9,9 @@ import {
 import {
   SAVE_SCRIPT
 } from "../constants/scripts";
-import { LOAD_GAME } from "../constants/save-state";
+import {
+  LOAD_GAME
+} from "../constants/save-state";
 
 import helloWorld from "raw-loader!src/in-game-scripts/hello-world.js";
 import demo from "raw-loader!src/in-game-scripts/demo.js";
@@ -215,6 +217,9 @@ export default function reduceInventory(state = INITIAL_STATE, action) {
           return item;
         })
       }
+    }
+    case LOAD_GAME: {
+      return action.data.inventory;
     }
     default:
       return state;

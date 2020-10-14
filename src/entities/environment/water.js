@@ -18,6 +18,7 @@ const WATER_RESOLUTION = 8;
 
 // TODO
 export class SmallBodyOfWater {
+
   constructor(props) {
     this.width = props.width || 100;
     this.height = props.height || 100;

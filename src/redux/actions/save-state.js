@@ -49,9 +49,22 @@ export function saveGame(engine) {
   };
 }
 
-export const loadGame = (state) => {
-  return {
-    type: LOAD_GAME,
-    state
+export const loadGame = () => {
+  return (dispatch, getState) => {
+
+    const saveStore = new LoadSaveStore();
+
+    if (!saveStore.saveFileExists) {
+      throw new Error("no save file present");
+    }
+
+    const data = saveStore.load();
+
+    setCompletePersistenceState(data.persistState);
+
+    return dispatch({
+      type: LOAD_GAME,
+      data
+    });
   };
 };
