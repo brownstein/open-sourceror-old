@@ -85,21 +85,26 @@ export class AnimatedSprite {
    * @param spriteSheetImage - image URL of sprite sheet
    * @param spriteAnimations - animation definitions of the sprite sheet
    */
-  constructor(spriteSheetImage, spriteAnimations) {
+  constructor(spriteSheetImage, spriteDefinition, options = {}) {
     this.spriteSheetImage = spriteSheetImage;
-    this.spriteAnimations = spriteAnimations;
+    this.spriteDefinition = spriteDefinition;
+    this.frameRegex = options.frameRegex || /.+ ([0-9]+).ase/;
+    this.frameRegexIndex = options.frameRegexIndex || 1;
 
     this.texture = null;
     this.textureWidth = 128;
     this.textureHeight = 128;
+
+    this.frames = [];
 
     this.geometry = null;
     this.material = null;
     this.mesh = null;
 
     this.playingCurrentAnimation = false;
-    this.currentAnimationName = null;
     this.currentAnimationFrame = null;
+
+    this.frameDurations = [];
     this.frameTime = 0;
 
     this.ready = false;
@@ -134,6 +139,24 @@ export class AnimatedSprite {
       new Vector2(1, 1)
     ]);
 
+    // extract frame definitions
+    const { frames, meta } = this.spriteDefinition;
+    const orderedFrameNames = [];
+    Object.keys(frames).forEach(frameName => {
+      const execResult = this.frameRegex.exec(frameName);
+      const frameNumber = Number(execResult[this.frameRegexIndex]);
+      orderedFrameNames.push([frameNumber, frameName]);
+    });
+    orderedFrameNames.sort((a, b) => {
+      if (a[0] > b[0]) return 1;
+      if (a[0] < b[0]) return -1;
+      return 0;
+    });
+    // map sorted names to frame definitions
+    this.frames = orderedFrameNames.map(([n, frameName]) => {
+      return frames[frameName];
+    });
+
     // TODO: reuse this
     this.material = new MeshBasicMaterial({
       map: this.texture,
@@ -143,8 +166,6 @@ export class AnimatedSprite {
     });
 
     this.mesh = new Mesh(this.geometry, this.material);
-    // assign default animation
-    this.currentAnimationName = Object.keys(this.spriteAnimations)[0];
 
     // go to first frame of the current animation
     this._gotoFrame(0);
@@ -152,7 +173,8 @@ export class AnimatedSprite {
     this.ready = true;
   }
   _gotoFrame(frame) {
-    const animationFrames = this.spriteAnimations[this.currentAnimationName];
+    const animationDefinition = this.animationDefinition;
+    const animationFrames = this.frames;
     const animationFrame = animationFrames[frame % animationFrames.length];
 
     const { textureWidth, textureHeight } = this;
@@ -190,14 +212,10 @@ export class AnimatedSprite {
     // update current animation frame
     this.currentAnimationFrame = frame;
   }
-  switchToAnimation(animationName, playAnimation = true) {
-    this.playingCurrentAnimation = playAnimation;
-    if (animationName !== this.currentAnimationName) {
-      this.currentAnimationName = animationName;
-      this._gotoFrame(0);
-    }
+  playAnimation() {
+    this.playingCurrentAnimation = true;
   }
-  pauseCurrentAnimation() {
+  pauseAnimation() {
     this.playingCurrentAnimation = false;
   }
   animate(timeDelta = 1000 / 60) {
@@ -205,7 +223,7 @@ export class AnimatedSprite {
       return;
     }
     this.frameTime += timeDelta;
-    const animationFrames = this.spriteAnimations[this.currentAnimationName];
+    const animationFrames = this.frames;
     const animationFrame = animationFrames[this.currentAnimationFrame % animationFrames.length];
     const duration = animationFrame.duration || 10;
     if (this.frameTime >= duration) {

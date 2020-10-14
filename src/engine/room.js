@@ -21,6 +21,7 @@ import { BackgroundText } from "src/entities/background/background-text";
 import { ConditionWall } from "src/entities/environment/condition-wall";
 import SavePoint from "src/entities/environment/save-point";
 import { DoorSpawn } from "src/entities/environment/door";
+import { Fox } from "src/entities/character/critters/fox";
 
 import getContactMaterials from "src/entities/contact-materials";
 
@@ -36,7 +37,8 @@ const ENTITIES = [
   TransitionZone,
   SmallBodyOfWater,
   DialogueEntity,
-  BackgroundText
+  BackgroundText,
+  Fox
 ];
 
 const PERSIST_STORE = {};

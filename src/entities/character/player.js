@@ -12,7 +12,6 @@ import {
 } from "three";
 import { Body, Circle, vec2 } from "p2";
 import { Character } from "./base";
-import { AnimatedSprite } from "engine/sprites";
 import { MultiLayerAnimatedSprite } from "engine/multi-layer-sprites";
 import {
   walkLayersSheet,

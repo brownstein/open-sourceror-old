@@ -172,6 +172,18 @@
                  "width":114.369144664801,
                  "x":423.409173865434,
                  "y":430.709332035527
+                }, 
+                {
+                 "height":0,
+                 "id":14,
+                 "name":"fox",
+                 "point":true,
+                 "rotation":0,
+                 "type":"foxStart",
+                 "visible":true,
+                 "width":0,
+                 "x":918.603236403456,
+                 "y":227.521596301253
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -180,7 +192,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":14,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",
