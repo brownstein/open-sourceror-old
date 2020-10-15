@@ -27,6 +27,9 @@ export class StatefulSpriteSystem {
     this.activeSprite.animate(timeDelta);
   }
   pauseCurrentAnimation() {
-    this.playingCurrentAnimation = false;
+    this.activeSprite.pauseAnimation();
+  }
+  playCurrentAnimation() {
+    this.activeSprite.playAnimation();
   }
 }

@@ -5,14 +5,15 @@ import {
   vec2
 } from "p2";
 import { AnimatedSprite } from "src/engine/sprites";
+import { StatefulSpriteSystem } from "src/engine/stateful-sprite-system";
+import BaseEntity from "src/entities/base";
+
 import {
   runSheet,
   runImage,
   hangoutSheet,
   hangoutImage
 } from "./sprites/fox";
-
-import BaseEntity from "src/entities/base";
 
 export class Fox extends BaseEntity {
   static roomEntityNames = ["foxStart"];
@@ -58,20 +59,20 @@ export class Fox extends BaseEntity {
     await runSprite.readyPromise;
     await sitSprite.readyPromise;
     this.spritesLoaded = true;
-    this.sprites = {
-      sitSprite,
-      runSprite
-    };
     sitSprite.playAnimation();
     runSprite.playAnimation();
     this.mesh.add(sitSprite.mesh);
     this.mesh.add(runSprite.mesh);
-    this.currentSprite = sitSprite;
+    this.spriteSystem = new StatefulSpriteSystem({
+      run: runSprite,
+      sit: sitSprite
+    });
+    this.spriteSystem.switchToSprite("run");
   }
   syncMeshWithBody(timeDelta) {
     super.syncMeshWithBody(timeDelta);
     if (this.spritesLoaded) {
-      this.currentSprite.animate(timeDelta);
+      this.spriteSystem.animate(timeDelta);
     }
   }
   onFrame(timeDelta) {
@@ -87,18 +88,16 @@ export class Fox extends BaseEntity {
     ) < 100) {
       this.t += timeDelta;
       this.body.velocity[0] += 10;
-      this.sprites.sitSprite.mesh.visible = false;
-      this.sprites.runSprite.mesh.visible = true;
-      this.currentSprite = this.sprites.runSprite;
+      this.spriteSystem.switchToSprite("run");
+      // this.spriteSystem.playCurrentAnimation();
       if (this.t > 1000) {
         this.t = 0;
         this.body.velocity[1] -= 200;
       }
     }
     else {
-      this.sprites.sitSprite.mesh.visible = true;
-      this.sprites.runSprite.mesh.visible = false;
-      this.currentSprite = this.sprites.sitSprite;
+      this.spriteSystem.switchToSprite("sit");
+      // this.spriteSystem.playCurrentAnimation();
     }
   }
 }
