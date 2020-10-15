@@ -80,6 +80,9 @@ export class Fox extends BaseEntity {
       return;
     }
     const controllingEntity = this.engine.controllingEntity;
+    if (!controllingEntity) {
+      return;
+    }
 
     // move to the right if the player is nearby, jump from time to time
     if (Math.abs(
@@ -89,7 +92,6 @@ export class Fox extends BaseEntity {
       this.t += timeDelta;
       this.body.velocity[0] += 10;
       this.spriteSystem.switchToSprite("run");
-      // this.spriteSystem.playCurrentAnimation();
       if (this.t > 1000) {
         this.t = 0;
         this.body.velocity[1] -= 200;
@@ -97,7 +99,11 @@ export class Fox extends BaseEntity {
     }
     else {
       this.spriteSystem.switchToSprite("sit");
-      // this.spriteSystem.playCurrentAnimation();
+    }
+  }
+  collisionHandler(engine, shapeId, otherBodyId, otherEntity) {
+    if (otherEntity.isTransitionZone) {
+      engine.removeEntity(this);
     }
   }
 }

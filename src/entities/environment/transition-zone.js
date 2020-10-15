@@ -30,6 +30,7 @@ export default class TransitionZone extends BaseEntity {
     const level = props.level;
     const spawnColliding = props.spawnColliding;
 
+    this.isTransitionZone = true;
     this.spawnColliding = spawnColliding || false;
 
     this.body = new Body({
