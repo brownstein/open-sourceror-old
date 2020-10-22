@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="15">
+<map version="1.2" tiledversion="1.3.4" orientation="orthogonal" renderorder="left-down" width="100" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="16">
  <editorsettings>
   <export target="room-1.json" format="json"/>
  </editorsettings>
@@ -164,6 +164,12 @@ Open Sourceror.</text>
   </object>
   <object id="13" type="water" x="423.409" y="430.709" width="114.369" height="46.2343"/>
   <object id="14" name="fox" type="foxStart" x="918.603" y="227.522">
+   <point/>
+  </object>
+  <object id="15" name="NPC with dialogue" type="npc" x="633.897" y="272.539">
+   <properties>
+    <property name="dialogueDef" value="tutorial-1"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>

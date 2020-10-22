@@ -1,16 +1,17 @@
 import {
   BEGIN_DIALOGUE,
-  ADVANCE_THROUGH_DIALOGUE,
+  CONTINUE_DIALOGUE,
   END_DIALOGUE
-} from "src/redux/constants/dialogue";
+} from "../constants/dialogue";
 
-export const beginDialogue = (dialogueLines) => ({
+export const beginDialogue = (dialogueDef) => ({
   type: BEGIN_DIALOGUE,
-  dialogueLines
+  dialogueDef
 });
 
-export const advanceThroughDialogue = () => ({
-  type: ADVANCE_THROUGH_DIALOGUE
+export const continueDialogue = (nextState) => ({
+  type: CONTINUE_DIALOGUE,
+  nextStaste
 });
 
 export const endDialogue = () => ({

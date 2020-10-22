@@ -22,7 +22,8 @@ export class NPC extends BaseEntity {
         x: obj.x,
         y: obj.y
       },
-      npcDialogue: props.npcDialogue
+      npcDialogue: props.npcDialogue,
+      dialogueDef: props.dialogueDef
     });
     engine.addEntity(npc);
     return npc;
@@ -51,8 +52,10 @@ export class NPC extends BaseEntity {
     this.sensor.attachUpdateHandler(this._onSensorUpdate.bind(this));
     this.children = [this.sensor];
 
-    this.npcDialogue = npcDialogue.split("|").map(d => d.trim());
-    this.npcDialogueStep = 0;
+    if (npcDialogue) {
+      this.npcDialogue = npcDialogue.split("|").map(d => d.trim());
+      this.npcDialogueStep = 0;
+    }
 
     this.dialogueEntity = null;
     this._onKeyEvent = this._onKeyEvent.bind(this);
@@ -83,22 +86,26 @@ export class NPC extends BaseEntity {
       if (this.dialogueEntity) {
         return;
       }
-      this.npcDialogueStep = 0;
-      this.dialogueEntity = new DialogueEntity(
-        vec2ToVector2(this.body.position).add(new Vector2(0, -16)),
-        this.npcDialogue[this.npcDialogueStep]
-      );
-      engine.addEntity(this.dialogueEntity);
-      engine.keyEventBus.on("keyboard-event", this._onKeyEvent);
+      if (this.npcDialogue) {
+        this.npcDialogueStep = 0;
+        this.dialogueEntity = new DialogueEntity(
+          vec2ToVector2(this.body.position).add(new Vector2(0, -16)),
+          this.npcDialogue[this.npcDialogueStep]
+        );
+        engine.addEntity(this.dialogueEntity);
+        engine.keyEventBus.on("keyboard-event", this._onKeyEvent);
+      }
     }
     else {
       if (!this.dialogueEntity) {
         return;
       }
-      engine.removeEntity(this.dialogueEntity);
-      this.dialogueEntity = null;
-      engine.keyEventBus.off("keyboard-event", this._onKeyEvent);
-      this.npcDialogueStep = 0;
+      if (this.npcDialogue) {
+        engine.removeEntity(this.dialogueEntity);
+        this.dialogueEntity = null;
+        engine.keyEventBus.off("keyboard-event", this._onKeyEvent);
+        this.npcDialogueStep = 0;
+      }
     }
   }
 }

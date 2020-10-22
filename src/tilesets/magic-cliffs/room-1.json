@@ -159,19 +159,19 @@
                  "type":"dialogue",
                  "visible":true,
                  "width":0,
-                 "x":813.967635965446,
-                 "y":227.521596301253
+                 "x":813.968,
+                 "y":227.522
                 }, 
                 {
-                 "height":46.23433507726,
+                 "height":46.2343,
                  "id":13,
                  "name":"",
                  "rotation":0,
                  "type":"water",
                  "visible":true,
-                 "width":114.369144664801,
-                 "x":423.409173865434,
-                 "y":430.709332035527
+                 "width":114.369,
+                 "x":423.409,
+                 "y":430.709
                 }, 
                 {
                  "height":0,
@@ -182,8 +182,26 @@
                  "type":"foxStart",
                  "visible":true,
                  "width":0,
-                 "x":918.603236403456,
-                 "y":227.521596301253
+                 "x":918.603,
+                 "y":227.522
+                }, 
+                {
+                 "height":0,
+                 "id":15,
+                 "name":"NPC with dialogue",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"dialogueDef",
+                         "type":"string",
+                         "value":"tutorial-1"
+                        }],
+                 "rotation":0,
+                 "type":"npc",
+                 "visible":true,
+                 "width":0,
+                 "x":633.897067769802,
+                 "y":272.539238350164
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -192,7 +210,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":15,
+ "nextobjectid":16,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.3.4",

@@ -10,6 +10,7 @@ import { EngineViewport } from "./viewport/viewport";
 import CodeConsoleTabs from "./code-pane/tabs";
 import LoadingScreen from "./loading-screen";
 import ModalsDisplay from "./modals/modals-display";
+import DialogueDisplay from "./dialogue";
 
 import { transitionToRoom } from "src/redux/actions/rooms";
 import { loadGame } from "src/redux/actions/save-state";
@@ -54,6 +55,7 @@ export default function Game({ store }) {
             <DndProvider backend={HTML5Backend}>
               <div className="game-viewport">
                 <EngineViewport/>
+                <DialogueDisplay/>
               </div>
               <div className="game-code-editor">
                 <CodeConsoleTabs/>

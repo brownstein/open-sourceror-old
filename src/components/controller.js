@@ -220,7 +220,7 @@ class _GameController extends Component {
 };
 
 function mapStateToProps(state) {
-  const { rooms, ui } = state;
+  const { rooms, ui, dialogue } = state;
   const {
     currentRoom,
     previousRoom,
@@ -232,7 +232,7 @@ function mapStateToProps(state) {
     previousRoom,
     transitionPosition,
     transitionType,
-    paused: !!ui.modalStack.length,
+    paused: !!(ui.modalStack.length || dialogue.dialogue),
     canOpenPauseMenu: canOpenPauseMenu(state)
   };
 }

@@ -1,0 +1,48 @@
+
+.dialogue-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.dialogue-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  background: #ddd;
+  box-sizing: border-box;
+  padding: 10px;
+  align-items: flex-start;
+
+  .dialogue-icon-container {
+    width: 64px;
+    flex-basis: 64px;
+    display: block;
+  }
+
+  .dialogue-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 64px;
+    height: 64px;
+    background: #444;
+    color: #fff;
+  }
+
+  .dialogue-text {
+    padding-left: 10px;
+  }
+}
