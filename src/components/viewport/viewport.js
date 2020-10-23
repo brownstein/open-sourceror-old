@@ -403,6 +403,10 @@ export class EngineViewport extends Component {
       clientY
     };
   }
+  /**
+   * This is a hack to allow the player to immediately interract with the
+   * viewport after closing an overlay that stole focus
+   */
   _onReturnFocus() {
     if (this.mouseOnScreen) {
       return;
