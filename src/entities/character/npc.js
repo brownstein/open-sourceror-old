@@ -13,6 +13,8 @@ import getThreeJsObjectForP2Body from "src/p2-utils/get-threejs-mesh";
 import BaseEntity from "src/entities/base";
 import { DialogueEntity } from "src/entities/presentational/dialogue";
 import { Sensor } from "src/entities/sensor";
+import { loadDialogue } from "src/dialogues/loader";
+import { beginDialogue } from "src/redux/actions/dialogue";
 
 export class NPC extends BaseEntity {
   static roomEntityNames = ["npc"];
@@ -31,7 +33,12 @@ export class NPC extends BaseEntity {
 
   constructor(props) {
     super(props);
-    const { position, npcDialogue } = props;
+    const {
+      position,
+      npcDialogue,
+      dialogueDef
+    } = props;
+
     const color = new Color(0.2, 1, 0.2);
 
     this.body = new Body({
@@ -57,8 +64,13 @@ export class NPC extends BaseEntity {
       this.npcDialogueStep = 0;
     }
 
+    if (dialogueDef) {
+      this.dialogueDef = dialogueDef;
+    }
+
     this.dialogueEntity = null;
     this._onKeyEvent = this._onKeyEvent.bind(this);
+    this._onKeyEvent2 = this._onKeyEvent2.bind(this);
   }
   _onKeyEvent(keyEvent) {
     const { engine } = this;
@@ -79,6 +91,14 @@ export class NPC extends BaseEntity {
       }
     }
   }
+  _onKeyEvent2(keyEvent) {
+    const { engine } = this;
+    if (keyEvent.key !== "e" || !keyEvent.down) {
+      return;
+    }
+    const def = loadDialogue(this.dialogueDef);
+    engine.store.dispatch(beginDialogue(def));
+  }
   _onSensorUpdate() {
     const { sensor, engine } = this;
     const player = engine.controllingEntity;
@@ -95,16 +115,24 @@ export class NPC extends BaseEntity {
         engine.addEntity(this.dialogueEntity);
         engine.keyEventBus.on("keyboard-event", this._onKeyEvent);
       }
+      // enable trigger
+      if (this.dialogueDef) {
+        engine.keyEventBus.on("keyboard-event", this._onKeyEvent2);
+      }
     }
     else {
-      if (!this.dialogueEntity) {
-        return;
-      }
       if (this.npcDialogue) {
-        engine.removeEntity(this.dialogueEntity);
-        this.dialogueEntity = null;
+        if (this.dialogueEntity) {
+          engine.removeEntity(this.dialogueEntity);
+          this.dialogueEntity = null;
+        }
         engine.keyEventBus.off("keyboard-event", this._onKeyEvent);
         this.npcDialogueStep = 0;
+      }
+      // disdable trigger
+      if (this.dialogueDef) {
+        console.log("OFF");
+        engine.keyEventBus.off("keyboard-event", this._onKeyEvent2);
       }
     }
   }

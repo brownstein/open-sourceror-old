@@ -7,6 +7,7 @@ import "./dialogue.less";
 
 export function DialogueOverlay ({
   dialogueInProgress,
+  currentTextLines,
   dispatch
 }) {
   // set up key press handler for the lifetime of the component
@@ -41,7 +42,7 @@ export function DialogueOverlay ({
           </div>
         </div>
         <div className="dialogue-text">
-          Lorem Ipsum Dolor Dolor Dolor Lorem Ipsum Dolor Dolor Dolor Lorem Ipsum Dolor Dolor Dolor Lorem Ipsum Dolor Dolor Dolor
+          {JSON.stringify(currentTextLines, 0, 2)}
         </div>
       </div>
     </div>
@@ -49,9 +50,18 @@ export function DialogueOverlay ({
 }
 
 function mapStateToProps(state) {
-  const { dialogue } = state;
+  const { dialogue: dialogueState } = state;
+  let currentTextLines = null;
+  let dialogueInProgress = false;
+  if (dialogueState.dialogue) {
+    const { dialogue, currentState } = dialogueState;
+    dialogueInProgress = true;
+    const currentDialogueState = dialogue[currentState] || {};
+    currentTextLines = currentDialogueState.text;
+  }
   return {
-    dialogueInProgress: dialogue.dialogue
+    dialogueInProgress,
+    currentTextLines
   }
 }
 

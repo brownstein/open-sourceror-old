@@ -340,14 +340,18 @@ export class EngineViewport extends Component {
   _onMouseEnter(event) {
     const { engine } = this.context;
     this.mouseOnScreen = true;
-    this.targetingReticle.setVisible(true);
+    if (this.targetingReticle) {
+      this.targetingReticle.setVisible(true);
+    }
     engine.handleViewportFocus(true);
     this._updateMouseScreenCoordinates(event);
   }
   _onMouseLeave(event) {
     const { engine } = this.context;
     this.mouseOnScreen = false;
-    this.targetingReticle.setVisible(false);
+    if (this.targetingReticle) {
+      this.targetingReticle.setVisible(false);
+    }
     engine.handleViewportFocus(false);
     this._updateMouseScreenCoordinates(event);
   }
