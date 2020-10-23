@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 
 import { FocalTracker } from "src/components/hooks/return-focus";
-import { endDialogue } from "src/redux/actions/dialogue";
+import { continueDialogue } from "src/redux/actions/dialogue";
 
 import "./dialogue.less";
 
@@ -37,7 +37,7 @@ export function DialogueOverlay ({
           return;
         }
       }
-      dispatch(endDialogue());
+      dispatch(continueDialogue(key));
     };
   });
 
