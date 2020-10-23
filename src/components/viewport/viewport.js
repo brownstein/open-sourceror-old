@@ -51,6 +51,12 @@ export class EngineViewport extends Component {
     this.targetSceneFrameSize = new Vector2(300, 200);
     this.targetingReticle = new TargetingReticle(this);
 
+    // return focus support
+    this._globalMousePosition = {
+      clientX: 0,
+      clientY: 0
+    };
+
     this._onFrame = this._onFrame.bind(this);
     this._renderFrame = this._renderFrame.bind(this);
     this._onResize = this._onResize.bind(this);
@@ -60,6 +66,8 @@ export class EngineViewport extends Component {
     this._onMouseDown = this._onMouseDown.bind(this);
     this._onMouseUp = this._onMouseUp.bind(this);
     this._onClick = this._onClick.bind(this);
+    this._onReturnFocus = this._onReturnFocus.bind(this);
+    this._onGlobalMouseMove = this._onGlobalMouseMove.bind(this);
   }
   componentDidMount() {
     const { engine, cursorPosition } = this.context;
@@ -96,6 +104,10 @@ export class EngineViewport extends Component {
     // start listening for rendering queues
     engine.on("frame", this._onFrame);
 
+    // listen for focus returns after closing a modal
+    engine.on("return-focus", this._onReturnFocus);
+    document.addEventListener("mousemove", this._onGlobalMouseMove);
+
     // queue second resize to be sure (windows)
     requestAnimationFrame(this._onResize);
 
@@ -121,6 +133,8 @@ export class EngineViewport extends Component {
     this.ks.unmount(document);
     window.removeEventListener("resize", this._onResize);
     engine.off("frame", this._onFrame);
+    engine.off("return-focus", this._onReturnFocus);
+    document.removeEventListener("mousemove", this._onGlobalMouseMove);
     // engine.removeEntity(this.targetingReticle);
   }
   render() {
@@ -381,5 +395,28 @@ export class EngineViewport extends Component {
     engine.emit("click", {
       position: this.mouseSceneCoordinates
     });
+  }
+  _onGlobalMouseMove(event) {
+    const { clientX, clientY } = event;
+    this._globalMousePosition = {
+      clientX,
+      clientY
+    };
+  }
+  _onReturnFocus() {
+    if (this.mouseOnScreen) {
+      return;
+    }
+    const viewportEl = this.viewportEl;
+    const bbox = viewportEl.getBoundingClientRect();
+    const mousePos = this._globalMousePosition;
+    if (
+      mousePos.clientX >= bbox.left &&
+      mousePos.clientX <= bbox.right &&
+      mousePos.clientY >= bbox.top &&
+      mousePos.clientY <= bbox.bottom
+    ) {
+      this._onMouseEnter(this._globalMousePosition);
+    }
   }
 }
