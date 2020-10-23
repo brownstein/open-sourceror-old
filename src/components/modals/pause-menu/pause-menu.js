@@ -3,10 +3,12 @@ import { ControllerContext } from "src/components/controller";
 import useKey from "src/components/hooks/use-key";
 import ItemGrid from "src/components/items/item-grid";
 import HotkeyRow from "src/components/items/hotkey-row";
+import { useTrackFocus } from "src/components/hooks/return-focus";
 
 import "./pause-menu.less";
 
 export default function PauseMenu () {
+  useTrackFocus();
   const ctx = useContext(ControllerContext);
   const { running, unPause } = ctx;
 

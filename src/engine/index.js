@@ -386,4 +386,10 @@ export default class Engine extends EventEmitter {
     });
     return snapshot;
   }
+  /**
+   * Return focus to the viewport if the mouse coordinates are there
+   */
+  returnFocus() {
+    console.log("returning focus to next item");
+  }
 }
