@@ -26,11 +26,15 @@ export default {
     ]
   },
   CHASING_FOX: {
-    text: ["I see."],
-    next: 'DONE'
+    text: [
+      "I see."
+    ],
+    next: "DONE"
   },
   LOST: {
-    text: ["I see."],
-    next: 'DONE'
+    text: [
+      "I see."
+    ],
+    next: "DONE"
   }
 };

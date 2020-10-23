@@ -37,6 +37,7 @@ export function DialogueOverlay ({
           return;
         }
       }
+      setCurrentLine(0);
       dispatch(continueDialogue(key));
     };
   });
