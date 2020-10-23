@@ -6,6 +6,7 @@ import { saveScript } from "src/redux/actions/scripts";
 
 import ItemGrid from "src/components/items/item-grid";
 import BaseModal from "../base";
+import { useTrackFocus } from "src/components/hooks/return-focus";
 
 import "src/less/forms.less";
 import "./save-script.less";
@@ -15,6 +16,7 @@ function SaveScriptModal({
   scriptLibrary,
   dispatch
 }) {
+  useTrackFocus();
   const [state, setState] = useState({
     spellName: "",
     existingScriptId: null

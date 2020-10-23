@@ -10,3 +10,8 @@ export function useTrackFocus() {
     engine.returnFocus();
   }, []);
 }
+
+export function FocalTracker() {
+  useTrackFocus();
+  return null;
+}

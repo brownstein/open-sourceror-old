@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 
+import { FocalTracker } from "src/components/hooks/return-focus";
 import { endDialogue } from "src/redux/actions/dialogue";
 
 import "./dialogue.less";
@@ -10,6 +11,7 @@ export function DialogueOverlay ({
   currentTextLines,
   dispatch
 }) {
+
   // set up key press handler for the lifetime of the component
   const keyHandlerRef = useRef();
   useEffect(() => {
@@ -46,6 +48,7 @@ export function DialogueOverlay ({
   }
   return (
     <div className="dialogue-overlay">
+      <FocalTracker/>
       <div className="dialogue-box">
         <div className="dialogue-icon-container">
           <div className="dialogue-icon">
