@@ -16,21 +16,21 @@ export default {
     icon: "teacher",
     options: [
       {
-        text: "I was chasing a fox.",
+        text: ["I was chasing a fox."],
         next: "CHASING_FOX"
       },
       {
-        text: "Yes.",
+        text: ["Yes."],
         next: "LOST"
       }
     ]
   },
   CHASING_FOX: {
-    text: "I see.",
+    text: ["I see."],
     next: 'DONE'
   },
   LOST: {
-    text: "I see.",
+    text: ["I see."],
     next: 'DONE'
   }
 };

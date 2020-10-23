@@ -131,7 +131,6 @@ export class NPC extends BaseEntity {
       }
       // disdable trigger
       if (this.dialogueDef) {
-        console.log("OFF");
         engine.keyEventBus.off("keyboard-event", this._onKeyEvent2);
       }
     }

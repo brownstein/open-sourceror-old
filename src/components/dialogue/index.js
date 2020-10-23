@@ -23,12 +23,23 @@ export function DialogueOverlay ({
     }
   }, []);
 
+
+  const [currentLine, setCurrentLine] = useState(0);
+
   // bind the key handler to the appropreate key once per refresh
   useEffect(() => {
     keyHandlerRef.current = key => {
+      if (currentTextLines) {
+        if (currentLine + 1 < currentTextLines.length) {
+          setCurrentLine(n => n + 1);
+          return;
+        }
+      }
       dispatch(endDialogue());
     };
   });
+
+  let displayLine = currentTextLines && currentTextLines[currentLine];
 
   if (!dialogueInProgress) {
     return null;
@@ -42,7 +53,7 @@ export function DialogueOverlay ({
           </div>
         </div>
         <div className="dialogue-text">
-          {JSON.stringify(currentTextLines, 0, 2)}
+          {displayLine}
         </div>
       </div>
     </div>
