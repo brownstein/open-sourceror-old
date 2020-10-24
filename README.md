@@ -1,3 +1,7 @@
-NOTES:
+# Open Sourceror
+A metroidvania where you write your own spells
 
-babel's source maps map the end of a closure to its' start
+## Technology
+Open Sourceror is built entirely on open-source software
+- Tiled is used as the primary map editor
+- Almost everything else is NPM dependencies or custom code

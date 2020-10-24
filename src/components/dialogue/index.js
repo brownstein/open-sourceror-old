@@ -71,6 +71,16 @@ export function DialogueOverlay ({
   );
 }
 
+function DialogueOptions({
+  options
+}) {
+  return (
+    <div>
+      
+    </div>
+  );
+}
+
 function mapStateToProps(state) {
   const { dialogue: dialogueState } = state;
   let currentTextLines = null;
