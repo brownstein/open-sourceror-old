@@ -1,5 +1,6 @@
 import {
   BEGIN_DIALOGUE,
+  ADVANCE_DIALOGUE_LINE,
   CONTINUE_DIALOGUE,
   END_DIALOGUE
 } from "../constants/dialogue";
@@ -9,7 +10,7 @@ export const beginDialogue = (dialogueDef) => ({
   dialogueDef
 });
 
-export const continueDialogue = (action) => {
+export const continueDialogue = (option) => {
   return (dispatch, getState) => {
     const { dialogue: dialogueState } = getState();
     const {

@@ -6,9 +6,12 @@ import { continueDialogue } from "src/redux/actions/dialogue";
 
 import "./dialogue.less";
 
+
+
 export function DialogueOverlay ({
   dialogueInProgress,
   currentTextLines,
+  options,
   dispatch
 }) {
 
@@ -31,6 +34,9 @@ export function DialogueOverlay ({
   // bind the key handler to the appropreate key once per refresh
   useEffect(() => {
     keyHandlerRef.current = key => {
+      if (key !== 'e') {
+        return;
+      }
       if (currentTextLines) {
         if (currentLine + 1 < currentTextLines.length) {
           setCurrentLine(n => n + 1);
@@ -56,8 +62,9 @@ export function DialogueOverlay ({
             ICON HERE
           </div>
         </div>
-        <div className="dialogue-text">
+        <div className="dialogue-main">
           {displayLine}
+          {options && JSON.stringify(options, 0, 2)}
         </div>
       </div>
     </div>
@@ -68,15 +75,18 @@ function mapStateToProps(state) {
   const { dialogue: dialogueState } = state;
   let currentTextLines = null;
   let dialogueInProgress = false;
+  let options = null;
   if (dialogueState.dialogue) {
     const { dialogue, currentState } = dialogueState;
     dialogueInProgress = true;
     const currentDialogueState = dialogue[currentState] || {};
     currentTextLines = currentDialogueState.text;
+    options = currentDialogueState.options;
   }
   return {
     dialogueInProgress,
-    currentTextLines
+    currentTextLines,
+    options
   }
 }
 

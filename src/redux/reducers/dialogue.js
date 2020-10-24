@@ -6,7 +6,8 @@ import {
 
 const INITIAL_STATE = {
   dialogue: null,
-  currentState: null
+  currentState: null,
+  currentLine: 0
 };
 
 export default function reduceDialogue(state = INITIAL_STATE, action) {
