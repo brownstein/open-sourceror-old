@@ -2,7 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 
 import { FocalTracker } from "src/components/hooks/return-focus";
-import { continueDialogue } from "src/redux/actions/dialogue";
+import {
+  continueDialogue,
+  advanceDialogueLine
+} from "src/redux/actions/dialogue";
+import {
+  presentDialogueDisplay
+} from "src/redux/selectors/dialogue";
 
 import "./dialogue.less";
 
@@ -28,32 +34,23 @@ export function useKeyboardHandler(handler) {
 
 export function DialogueOverlay ({
   dialogueInProgress,
-  currentTextLines,
+  textLine,
+  hasNextLine,
+  hasOptions,
   options,
   dispatch
 }) {
-  // set up key press handler for the lifetime of the component
-  const [currentLine, setCurrentLine] = useState(0);
-
   useKeyboardHandler(key => {
     if (key !== 'e') {
       return;
     }
-    if (currentTextLines) {
-      if (currentLine + 1 < currentTextLines.length) {
-        setCurrentLine(n => n + 1);
-        return;
-      }
+    if (hasNextLine) {
+      return dispatch(advanceDialogueLine());
     }
-    if (options) {
-      setCurrentLine(n => n + 1);
-      return;
+    if (!options) {
+      dispatch(continueDialogue());
     }
-    setCurrentLine(0);
-    dispatch(continueDialogue(key));
   });
-
-  let displayLine = currentTextLines && currentTextLines[currentLine];
 
   if (!dialogueInProgress) {
     return null;
@@ -68,8 +65,8 @@ export function DialogueOverlay ({
           </div>
         </div>
         <div className="dialogue-main">
-          {displayLine}
-          { !displayLine && options &&
+          { textLine }
+          { options &&
             <DialogueOptions
               dispatch={dispatch}
               options={options}
@@ -111,21 +108,18 @@ function DialogueOptions({
 }
 
 function mapStateToProps(state) {
-  const { dialogue: dialogueState } = state;
-  let currentTextLines = null;
-  let dialogueInProgress = false;
-  let options = null;
-  if (dialogueState.dialogue) {
-    const { dialogue, currentState } = dialogueState;
-    dialogueInProgress = true;
-    const currentDialogueState = dialogue[currentState] || {};
-    currentTextLines = currentDialogueState.text;
-    options = currentDialogueState.options;
+  const dialogueDisplay = presentDialogueDisplay(state);
+  console.log({ dialogueDisplay });
+  if (!dialogueDisplay) {
+    return {
+      dialogueInProgress: false
+    };
   }
-  return {
-    dialogueInProgress,
-    currentTextLines,
-    options
+  else {
+    return {
+      dialogueInProgress: true,
+      ...dialogueDisplay
+    };
   }
 }
 

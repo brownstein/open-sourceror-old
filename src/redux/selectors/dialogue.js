@@ -16,25 +16,21 @@ export function presentDialogueDisplay(state) {
   const currentDialogueDef = dialogue[currentState];
   const options = currentDialogueDef.options;
   let textLine;
+  let hasNextLine = false;
+  let hasOptions = false;
   if (Array.isArray(currentDialogueDef.text)) {
     textLine = currentDialogueDef.text[currentLine];
+    hasNextLine = currentLine + 1 < currentDialogueDef.text.length;
   }
   else {
     textLine = currentDialogueDef.text;
+    hasNextLine = false;
   }
-  if (textLine) {
-    return {
-      textLine
-    };
-  }
-  else if (options) {
-    return {
-      options
-    };
-  }
-  else {
-    return {
-      needsAdvance: true
-    };
-  }
+  hasOptions = !!options;
+  return {
+    textLine,
+    hasNextLine,
+    options,
+    hasOptions
+  };
 };

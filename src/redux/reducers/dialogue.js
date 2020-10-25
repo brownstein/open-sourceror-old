@@ -1,5 +1,6 @@
 import {
   BEGIN_DIALOGUE,
+  ADVANCE_DIALOGUE_LINE,
   CONTINUE_DIALOGUE,
   END_DIALOGUE
 } from "../constants/dialogue";
@@ -24,20 +25,29 @@ export default function reduceDialogue(state = INITIAL_STATE, action) {
       return {
         ...state,
         dialogue,
-        currentState: initialState
+        currentState: initialState,
+        currentLine: 0
+      };
+    }
+    case ADVANCE_DIALOGUE_LINE: {
+      return {
+        ...state,
+        currentLine: state.currentLine + 1
       };
     }
     case CONTINUE_DIALOGUE: {
       return {
         ...state,
-        currentState: action.nextState
+        currentState: action.nextState,
+        currentLine: 0
       };
     }
     case END_DIALOGUE: {
       return {
         ...state,
         dialogue: null,
-        currentState: null
+        currentState: null,
+        currentLine: 0
       };
     }
     default:

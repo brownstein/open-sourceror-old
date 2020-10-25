@@ -33,7 +33,7 @@ export default {
   },
   LOST: {
     text: [
-      "I see."
+      "I see (2)."
     ],
     next: "DONE"
   }

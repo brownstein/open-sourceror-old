@@ -10,6 +10,10 @@ export const beginDialogue = (dialogueDef) => ({
   dialogueDef
 });
 
+export const advanceDialogueLine = () => ({
+  type: ADVANCE_DIALOGUE_LINE
+});
+
 export const continueDialogue = (option) => {
   return (dispatch, getState) => {
     const { dialogue: dialogueState } = getState();
@@ -37,7 +41,7 @@ export const continueDialogue = (option) => {
     else if (currentStateDef.options) {
       dispatch({
         type: CONTINUE_DIALOGUE,
-        nextState: currentStateDef.options[0].next
+        nextState: currentStateDef.options[option].next
       });
     }
     else {
