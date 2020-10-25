@@ -166,9 +166,9 @@ Open Sourceror.</text>
   <object id="14" name="fox" type="foxStart" x="918.603" y="227.522">
    <point/>
   </object>
-  <object id="15" name="NPC with dialogue" type="npc" x="633.897" y="272.539">
+  <object id="15" name="NPC with dialogue" type="npc" x="618.08" y="273.756">
    <properties>
-    <property name="dialogueDef" value="tutorial-1"/>
+    <property name="npcDialogue" value="Go chase that fox!"/>
    </properties>
    <point/>
   </object>

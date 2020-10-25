@@ -27,13 +27,32 @@ export default {
   },
   CHASING_FOX: {
     text: [
-      "I see."
+      "I don't see any foxes around, but never mind that",
+      "you look like a noob in need to a tutorial"
     ],
-    next: "DONE"
+    options: [
+      {
+        text: "Yes",
+        next: "TUTORIAL"
+      },
+      {
+        text: "Definitely",
+        next: "TUTORIAL"
+      }
+    ]
   },
   LOST: {
     text: [
-      "I see (2)."
+      "I see.",
+      "Let's get you un-lost"
+    ],
+    next: "TUTORIAL"
+  },
+  TUTORIAL: {
+    text: [
+      "It's time you learned a little magic",
+      "You see that console in the bottom half of your screen?",
+      <span>Type "<b>console.log("Hello World");</b>" in there and hit run </span>
     ],
     next: "DONE"
   }

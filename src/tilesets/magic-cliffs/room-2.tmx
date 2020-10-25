@@ -122,9 +122,7 @@
   </object>
   <object id="2" name="Teacher" type="npc" x="419.032" y="248.18">
    <properties>
-    <property name="npcDialogue">Hello!|
-You must have many questions.|
-I'm the NPC character, now type &quot;console.log('hello world');&quot; into the console to start your adventure.</property>
+    <property name="dialogueDef" value="tutorial-1"/>
    </properties>
    <point/>
   </object>

@@ -80,16 +80,16 @@
                  "point":true,
                  "properties":[
                         {
-                         "name":"npcDialogue",
+                         "name":"dialogueDef",
                          "type":"string",
-                         "value":"Hello!|\nYou must have many questions.|\nI'm the NPC character, now type \"console.log('hello world');\" into the console to start your adventure."
+                         "value":"tutorial-1"
                         }],
                  "rotation":0,
                  "type":"npc",
                  "visible":true,
                  "width":0,
-                 "x":419.032377825188,
-                 "y":248.18008880592
+                 "x":419.032,
+                 "y":248.18
                 }, 
                 {
                  "height":19.3986,

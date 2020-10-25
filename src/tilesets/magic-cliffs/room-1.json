@@ -192,16 +192,16 @@
                  "point":true,
                  "properties":[
                         {
-                         "name":"dialogueDef",
+                         "name":"npcDialogue",
                          "type":"string",
-                         "value":"tutorial-1"
+                         "value":"Go chase that fox!"
                         }],
                  "rotation":0,
                  "type":"npc",
                  "visible":true,
                  "width":0,
-                 "x":633.897067769802,
-                 "y":272.539238350164
+                 "x":618.080058401265,
+                 "y":273.755931378513
                 }],
          "opacity":1,
          "type":"objectgroup",
