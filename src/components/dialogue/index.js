@@ -85,7 +85,7 @@ function DialogueOptions({
 
   useKeyboardHandler(key => {
     if (key === "w") {
-      return setOptionChoice(c => (c - 1) % options.length);
+      return setOptionChoice(c => (c + options.length - 1) % options.length);
     }
     if (key === "s") {
       return setOptionChoice(c => (c + 1) % options.length);

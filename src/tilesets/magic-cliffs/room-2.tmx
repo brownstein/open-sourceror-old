@@ -136,13 +136,6 @@
     <property name="open" value="hello world"/>
    </properties>
   </object>
-  <object id="6" type="foregroundText" x="329.918" y="74.5837" width="172.219" height="18.177">
-   <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">TODO: interaction here</text>
-  </object>
-  <object id="7" type="foregroundText" x="312.25" y="282.931" width="200.888" height="38.1784">
-   <text fontfamily="Roboto" pixelsize="14" wrap="1" color="#ffffff" halign="center">type &quot;console.log('hello world')&quot;,
-and hit &quot;run&quot;</text>
-  </object>
   <object id="8" type="room-transition" x="640.054" y="191.739" width="14.6446" height="79.8853">
    <properties>
     <property name="direction" value="right"/>

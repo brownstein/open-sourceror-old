@@ -126,46 +126,6 @@
                  "y":196.758
                 }, 
                 {
-                 "height":18.177,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
-                 "text":
-                    {
-                     "color":"#ffffff",
-                     "fontfamily":"Roboto",
-                     "halign":"center",
-                     "pixelsize":14,
-                     "text":"TODO: interaction here",
-                     "wrap":true
-                    },
-                 "type":"foregroundText",
-                 "visible":true,
-                 "width":172.219,
-                 "x":329.918,
-                 "y":74.5837
-                }, 
-                {
-                 "height":38.1784,
-                 "id":7,
-                 "name":"",
-                 "rotation":0,
-                 "text":
-                    {
-                     "color":"#ffffff",
-                     "fontfamily":"Roboto",
-                     "halign":"center",
-                     "pixelsize":14,
-                     "text":"type \"console.log('hello world')\",\nand hit \"run\"",
-                     "wrap":true
-                    },
-                 "type":"foregroundText",
-                 "visible":true,
-                 "width":200.888,
-                 "x":312.25,
-                 "y":282.931
-                }, 
-                {
                  "height":79.8853,
                  "id":8,
                  "name":"",
