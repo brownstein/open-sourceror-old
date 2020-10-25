@@ -28,7 +28,9 @@ export function presentDialogueDisplay(state) {
     };
   }
   else if (options) {
-
+    return {
+      options
+    };
   }
   else {
     return {

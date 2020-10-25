@@ -6,16 +6,10 @@ import { continueDialogue } from "src/redux/actions/dialogue";
 
 import "./dialogue.less";
 
-
-
-export function DialogueOverlay ({
-  dialogueInProgress,
-  currentTextLines,
-  options,
-  dispatch
-}) {
-
-  // set up key press handler for the lifetime of the component
+/**
+ * Shared functional keyboard handler hook
+ */
+export function useKeyboardHandler(handler) {
   const keyHandlerRef = useRef();
   useEffect(() => {
     function onKeyDown(e) {
@@ -27,25 +21,36 @@ export function DialogueOverlay ({
       document.removeEventListener("keydown", onKeyDown);
     }
   }, []);
+  useEffect(() => {
+    keyHandlerRef.current = handler;
+  });
+}
 
-
+export function DialogueOverlay ({
+  dialogueInProgress,
+  currentTextLines,
+  options,
+  dispatch
+}) {
+  // set up key press handler for the lifetime of the component
   const [currentLine, setCurrentLine] = useState(0);
 
-  // bind the key handler to the appropreate key once per refresh
-  useEffect(() => {
-    keyHandlerRef.current = key => {
-      if (key !== 'e') {
+  useKeyboardHandler(key => {
+    if (key !== 'e') {
+      return;
+    }
+    if (currentTextLines) {
+      if (currentLine + 1 < currentTextLines.length) {
+        setCurrentLine(n => n + 1);
         return;
       }
-      if (currentTextLines) {
-        if (currentLine + 1 < currentTextLines.length) {
-          setCurrentLine(n => n + 1);
-          return;
-        }
-      }
-      setCurrentLine(0);
-      dispatch(continueDialogue(key));
-    };
+    }
+    if (options) {
+      setCurrentLine(n => n + 1);
+      return;
+    }
+    setCurrentLine(0);
+    dispatch(continueDialogue(key));
   });
 
   let displayLine = currentTextLines && currentTextLines[currentLine];
@@ -64,7 +69,11 @@ export function DialogueOverlay ({
         </div>
         <div className="dialogue-main">
           {displayLine}
-          {options && JSON.stringify(options, 0, 2)}
+          { !displayLine && options &&
+            <DialogueOptions
+              dispatch={dispatch}
+              options={options}
+            />}
         </div>
       </div>
     </div>
@@ -72,11 +81,31 @@ export function DialogueOverlay ({
 }
 
 function DialogueOptions({
-  options
+  options,
+  dispatch
 }) {
+  const [optionChoice, setOptionChoice] = useState(0);
+
+  useKeyboardHandler(key => {
+    if (key === "w") {
+      return setOptionChoice(c => (c - 1) % options.length);
+    }
+    if (key === "s") {
+      return setOptionChoice(c => (c + 1) % options.length);
+    }
+    if (key === "e") {
+      return dispatch(continueDialogue(optionChoice));
+    }
+  });
+
   return (
-    <div>
-      
+    <div className="dialogue-options">
+      { options.map((opt, i) => (
+        <div key={i}>
+          { optionChoice === i && ">" }
+          { opt.text }
+        </div>
+      ))}
     </div>
   );
 }
