@@ -68,7 +68,7 @@
     "serialize-error": "^7.0.1",
     "shortid": "^2.2.15",
     "terser-webpack-plugin": "^3.0.2",
-    "three": "^0.117.1",
+    "three": "^0.125.0",
     "three-bmfont-text": "github:brownstein/three-bmfont-text",
     "three-line-2d": "^1.1.6",
     "tinyqueue": "^2.0.3",
